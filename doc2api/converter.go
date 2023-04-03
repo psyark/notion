@@ -61,10 +61,10 @@ func (c converter) convert() error {
 
 		if len(c.matchers) < i+1 {
 			return fmt.Errorf("matcherが足りません：%v", i)
-		} else if c.matchers[i].match(remote) {
-			// OK
+		} else if err := c.matchers[i].match(remote); err != nil {
+			return err
 		} else {
-			return fmt.Errorf("mismatch: remote=%#v", remote)
+			fmt.Println("OK")
 		}
 	}
 }
@@ -86,45 +86,67 @@ func convertAll() error {
 	return nil
 }
 
-// elementMatcher はNotion API Referenceの要素と、Goコードへの変換ルールが一体となったデータです
+// elementMatcher はNotion API Referenceのローカルコピーと、Goコードへの変換ルールが一体となったデータです
+//
+// converter.convertは保有する各elementMatcherに対し、matchを呼び出します
+// 各elementMatcherはローカルコピーとの比較を行い、失敗した場合はerrorを返し
+// 成功した場合はコードを出力します。
 type elementMatcher interface {
-	match(remote objectDocElement) bool
+	match(remote objectDocElement) error
+}
+
+var _ = []elementMatcher{
+	paragraphElementMatcher{},
+	headingElementMatcher{},
+	codeElementMatcher{},
 }
 
 type paragraphElementMatcher struct {
-	element objectDocParagraphElement
-	output  func(objectDocParagraphElement) error
+	local  *objectDocParagraphElement
+	output func(objectDocParagraphElement) error
 }
 
-func (m paragraphElementMatcher) match(remote objectDocElement) bool {
-	return remote == m.element
+func (m paragraphElementMatcher) match(remote objectDocElement) error {
+	if remote, ok := remote.(*objectDocParagraphElement); ok {
+		if remote.Text != m.local.Text {
+			return fmt.Errorf("mismatch: remote=%#v, local=%#v", remote, m.local)
+		}
+		return nil
+	}
+	return fmt.Errorf("mismatch: remote is not objectDocParagraphElement (%#v)", remote)
 }
 
 type headingElementMatcher struct {
-	element objectDocHeadingElement
-	output  func(objectDocHeadingElement) error
+	local  *objectDocHeadingElement
+	output func(objectDocHeadingElement) error
 }
 
-func (m headingElementMatcher) match(remote objectDocElement) bool {
-	return remote == m.element
+func (m headingElementMatcher) match(remote objectDocElement) error {
+	if remote, ok := remote.(*objectDocHeadingElement); ok {
+		if remote.Text != m.local.Text {
+			return fmt.Errorf("mismatch: remote=%#v, local=%#v", remote, m.local)
+		}
+		return nil
+	}
+	return fmt.Errorf("mismatch: remote is not objectDocHeadingElement (%#v)", remote)
 }
 
 type codeElementMatcher struct {
-	element objectDocCodeElement
-	output  func(objectDocCodeElement) error
+	local  objectDocCodeElement
+	output func(objectDocCodeElement) error
 }
 
-func (m codeElementMatcher) match(remote objectDocElement) bool {
-	if remote, ok := remote.(objectDocCodeElement); ok {
-		if len(remote.Codes) != len(m.element.Codes) {
-			return false
+func (m codeElementMatcher) match(remote objectDocElement) error {
+	if remote, ok := remote.(*objectDocCodeElement); ok {
+		if len(remote.Codes) != len(m.local.Codes) {
+			return fmt.Errorf("mismatch: len(remote.Codes)=%v, len(local.Codes)=%v", len(remote.Codes), len(m.local.Codes))
 		}
 		for i := range remote.Codes {
-			if remote.Codes[i] != m.element.Codes[i] {
-				return false
+			if remote.Codes[i] != m.local.Codes[i] {
+				return fmt.Errorf("mismatch: remote.Codes[%v]=%v, local.Codes[%v]=%v", i, remote.Codes[i], i, m.local.Codes[i])
 			}
 		}
-		return true
+		return nil
 	}
-	return false
+	return fmt.Errorf("mismatch: remote is not objectDocCodeElement (%#v)", remote)
 }

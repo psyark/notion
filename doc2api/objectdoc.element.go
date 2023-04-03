@@ -12,19 +12,23 @@ type objectDocElement interface {
 }
 
 var _ = []objectDocElement{
-	objectDocHeadingElement(""),
-	objectDocParagraphElement(""),
-	objectDocCodeElement{},
-	objectDocCalloutElement{},
-	objectDocParametersElement{},
-	objectDocAPIHeaderElement{},
+	&objectDocHeadingElement{},
+	&objectDocParagraphElement{},
+	&objectDocCodeElement{},
+	&objectDocCalloutElement{},
+	&objectDocParametersElement{},
+	&objectDocAPIHeaderElement{},
 }
 
 // objectDocHeadingElement は見出しのobjectDocElementです
-type objectDocHeadingElement string
+type objectDocHeadingElement struct {
+	Text string
+}
 
 // objectDocParagraphElement は段落のobjectDocElementです
-type objectDocParagraphElement string
+type objectDocParagraphElement struct {
+	Text string
+}
 
 type objectDocCodeElement struct {
 	Codes []objectDocCodeElementCode `json:"codes"`
@@ -77,9 +81,9 @@ type objectDocAPIHeaderElement struct {
 	Title string `json:"title"`
 }
 
-func (t objectDocHeadingElement) isObjectDocElement()    {}
-func (t objectDocParagraphElement) isObjectDocElement()  {}
-func (t objectDocCodeElement) isObjectDocElement()       {}
-func (t objectDocCalloutElement) isObjectDocElement()    {}
-func (t objectDocParametersElement) isObjectDocElement() {}
-func (t objectDocAPIHeaderElement) isObjectDocElement()  {}
+func (t *objectDocHeadingElement) isObjectDocElement()    {}
+func (t *objectDocParagraphElement) isObjectDocElement()  {}
+func (t *objectDocCodeElement) isObjectDocElement()       {}
+func (t *objectDocCalloutElement) isObjectDocElement()    {}
+func (t *objectDocParametersElement) isObjectDocElement() {}
+func (t *objectDocAPIHeaderElement) isObjectDocElement()  {}

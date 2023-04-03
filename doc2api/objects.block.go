@@ -6,11 +6,11 @@ func init() {
 		fileName: "block.go",
 		matchers: []elementMatcher{
 			paragraphElementMatcher{
-				element: objectDocParagraphElement("A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:"),
-				output:  func(e objectDocParagraphElement) error { return nil },
+				local:  &objectDocParagraphElement{"A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:"},
+				output: func(e objectDocParagraphElement) error { return nil },
 			},
 			codeElementMatcher{
-				element: objectDocCodeElement{Codes: []objectDocCodeElementCode{
+				local: objectDocCodeElement{Codes: []objectDocCodeElementCode{
 					{
 						Name:     "",
 						Language: "json",
