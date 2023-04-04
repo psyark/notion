@@ -8,11 +8,15 @@ package doc2api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/dave/jennifer/jen"
 )
 
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
@@ -53,19 +57,84 @@ func (c converter) convert() error {
 	lines := strings.Split(ssrProps.Doc.Body, "\n")
 	odt := &objectDocTokenizer{lines, 0}
 
+	requiredMatchers := jen.Statement{}
+
 	for i := 0; ; i++ {
 		remote, err := odt.next()
-		if err != nil {
+		if errors.Is(err, io.EOF) {
+			break
+		} else if err != nil {
 			return err
 		}
 
 		if len(c.matchers) < i+1 {
-			return fmt.Errorf("matcherが足りません：element[%v]=%#v", i, remote)
+			requiredMatchers = append(requiredMatchers, createRequiredMatcher(remote))
 		} else if err := c.matchers[i].match(remote); err != nil {
 			return err
-		} else {
-			fmt.Println("OK")
 		}
+	}
+
+	if len(requiredMatchers) != 0 {
+		gostr := jen.Var().Id("TARINAI").Op("=").Index().Id("elementMatcher").Values(jen.List(requiredMatchers...), jen.Line()).GoString()
+		os.WriteFile("required_matchers.txt", []byte(gostr), 0666)
+		return fmt.Errorf("matcherが足りません (see required_matchers.txt)")
+	}
+	return nil
+}
+
+func createRequiredMatcher(remote objectDocElement) jen.Code {
+	typeName := strings.TrimPrefix(fmt.Sprintf("%T", remote), "*doc2api.")
+	outputCode := jen.Func().Params(jen.Id("e").Op("*").Id(typeName)).Error().Block(jen.Return().Nil().Comment("TODO"))
+
+	switch remote := remote.(type) {
+	case *objectDocHeadingElement:
+		return jen.Line().Id("headingElementMatcher").Values(jen.Dict{
+			jen.Id("local"):  jen.Op("&").Id("objectDocHeadingElement").Values(jen.Dict{jen.Id("Text"): jen.Lit(remote.Text)}),
+			jen.Id("output"): outputCode,
+		})
+	case *objectDocParagraphElement:
+		return jen.Line().Id("paragraphElementMatcher").Values(jen.Dict{
+			jen.Id("local"):  jen.Op("&").Id("objectDocParagraphElement").Values(jen.Dict{jen.Id("Text"): jen.Lit(remote.Text)}),
+			jen.Id("output"): outputCode,
+		})
+	case *objectDocCalloutElement:
+		return jen.Line().Id("calloutElementMatcher").Values(jen.Dict{
+			jen.Id("local"): jen.Op("&").Id("objectDocCalloutElement").Values(jen.Dict{
+				jen.Id("Type"):  jen.Lit(remote.Type),
+				jen.Id("Title"): jen.Lit(remote.Title),
+				jen.Id("Body"):  jen.Lit(remote.Body),
+			}),
+			jen.Id("output"): outputCode,
+		})
+	case *objectDocCodeElement:
+		codes := jen.Statement{}
+		for _, c := range remote.Codes {
+			codes = append(codes, jen.Values(jen.Dict{
+				jen.Id("Name"):     jen.Lit(c.Name),
+				jen.Id("Language"): jen.Lit(c.Language),
+				jen.Id("Code"):     jen.Lit(c.Code),
+			}))
+		}
+		return jen.Line().Id("codeElementMatcher").Values(jen.Dict{
+			jen.Id("local"):  jen.Op("&").Id("objectDocCodeElement").Values(jen.Dict{jen.Id("Codes"): jen.Index().Id("objectDocCodeElementCode").Values(codes...)}),
+			jen.Id("output"): outputCode,
+		})
+	case *objectDocParametersElement:
+		params := jen.Statement{}
+		for _, p := range *remote {
+			params = append(params, jen.Values(jen.Dict{
+				jen.Id("Name"):         jen.Lit(p.Name),
+				jen.Id("Type"):         jen.Lit(p.Type),
+				jen.Id("Description"):  jen.Lit(p.Description),
+				jen.Id("ExampleValue"): jen.Lit(p.ExampleValue),
+			}))
+		}
+		return jen.Line().Id("parametersElementMatcher").Values(jen.Dict{
+			jen.Id("local"):  jen.Op("&").Id("objectDocParametersElement").Values(params...),
+			jen.Id("output"): outputCode,
+		})
+	default:
+		panic(remote)
 	}
 }
 
