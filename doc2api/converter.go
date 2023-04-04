@@ -60,7 +60,7 @@ func (c converter) convert() error {
 		}
 
 		if len(c.matchers) < i+1 {
-			return fmt.Errorf("matcherが足りません：%v", i)
+			return fmt.Errorf("matcherが足りません：element[%v]=%#v", i, remote)
 		} else if err := c.matchers[i].match(remote); err != nil {
 			return err
 		} else {
@@ -80,7 +80,7 @@ func registerConverter(c converter) {
 func convertAll() error {
 	for _, c := range registeredConverters {
 		if err := c.convert(); err != nil {
-			return err
+			return fmt.Errorf("convert: %s: %w", c.fileName, err)
 		}
 	}
 	return nil
@@ -103,22 +103,22 @@ var _ = []elementMatcher{
 
 type paragraphElementMatcher struct {
 	local  *objectDocParagraphElement
-	output func(objectDocParagraphElement) error
+	output func(*objectDocParagraphElement) error
 }
 
 func (m paragraphElementMatcher) match(remote objectDocElement) error {
 	if remote, ok := remote.(*objectDocParagraphElement); ok {
-		if remote.Text != m.local.Text {
+		if *remote != *m.local {
 			return fmt.Errorf("mismatch: remote=%#v, local=%#v", remote, m.local)
 		}
-		return nil
+		return m.output(remote)
 	}
 	return fmt.Errorf("mismatch: remote is not objectDocParagraphElement (%#v)", remote)
 }
 
 type headingElementMatcher struct {
 	local  *objectDocHeadingElement
-	output func(objectDocHeadingElement) error
+	output func(*objectDocHeadingElement) error
 }
 
 func (m headingElementMatcher) match(remote objectDocElement) error {
@@ -126,14 +126,29 @@ func (m headingElementMatcher) match(remote objectDocElement) error {
 		if remote.Text != m.local.Text {
 			return fmt.Errorf("mismatch: remote=%#v, local=%#v", remote, m.local)
 		}
-		return nil
+		return m.output(remote)
 	}
 	return fmt.Errorf("mismatch: remote is not objectDocHeadingElement (%#v)", remote)
 }
 
+type calloutElementMatcher struct {
+	local  *objectDocCalloutElement
+	output func(*objectDocCalloutElement) error
+}
+
+func (m calloutElementMatcher) match(remote objectDocElement) error {
+	if remote, ok := remote.(*objectDocCalloutElement); ok {
+		if *remote != *m.local {
+			return fmt.Errorf("mismatch: remote=%#v, local=%#v", remote, m.local)
+		}
+		return m.output(remote)
+	}
+	return fmt.Errorf("mismatch: remote is not objectDocCalloutElement (%#v)", remote)
+}
+
 type codeElementMatcher struct {
-	local  objectDocCodeElement
-	output func(objectDocCodeElement) error
+	local  *objectDocCodeElement
+	output func(*objectDocCodeElement) error
 }
 
 func (m codeElementMatcher) match(remote objectDocElement) error {
@@ -146,7 +161,27 @@ func (m codeElementMatcher) match(remote objectDocElement) error {
 				return fmt.Errorf("mismatch: remote.Codes[%v]=%v, local.Codes[%v]=%v", i, remote.Codes[i], i, m.local.Codes[i])
 			}
 		}
-		return nil
+		return m.output(remote)
 	}
 	return fmt.Errorf("mismatch: remote is not objectDocCodeElement (%#v)", remote)
+}
+
+type parametersElementMatcher struct {
+	local  *objectDocParametersElement
+	output func(*objectDocParametersElement) error
+}
+
+func (m parametersElementMatcher) match(remote objectDocElement) error {
+	if remote, ok := remote.(*objectDocParametersElement); ok {
+		if len(*remote) != len(*m.local) {
+			return fmt.Errorf("mismatch: len(remote)=%v, len(local)=%v", len(*remote), len(*m.local))
+		}
+		for i := range *remote {
+			if (*remote)[i] != (*m.local)[i] {
+				return fmt.Errorf("mismatch: remote[%v]=%v, local[%v]=%v", i, (*remote)[i], i, (*m.local)[i])
+			}
+		}
+		return m.output(remote)
+	}
+	return fmt.Errorf("mismatch: remote is not objectDocParametersElement (%#v)", remote)
 }
