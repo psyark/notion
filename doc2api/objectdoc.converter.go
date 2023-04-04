@@ -60,6 +60,7 @@ func (c converter) convert() error {
 	odt := &objectDocTokenizer{lines, 0}
 
 	requiredCopy := jen.Statement{}
+	b := &builder{}
 
 	for i := 0; ; i++ {
 		remote, err := odt.next()
@@ -71,7 +72,7 @@ func (c converter) convert() error {
 
 		if len(c.localCopy) < i+1 {
 			requiredCopy = append(requiredCopy, createLocalCopy(remote))
-		} else if err := c.localCopy[i].checkAndOutput(remote); err != nil {
+		} else if err := c.localCopy[i].checkAndOutput(remote, b); err != nil {
 			if errors.Is(err, errUnmatch) {
 				ld, _ := json.MarshalIndent(c.localCopy[i], "", "  ")
 				rd, _ := json.MarshalIndent(remote, "", "  ")
@@ -95,7 +96,7 @@ func (c converter) convert() error {
 
 func createLocalCopy(remote objectDocElement) jen.Code {
 	typeName := strings.TrimPrefix(fmt.Sprintf("%T", remote), "*doc2api.")
-	outputCode := jen.Func().Params(jen.Id("e").Op("*").Id(typeName)).Error().Block(jen.Return().Nil().Comment("TODO"))
+	outputCode := jen.Func().Params(jen.Id("e").Op("*").Id(typeName), jen.Id("b").Op("*").Id("builder")).Error().Block(jen.Return().Nil().Comment("TODO"))
 
 	switch remote := remote.(type) {
 	case *objectDocHeadingElement:
@@ -116,7 +117,7 @@ func createLocalCopy(remote objectDocElement) jen.Code {
 			jen.Id("output"): outputCode,
 		})
 	case *objectDocCodeElement:
-		outputCode = jen.Func().Params(jen.Id("e").Op("*").Id("objectDocCodeElementCode")).Error().Block(jen.Return().Nil().Comment("TODO"))
+		outputCode = jen.Func().Params(jen.Id("e").Op("*").Id("objectDocCodeElementCode"), jen.Id("b").Op("*").Id("builder")).Error().Block(jen.Return().Nil().Comment("TODO"))
 		codes := jen.Statement{}
 		for _, c := range remote.Codes {
 			codes = append(codes, jen.Values(jen.Dict{
@@ -130,7 +131,7 @@ func createLocalCopy(remote objectDocElement) jen.Code {
 			jen.Id("Codes"): jen.Index().Op("*").Id("objectDocCodeElementCode").Values(codes...),
 		})
 	case *objectDocParametersElement:
-		outputCode = jen.Func().Params(jen.Id("e").Op("*").Id("objectDocParameter")).Error().Block(jen.Return().Nil().Comment("TODO"))
+		outputCode = jen.Func().Params(jen.Id("e").Op("*").Id("objectDocParameter"), jen.Id("b").Op("*").Id("builder")).Error().Block(jen.Return().Nil().Comment("TODO"))
 		params := jen.Statement{}
 		for _, p := range *remote {
 			params = append(params, jen.Values(jen.Dict{

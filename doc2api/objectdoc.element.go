@@ -17,7 +17,7 @@ type objectDocElement interface {
 	// checkAndOutput は2つのことを行います
 	// 1. このエレメント（ローカルコピー）と渡されたエレメント（最新のリモート）を比べ、一致しなければ errUnmatch を返す
 	// 2. このエレメント（ローカルコピー）に変換ロジックが設定されていればそれを実行し、エラーを返す
-	checkAndOutput(remote objectDocElement) error
+	checkAndOutput(remote objectDocElement, b *builder) error
 }
 
 var _ = []objectDocElement{
@@ -32,16 +32,16 @@ var _ = []objectDocElement{
 // objectDocHeadingElement は見出しを表すobjectDocElementです
 type objectDocHeadingElement struct {
 	Text   string
-	output func(*objectDocHeadingElement) error
+	output func(*objectDocHeadingElement, *builder) error
 }
 
-func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocHeadingElement); !ok {
 		return errUnmatch
 	} else if e.Text != remote.Text {
 		return errUnmatch
 	} else if e.output != nil {
-		return e.output(e)
+		return e.output(e, b)
 	} else {
 		return nil
 	}
@@ -50,16 +50,16 @@ func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement) error 
 // objectDocParagraphElement は段落を表すobjectDocElementです
 type objectDocParagraphElement struct {
 	Text   string
-	output func(*objectDocParagraphElement) error
+	output func(*objectDocParagraphElement, *builder) error
 }
 
-func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocParagraphElement); !ok {
 		return errUnmatch
 	} else if e.Text != remote.Text {
 		return errUnmatch
 	} else if e.output != nil {
-		return e.output(e)
+		return e.output(e, b)
 	} else {
 		return nil
 	}
@@ -68,16 +68,16 @@ func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement) erro
 // objectDocAPIHeaderElement はAPI Headerを表すobjectDocElementです
 type objectDocAPIHeaderElement struct {
 	Title  string `json:"title"`
-	output func(*objectDocAPIHeaderElement) error
+	output func(*objectDocAPIHeaderElement, *builder) error
 }
 
-func (e *objectDocAPIHeaderElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocAPIHeaderElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocAPIHeaderElement); !ok {
 		return errUnmatch
 	} else if e.Title != remote.Title {
 		return errUnmatch
 	} else if e.output != nil {
-		return e.output(e)
+		return e.output(e, b)
 	} else {
 		return nil
 	}
@@ -88,7 +88,7 @@ type objectDocCodeElement struct {
 	Codes []*objectDocCodeElementCode `json:"codes"`
 }
 
-func (e *objectDocCodeElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocCodeElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocCodeElement); !ok {
 		return errUnmatch
 	} else if len(e.Codes) != len(remote.Codes) {
@@ -99,7 +99,7 @@ func (e *objectDocCodeElement) checkAndOutput(remote objectDocElement) error {
 			if code.Name != rc.Name || code.Language != rc.Language || code.Code != rc.Code {
 				return errUnmatch
 			} else if code.output != nil {
-				if err := code.output(code); err != nil {
+				if err := code.output(code, b); err != nil {
 					return err
 				}
 			}
@@ -112,7 +112,7 @@ type objectDocCodeElementCode struct {
 	Name     string `json:"string"`
 	Language string `json:"language"`
 	Code     string `json:"code"`
-	output   func(*objectDocCodeElementCode) error
+	output   func(*objectDocCodeElementCode, *builder) error
 }
 
 // objectDocCodeElement はコールアウトを表すobjectDocElementです
@@ -120,16 +120,16 @@ type objectDocCalloutElement struct {
 	Type   string `json:"type"`
 	Title  string `json:"title"`
 	Body   string `json:"body"`
-	output func(*objectDocCalloutElement) error
+	output func(*objectDocCalloutElement, *builder) error
 }
 
-func (e *objectDocCalloutElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocCalloutElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocCalloutElement); !ok {
 		return errUnmatch
 	} else if e.Type != remote.Type || e.Title != remote.Title || e.Body != remote.Body {
 		return errUnmatch
 	} else if e.output != nil {
-		return e.output(e)
+		return e.output(e, b)
 	} else {
 		return nil
 	}
@@ -137,7 +137,7 @@ func (e *objectDocCalloutElement) checkAndOutput(remote objectDocElement) error 
 
 type objectDocParametersElement []*objectDocParameter
 
-func (e *objectDocParametersElement) checkAndOutput(remote objectDocElement) error {
+func (e *objectDocParametersElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocParametersElement); !ok {
 		return errUnmatch
 	} else if len(*e) != len(*remote) {
@@ -148,7 +148,7 @@ func (e *objectDocParametersElement) checkAndOutput(remote objectDocElement) err
 			if param.Property != rp.Property || param.Field != rp.Field || param.Type != rp.Type || param.Description != rp.Description || param.ExampleValue != rp.ExampleValue {
 				return errUnmatch
 			} else if param.output != nil {
-				if err := param.output(param); err != nil {
+				if err := param.output(param, b); err != nil {
 					return err
 				}
 			}
@@ -193,5 +193,5 @@ type objectDocParameter struct {
 	Type         string
 	Description  string
 	ExampleValue string `json:"Example value"`
-	output       func(*objectDocParameter) error
+	output       func(*objectDocParameter, *builder) error
 }
