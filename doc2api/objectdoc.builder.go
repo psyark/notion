@@ -22,7 +22,7 @@ func (b *builder) add(c coder) {
 func (b *builder) statement() jen.Statement {
 	s := jen.Statement{}
 	for _, item := range *b {
-		s = append(s, item.code())
+		s = append(s, jen.Line().Line(), item.code())
 	}
 	return s
 }
@@ -60,7 +60,7 @@ func (c *classStruct) code() jen.Code {
 	for _, field := range c.fields {
 		fields = append(fields, field.code())
 	}
-	return jen.Line().Comment(c.comment).Line().Type().Id(c.name).Struct(fields...)
+	return jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...)
 }
 
 type field struct {
@@ -102,5 +102,11 @@ type classInterface struct {
 }
 
 func (c *classInterface) code() jen.Code {
-	return jen.Line().Comment(c.comment).Line().Type().Id(c.name).Interface()
+	return jen.Comment(c.comment).Line().Type().Id(c.name).Interface()
+}
+
+type independentComment string
+
+func (c independentComment) code() jen.Code {
+	return jen.Comment(string(c))
 }

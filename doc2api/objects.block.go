@@ -113,66 +113,88 @@ func init() {
 				Field:        "created_by",
 				Type:         "Partial User",
 				Description:  "User who created the block.",
-				ExampleValue: "{\"object\": \"user\",\"id\": \"45ee8d13-687b-47ce-a5ca-6e2e45548c4b\"}",
+				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.Id("PartialUser"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
-				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
-				ExampleValue: "\"2020-03-17T19:10:04.968Z\"",
 				Field:        "last_edited_time",
-				Property:     "",
 				Type:         "string (ISO 8601 date time)",
+				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
+				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.String(),
+						comment:  e.Description,
+					})
+					return nil // TODO ISO 8601をどうするか検討
 				},
 			}, {
-				Description:  "User who last edited the block.",
-				ExampleValue: "{\"object\": \"user\",\"id\": \"45ee8d13-687b-47ce-a5ca-6e2e45548c4b\"}",
 				Field:        "last_edited_by",
-				Property:     "",
 				Type:         "Partial User",
+				Description:  "User who last edited the block.",
+				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.Id("PartialUser"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
+				Field:        "archived",
+				Type:         "boolean",
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
-				Field:        "archived",
-				Property:     "",
-				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.Bool(),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
+				Field:        "has_children",
+				Type:         "boolean",
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
-				Field:        "has_children",
-				Property:     "",
-				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.Bool(),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
+				Field:        "{type}",
+				Type:         "block type object",
 				Description:  "An object containing type-specific block information.",
 				ExampleValue: "Refer to the block type object section for examples of each block type.",
-				Field:        "{type}",
-				Property:     "",
-				Type:         "block type object",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					return nil // 各structで定義
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "Block types that support child blocks",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").comment += "\n" + e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nSome block types contain nested blocks. The following block types support child blocks: \n\n- Bulleted list item\n- Callout \n- Child database\n- Child page\n- Column\n- Heading 1, when the is_toggleable property is true\n- Heading 2, when the is_toggleable property is true\n- Heading 3, when the is_toggleable property is true\n- Numbered list item\n- Paragraph \n- Quote\n- Synced block\n- Table\n- Template\n- To do\n- Toggle ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCalloutElement{
@@ -180,41 +202,49 @@ func init() {
 				Title: "The API does not support all block types.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").comment += "\n\n" + e.Title + "\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Block type objects",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(independentComment(e.Text))
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.add(independentComment(strings.TrimSpace(e.Text)))
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{name: "BookmarkBlock"})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBookmark block objects contain the following information within the bookmark property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BookmarkBlock").comment = strings.TrimSpace(e.Text)
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The caption for the bookmark.",
-				ExampleValue: "",
-				Field:        "caption",
-				Property:     "",
-				Type:         "array of rich text objects text",
+				Field:       "caption",
+				Type:        "array of rich text objects text",
+				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BookmarkBlock").addField(&field{
+						name:     e.Field,
+						typeCode: jen.Index().Id("RichText"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
 				Description:  "The link for the bookmark.",
