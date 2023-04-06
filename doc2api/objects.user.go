@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	allUser := &classStruct{name: "allUser"}
+
 	registerConverter(converter{
 		url:      "https://developers.notion.com/reference/user",
 		fileName: "user.go",
@@ -14,9 +16,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
+					allUser.comment = e.Text
 					b.add(&classStruct{name: "PartialUser", comment: e.Text})
-					b.add(&classStruct{name: "allUser", comment: e.Text})
-					b.getClassStruct("allUser").addField(&field{typeCode: jen.Id("PartialUser")})
+					b.add(allUser)
+					allUser.addField(&field{typeCode: jen.Id("PartialUser")})
 					return nil
 				},
 			},
@@ -35,28 +38,28 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Where user objects appear in the API",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("allUser").comment += "\n\n" + e.Text
+					allUser.comment += "\n\n" + e.Text
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nUser objects appear in the API in nearly all objects returned by the API, including:\n* Block object under created_by and last_edited_by.\n* Page object under created_by and last_edited_by and in people property items.\n* Database object under created_by and last_edited_by.\n* Rich text object, as user mentions.\n* Property object when the property is a people property.\n\nUser objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("allUser").comment += "\n\n" + e.Text
+					allUser.comment += "\n\n" + e.Text
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "All users",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("allUser").comment += "\n" + e.Text
+					allUser.comment += "\n" + e.Text
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThese fields are shared by all users, including people and bots. Fields marked with * are always present.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("allUser").comment += e.Text
+					allUser.comment += e.Text
 					return nil
 				},
 			},
@@ -100,7 +103,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("allUser").addField(&field{
+					allUser.addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -113,7 +116,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("allUser").addField(&field{
+					allUser.addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -172,13 +175,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "BotUser", comment: e.Text})
-					b.getClassStruct("BotUser").addField(&field{
-						typeCode: jen.Id("allUser"),
-					})
-					b.getClassStruct("BotUser").addField(&fixedStringField{
-						name:  "type",
-						value: "bot",
+					b.add(&classStruct{
+						name:    "BotUser",
+						comment: e.Text,
+						fields: []coder{
+							&field{typeCode: jen.Id(allUser.name)},
+							&fixedStringField{name: "type", value: "bot"},
+						},
 					})
 					return nil
 				},
@@ -186,7 +189,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("BotUser").comment += e.Text
+					b.getLastClassStruct().comment += e.Text
 					return nil
 				},
 			},
@@ -196,8 +199,8 @@ func init() {
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotUser").comment += "\n\n" + e.ExampleValue
-					b.getClassStruct("BotUser").addField(&field{
+					b.getLastClassStruct().comment += "\n\n" + e.ExampleValue
+					b.getLastClassStruct().addField(&field{
 						name:     e.Property,
 						typeCode: jen.Id("BotData"),
 						comment:  e.Description,
@@ -211,7 +214,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotData").addField(&field{
+					b.getLastClassStruct().addField(&field{
 						name:     e.Property,
 						typeCode: jen.Id("BotDataOwner"),
 						comment:  e.Description,
@@ -225,7 +228,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotDataOwner").addField(&field{
+					b.getLastClassStruct().addField(&field{
 						name:     "type",
 						typeCode: jen.String(),
 						comment:  e.Description,

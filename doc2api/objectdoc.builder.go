@@ -11,6 +11,10 @@ type coder interface {
 
 var _ = []coder{
 	&classStruct{},
+	&classInterface{},
+	&field{},
+	&fixedStringField{},
+	independentComment(""),
 }
 
 type builder []coder
@@ -27,6 +31,15 @@ func (b *builder) statement() jen.Statement {
 	return s
 }
 
+func (b *builder) getClassInterface(name string) *classInterface {
+	for _, item := range *b {
+		if item, ok := item.(*classInterface); ok && item.name == name {
+			return item
+		}
+	}
+	return nil
+}
+
 func (b *builder) getClassStruct(name string) *classStruct {
 	for _, item := range *b {
 		if item, ok := item.(*classStruct); ok && item.name == name {
@@ -36,10 +49,24 @@ func (b *builder) getClassStruct(name string) *classStruct {
 	return nil
 }
 
+// getLastClassStruct は、このbuilderに最後に追加されたclassStructを返します
+// ドキュメントを順に読むと直近のクラスへの参照が頻繁に発生するため、この関数は有用です
+// Deprecated:
+func (b *builder) getLastClassStruct() *classStruct {
+	for i := range *b {
+		item := (*b)[len(*b)-i-1]
+		if item, ok := item.(*classStruct); ok {
+			return item
+		}
+	}
+	return nil
+}
+
 type classStruct struct {
-	name    string
-	comment string
-	fields  []coder
+	name       string
+	comment    string
+	fields     []coder
+	implements []string
 }
 
 func (c *classStruct) addField(f coder) {
@@ -60,7 +87,11 @@ func (c *classStruct) code() jen.Code {
 	for _, field := range c.fields {
 		fields = append(fields, field.code())
 	}
-	return jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...)
+	code := jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...)
+	for _, ifName := range c.implements {
+		code.Line().Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + ifName).Params().Block()
+	}
+	return code
 }
 
 type field struct {
@@ -102,7 +133,7 @@ type classInterface struct {
 }
 
 func (c *classInterface) code() jen.Code {
-	return jen.Comment(c.comment).Line().Type().Id(c.name).Interface()
+	return jen.Comment(c.comment).Line().Type().Id(c.name).Interface(jen.Id("is" + c.name).Params())
 }
 
 type independentComment string

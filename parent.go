@@ -13,7 +13,9 @@ Parenting rules:
 * Blocks can be parented by pages, databases, or blocks.
 * Databases can be parented by pages, blocks, or by the whole workspace.
 */
-type Parent interface{}
+type Parent interface {
+	isParent()
+}
 
 /*
 Database parent
