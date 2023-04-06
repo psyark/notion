@@ -1,15 +1,17 @@
 package doc2api
 
+import "github.com/dave/jennifer/jen"
+
 func init() {
 	registerConverter(converter{
 		url:      "https://developers.notion.com/reference/block",
 		fileName: "block.go",
 		localCopy: []objectDocElement{
-
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.add(&class{name: "Block", comment: e.Text})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -17,50 +19,49 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClass("Block").comment += "\n\n" + e.Code
+					return nil
 				},
 			}}},
 			&objectDocParagraphElement{
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClass("Block").comment += "\n\n" + e.Text
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "Keys",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Keys",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCalloutElement{
-				Body:  "Fields marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the [integration capabilities reference](https://developers.notion.com/reference/capabilities) for details.",
-				Title: "",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "Fields marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the [integration capabilities reference](https://developers.notion.com/reference/capabilities) for details.",
+				Title:  "",
+				Type:   "info",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocParametersElement{{
+				Field:        "object*",
+				Type:         "string",
 				Description:  "Always \"block\".",
 				ExampleValue: "\"block\"",
-				Field:        "object*",
-				Property:     "",
-				Type:         "string",
 				output: func(e *objectDocParameter, b *builder) error {
+					b.getClass("Block").addField(&field{
+						name:     "object",
+						typeCode: jen.String(),
+						comment:  e.Description,
+					})
 					return nil // TODO
 				},
 			}, {
+				Field:        "id*",
+				Type:         "string (UUIDv4)",
 				Description:  "Identifier for the block.",
 				ExampleValue: "\"7af38973-3787-41b3-bd75-0ed3a1edfac9\"",
-				Field:        "id*",
-				Property:     "",
-				Type:         "string (UUIDv4)",
 				output: func(e *objectDocParameter, b *builder) error {
 					return nil // TODO
 				},
