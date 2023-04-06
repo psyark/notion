@@ -346,8 +346,8 @@ Example rich text mention object for a user mention
 }
 */
 type UserMention struct {
-	Type string `always:"user" json:"type"`
-	User User   `json:"user"`
+	Type string      `always:"user" json:"type"`
+	User PartialUser `json:"user"`
 }
 
 func (_ *UserMention) isMention() {}

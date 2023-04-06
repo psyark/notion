@@ -518,7 +518,7 @@ func init() {
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "user"},
-							&field{name: "user", typeCode: jen.Id("User")},
+							&field{name: "user", typeCode: jen.Id("PartialUser")},
 						},
 						implements: []string{"Mention"},
 					})
