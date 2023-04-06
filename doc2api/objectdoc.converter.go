@@ -85,6 +85,8 @@ func (c converter) convert() error {
 			return err
 		}
 		return fmt.Errorf("localCopyが足りません (see required_copy.txt)")
+	} else {
+		_ = os.Remove("required_copy.txt")
 	}
 
 	file := jen.NewFile("notion")
@@ -135,15 +137,24 @@ func createLocalCopy(remote objectDocElement) jen.Code {
 		outputCode = jen.Func().Params(jen.Id("e").Op("*").Id("objectDocParameter"), jen.Id("b").Op("*").Id("builder")).Error().Block(jen.Return().Nil().Comment("TODO"))
 		params := jen.Statement{}
 		for _, p := range *remote {
-			params = append(params, jen.Values(jen.Dict{
-				jen.Id("Property"):      jen.Lit(p.Property),
-				jen.Id("Field"):         jen.Lit(p.Field),
-				jen.Id("Type"):          jen.Lit(p.Type),
-				jen.Id("Description"):   jen.Lit(p.Description),
-				jen.Id("ExampleValue"):  jen.Lit(p.ExampleValue),
-				jen.Id("ExampleValues"): jen.Lit(p.ExampleValues),
-				jen.Id("output"):        outputCode,
-			}))
+			values := jen.Dict{
+				jen.Id("Type"):        jen.Lit(p.Type),
+				jen.Id("Description"): jen.Lit(p.Description),
+				jen.Id("output"):      outputCode,
+			}
+			if p.Property != "" {
+				values[jen.Id("Property")] = jen.Lit(p.Property)
+			}
+			if p.Field != "" {
+				values[jen.Id("Field")] = jen.Lit(p.Field)
+			}
+			if p.ExampleValue != "" {
+				values[jen.Id("ExampleValue")] = jen.Lit(p.ExampleValue)
+			}
+			if p.ExampleValues != "" {
+				values[jen.Id("ExampleValues")] = jen.Lit(p.ExampleValues)
+			}
+			params = append(params, jen.Values(values))
 		}
 		return jen.Line().Op("&").Id(typeName).Values(params...)
 	default:

@@ -46,6 +46,15 @@ func (c *classStruct) addField(f coder) {
 	c.fields = append(c.fields, f)
 }
 
+// func (c *classStruct) getField(name string) *field {
+// 	for _, f := range c.fields {
+// 		if f, ok := f.(*field); ok && f.name == name {
+// 			return f
+// 		}
+// 	}
+// 	return nil
+// }
+
 func (c *classStruct) code() jen.Code {
 	fields := []jen.Code{}
 	for _, field := range c.fields {
@@ -62,7 +71,14 @@ type field struct {
 
 func (f *field) code() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
-	return jen.Id(goName).Add(f.typeCode).Tag(map[string]string{"json": f.name}).Comment(f.comment)
+	code := jen.Id(goName).Add(f.typeCode)
+	if f.name != "" {
+		code.Tag(map[string]string{"json": f.name})
+	}
+	if f.comment != "" {
+		code.Comment(f.comment)
+	}
+	return code
 }
 
 type fixedStringField struct {
@@ -73,7 +89,11 @@ type fixedStringField struct {
 
 func (f *fixedStringField) code() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
-	return jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value}).Comment(f.comment)
+	code := jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value})
+	if f.comment != "" {
+		code.Comment(f.comment)
+	}
+	return code
 }
 
 type classInterface struct {
