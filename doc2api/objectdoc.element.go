@@ -144,13 +144,8 @@ func (e *objectDocParametersElement) checkAndOutput(remote objectDocElement, b *
 		return errUnmatch
 	} else {
 		for i, param := range *e {
-			rp := (*remote)[i]
-			if param.Property != rp.Property || param.Field != rp.Field || param.Type != rp.Type || param.Description != rp.Description || param.ExampleValue != rp.ExampleValue {
-				return errUnmatch
-			} else if param.output != nil {
-				if err := param.output(param, b); err != nil {
-					return err
-				}
+			if err := param.checkAndOutput((*remote)[i], b); err != nil {
+				return err
 			}
 		}
 		return nil
@@ -188,10 +183,22 @@ func (t *objectDocParametersElement) UnmarshalJSON(data []byte) error {
 
 // objectDocParameter はドキュメントに書かれているパラメータです
 type objectDocParameter struct {
-	Property     string
-	Field        string
-	Type         string
-	Description  string
-	ExampleValue string `json:"Example value"`
-	output       func(*objectDocParameter, *builder) error
+	Property      string `json:",omitempty"`
+	Field         string `json:",omitempty"`
+	Type          string `json:",omitempty"`
+	Description   string `json:",omitempty"`
+	ExampleValue  string `json:"Example value,omitempty"`
+	ExampleValues string `json:"Example values,omitempty"`
+	output        func(*objectDocParameter, *builder) error
+}
+
+func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *builder) error {
+	if e.Property != remote.Property || e.Field != remote.Field || e.Type != remote.Type || e.Description != remote.Description || e.ExampleValue != remote.ExampleValue || e.ExampleValues != remote.ExampleValues {
+		return errUnmatch
+	} else if e.output != nil {
+		if err := e.output(e, b); err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -136,12 +136,13 @@ func createLocalCopy(remote objectDocElement) jen.Code {
 		params := jen.Statement{}
 		for _, p := range *remote {
 			params = append(params, jen.Values(jen.Dict{
-				jen.Id("Property"):     jen.Lit(p.Property),
-				jen.Id("Field"):        jen.Lit(p.Field),
-				jen.Id("Type"):         jen.Lit(p.Type),
-				jen.Id("Description"):  jen.Lit(p.Description),
-				jen.Id("ExampleValue"): jen.Lit(p.ExampleValue),
-				jen.Id("output"):       outputCode,
+				jen.Id("Property"):      jen.Lit(p.Property),
+				jen.Id("Field"):         jen.Lit(p.Field),
+				jen.Id("Type"):          jen.Lit(p.Type),
+				jen.Id("Description"):   jen.Lit(p.Description),
+				jen.Id("ExampleValue"):  jen.Lit(p.ExampleValue),
+				jen.Id("ExampleValues"): jen.Lit(p.ExampleValues),
+				jen.Id("output"):        outputCode,
 			}))
 		}
 		return jen.Line().Op("&").Id(typeName).Values(params...)
