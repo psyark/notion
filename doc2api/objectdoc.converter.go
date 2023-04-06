@@ -17,6 +17,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/dave/jennifer/jen"
+	"golang.org/x/sync/errgroup"
 )
 
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
@@ -81,12 +82,12 @@ func (c converter) convert() error {
 
 	if len(requiredCopy) != 0 {
 		gostr := jen.Var().Id("LOCAL_COPY").Op("=").Index().Id("objectDocElement").Values(jen.List(requiredCopy...), jen.Line()).GoString()
-		if err := os.WriteFile("required_copy.txt", []byte(gostr), 0666); err != nil {
+		if err := os.WriteFile("tmp/required_copy.go", []byte(gostr), 0666); err != nil {
 			return err
 		}
-		return fmt.Errorf("localCopyが足りません (see required_copy.txt)")
+		return fmt.Errorf("localCopyが足りません (see tmp/required_copy.go)")
 	} else {
-		_ = os.Remove("required_copy.txt")
+		_ = os.Remove("tmp/required_copy.go")
 	}
 
 	file := jen.NewFile("notion")
@@ -171,10 +172,15 @@ func registerConverter(c converter) {
 
 // convertAll は登録された全てのconverterで変換を実行します
 func convertAll() error {
+	eg := errgroup.Group{}
 	for _, c := range registeredConverters {
-		if err := c.convert(); err != nil {
-			return fmt.Errorf("convert: %s: %w", c.fileName, err)
-		}
+		c := c
+		eg.Go(func() error {
+			if err := c.convert(); err != nil {
+				return fmt.Errorf("convert: %s: %w", c.fileName, err)
+			}
+			return nil
+		})
 	}
-	return nil
+	return eg.Wait()
 }

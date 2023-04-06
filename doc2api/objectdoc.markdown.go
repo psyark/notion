@@ -17,6 +17,7 @@ func stripMarkdown(md string) string {
 	md = strings.TrimPrefix(md, "# ")
 	md = strings.TrimPrefix(md, "## ")
 	md = strings.TrimPrefix(md, "### ")
+	md = strings.TrimPrefix(md, "#### ")
 	md = strings.ReplaceAll(md, "`", "")
 	md = markdownLinkRegex.ReplaceAllString(md, "$1")
 	md = markdownStrongRegex1.ReplaceAllString(md, "$1")

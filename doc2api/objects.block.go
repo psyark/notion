@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var blockCommon *classStruct
+
 	registerConverter(converter{
 		url:      "https://developers.notion.com/reference/block",
 		fileName: "block.go",
@@ -14,7 +16,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classStruct{name: "Block", comment: e.Text})
+					blockCommon = &classStruct{name: "blockCommon", comment: e.Text}
+					b.add(blockCommon)
 					return nil
 				},
 			},
@@ -23,14 +26,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("Block").comment += "\n\n" + e.Code
+					blockCommon.comment += "\n\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocParagraphElement{
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("Block").comment += "\n\n" + e.Text
+					blockCommon.comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -50,7 +53,7 @@ func init() {
 				Description:  `Always "block".`,
 				ExampleValue: `"block"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&fixedStringField{
+					blockCommon.addField(&fixedStringField{
 						name:    strings.TrimSuffix(e.Field, "*"),
 						value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
 						comment: e.Description,
@@ -63,7 +66,7 @@ func init() {
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
 						comment:  e.Description,
@@ -76,7 +79,7 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Id("Parent"),
 						comment:  e.Description,
@@ -89,12 +92,7 @@ func init() {
 				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
 				ExampleValue: `"paragraph"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
-						name:     e.Field,
-						typeCode: jen.String(),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
-					})
-					return nil // TODO 仮実装
+					return nil // 各structで定義
 				},
 			}, {
 				Field:        "created_time",
@@ -102,7 +100,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -115,7 +113,7 @@ func init() {
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.Id("PartialUser"),
 						comment:  e.Description,
@@ -128,7 +126,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -141,7 +139,7 @@ func init() {
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.Id("PartialUser"),
 						comment:  e.Description,
@@ -154,7 +152,7 @@ func init() {
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.Bool(),
 						comment:  e.Description,
@@ -167,7 +165,7 @@ func init() {
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
+					blockCommon.addField(&field{
 						name:     e.Field,
 						typeCode: jen.Bool(),
 						comment:  e.Description,
@@ -186,14 +184,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block types that support child blocks",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("Block").comment += "\n" + e.Text
+					blockCommon.comment += "\n" + e.Text
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nSome block types contain nested blocks. The following block types support child blocks: \n\n- Bulleted list item\n- Callout \n- Child database\n- Child page\n- Column\n- Heading 1, when the is_toggleable property is true\n- Heading 2, when the is_toggleable property is true\n- Heading 3, when the is_toggleable property is true\n- Numbered list item\n- Paragraph \n- Quote\n- Synced block\n- Table\n- Template\n- To do\n- Toggle ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("Block").comment += e.Text
+					blockCommon.comment += e.Text
 					return nil
 				},
 			},
@@ -202,7 +200,7 @@ func init() {
 				Title: "The API does not support all block types.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("Block").comment += "\n\n" + e.Title + "\n" + e.Body
+					blockCommon.comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
@@ -223,7 +221,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "BookmarkBlock"})
+					b.add(&classStruct{
+						name: "BookmarkBlock",
+						fields: []coder{
+							&field{typeCode: jen.Id(blockCommon.name)},
+							&fixedStringField{name: "type", value: "bookmark"},
+						},
+					})
 					return nil
 				},
 			},
@@ -247,21 +251,24 @@ func init() {
 					return nil
 				},
 			}, {
-				Description:  "The link for the bookmark.",
-				ExampleValue: "",
-				Field:        "url",
-				Property:     "",
-				Type:         "string",
+				Field:       "url",
+				Type:        "string",
+				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BookmarkBlock").addField(&field{
+						name:     e.Field,
+						typeCode: jen.String(),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
-				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
+					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
