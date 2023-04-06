@@ -214,7 +214,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNotion supports inline LaTeX equations as rich text object’s with a type value of \"equation\". The corresponding equation type object contains the following: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getLastClassStruct().comment += e.Text
+					b.getClassStruct("EquationRichText").comment += e.Text
 					return nil
 				},
 			},
@@ -224,7 +224,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getLastClassStruct().addField(&field{
+					b.getClassStruct("EquationRichText").addField(&field{
 						name:     e.Field,
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -235,7 +235,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Example rich text equation object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getLastClassStruct().comment += "\n\n" + e.Text
+					b.getClassStruct("EquationRichText").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -244,7 +244,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getLastClassStruct().comment += "\n" + e.Code
+					b.getClassStruct("EquationRichText").comment += "\n" + e.Code
 					return nil
 				},
 			}}},

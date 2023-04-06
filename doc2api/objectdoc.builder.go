@@ -49,19 +49,6 @@ func (b *builder) getClassStruct(name string) *classStruct {
 	return nil
 }
 
-// getLastClassStruct は、このbuilderに最後に追加されたclassStructを返します
-// ドキュメントを順に読むと直近のクラスへの参照が頻繁に発生するため、この関数は有用です
-// Deprecated:
-func (b *builder) getLastClassStruct() *classStruct {
-	for i := range *b {
-		item := (*b)[len(*b)-i-1]
-		if item, ok := item.(*classStruct); ok {
-			return item
-		}
-	}
-	return nil
-}
-
 type classStruct struct {
 	name       string
 	comment    string

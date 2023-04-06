@@ -189,7 +189,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getLastClassStruct().comment += e.Text
+					b.getClassStruct("BotUser").comment += e.Text
 					return nil
 				},
 			},
@@ -199,8 +199,8 @@ func init() {
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getLastClassStruct().comment += "\n\n" + e.ExampleValue
-					b.getLastClassStruct().addField(&field{
+					b.getClassStruct("BotUser").comment += "\n\n" + e.ExampleValue
+					b.getClassStruct("BotUser").addField(&field{
 						name:     e.Property,
 						typeCode: jen.Id("BotData"),
 						comment:  e.Description,
@@ -214,7 +214,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getLastClassStruct().addField(&field{
+					b.getClassStruct("BotData").addField(&field{
 						name:     e.Property,
 						typeCode: jen.Id("BotDataOwner"),
 						comment:  e.Description,
@@ -228,7 +228,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getLastClassStruct().addField(&field{
+					b.getClassStruct("BotDataOwner").addField(&field{
 						name:     "type",
 						typeCode: jen.String(),
 						comment:  e.Description,
