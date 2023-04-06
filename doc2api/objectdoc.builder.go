@@ -40,10 +40,10 @@ func (b *builder) getClassStruct(name string) *classStruct {
 type classStruct struct {
 	name    string
 	comment string
-	fields  []*field
+	fields  []coder
 }
 
-func (c *classStruct) addField(f *field) {
+func (c *classStruct) addField(f coder) {
 	c.fields = append(c.fields, f)
 }
 
@@ -64,6 +64,17 @@ type field struct {
 func (f *field) code() jen.Code {
 	goName := strings.ToUpper(f.name[0:1]) + f.name[1:]
 	return jen.Id(goName).Add(f.typeCode).Tag(map[string]string{"json": f.name}).Comment(f.comment)
+}
+
+type fixedStringField struct {
+	name    string
+	value   string
+	comment string
+}
+
+func (f *fixedStringField) code() jen.Code {
+	goName := strings.ToUpper(f.name[0:1]) + f.name[1:]
+	return jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value}).Comment(f.comment)
 }
 
 type classInterface struct {

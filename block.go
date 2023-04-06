@@ -58,7 +58,7 @@ A block object represents a piece of content within Notion. The API translates t
 Use the Retrieve block children endpoint to list all of the blocks on a page.
 */
 type Block struct {
-	Object string    `json:"object"` // Always "block".
-	Id     uuid.UUID `json:"id"`     // Identifier for the block.
-	Parent Parent    `json:"parent"` // Information about the block's parent. See Parent object.
+	Object string    `always:"block" json:"object"` // Always "block".
+	Id     uuid.UUID `json:"id"`                    // Identifier for the block.
+	Parent Parent    `json:"parent"`                // Information about the block's parent. See Parent object.
 }

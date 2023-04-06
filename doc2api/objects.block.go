@@ -50,10 +50,10 @@ func init() {
 				Description:  "Always \"block\".",
 				ExampleValue: "\"block\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Block").addField(&field{
-						name:     strings.TrimSuffix(e.Field, "*"),
-						typeCode: jen.String(),
-						comment:  e.Description,
+					b.getClassStruct("Block").addField(&fixedStringField{
+						name:    strings.TrimSuffix(e.Field, "*"),
+						value:   "block",
+						comment: e.Description,
 					})
 					return nil
 				},

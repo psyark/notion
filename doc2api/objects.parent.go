@@ -1,5 +1,11 @@
 package doc2api
 
+import (
+	"strings"
+
+	"github.com/dave/jennifer/jen"
+)
+
 func init() {
 	registerConverter(converter{
 		url:      "https://developers.notion.com/reference/parent-object",
@@ -25,7 +31,12 @@ func init() {
 				Description:   `Always "database_id".`,
 				ExampleValues: `"database_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatabaseParent").addField(&fixedStringField{
+						name:    e.Property,
+						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
+						comment: e.Description,
+					})
+					return nil
 				},
 			}, {
 				Property:      "database_id",
@@ -33,7 +44,12 @@ func init() {
 				Description:   "The ID of the database that this page belongs to.",
 				ExampleValues: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatabaseParent").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -41,7 +57,8 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatabaseParent").comment += "\n\n" + e.Code
+					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -57,7 +74,12 @@ func init() {
 				Description:   `Always "page_id".`,
 				ExampleValues: `"page_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PageParent").addField(&fixedStringField{
+						name:    e.Property,
+						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
+						comment: e.Description,
+					})
+					return nil
 				},
 			}, {
 				Property:      "page_id",
@@ -65,7 +87,12 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"59833787-2cf9-4fdf-8782-e53db20768a5"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PageParent").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -73,7 +100,8 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PageParent").comment += "\n\n" + e.Code
+					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -86,7 +114,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA page with a workspace parent is a top-level page within a Notion workspace. The parent property is an object containing the following keys:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("WorkspaceParent").comment += e.Text
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
@@ -95,7 +124,12 @@ func init() {
 				Description:   `Always "workspace".`,
 				ExampleValues: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("WorkspaceParent").addField(&fixedStringField{
+						name:    e.Property,
+						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
+						comment: e.Description,
+					})
+					return nil
 				},
 			}, {
 				Property:      "workspace",
@@ -103,7 +137,12 @@ func init() {
 				Description:   "Always true.",
 				ExampleValues: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("WorkspaceParent").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Bool(),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -111,7 +150,8 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("WorkspaceParent").comment += "\n\n" + e.Code
+					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -124,7 +164,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA page may have a block parent if it is created inline in a chunk of text, or is located beneath another block like a toggle or bullet block. The parent property is an object containing the following keys:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BlockParent").comment += e.Text
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
@@ -133,7 +174,12 @@ func init() {
 				Description:   `Always "block_id".`,
 				ExampleValues: `"block_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BlockParent").addField(&fixedStringField{
+						name:    e.Property,
+						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
+						comment: e.Description,
+					})
+					return nil
 				},
 			}, {
 				Property:      "block_id",
@@ -141,7 +187,12 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BlockParent").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -149,7 +200,8 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BlockParent").comment += "\n\n" + e.Code
+					return nil
 				},
 			}}},
 		},
