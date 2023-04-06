@@ -24,8 +24,8 @@ Database parent
 }
 */
 type DatabaseParent struct {
-	Type        string    `always:"database_id" json:"type"` // Always "database_id".
-	Database_id uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
+	Type       string    `always:"database_id" json:"type"` // Always "database_id".
+	DatabaseId uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
 }
 
 /*
@@ -37,8 +37,8 @@ Page parent
 }
 */
 type PageParent struct {
-	Type    string    `always:"page_id" json:"type"` // Always "page_id".
-	Page_id uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
+	Type   string    `always:"page_id" json:"type"` // Always "page_id".
+	PageId uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
 }
 
 /*
@@ -65,6 +65,6 @@ A page may have a block parent if it is created inline in a chunk of text, or is
 }
 */
 type BlockParent struct {
-	Type     string    `always:"block_id" json:"type"` // Always "block_id".
-	Block_id uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
+	Type    string    `always:"block_id" json:"type"` // Always "block_id".
+	BlockId uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
 }

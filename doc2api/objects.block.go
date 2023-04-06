@@ -47,12 +47,12 @@ func init() {
 			&objectDocParametersElement{{
 				Field:        "object*",
 				Type:         "string",
-				Description:  "Always \"block\".",
-				ExampleValue: "\"block\"",
+				Description:  `Always "block".`,
+				ExampleValue: `"block"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Block").addField(&fixedStringField{
 						name:    strings.TrimSuffix(e.Field, "*"),
-						value:   "block",
+						value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
 						comment: e.Description,
 					})
 					return nil
@@ -61,7 +61,7 @@ func init() {
 				Field:        "id*",
 				Type:         "string (UUIDv4)",
 				Description:  "Identifier for the block.",
-				ExampleValue: "\"7af38973-3787-41b3-bd75-0ed3a1edfac9\"",
+				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Block").addField(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
@@ -84,29 +84,36 @@ func init() {
 					return nil
 				},
 			}, {
-				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
-				ExampleValue: "\"paragraph\"",
 				Field:        "type",
-				Property:     "",
 				Type:         "string (enum)",
+				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
+				ExampleValue: `"paragraph"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.String(),
+						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+					})
+					return nil // TODO 仮実装
 				},
 			}, {
-				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
-				ExampleValue: "\"2020-03-17T19:10:04.968Z\"",
 				Field:        "created_time",
-				Property:     "",
 				Type:         "string (ISO 8601 date time)",
+				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
+				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     e.Field,
+						typeCode: jen.String(),
+						comment:  e.Description,
+					})
+					return nil // TODO ISO 8601をどうするか検討
 				},
 			}, {
+				Field:        "created_by",
+				Type:         "Partial User",
 				Description:  "User who created the block.",
 				ExampleValue: "{\"object\": \"user\",\"id\": \"45ee8d13-687b-47ce-a5ca-6e2e45548c4b\"}",
-				Field:        "created_by",
-				Property:     "",
-				Type:         "Partial User",
 				output: func(e *objectDocParameter, b *builder) error {
 					return nil // TODO
 				},

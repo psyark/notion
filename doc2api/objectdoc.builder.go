@@ -1,9 +1,8 @@
 package doc2api
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
 )
 
 type coder interface {
@@ -62,7 +61,7 @@ type field struct {
 }
 
 func (f *field) code() jen.Code {
-	goName := strings.ToUpper(f.name[0:1]) + f.name[1:]
+	goName := strcase.UpperCamelCase(f.name)
 	return jen.Id(goName).Add(f.typeCode).Tag(map[string]string{"json": f.name}).Comment(f.comment)
 }
 
@@ -73,7 +72,7 @@ type fixedStringField struct {
 }
 
 func (f *fixedStringField) code() jen.Code {
-	goName := strings.ToUpper(f.name[0:1]) + f.name[1:]
+	goName := strcase.UpperCamelCase(f.name)
 	return jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value}).Comment(f.comment)
 }
 
