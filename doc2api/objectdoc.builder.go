@@ -11,7 +11,7 @@ type coder interface {
 }
 
 var _ = []coder{
-	&class{},
+	&classStruct{},
 }
 
 type builder []coder
@@ -28,26 +28,26 @@ func (b *builder) statement() jen.Statement {
 	return s
 }
 
-func (b *builder) getClass(name string) *class {
+func (b *builder) getClassStruct(name string) *classStruct {
 	for _, item := range *b {
-		if item, ok := item.(*class); ok && item.name == name {
+		if item, ok := item.(*classStruct); ok && item.name == name {
 			return item
 		}
 	}
 	return nil
 }
 
-type class struct {
+type classStruct struct {
 	name    string
 	comment string
 	fields  []*field
 }
 
-func (c *class) addField(f *field) {
+func (c *classStruct) addField(f *field) {
 	c.fields = append(c.fields, f)
 }
 
-func (c *class) code() jen.Code {
+func (c *classStruct) code() jen.Code {
 	fields := []jen.Code{}
 	for _, field := range c.fields {
 		fields = append(fields, field.code())
@@ -64,4 +64,13 @@ type field struct {
 func (f *field) code() jen.Code {
 	goName := strings.ToUpper(f.name[0:1]) + f.name[1:]
 	return jen.Id(goName).Add(f.typeCode).Tag(map[string]string{"json": f.name}).Comment(f.comment)
+}
+
+type classInterface struct {
+	name    string
+	comment string
+}
+
+func (c *classInterface) code() jen.Code {
+	return jen.Line().Comment(c.comment).Line().Type().Id(c.name).Interface()
 }

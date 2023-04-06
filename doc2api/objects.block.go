@@ -1,6 +1,10 @@
 package doc2api
 
-import "github.com/dave/jennifer/jen"
+import (
+	"strings"
+
+	"github.com/dave/jennifer/jen"
+)
 
 func init() {
 	registerConverter(converter{
@@ -10,7 +14,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&class{name: "Block", comment: e.Text})
+					b.add(&classStruct{name: "Block", comment: e.Text})
 					return nil
 				},
 			},
@@ -19,14 +23,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClass("Block").comment += "\n\n" + e.Code
+					b.getClassStruct("Block").comment += "\n\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocParagraphElement{
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClass("Block").comment += "\n\n" + e.Text
+					b.getClassStruct("Block").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -40,22 +44,18 @@ func init() {
 				Type:   "info",
 				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
-			&objectDocParagraphElement{
-				Text:   "",
-				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
-			},
 			&objectDocParametersElement{{
 				Field:        "object*",
 				Type:         "string",
 				Description:  "Always \"block\".",
 				ExampleValue: "\"block\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClass("Block").addField(&field{
-						name:     "object",
+					b.getClassStruct("Block").addField(&field{
+						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.String(),
 						comment:  e.Description,
 					})
-					return nil // TODO
+					return nil
 				},
 			}, {
 				Field:        "id*",
@@ -63,16 +63,25 @@ func init() {
 				Description:  "Identifier for the block.",
 				ExampleValue: "\"7af38973-3787-41b3-bd75-0ed3a1edfac9\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     strings.TrimSuffix(e.Field, "*"),
+						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
+				Field:        "parent",
+				Type:         "object",
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
-				Field:        "parent",
-				Property:     "",
-				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("Block").addField(&field{
+						name:     strings.TrimSuffix(e.Field, "*"),
+						typeCode: jen.Id("Parent"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
 				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
@@ -210,12 +219,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
@@ -284,12 +287,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
 				Language: "json",
@@ -338,12 +335,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
 				Language: "json",
@@ -374,12 +365,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n} ",
 				Language: "json",
@@ -388,12 +373,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "To create or update `child_database` type blocks, use the [Create a database](ref:create-a-database) and the [Update a database](ref:update-a-database) endpoints, specifying the ID of the parent page in the `parent` body param.",
 				Title: "Creating and updating `child_database` blocks",
@@ -424,12 +403,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n} ",
 				Language: "json",
@@ -438,12 +411,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "To create or update `child_page` type blocks, use the [Create a page](https://developers.notion.com/reference/post-page) and the [Update page](https://developers.notion.com/reference/patch-page) endpoints, specifying the ID of the parent page in the `parent` body param.",
 				Title: "Creating and updating `child_page` blocks",
@@ -492,12 +459,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n} ",
 				Language: "json",
@@ -600,12 +561,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"embed\",\n  //...other keys excluded\n  \"embed\": {\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
@@ -614,12 +569,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "The Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.\n\nWe chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.\n\nThe result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
 				Title: "Differences in embed blocks between the Notion app and the API",
@@ -650,12 +599,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"equation\",\n  //...other keys excluded\n  \"equation\": {\n    \"expression\": \"e=mc^2\"\n  }\n} ",
 				Language: "json",
@@ -704,12 +647,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n} ",
 				Language: "json",
@@ -758,12 +695,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_1\",\n  //...other keys excluded\n  \"heading_1\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
 				Language: "json",
@@ -772,12 +703,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_2\",\n  //...other keys excluded\n  \"heading_2\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
 				Language: "json",
@@ -786,12 +711,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_3\",\n  //...other keys excluded\n  \"heading_3\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
 				Language: "json",
@@ -852,12 +771,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "The `link_preview` block can only be returned as part of a response. The API does not support creating or appending `link_preview` blocks.",
 				Title: "",
@@ -897,12 +810,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"page\",\n  \"page\": {\n    \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n  }\n}",
 				Language: "json",
@@ -951,12 +858,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"numbered_list_item\",\n  \"numbered_list_item\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Finish reading the docs\",\n          \"link\": null\n        }\n      }\n    ],\n    \"color\": \"default\"\n  }\n}",
 				Language: "json",
@@ -1005,12 +906,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n} ",
 				Language: "json",
@@ -1019,12 +914,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}",
 				Language: "json",
@@ -1073,12 +962,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n\t\"type\": \"pdf\",\n  //...other keys excluded\n  \"pdf\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/files/doc.pdf\"\n    }\n  }\n} ",
 				Language: "json",
@@ -1127,12 +1010,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n\t//...other keys excluded\n\t\"type\": \"quote\",\n   //...other keys excluded\n   \"quote\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"To be or not to be...\",\n        \"link\": null\n      },\n    \t//...other keys excluded\n    }],\n    //...other keys excluded\n    \"color\": \"default\"\n   }\n}",
 				Language: "json",
@@ -1192,12 +1069,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}",
 				Language: "json",
@@ -1237,12 +1108,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}",
 				Language: "json",
@@ -1251,12 +1116,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "The API does not supported updating synced block content.",
 				Title: "",
@@ -1305,12 +1164,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"table\",\n  \"table\": {\n    \"table_width\": 2,\n    \"has_column_header\": false,\n    \"has_row_header\": false\n  }\n}",
 				Language: "json",
@@ -1319,12 +1172,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "Note that the number of columns in a table can only be set when the table is first created. Calls to the Update block endpoint to update `table_width` fail.",
 				Title: "`table_width` can only be set when the table is first created.",
@@ -1355,12 +1202,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"table_row\",\n  \"table_row\": {\n    \"cells\": [\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 1 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 1 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 2 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 2 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 3 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 3 content\",\n          \"href\": null\n        }\n      ]\n    ]\n  }\n}",
 				Language: "json",
@@ -1369,12 +1210,6 @@ func init() {
 					return nil // TODO
 				},
 			}}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "When creating a table block via the [Append block children](ref:patch-block-children) endpoint, the `table` must have at least one `table_row` whose `cells` array has the same length as the `table_width`.",
 				Title: "",
@@ -1405,12 +1240,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n\t\"type\": \"table_of_contents\",\n  \"table_of_contents\": {\n  \t\"color\": \"default\"\n  }\n}",
 				Language: "json",
@@ -1464,12 +1293,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"template\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Add a new to-do\",\n          \"link\": null\n        },\n        \"annotations\": {\n          //...other keys excluded\n        },\n        \"plain_text\": \"Add a new to-do\",\n        \"href\": null\n      }\n    ]\n  }\n}",
 				Language: "json",
@@ -1527,12 +1350,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
 				Language: "json",
@@ -1581,12 +1398,6 @@ func init() {
 					return nil // TODO
 				},
 			}},
-			&objectDocParagraphElement{
-				Text: "",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
-			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"toggle\",\n  \"toggle\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Additional project details\",\n        \"link\": null\n      }\n      //...other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
 				Language: "json",

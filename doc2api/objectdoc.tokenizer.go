@@ -49,18 +49,20 @@ func (t *objectDocTokenizer) next() (objectDocElement, error) {
 			t.index++
 		}
 		return nil, fmt.Errorf("[/block] not exists")
+	} else if m := headingRegex.FindString(t.lines[t.index]); m != "" {
+		token := &objectDocHeadingElement{Text: stripMarkdown(t.lines[t.index])}
+		t.index++
+		return token, nil
 	} else {
-		if m := headingRegex.FindString(t.lines[t.index]); m != "" {
-			token := &objectDocHeadingElement{Text: stripMarkdown(t.lines[t.index])}
+		startIndex := t.index
+		for t.index < len(t.lines) && t.isParagraph(t.lines[t.index]) {
 			t.index++
-			return token, nil
-		} else {
-			startIndex := t.index
-			for t.index < len(t.lines) && t.isParagraph(t.lines[t.index]) {
-				t.index++
-			}
-			return &objectDocParagraphElement{Text: stripMarkdown(strings.Join(t.lines[startIndex:t.index], "\n"))}, nil
 		}
+		token := &objectDocParagraphElement{Text: stripMarkdown(strings.Join(t.lines[startIndex:t.index], "\n"))}
+		if token.Text != "" {
+			return token, nil
+		}
+		return t.next()
 	}
 }
 
