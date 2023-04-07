@@ -450,32 +450,56 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyValue").addField(&field{
+						name:     "date",
+						typeCode: jen.Id("DatePropertyValueData"),
+						comment:  e.Text,
+					})
+					b.add(&classStruct{
+						name:    "DatePropertyValueData",
+						comment: e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "An ISO 8601 format date, with optional time.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "start",
 				Type:         "string (ISO 8601 date and time)",
+				Description:  "An ISO 8601 format date, with optional time.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyValueData").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Id("ISO8601String"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
-				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "end",
 				Type:         "string (optional, ISO 8601 date and time)",
+				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyValueData").addField(&field{
+						name:     e.Property,
+						typeCode: jen.Id("ISO8601String"),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}, {
-				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
-				ExampleValue: "\"America/Los_Angeles\"",
 				Property:     "time_zone",
 				Type:         "string (optional, enum)",
+				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
+				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyValueData").addField(&field{
+						name:     e.Property,
+						typeCode: jen.String(),
+						comment:  e.Description,
+					})
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -515,18 +539,23 @@ func init() {
 				Text: "Formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					b.add(&classStruct{
-						name:       "FormulaPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "formula"}},
+						name:    "FormulaPropertyValue",
+						comment: e.Text,
+						fields: []coder{
+							&fixedStringField{name: "type", value: "formula"},
+							&field{name: "formula", typeCode: jen.Id("Formula")},
+						},
 						implements: []string{"PropertyValue"},
 					})
+					b.add(&classInterface{name: "Formula"})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nFormula property value objects represent the result of evaluating a formula described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("FormulaPropertyValue").comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCalloutElement{
@@ -534,7 +563,8 @@ func init() {
 				Title: "Formula values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("FormulaPropertyValue").comment += "\n" + e.Title + "\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -547,56 +577,98 @@ func init() {
 				Description: "",
 				Property:    "type",
 				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}},
 			&objectDocHeadingElement{
 				Text: "String formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "StringFormula",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "string"}},
+						implements: []string{"Formula"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nString formula property values contain an optional string within the string property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("StringFormula").addField(&field{
+						name:     "string",
+						typeCode: jen.String(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Number formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "NumberFormula",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "number"}},
+						implements: []string{"Formula"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber formula property values contain an optional number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("NumberFormula").addField(&field{
+						name:     "number",
+						typeCode: jen.Float64(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Boolean formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "BooleanFormula",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "boolean"}},
+						implements: []string{"Formula"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBoolean formula property values contain a boolean within the boolean property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("BooleanFormula").addField(&field{
+						name:     "boolean",
+						typeCode: jen.Bool(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Date formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "DateFormula",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "date"}},
+						implements: []string{"Formula"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate formula property values contain an optional date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DateFormula").addField(&field{
+						name:     "date",
+						typeCode: jen.Id("DatePropertyValue"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{

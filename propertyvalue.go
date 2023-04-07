@@ -108,17 +108,73 @@ type MultiSelectOption struct {
 
 // Date property values
 type DatePropertyValue struct {
-	Type string `always:"date" json:"type"`
+	Type string                `always:"date" json:"type"`
+	Date DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
 
 func (_ *DatePropertyValue) isPropertyValue() {}
 
-// Formula property values
+/*
+
+Date property value objects contain the following data within the date property:
+*/
+type DatePropertyValueData struct {
+	Start    ISO8601String `json:"start"`     // An ISO 8601 format date, with optional time.
+	End      ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.
+	TimeZone string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
+}
+
+/*
+Formula property values
+Formula property value objects represent the result of evaluating a formula described in the
+database's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.
+
+Formula values may not match the Notion UI.
+Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
+*/
 type FormulaPropertyValue struct {
-	Type string `always:"formula" json:"type"`
+	Type    string  `always:"formula" json:"type"`
+	Formula Formula `json:"formula"`
 }
 
 func (_ *FormulaPropertyValue) isPropertyValue() {}
+
+//
+type Formula interface {
+	isFormula()
+}
+
+// String formula property values
+type StringFormula struct {
+	Type   string `always:"string" json:"type"`
+	String string `json:"string"` //  String formula property values contain an optional string within the string property.
+}
+
+func (_ *StringFormula) isFormula() {}
+
+// Number formula property values
+type NumberFormula struct {
+	Type   string  `always:"number" json:"type"`
+	Number float64 `json:"number"` //  Number formula property values contain an optional number within the number property.
+}
+
+func (_ *NumberFormula) isFormula() {}
+
+// Boolean formula property values
+type BooleanFormula struct {
+	Type    string `always:"boolean" json:"type"`
+	Boolean bool   `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
+}
+
+func (_ *BooleanFormula) isFormula() {}
+
+// Date formula property values
+type DateFormula struct {
+	Type string            `always:"date" json:"type"`
+	Date DatePropertyValue `json:"date"` //  Date formula property values contain an optional date property value within the date property.
+}
+
+func (_ *DateFormula) isFormula() {}
 
 // Relation property values
 type RelationPropertyValue struct {
