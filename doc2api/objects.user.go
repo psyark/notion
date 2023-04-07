@@ -17,6 +17,7 @@ func init() {
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					allUser.comment = e.Text
+					b.add(&classInterface{name: "User", comment: e.Text})
 					b.add(&classStruct{name: "PartialUser", comment: e.Text})
 					b.add(allUser)
 					allUser.addField(&field{typeCode: jen.Id("PartialUser")})
@@ -127,7 +128,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "PersonUser", comment: e.Text})
+					b.add(&classStruct{
+						name:       "PersonUser",
+						comment:    e.Text,
+						implements: []string{"User"},
+					})
 					b.getClassStruct("PersonUser").addField(&field{
 						typeCode: jen.Id("allUser"),
 					})
@@ -182,6 +187,7 @@ func init() {
 							&field{typeCode: jen.Id(allUser.name)},
 							&fixedStringField{name: "type", value: "bot"},
 						},
+						implements: []string{"User"},
 					})
 					return nil
 				},

@@ -6,6 +6,11 @@ import uuid "github.com/google/uuid"
 // https://developers.notion.com/reference/user
 
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
+type User interface {
+	isUser()
+}
+
+// The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
 type PartialUser struct {
 	Object string    `always:"user" json:"object"` // Always "user"
 	Id     uuid.UUID `json:"id"`                   // Unique identifier for this user.
@@ -45,6 +50,8 @@ type PersonUser struct {
 	Person PersonData `json:"person"` // Properties only present for non-bot users.
 }
 
+func (_ *PersonUser) isUser() {}
+
 // Properties only present for non-bot users.
 type PersonData struct {
 	Email string `json:"email"` // Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.
@@ -74,6 +81,8 @@ type BotUser struct {
 	Type string  `always:"bot" json:"type"`
 	Bot  BotData `json:"bot"` // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
 }
+
+func (_ *BotUser) isUser() {}
 
 // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
 type BotData struct {

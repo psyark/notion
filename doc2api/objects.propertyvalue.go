@@ -853,7 +853,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PeoplePropertyValue").addField(&field{
+						name:     "user",
+						typeCode: jen.Id("User"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -872,7 +877,8 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PeoplePropertyValue").comment += "\n\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -890,7 +896,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("FilesPropertyValue").addField(&field{
+						name:     "files",
+						typeCode: jen.Index().Id("File"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -904,7 +915,8 @@ func init() {
 				Title: "When updating a file property, the value will be overwritten by the array of files passed.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("FilesPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -922,7 +934,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCheckbox property value objects contain a boolean within the checkbox property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("CheckboxPropertyValue").addField(&field{
+						name:     "checkbox",
+						typeCode: jen.Bool(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -951,7 +968,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nURL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("UrlPropertyValue").addField(&field{
+						name:     "url",
+						typeCode: jen.String(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -980,7 +1002,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEmail property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("EmailPropertyValue").addField(&field{
+						name:     "email",
+						typeCode: jen.String(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -1009,7 +1036,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPhone number property value objects contain a string within the phone_number property. No structure is enforced.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("PhoneNumberPropertyValue").addField(&field{
+						name:     "phone_number",
+						typeCode: jen.String(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -1038,7 +1070,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned. \n\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("CreatedTimePropertyValue").addField(&field{
+						name:     "created_time",
+						typeCode: jen.Id("ISO8601String"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -1056,7 +1093,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("CreatedByPropertyValue").addField(&field{
+						name:     "created_by",
+						typeCode: jen.Id("User"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -1074,7 +1116,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("LastEditedTimePropertyValue").addField(&field{
+						name:     "last_edited_time",
+						typeCode: jen.Id("ISO8601String"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -1092,7 +1139,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("LastEditedByPropertyValue").addField(&field{
+						name:     "last_edited_by",
+						typeCode: jen.Id("User"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 		},
