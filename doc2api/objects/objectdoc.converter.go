@@ -95,7 +95,7 @@ func (c converter) convert() error {
 	file.Comment(c.url)
 	file.Add(b.statement()...)
 
-	return file.Save(fmt.Sprintf("../%s", c.fileName))
+	return file.Save(fmt.Sprintf("../../%s", c.fileName))
 }
 
 func createLocalCopy(remote objectDocElement) jen.Code {

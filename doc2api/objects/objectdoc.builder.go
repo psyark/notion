@@ -62,15 +62,6 @@ func (c *classStruct) addField(f coder) {
 	c.fields = append(c.fields, f)
 }
 
-// func (c *classStruct) getField(name string) *field {
-// 	for _, f := range c.fields {
-// 		if f, ok := f.(*field); ok && f.name == name {
-// 			return f
-// 		}
-// 	}
-// 	return nil
-// }
-
 func (c *classStruct) code() jen.Code {
 	fields := []jen.Code{}
 	for _, field := range c.fields {
