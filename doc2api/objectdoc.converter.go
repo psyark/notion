@@ -82,12 +82,12 @@ func (c converter) convert() error {
 
 	if len(requiredCopy) != 0 {
 		gostr := jen.Var().Id("LOCAL_COPY").Op("=").Index().Id("objectDocElement").Values(jen.List(requiredCopy...), jen.Line()).GoString()
-		if err := os.WriteFile("tmp/required_copy.go", []byte(gostr), 0666); err != nil {
+		if err := os.WriteFile("tmp/"+c.fileName, []byte(gostr), 0666); err != nil {
 			return err
 		}
-		return fmt.Errorf("localCopyが足りません (see tmp/required_copy.go)")
+		return fmt.Errorf("localCopyが足りません (see tmp/%s)", c.fileName)
 	} else {
-		_ = os.Remove("tmp/required_copy.go")
+		_ = os.Remove("tmp/" + c.fileName)
 	}
 
 	file := jen.NewFile("notion")

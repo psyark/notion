@@ -1,6 +1,8 @@
 package doc2api
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
 )
@@ -94,7 +96,7 @@ func (f *field) code() jen.Code {
 		code.Tag(map[string]string{"json": f.name})
 	}
 	if f.comment != "" {
-		code.Comment(f.comment)
+		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
 	}
 	return code
 }
@@ -109,7 +111,7 @@ func (f *fixedStringField) code() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value})
 	if f.comment != "" {
-		code.Comment(f.comment)
+		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
 	}
 	return code
 }

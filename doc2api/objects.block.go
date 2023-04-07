@@ -102,10 +102,10 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					blockCommon.addField(&field{
 						name:     e.Field,
-						typeCode: jen.String(),
+						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Description,
 					})
-					return nil // TODO ISO 8601をどうするか検討
+					return nil
 				},
 			}, {
 				Field:        "created_by",
@@ -128,10 +128,10 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					blockCommon.addField(&field{
 						name:     e.Field,
-						typeCode: jen.String(),
+						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Description,
 					})
-					return nil // TODO ISO 8601をどうするか検討
+					return nil
 				},
 			}, {
 				Field:        "last_edited_by",
