@@ -1,4 +1,4 @@
-package doc2api
+package methoddoc
 
 type SSRProps struct {
 	// BaseURL                  string         `json:"baseUrl"`

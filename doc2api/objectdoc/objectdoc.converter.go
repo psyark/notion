@@ -4,7 +4,7 @@
 // Goコードへの変換ルールは、命令形のコードではなくデータ構造として objects.*.go に格納されます。
 // このデータ構造には Notion API Referenceのローカルコピーも含まれるため、
 // ドキュメントの更新に対してGoコードへの変換ルールが古いままになることを防ぎます。
-package doc2api
+package objectdoc
 
 import (
 	"encoding/json"

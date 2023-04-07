@@ -1,4 +1,4 @@
-package doc2api
+package methoddoc
 
 import (
 	"regexp"
