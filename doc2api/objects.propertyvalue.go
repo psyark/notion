@@ -686,7 +686,16 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRelation property value objects contain an array of page references within the\u00a0relation property. A page reference is an object with an id key and a string value (UUIDv4) corresponding to a page ID in another database.\n\nA relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.\n\nNote that updating a relation property value with an empty array will clear the list.  ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("RelationPropertyValue").comment += e.Text
+					b.getClassStruct("RelationPropertyValue").addField(&field{
+						name:     "relation",
+						typeCode: jen.Index().Id("PageReference"),
+					})
+					b.getClassStruct("RelationPropertyValue").addField(&field{
+						name:     "has_more",
+						typeCode: jen.Bool(),
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -709,13 +718,17 @@ func init() {
 						fields:     []coder{&fixedStringField{name: "type", value: "rollup"}},
 						implements: []string{"PropertyValue"},
 					})
+					b.add(&classInterface{
+						name: "Rollup",
+					})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nRollup property value objects represent the result of evaluating a rollup described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a rollup cannot be updated directly.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("RollupPropertyValue").comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -729,55 +742,100 @@ func init() {
 				Title: "Rollup values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("RollupPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "String rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "StringRollup",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "string"}},
+						implements: []string{"Rollup"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nString rollup property values contain an optional string within the string property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("StringRollup").addField(&field{
+						name:     "string",
+						typeCode: jen.String(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Number rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "NumberRollup",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "number"}},
+						implements: []string{"Rollup"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber rollup property values contain a number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("NumberRollup").addField(&field{
+						name:     "number",
+						typeCode: jen.Float64(),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Date rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "DateRollup",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "date"}},
+						implements: []string{"Rollup"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate rollup property values contain a date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DateRollup").addField(&field{
+						name:     "date",
+						typeCode: jen.Id("DatePropertyValue"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Array rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.add(&classStruct{
+						name:       "ArrayRollup",
+						comment:    e.Text,
+						fields:     []coder{&fixedStringField{name: "type", value: "array"}},
+						implements: []string{"Rollup"},
+					})
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nArray rollup property values contain an array of number, date, or string objects within the results property. \n\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("ArrayRollup").addField(&field{
+						name:     "array",
+						typeCode: jen.Index().Id("Rollup"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{

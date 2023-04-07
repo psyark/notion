@@ -176,19 +176,72 @@ type DateFormula struct {
 
 func (_ *DateFormula) isFormula() {}
 
-// Relation property values
+/*
+Relation property values
+Relation property value objects contain an array of page references within the relation property. A page reference is an object with an id key and a string value (UUIDv4) corresponding to a page ID in another database.
+
+A relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.
+
+Note that updating a relation property value with an empty array will clear the list.
+*/
 type RelationPropertyValue struct {
-	Type string `always:"relation" json:"type"`
+	Type     string          `always:"relation" json:"type"`
+	Relation []PageReference `json:"relation"`
+	HasMore  bool            `json:"has_more"`
 }
 
 func (_ *RelationPropertyValue) isPropertyValue() {}
 
-// Rollup property values
+/*
+Rollup property values
+Rollup property value objects represent the result of evaluating a rollup described in the
+database's properties. These objects contain a type key and a key corresponding with the value of type. The value of a rollup cannot be updated directly.
+
+Rollup values may not match the Notion UI.
+Rollups returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
+*/
 type RollupPropertyValue struct {
 	Type string `always:"rollup" json:"type"`
 }
 
 func (_ *RollupPropertyValue) isPropertyValue() {}
+
+//
+type Rollup interface {
+	isRollup()
+}
+
+// String rollup property values
+type StringRollup struct {
+	Type   string `always:"string" json:"type"`
+	String string `json:"string"` //  String rollup property values contain an optional string within the string property.
+}
+
+func (_ *StringRollup) isRollup() {}
+
+// Number rollup property values
+type NumberRollup struct {
+	Type   string  `always:"number" json:"type"`
+	Number float64 `json:"number"` //  Number rollup property values contain a number within the number property.
+}
+
+func (_ *NumberRollup) isRollup() {}
+
+// Date rollup property values
+type DateRollup struct {
+	Type string            `always:"date" json:"type"`
+	Date DatePropertyValue `json:"date"` //  Date rollup property values contain a date property value within the date property.
+}
+
+func (_ *DateRollup) isRollup() {}
+
+// Array rollup property values
+type ArrayRollup struct {
+	Type  string   `always:"array" json:"type"`
+	Array []Rollup `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
+}
+
+func (_ *ArrayRollup) isRollup() {}
 
 // People property values
 type PeoplePropertyValue struct {
