@@ -125,6 +125,7 @@ func (c MethodCoder) hasOptions() bool {
 	return len(c.getParams("body")) != 0
 }
 
+// Deprecated:　推測しない
 func (c MethodCoder) getOptionField(param SSRPropsDocAPIParam) jen.Code {
 	code := jen.Id(nfCamelCase.String(param.Name))
 	switch param.Type {

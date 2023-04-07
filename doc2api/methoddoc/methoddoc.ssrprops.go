@@ -63,17 +63,16 @@ type SSRPropsDoc struct {
 }
 
 type SSRPropsDocAPI struct {
-	Method  string                `json:"method"`  // post
-	Params  []SSRPropsDocAPIParam `json:"params"`  // [map[_id:609176570b6bf20019821ce8 default: desc...
-	Results map[string]any        `json:"results"` // map[codes:[map[code:{"object": "list","resu...
-	URL     string                `json:"url"`     // /v1/databases/{database_id}/query
+	Method string                `json:"method"` // post
+	Params []SSRPropsDocAPIParam `json:"params"` // [map[_id:609176570b6bf20019821ce8 default: desc...
+	URL    string                `json:"url"`    // /v1/databases/{database_id}/query
+	// Results map[string]any        `json:"results"` // map[codes:[map[code:{"object": "list","resu...
 	// APISetting string                `json:"apiSetting,omitempty"` // 606ecc2cd9e93b0044cf6e47
 	// Auth     string                `json:"auth"`               // required
 	// Examples map[string]any        `json:"examples,omitempty"` // map[codes:[map[code:const { Client } = require(...
 }
 
 type SSRPropsDocAPIParam struct {
-	ID         string `json:"_id"`        // 609176570b6bf20019821ce8
 	Default    string `json:"default"`    //
 	Desc       string `json:"desc"`       // When supplied, limits which pages are returned ...
 	EnumValues string `json:"enumValues"` //
@@ -82,4 +81,5 @@ type SSRPropsDocAPIParam struct {
 	Ref        string `json:"ref"`        //
 	Required   bool   `json:"required"`   // false
 	Type       string `json:"type"`       // json
+	// ID         string `json:"_id"`        // 609176570b6bf20019821ce8
 }

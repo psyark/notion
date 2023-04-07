@@ -9,9 +9,8 @@ import (
 
 func TestMethods(t *testing.T) {
 	type methodDef struct {
-		DocURL  string
-		Type    MethodCoderType
-		Correct func(*MethodCoder)
+		DocURL string
+		Type   MethodCoderType
 	}
 
 	methods := []methodDef{
@@ -21,9 +20,9 @@ func TestMethods(t *testing.T) {
 		// {DocURL: "https://developers.notion.com/reference/retrieve-a-database", Type: &ReturnsStructRef{"Database"}},
 		// https://developers.notion.com/reference/get-databases : deprecated
 		{DocURL: "https://developers.notion.com/reference/retrieve-a-page", Type: &ReturnsStructRef{"Page"}},
-		// {DocURL: "https://developers.notion.com/reference/post-page", Type: &ReturnsStructRef{"Page"}},
+		{DocURL: "https://developers.notion.com/reference/post-page", Type: &ReturnsStructRef{"Page"}},
 		// {DocURL: "https://developers.notion.com/reference/patch-page", Type: &ReturnsStructRef{"Page"}},
-		// {DocURL: "https://developers.notion.com/reference/retrieve-a-page-property", Type: &ReturnsInterface{"PropertyItemOrPropertyItemPagination"}},
+		{DocURL: "https://developers.notion.com/reference/retrieve-a-page-property", Type: &ReturnsInterface{"PropertyItemOrPropertyItemPagination"}},
 		// {DocURL: "https://developers.notion.com/reference/retrieve-a-block", Type: &ReturnsStructRef{"Block"}},
 		// {DocURL: "https://developers.notion.com/reference/update-a-block", Type: &ReturnsStructRef{"Block"}, Correct: func(method *MethodCoder) {
 		// 	for i, p := range method.Props.Doc.API.Params {
@@ -70,9 +69,6 @@ func TestMethods(t *testing.T) {
 			}
 
 			coder.Props = *ssrProps
-			if def.Correct != nil {
-				def.Correct(coder)
-			}
 			return nil
 		})
 
