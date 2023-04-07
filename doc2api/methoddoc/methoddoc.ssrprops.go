@@ -1,11 +1,11 @@
 package methoddoc
 
 type SSRProps struct {
+	Doc SSRPropsDoc `json:"doc"` // map[__v:57 _id:609176570b6bf20019821ce5 api:map...
 	// BaseURL                  string         `json:"baseUrl"`
 	// APIBaseURL               string         `json:"apiBaseUrl"`
 	// Config                   any            `json:"config"`
 	// Context                  map[string]any `json:"context"`                  // map[project:map[appearance:map[body:map[style:n...
-	Doc SSRPropsDoc `json:"doc"` // map[__v:57 _id:609176570b6bf20019821ce5 api:map...
 	// GlossaryTerms            []any          `json:"glossaryTerms"`            // [map[_id:608fece52e9bb4000fea89a2 definition:TO...
 	// TideTOC                  bool   `json:"hideTOC"`                  // false
 	// IsDetachedProductionSite bool   `json:"isDetachedProductionSite"` // false
@@ -26,10 +26,11 @@ type SSRProps struct {
 }
 
 type SSRPropsDoc struct {
+	API   SSRPropsDocAPI `json:"api"`   // map[apiSetting:606ecc2cd9e93b0044cf6e47 auth:re...
+	Title string         `json:"title"` // Query a database
 	// V                     float64        `json:"__v"`                   // 57
 	// ID                    string         `json:"id,omitempty"`          // 614943b3de71ea001c546257
 	// ID2                   string         `json:"_id"`                   // 609176570b6bf20019821ce5
-	API SSRPropsDocAPI `json:"api"` // map[apiSetting:606ecc2cd9e93b0044cf6e47 auth:re...
 	// Body                  string         `json:"body"`                  // Gets a list of [Pages](ref:page) contained in t...
 	// Category              string         `json:"category"`              // 6091386ce2ca9200479fb438
 	// Children              []any          `json:"children"`              // [map[__v:0 _id:6098885974ae4300418f9a18 api:map...
@@ -54,7 +55,6 @@ type SSRPropsDoc struct {
 	// SlugUpdatedAt string         `json:"slugUpdatedAt"`     // 2021-05-10T00:46:29.470Z
 	// Swagger       map[string]any `json:"swagger,omitempty"` // map[path:/v1/databases/{database_id}/query]
 	// SyncUnique    string         `json:"sync_unique"`       //
-	Title string `json:"title"` // Query a database
 	// Type          string         `json:"type"`              // endpoint
 	// UpdatedAt     string         `json:"updatedAt"`         // 2021-12-23T16:56:23.254Z
 	// Updates       []any          `json:"updates"`           // []
@@ -63,13 +63,13 @@ type SSRPropsDoc struct {
 }
 
 type SSRPropsDocAPI struct {
-	// APISetting string                `json:"apiSetting,omitempty"` // 606ecc2cd9e93b0044cf6e47
-	// Auth     string                `json:"auth"`               // required
-	// Examples map[string]any        `json:"examples,omitempty"` // map[codes:[map[code:const { Client } = require(...
 	Method  string                `json:"method"`  // post
 	Params  []SSRPropsDocAPIParam `json:"params"`  // [map[_id:609176570b6bf20019821ce8 default: desc...
 	Results map[string]any        `json:"results"` // map[codes:[map[code:{"object": "list","resu...
 	URL     string                `json:"url"`     // /v1/databases/{database_id}/query
+	// APISetting string                `json:"apiSetting,omitempty"` // 606ecc2cd9e93b0044cf6e47
+	// Auth     string                `json:"auth"`               // required
+	// Examples map[string]any        `json:"examples,omitempty"` // map[codes:[map[code:const { Client } = require(...
 }
 
 type SSRPropsDocAPIParam struct {

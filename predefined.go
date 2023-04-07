@@ -1,6 +1,10 @@
 package notion
 
-import "github.com/google/uuid"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 type ISO8601String = string
 
@@ -16,4 +20,16 @@ type RichTextArray []RichText
 
 type FileOrEmoji interface {
 	isFileOrEmoji()
+}
+
+// https://developers.notion.com/reference/errors
+type Error struct {
+	Object  string `json:"object"`
+	Status  int    `json:"status"`
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+func (e Error) Error() string {
+	return fmt.Sprintf("(%v) %v", e.Code, e.Message)
 }

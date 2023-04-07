@@ -10,7 +10,8 @@ import (
 
 var (
 	getNameRegex = regexp.MustCompile(`[^a-zA-Z0-9]+`)
-	nfCamelCase  = &nameFormatter{"", toTitle, toUpper}
+	// Deprecated: 再発明しない
+	nfCamelCase = &nameFormatter{"", toTitle, toUpper}
 )
 
 type nameFormatter struct {
