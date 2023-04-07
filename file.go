@@ -24,7 +24,8 @@ type NotionHostedFile struct {
 	File NotionHostedFileData `json:"file"`
 }
 
-func (_ *NotionHostedFile) isFile() {}
+func (_ *NotionHostedFile) isFile()        {}
+func (_ *NotionHostedFile) isFileOrEmoji() {}
 
 /*
 
@@ -42,7 +43,8 @@ type ExternalFile struct {
 	File ExternalFileData `json:"file"`
 }
 
-func (_ *ExternalFile) isFile() {}
+func (_ *ExternalFile) isFile()        {}
+func (_ *ExternalFile) isFileOrEmoji() {}
 
 /*
 

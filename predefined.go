@@ -13,3 +13,7 @@ type PageReference struct {
 }
 
 type RichTextArray []RichText
+
+type FileOrEmoji interface {
+	isFileOrEmoji()
+}

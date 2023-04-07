@@ -65,7 +65,7 @@ func init() {
 							&fixedStringField{name: "type", value: "file"},
 							&field{name: "file", typeCode: jen.Id("NotionHostedFileData")},
 						},
-						implements: []string{"File"},
+						implements: []string{"File", "FileOrEmoji"},
 					})
 					return nil
 				},
@@ -152,7 +152,7 @@ func init() {
 							&fixedStringField{name: "type", value: "external"},
 							&field{name: "file", typeCode: jen.Id("ExternalFileData")},
 						},
-						implements: []string{"File"},
+						implements: []string{"File", "FileOrEmoji"},
 					})
 					return nil
 				},
