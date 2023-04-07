@@ -69,6 +69,7 @@ func (c MethodCoder) Code() jen.Code {
 	if c.hasOptions() {
 		methodParams = append(methodParams, jen.Id("params").Op("*").Id(methodName+"Params"))
 	}
+	methodParams = append(methodParams, jen.Id("options").Op("...").Id("callOption"))
 
 	pathParams := []jen.Code{}
 	path := regexp.MustCompile(`\{\w+\}`).ReplaceAllStringFunc(c.Props.Doc.API.URL, func(s string) string {
@@ -82,10 +83,10 @@ func (c MethodCoder) Code() jen.Code {
 		params = jen.Id("params")
 	}
 
-	methodBody := jen.Statement{
+	code.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.Type.Returns(), jen.Error()).Block(
 		jen.Id("result").Op(":=").Add(c.Type.New()).Values(),
 		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
-			jen.Id("method"): jen.Lit(strings.ToUpper(c.Props.Doc.API.Method)),
+			jen.Id("method"): jen.Qual("net/http", "Method"+strcase.UpperCamelCase(c.Props.Doc.API.Method)),
 			jen.Id("path"):   jen.Qual("fmt", "Sprintf").Call(pathParams...),
 			jen.Id("params"): params,
 			jen.Id("result"): jen.Id("result"),
@@ -97,10 +98,7 @@ func (c MethodCoder) Code() jen.Code {
 			jen.Id("ctx"),
 			jen.Id("co"),
 		)),
-	}
-
-	methodParams = append(methodParams, jen.Id("options").Op("...").Id("callOption"))
-	code.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.Type.Returns(), jen.Error()).Block(methodBody...).Line()
+	).Line()
 
 	if c.hasOptions() {
 		fields := []jen.Code{}
