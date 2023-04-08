@@ -52,10 +52,9 @@ func (b *builder) getClassStruct(name string) *classStruct {
 }
 
 type classStruct struct {
-	name       string
-	comment    string
-	fields     []coder
-	implements []string // TODO: 廃止
+	name    string
+	comment string
+	fields  []coder
 }
 
 func (c *classStruct) addField(f coder) {
@@ -72,9 +71,6 @@ func (c *classStruct) code() jen.Code {
 		}
 	}
 	code := jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...).Line()
-	for _, ifName := range c.implements {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + ifName).Params().Block().Line()
-	}
 
 	// フィールドにインターフェイスを含むため、UnmarshalJSONで前処理を行う
 	if hasInterface {
