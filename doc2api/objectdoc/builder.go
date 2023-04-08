@@ -55,7 +55,7 @@ type classStruct struct {
 	name       string
 	comment    string
 	fields     []coder
-	implements []string
+	implements []string // Deprecated: use classInterface.addVariant
 }
 
 func (c *classStruct) addField(f coder) {
@@ -84,7 +84,7 @@ func (c *classStruct) code() jen.Code {
 			if f, ok := f.(*field); ok && f.isInterface {
 				interfaceName := (&jen.Statement{f.typeCode}).GoString()
 				bodyCodes = append(bodyCodes, jen.Id("o").Dot(strcase.UpperCamelCase(f.name)).Op("=").Id("new"+interfaceName).Call(
-					jen.Id("getChild").Call(jen.Id("data"), jen.Lit(f.name)),
+					jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(f.name)),
 				))
 			}
 		}
@@ -133,12 +133,41 @@ func (f *fixedStringField) code() jen.Code {
 }
 
 type classInterface struct {
-	name    string
-	comment string
+	name     string
+	comment  string
+	variants []*classStruct
+}
+
+// addVariant は指定したclassStructをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
+// - バリアントに対してインターフェイスメソッドを実装
+// - このインターフェイスの未判別のJSONメッセージから適切なバリアントのポインタを返すnew関数を作成
+func (c *classInterface) addVariant(variant *classStruct) {
+	c.variants = append(c.variants, variant)
 }
 
 func (c *classInterface) code() jen.Code {
-	return jen.Comment(c.comment).Line().Type().Id(c.name).Interface(jen.Id("is" + c.name).Params())
+	// インターフェイス本体とisメソッド
+	code := jen.Comment(c.comment).Line().Type().Id(c.name).Interface(jen.Id("is" + c.name).Params()).Line()
+
+	// バリアントにisメソッドを実装
+	cases := []jen.Code{}
+	for _, v := range c.variants {
+		code.Func().Params(jen.Id("_").Op("*").Id(v.name)).Id("is" + c.name).Params().Block().Line()
+		for _, f := range v.fields {
+			if f, ok := f.(*fixedStringField); ok {
+				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Return().Op("&").Id(v.name).Values())
+			}
+		}
+	}
+
+	// new関数
+	if len(c.variants) != 0 {
+		code.Func().Id("new"+c.name).Call(jen.Id("msg").Qual("encoding/json", "RawMessage")).Id(c.name).Block(
+			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("msg"), jen.Lit("type"))).Block(cases...),
+			jen.Panic(jen.String().Call(jen.Id("msg"))),
+		).Line()
+	}
+	return code
 }
 
 type independentComment string

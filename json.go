@@ -2,11 +2,11 @@ package notion
 
 import "encoding/json"
 
-func getChild(data []byte, childName string) []byte {
+// getRawProperty はobject型のJSONメッセージから指定されたキーを取り出し、RawMessageとして返却します
+func getRawProperty(msg json.RawMessage, key string) json.RawMessage {
 	t := map[string]json.RawMessage{}
-	if err := json.Unmarshal(data, &t); err != nil {
+	if err := json.Unmarshal(msg, &t); err != nil {
 		panic(err)
 	}
-
-	return t[childName]
+	return t[key]
 }

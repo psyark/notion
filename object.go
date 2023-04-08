@@ -23,7 +23,7 @@ type FileOrEmoji interface {
 }
 
 func newFileOrEmoji(data []byte) FileOrEmoji {
-	switch string(getChild(data, "type")) {
+	switch string(getRawProperty(data, "type")) {
 	case `"file"`:
 		return &NotionHostedFile{}
 	case `"external"`:
@@ -34,27 +34,13 @@ func newFileOrEmoji(data []byte) FileOrEmoji {
 	panic(string(data))
 }
 
+// TODO 自動化
 func newFile(data []byte) File {
-	switch string(getChild(data, "type")) {
+	switch string(getRawProperty(data, "type")) {
 	case `"file"`:
 		return &NotionHostedFile{}
 	case `"external"`:
 		return &ExternalFile{}
-	}
-	panic(string(data))
-}
-
-// TODO 自動化
-func newParent(data []byte) Parent {
-	switch string(getChild(data, "type")) {
-	case `"page_id"`:
-		return &PageParent{}
-	case `"database_id"`:
-		return &DatabaseParent{}
-	case `"workspace"`:
-		return &WorkspaceParent{}
-	case `"block_id"`:
-		return &BlockParent{}
 	}
 	panic(string(data))
 }
