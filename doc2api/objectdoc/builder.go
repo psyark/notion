@@ -61,6 +61,13 @@ func (c *classStruct) addField(f coder) {
 	c.fields = append(c.fields, f)
 }
 
+func (c *classStruct) createVariant(variant classStruct) *classStruct {
+	variant.fields = append([]coder{
+		&field{typeCode: jen.Id(c.name)},
+	}, variant.fields...)
+	return &variant
+}
+
 func (c *classStruct) code() jen.Code {
 	fields := []jen.Code{}
 	hasInterface := false

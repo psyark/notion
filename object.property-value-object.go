@@ -114,18 +114,21 @@ Rich Text property values
 The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-a-page) returns a maximum of 25 populated inline page or person references for a `rich_text` property. If a `rich_text` property includes more than 25 references, then you can use the [Retrieve a page property endpoint](https://developers.notion.com/reference/retrieve-a-page-property) for the specific `rich_text` property to get its complete list of references.
 */
 type RichTextPropertyValue struct {
+	propertyValueCommon
 	Type     string        `always:"rich_text" json:"type"`
 	RichText RichTextArray `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 // Number property values
 type NumberPropertyValue struct {
+	propertyValueCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
 // Select property values
 type SelectPropertyValue struct {
+	propertyValueCommon
 	Type   string                  `always:"select" json:"type"`
 	Select SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
 }
@@ -142,6 +145,7 @@ type SelectPropertyValueData struct {
 
 // Status property values
 type StatusPropertyValue struct {
+	propertyValueCommon
 	Type   string                  `always:"status" json:"type"`
 	Status StatusPropertyValueData `json:"status"` //  Status property value objects contain the following data within the status property:
 }
@@ -158,6 +162,7 @@ type StatusPropertyValueData struct {
 
 // Multi-select property values
 type MultiSelectPropertyValue struct {
+	propertyValueCommon
 	Type        string              `always:"multi_select" json:"type"`
 	MultiSelect []MultiSelectOption `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
@@ -171,6 +176,7 @@ type MultiSelectOption struct {
 
 // Date property values
 type DatePropertyValue struct {
+	propertyValueCommon
 	Type string                `always:"date" json:"type"`
 	Date DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
@@ -194,6 +200,7 @@ Formula values may not match the Notion UI.
 Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
 */
 type FormulaPropertyValue struct {
+	propertyValueCommon
 	Type    string  `always:"formula" json:"type"`
 	Formula Formula `json:"formula"`
 }
@@ -259,6 +266,7 @@ A relation includes a has_more property in the Retrieve a page endpoint response
 Note that updating a relation property value with an empty array will clear the list.
 */
 type RelationPropertyValue struct {
+	propertyValueCommon
 	Type     string          `always:"relation" json:"type"`
 	Relation []PageReference `json:"relation"`
 	HasMore  bool            `json:"has_more"`
@@ -273,6 +281,7 @@ Rollup values may not match the Notion UI.
 Rollups returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
 */
 type RollupPropertyValue struct {
+	propertyValueCommon
 	Type string `always:"rollup" json:"type"`
 }
 
@@ -334,6 +343,7 @@ People property values
 The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) endpoint can’t be guaranteed to return more than 25 people per `people` page property. If a `people` page property includes more than 25 people, then you can use the [Retrieve a page property endpoint](https://developers.notion.com/reference/retrieve-a-page-property) for the specific `people` property to get a complete list of people.
 */
 type PeoplePropertyValue struct {
+	propertyValueCommon
 	Type string `always:"people" json:"type"`
 	User User   `json:"user"` //  People property value objects contain an array of user objects within the people property.
 }
@@ -345,54 +355,63 @@ When updating a file property, the value will be overwritten by the array of fil
 Although we do not support uploading files, if you pass a `file` object containing a file hosted by Notion, it will remain one of the files. To remove any file, just do not pass it in the update response.
 */
 type FilesPropertyValue struct {
+	propertyValueCommon
 	Type  string `always:"files" json:"type"`
 	Files []File `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
 // Checkbox property values
 type CheckboxPropertyValue struct {
+	propertyValueCommon
 	Type     string `always:"checkbox" json:"type"`
 	Checkbox bool   `json:"checkbox"` //  Checkbox property value objects contain a boolean within the checkbox property.
 }
 
 // URL property values
 type UrlPropertyValue struct {
+	propertyValueCommon
 	Type string `always:"url" json:"type"`
 	Url  string `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
 }
 
 // Email property values
 type EmailPropertyValue struct {
+	propertyValueCommon
 	Type  string `always:"email" json:"type"`
 	Email string `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
 }
 
 // Phone number property values
 type PhoneNumberPropertyValue struct {
+	propertyValueCommon
 	Type        string `always:"phone_number" json:"type"`
 	PhoneNumber string `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 }
 
 // Created time property values
 type CreatedTimePropertyValue struct {
+	propertyValueCommon
 	Type        string        `always:"created_time" json:"type"`
 	CreatedTime ISO8601String `json:"created_time"` //  Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 // Created by property values
 type CreatedByPropertyValue struct {
+	propertyValueCommon
 	Type      string `always:"created_by" json:"type"`
 	CreatedBy User   `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 // Last edited time property values
 type LastEditedTimePropertyValue struct {
+	propertyValueCommon
 	Type           string        `always:"last_edited_time" json:"type"`
 	LastEditedTime ISO8601String `json:"last_edited_time"` //  Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 // Last edited by property values
 type LastEditedByPropertyValue struct {
+	propertyValueCommon
 	Type         string `always:"last_edited_by" json:"type"`
 	LastEditedBy User   `json:"last_edited_by"` //  Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
 }

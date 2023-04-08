@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var propertyValueCommon *classStruct
+
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/property-value-object",
 		localCopy: []objectDocElement{
@@ -29,14 +31,15 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "All property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "propertyValueCommon", comment: e.Text})
+					propertyValueCommon = &classStruct{name: "propertyValueCommon", comment: e.Text}
+					b.add(propertyValueCommon)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nEach page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("propertyValueCommon").comment += e.Text
+					propertyValueCommon.comment += e.Text
 					return nil
 				},
 			},
@@ -46,7 +49,7 @@ func init() {
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
 				ExampleValue: `"f%5C%5C%3Ap"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("propertyValueCommon").addField(&field{
+					propertyValueCommon.addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
 						comment:  strings.ReplaceAll(e.Description, "\n", " "),
@@ -63,14 +66,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "TitlePropertyValue",
 						comment: e.Text,
-						fields: []coder{
-							&field{typeCode: jen.Id("propertyValueCommon")}, // TODO 他のバリアントにも埋め込み
-							&fixedStringField{name: "type", value: "title"},
-						},
-					}
+						fields:  []coder{&fixedStringField{name: "type", value: "title"}},
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -116,11 +116,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich Text property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "RichTextPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "rich_text"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -164,11 +164,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "NumberPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -203,11 +203,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "SelectPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "select"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -282,11 +282,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "StatusPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "status"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -361,11 +361,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "MultiSelectPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "multi_select"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -446,11 +446,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "DatePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -547,14 +547,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "FormulaPropertyValue",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "formula"},
 							&field{name: "formula", typeCode: jen.Id("Formula")},
 						},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					b.add(&classInterface{name: "Formula"})
@@ -688,11 +688,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "RelationPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "relation"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -727,11 +727,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "RollupPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "rollup"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					b.add(&classInterface{name: "Rollup"})
@@ -859,11 +859,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "PeoplePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "people"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -903,11 +903,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "FilesPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "files"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -942,11 +942,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "CheckboxPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "checkbox"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -977,11 +977,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "URL property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "UrlPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "url"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1012,11 +1012,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "EmailPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "email"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1047,11 +1047,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Phone number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "PhoneNumberPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "phone_number"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1082,11 +1082,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "CreatedTimePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "created_time"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1106,11 +1106,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "CreatedByPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "created_by"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1130,11 +1130,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "LastEditedTimePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_time"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
@@ -1154,11 +1154,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := propertyValueCommon.createVariant(classStruct{
 						name:    "LastEditedByPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_by"}},
-					}
+					})
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
