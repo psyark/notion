@@ -43,7 +43,6 @@ func (c *converter) convert() error {
 		return err
 	}
 
-	// TODO
 	// ローカルコピーとの比較
 	remoteMap := map[string]ssrPropsParam{}
 	for _, p := range sp.Doc.API.Params {

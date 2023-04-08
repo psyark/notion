@@ -18,33 +18,6 @@ type PageReference struct {
 
 type RichTextArray []RichText
 
-type FileOrEmoji interface {
-	isFileOrEmoji()
-}
-
-func newFileOrEmoji(data []byte) FileOrEmoji {
-	switch string(getRawProperty(data, "type")) {
-	case `"file"`:
-		return &NotionHostedFile{}
-	case `"external"`:
-		return &ExternalFile{}
-	case `"emoji"`:
-		return &Emoji{}
-	}
-	panic(string(data))
-}
-
-// TODO 自動化
-func newFile(data []byte) File {
-	switch string(getRawProperty(data, "type")) {
-	case `"file"`:
-		return &NotionHostedFile{}
-	case `"external"`:
-		return &ExternalFile{}
-	}
-	panic(string(data))
-}
-
 // https://developers.notion.com/reference/errors
 type Error struct {
 	Object  string `json:"object"`

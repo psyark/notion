@@ -55,7 +55,7 @@ type classStruct struct {
 	name       string
 	comment    string
 	fields     []coder
-	implements []string // Deprecated: use classInterface.addVariant
+	implements []string // TODO: 廃止
 }
 
 func (c *classStruct) addField(f coder) {
@@ -162,7 +162,7 @@ func (c *classInterface) code() jen.Code {
 
 	// new関数
 	if len(c.variants) != 0 {
-		code.Func().Id("new"+c.name).Call(jen.Id("msg").Qual("encoding/json", "RawMessage")).Id(c.name).Block(
+		code.Line().Func().Id("new"+c.name).Call(jen.Id("msg").Qual("encoding/json", "RawMessage")).Id(c.name).Block(
 			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("msg"), jen.Lit("type"))).Block(cases...),
 			jen.Panic(jen.String().Call(jen.Id("msg"))),
 		).Line()

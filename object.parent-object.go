@@ -24,6 +24,7 @@ func (_ *DatabaseParent) isParent()  {}
 func (_ *PageParent) isParent()      {}
 func (_ *WorkspaceParent) isParent() {}
 func (_ *BlockParent) isParent()     {}
+
 func newParent(msg json.RawMessage) Parent {
 	switch string(getRawProperty(msg, "type")) {
 	case "\"database_id\"":

@@ -12,6 +12,10 @@ func init() {
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
 					b.add(&classInterface{name: "File", comment: e.Body})
+					b.add(&classInterface{name: "FileOrEmoji"})
+
+					// TODO: 別ドキュメントの知識に依存しないように修正
+					b.getClassInterface("FileOrEmoji").addVariant(&classStruct{name: "Emoji", fields: []coder{&fixedStringField{name: "type", value: "emoji"}}})
 					return nil
 				},
 			},
@@ -57,15 +61,17 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "NotionHostedFile",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "file"},
 							&field{name: "file", typeCode: jen.Id("NotionHostedFileData")},
 						},
-						implements: []string{"File", "FileOrEmoji"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("File").addVariant(cs)
+					b.getClassInterface("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},
@@ -144,15 +150,17 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "ExternalFile",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "external"},
 							&field{name: "file", typeCode: jen.Id("ExternalFileData")},
 						},
-						implements: []string{"File", "FileOrEmoji"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("File").addVariant(cs)
+					b.getClassInterface("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},
