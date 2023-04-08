@@ -4,8 +4,7 @@ import "github.com/dave/jennifer/jen"
 
 func init() {
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/file-object",
-		fileName: "file.go",
+		url: "https://developers.notion.com/reference/file-object",
 		localCopy: []objectDocElement{
 			&objectDocCalloutElement{
 				Body:  "The Notion API does not yet support uploading files to Notion.",

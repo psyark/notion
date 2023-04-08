@@ -10,8 +10,7 @@ func init() {
 	allUser := &classStruct{name: "allUser"}
 
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/user",
-		fileName: "user.go",
+		url: "https://developers.notion.com/reference/user",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",

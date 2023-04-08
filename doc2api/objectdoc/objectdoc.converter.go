@@ -23,7 +23,6 @@ import (
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
 type converter struct {
 	url       string // ドキュメントのURL
-	fileName  string // 出力するファイル名
 	localCopy []objectDocElement
 }
 
@@ -80,14 +79,16 @@ func (c converter) convert() error {
 		}
 	}
 
+	fileName := "object." + strings.TrimPrefix(c.url, "https://developers.notion.com/reference/") + ".go"
+
 	if len(requiredCopy) != 0 {
 		gostr := jen.Var().Id("LOCAL_COPY").Op("=").Index().Id("objectDocElement").Values(jen.List(requiredCopy...), jen.Line()).GoString()
-		if err := os.WriteFile("tmp/"+c.fileName, []byte(gostr), 0666); err != nil {
+		if err := os.WriteFile("tmp/"+fileName, []byte(gostr), 0666); err != nil {
 			return err
 		}
-		return fmt.Errorf("localCopyが足りません (see tmp/%s)", c.fileName)
+		return fmt.Errorf("localCopyが足りません (see tmp/%s)", fileName)
 	} else {
-		_ = os.Remove("tmp/" + c.fileName)
+		_ = os.Remove("tmp/" + fileName)
 	}
 
 	file := jen.NewFile("notion")
@@ -95,7 +96,7 @@ func (c converter) convert() error {
 	file.Comment(c.url)
 	file.Add(b.statement()...)
 
-	return file.Save(fmt.Sprintf("../../%s", c.fileName))
+	return file.Save(fmt.Sprintf("../../%s", fileName))
 }
 
 func createLocalCopy(remote objectDocElement) jen.Code {
@@ -177,7 +178,7 @@ func convertAll() error {
 		c := c
 		eg.Go(func() error {
 			if err := c.convert(); err != nil {
-				return fmt.Errorf("convert: %s: %w", c.fileName, err)
+				return fmt.Errorf("convert: %s: %w", c.url, err)
 			}
 			return nil
 		})

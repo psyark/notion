@@ -8,8 +8,7 @@ import (
 
 func init() {
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/property-value-object",
-		fileName: "propertyvalue.go",
+		url: "https://developers.notion.com/reference/property-value-object",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",

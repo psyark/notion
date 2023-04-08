@@ -8,8 +8,7 @@ import (
 
 func init() {
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/parent-object",
-		fileName: "parent.go",
+		url: "https://developers.notion.com/reference/parent-object",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the \"parent\". Parent information is represented by a consistent parent object throughout the API.\n\nParenting rules:\n* Pages can be parented by other pages, databases, blocks, or by the whole workspace.\n* Blocks can be parented by pages, databases, or blocks.\n* Databases can be parented by pages, blocks, or by the whole workspace.\n",

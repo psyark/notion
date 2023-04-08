@@ -10,8 +10,7 @@ func init() {
 	var blockCommon *classStruct
 
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/block",
-		fileName: "block.go",
+		url: "https://developers.notion.com/reference/block",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",

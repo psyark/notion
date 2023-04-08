@@ -8,8 +8,7 @@ import (
 
 func init() {
 	registerConverter(converter{
-		url:      "https://developers.notion.com/reference/page",
-		fileName: "page.go",
+		url: "https://developers.notion.com/reference/page",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "The Page object contains the page property values of a single Notion page.",
