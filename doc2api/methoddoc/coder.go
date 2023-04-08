@@ -1,32 +1,43 @@
 package methoddoc
 
-import "github.com/dave/jennifer/jen"
+import (
+	"fmt"
 
-type MethodCoderType interface {
+	"github.com/dave/jennifer/jen"
+)
+
+// returnTypeCoder はメソッドの戻り型を取り扱うインターフェイスです
+type returnTypeCoder interface {
 	New() jen.Code
 	Returns() jen.Code
 	Access(name string) jen.Code
 }
 
-type structRefReturningMethodCoder string
-type interfaceReturningMethodCoder string
-
-// Deprecated: Use structRefReturningMethodCoder
-type ReturnsStructRef struct {
-	Name string
+var _ = []returnTypeCoder{
+	ReturnsStructRef(""),
+	ReturnsInterface(""),
 }
 
-func (r *ReturnsStructRef) New() jen.Code {
-	return jen.Op("&").Id(r.Name)
+type ReturnsStructRef string
+
+func (r ReturnsStructRef) New() jen.Code {
+	return jen.Op("&").Id(string(r))
 }
-func (r *ReturnsStructRef) Returns() jen.Code {
-	return jen.Op("*").Id(r.Name)
+func (r ReturnsStructRef) Returns() jen.Code {
+	return jen.Op("*").Id(string(r))
 }
-func (r *ReturnsStructRef) Access(name string) jen.Code {
+func (r ReturnsStructRef) Access(name string) jen.Code {
 	return jen.Id(name)
 }
 
-// Deprecated: interfaceReturningMethodCoder
-type ReturnsInterface struct {
-	Name string
+type ReturnsInterface string
+
+func (r ReturnsInterface) New() jen.Code {
+	return jen.Op("&").Id(fmt.Sprintf("_%vUnmarshaller", string(r)))
+}
+func (r ReturnsInterface) Returns() jen.Code {
+	return jen.Id(string(r))
+}
+func (r ReturnsInterface) Access(name string) jen.Code {
+	return jen.Id(name).Dot(string(r))
 }

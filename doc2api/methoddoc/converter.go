@@ -17,7 +17,7 @@ import (
 type converter struct {
 	url                   string          // ドキュメントのURL
 	localCopyOfBodyParams []ssrPropsParam // ボディパラメータのローカルコピー
-	returnType            MethodCoderType // リターンタイプ
+	returnType            returnTypeCoder // リターンタイプ
 }
 
 func (c *converter) convert(file *jen.File) error {
@@ -53,6 +53,11 @@ func (c *converter) convert(file *jen.File) error {
 	}
 	if len(remoteMap) != len(c.localCopyOfBodyParams) {
 		return fmt.Errorf("localCopyOfBodyParamsの数(%d)がリモート(%d)と一致しません", len(c.localCopyOfBodyParams), len(remoteMap))
+	}
+	for _, local := range c.localCopyOfBodyParams {
+		if err := local.compare(remoteMap[local.Name]); err != nil {
+			return err
+		}
 	}
 
 	c.output(file, sp.Doc)
@@ -115,7 +120,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 	if hasBodyParams {
 		fields := []jen.Code{}
 		for _, param := range c.localCopyOfBodyParams {
-			fields = append(fields, jen.Id(param.Name).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
+			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
 		}
 		code.Type().Id(methodName + "Params").Struct(fields...).Line()
 	}

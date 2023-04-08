@@ -7,7 +7,7 @@ import (
 func init() {
 	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/retrieve-a-page",
-		returnType: &ReturnsStructRef{"Page"},
+		returnType: ReturnsStructRef("Page"),
 	})
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/post-page",
@@ -50,6 +50,6 @@ func init() {
 				typeCode: jen.Id("File"),
 			},
 		},
-		returnType: &ReturnsStructRef{"Page"},
+		returnType: ReturnsStructRef("Page"),
 	})
 }

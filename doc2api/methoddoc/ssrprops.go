@@ -1,6 +1,10 @@
 package methoddoc
 
-import "github.com/dave/jennifer/jen"
+import (
+	"fmt"
+
+	"github.com/dave/jennifer/jen"
+)
 
 type ssrProps struct {
 	Doc ssrPropsDoc `json:"doc"` // map[__v:57 _id:609176570b6bf20019821ce5 api:map...
@@ -95,6 +99,15 @@ type ssrPropsParam struct {
 	Type       string `json:"type"`       // json
 	typeCode   jen.Code
 	// ID         string `json:"_id"`        // 609176570b6bf20019821ce8
+}
+
+func (p ssrPropsParam) compare(p2 ssrPropsParam) error {
+	s1 := &jen.Statement{p.Code()}
+	s2 := &jen.Statement{p2.Code()}
+	if s1.GoString() != (s2).GoString() {
+		return fmt.Errorf("mismatch: \n%#v\n%#v", s1, s2)
+	}
+	return nil
 }
 
 func (p ssrPropsParam) Code() jen.Code {
