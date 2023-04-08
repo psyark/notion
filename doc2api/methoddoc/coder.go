@@ -4,40 +4,41 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
 )
 
 // returnTypeCoder はメソッドの戻り型を取り扱うインターフェイスです
 type returnTypeCoder interface {
-	New() jen.Code
-	Returns() jen.Code
-	Access(name string) jen.Code
+	returnType() jen.Code             // returnType はメソッドの戻り型を表すコードです
+	unmarshaller() jen.Code           // unmarshaller はアンマーシャラーを生成するためのコードです
+	returnValue(name string) jen.Code // returnValue はアンマーシャラーから値を取り出すためのコードです
 }
 
 var _ = []returnTypeCoder{
-	ReturnsStructRef(""),
-	ReturnsInterface(""),
+	returnsStructRef(""),
+	returnsInterface(""),
 }
 
-type ReturnsStructRef string
+type returnsStructRef string
 
-func (r ReturnsStructRef) New() jen.Code {
+func (r returnsStructRef) unmarshaller() jen.Code {
 	return jen.Op("&").Id(string(r))
 }
-func (r ReturnsStructRef) Returns() jen.Code {
+func (r returnsStructRef) returnType() jen.Code {
 	return jen.Op("*").Id(string(r))
 }
-func (r ReturnsStructRef) Access(name string) jen.Code {
+func (r returnsStructRef) returnValue(name string) jen.Code {
 	return jen.Id(name)
 }
 
-type ReturnsInterface string
+type returnsInterface string
 
-func (r ReturnsInterface) New() jen.Code {
-	return jen.Op("&").Id(fmt.Sprintf("_%vUnmarshaller", string(r)))
+func (r returnsInterface) unmarshaller() jen.Code {
+	return jen.Op("&").Id(fmt.Sprintf("%vUnmarshaller", strcase.LowerCamelCase(string(r))))
 }
-func (r ReturnsInterface) Returns() jen.Code {
+func (r returnsInterface) returnType() jen.Code {
 	return jen.Id(string(r))
 }
-func (r ReturnsInterface) Access(name string) jen.Code {
-	return jen.Id(name).Dot(string(r))
+func (r returnsInterface) returnValue(name string) jen.Code {
+	return jen.Id(name).Dot("value")
 }

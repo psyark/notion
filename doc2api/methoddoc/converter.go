@@ -100,8 +100,8 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 		params = jen.Id("params")
 	}
 
-	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.Returns(), jen.Error()).Block(
-		jen.Id("result").Op(":=").Add(c.returnType.New()).Values(),
+	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.returnType(), jen.Error()).Block(
+		jen.Id("result").Op(":=").Add(c.returnType.unmarshaller()).Values(),
 		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
 			jen.Id("method"): jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
 			jen.Id("path"):   jen.Qual("fmt", "Sprintf").Call(pathParams...),
@@ -111,7 +111,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 		jen.For(jen.List(jen.Id("_"), jen.Id("o")).Op(":=").Range().Id("options")).Block(
 			jen.Id("o").Call(jen.Id("co")),
 		),
-		jen.List(jen.Return().Add(c.returnType.Access("result")), jen.Id("c").Dot("call").Call(
+		jen.List(jen.Return().Add(c.returnType.returnValue("result")), jen.Id("c").Dot("call").Call(
 			jen.Id("ctx"),
 			jen.Id("co"),
 		)),
