@@ -40,49 +40,53 @@ func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
 func (_ *LastEditedByPropertyValue) isPropertyValue()   {}
 
 func newPropertyValue(msg json.RawMessage) PropertyValue {
+	var result PropertyValue
 	switch string(getRawProperty(msg, "type")) {
 	case "\"title\"":
-		return &TitlePropertyValue{}
+		result = &TitlePropertyValue{}
 	case "\"rich_text\"":
-		return &RichTextPropertyValue{}
+		result = &RichTextPropertyValue{}
 	case "\"number\"":
-		return &NumberPropertyValue{}
+		result = &NumberPropertyValue{}
 	case "\"select\"":
-		return &SelectPropertyValue{}
+		result = &SelectPropertyValue{}
 	case "\"status\"":
-		return &StatusPropertyValue{}
+		result = &StatusPropertyValue{}
 	case "\"multi_select\"":
-		return &MultiSelectPropertyValue{}
+		result = &MultiSelectPropertyValue{}
 	case "\"date\"":
-		return &DatePropertyValue{}
+		result = &DatePropertyValue{}
 	case "\"formula\"":
-		return &FormulaPropertyValue{}
+		result = &FormulaPropertyValue{}
 	case "\"relation\"":
-		return &RelationPropertyValue{}
+		result = &RelationPropertyValue{}
 	case "\"rollup\"":
-		return &RollupPropertyValue{}
+		result = &RollupPropertyValue{}
 	case "\"people\"":
-		return &PeoplePropertyValue{}
+		result = &PeoplePropertyValue{}
 	case "\"files\"":
-		return &FilesPropertyValue{}
+		result = &FilesPropertyValue{}
 	case "\"checkbox\"":
-		return &CheckboxPropertyValue{}
+		result = &CheckboxPropertyValue{}
 	case "\"url\"":
-		return &UrlPropertyValue{}
+		result = &UrlPropertyValue{}
 	case "\"email\"":
-		return &EmailPropertyValue{}
+		result = &EmailPropertyValue{}
 	case "\"phone_number\"":
-		return &PhoneNumberPropertyValue{}
+		result = &PhoneNumberPropertyValue{}
 	case "\"created_time\"":
-		return &CreatedTimePropertyValue{}
+		result = &CreatedTimePropertyValue{}
 	case "\"created_by\"":
-		return &CreatedByPropertyValue{}
+		result = &CreatedByPropertyValue{}
 	case "\"last_edited_time\"":
-		return &LastEditedTimePropertyValue{}
+		result = &LastEditedTimePropertyValue{}
 	case "\"last_edited_by\"":
-		return &LastEditedByPropertyValue{}
+		result = &LastEditedByPropertyValue{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 /*
@@ -204,17 +208,21 @@ func (_ *BooleanFormula) isFormula() {}
 func (_ *DateFormula) isFormula()    {}
 
 func newFormula(msg json.RawMessage) Formula {
+	var result Formula
 	switch string(getRawProperty(msg, "type")) {
 	case "\"string\"":
-		return &StringFormula{}
+		result = &StringFormula{}
 	case "\"number\"":
-		return &NumberFormula{}
+		result = &NumberFormula{}
 	case "\"boolean\"":
-		return &BooleanFormula{}
+		result = &BooleanFormula{}
 	case "\"date\"":
-		return &DateFormula{}
+		result = &DateFormula{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 // String formula property values
@@ -278,17 +286,21 @@ func (_ *DateRollup) isRollup()   {}
 func (_ *ArrayRollup) isRollup()  {}
 
 func newRollup(msg json.RawMessage) Rollup {
+	var result Rollup
 	switch string(getRawProperty(msg, "type")) {
 	case "\"string\"":
-		return &StringRollup{}
+		result = &StringRollup{}
 	case "\"number\"":
-		return &NumberRollup{}
+		result = &NumberRollup{}
 	case "\"date\"":
-		return &DateRollup{}
+		result = &DateRollup{}
 	case "\"array\"":
-		return &ArrayRollup{}
+		result = &ArrayRollup{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 // String rollup property values

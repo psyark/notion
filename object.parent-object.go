@@ -26,17 +26,21 @@ func (_ *WorkspaceParent) isParent() {}
 func (_ *BlockParent) isParent()     {}
 
 func newParent(msg json.RawMessage) Parent {
+	var result Parent
 	switch string(getRawProperty(msg, "type")) {
 	case "\"database_id\"":
-		return &DatabaseParent{}
+		result = &DatabaseParent{}
 	case "\"page_id\"":
-		return &PageParent{}
+		result = &PageParent{}
 	case "\"workspace\"":
-		return &WorkspaceParent{}
+		result = &WorkspaceParent{}
 	case "\"block_id\"":
-		return &BlockParent{}
+		result = &BlockParent{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 /*

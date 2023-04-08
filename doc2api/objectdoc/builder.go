@@ -136,7 +136,7 @@ type classInterface struct {
 
 // addVariant は指定したclassStructをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
 // - バリアントに対してインターフェイスメソッドを実装
-// - このインターフェイスの未判別のJSONメッセージから適切なバリアントのポインタを返すnew関数を作成
+// - このインターフェイスの未判別のJSONメッセージから適切なバリアントを作成するnew関数を作成
 func (c *classInterface) addVariant(variant *classStruct) {
 	c.variants = append(c.variants, variant)
 }
@@ -151,16 +151,20 @@ func (c *classInterface) code() jen.Code {
 		code.Func().Params(jen.Id("_").Op("*").Id(v.name)).Id("is" + c.name).Params().Block().Line()
 		for _, f := range v.fields {
 			if f, ok := f.(*fixedStringField); ok && f.name == "type" { // TODO: "type" の決め打ちを廃止
-				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Return().Op("&").Id(v.name).Values())
+				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Id("result").Op("=").Op("&").Id(v.name).Values())
 			}
 		}
 	}
 
+	cases = append(cases, jen.Default().Panic(jen.String().Call(jen.Id("msg"))))
+
 	// new関数
 	if len(c.variants) != 0 {
 		code.Line().Func().Id("new"+c.name).Call(jen.Id("msg").Qual("encoding/json", "RawMessage")).Id(c.name).Block(
+			jen.Var().Id("result").Id(c.name),
 			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("msg"), jen.Lit("type"))).Block(cases...),
-			jen.Panic(jen.String().Call(jen.Id("msg"))),
+			jen.Qual("encoding/json", "Unmarshal").Call(jen.Id("msg"), jen.Id("result")),
+			jen.Return(jen.Id("result")),
 		).Line()
 	}
 	return code

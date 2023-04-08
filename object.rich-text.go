@@ -20,15 +20,19 @@ func (_ *MentionRichText) isRichText()  {}
 func (_ *TextRichText) isRichText()     {}
 
 func newRichText(msg json.RawMessage) RichText {
+	var result RichText
 	switch string(getRawProperty(msg, "type")) {
 	case "\"equation\"":
-		return &EquationRichText{}
+		result = &EquationRichText{}
 	case "\"mention\"":
-		return &MentionRichText{}
+		result = &MentionRichText{}
 	case "\"text\"":
-		return &TextRichText{}
+		result = &TextRichText{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 /*
@@ -120,21 +124,25 @@ func (_ *TemplateMention) isMention()    {}
 func (_ *UserMention) isMention()        {}
 
 func newMention(msg json.RawMessage) Mention {
+	var result Mention
 	switch string(getRawProperty(msg, "type")) {
 	case "\"database\"":
-		return &DatabaseMention{}
+		result = &DatabaseMention{}
 	case "\"date\"":
-		return &DateMention{}
+		result = &DateMention{}
 	case "\"link_preview\"":
-		return &LinkPreviewMention{}
+		result = &LinkPreviewMention{}
 	case "\"page\"":
-		return &PageMention{}
+		result = &PageMention{}
 	case "\"template_mention\"":
-		return &TemplateMention{}
+		result = &TemplateMention{}
 	case "\"user\"":
-		return &UserMention{}
+		result = &UserMention{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 // Mention
@@ -291,13 +299,17 @@ func (_ *TemplateMentionDate) isTemplateMentionData() {}
 func (_ *TemplateMentionUser) isTemplateMentionData() {}
 
 func newTemplateMentionData(msg json.RawMessage) TemplateMentionData {
+	var result TemplateMentionData
 	switch string(getRawProperty(msg, "type")) {
 	case "\"template_mention_date\"":
-		return &TemplateMentionDate{}
+		result = &TemplateMentionDate{}
 	case "\"template_mention_user\"":
-		return &TemplateMentionUser{}
+		result = &TemplateMentionUser{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 /*

@@ -17,13 +17,17 @@ func (_ *PersonUser) isUser() {}
 func (_ *BotUser) isUser()    {}
 
 func newUser(msg json.RawMessage) User {
+	var result User
 	switch string(getRawProperty(msg, "type")) {
 	case "\"person\"":
-		return &PersonUser{}
+		result = &PersonUser{}
 	case "\"bot\"":
-		return &BotUser{}
+		result = &BotUser{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.

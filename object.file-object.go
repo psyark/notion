@@ -24,13 +24,17 @@ func (_ *NotionHostedFile) isFile() {}
 func (_ *ExternalFile) isFile()     {}
 
 func newFile(msg json.RawMessage) File {
+	var result File
 	switch string(getRawProperty(msg, "type")) {
 	case "\"file\"":
-		return &NotionHostedFile{}
+		result = &NotionHostedFile{}
 	case "\"external\"":
-		return &ExternalFile{}
+		result = &ExternalFile{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 //
@@ -43,15 +47,19 @@ func (_ *NotionHostedFile) isFileOrEmoji() {}
 func (_ *ExternalFile) isFileOrEmoji()     {}
 
 func newFileOrEmoji(msg json.RawMessage) FileOrEmoji {
+	var result FileOrEmoji
 	switch string(getRawProperty(msg, "type")) {
 	case "\"emoji\"":
-		return &Emoji{}
+		result = &Emoji{}
 	case "\"file\"":
-		return &NotionHostedFile{}
+		result = &NotionHostedFile{}
 	case "\"external\"":
-		return &ExternalFile{}
+		result = &ExternalFile{}
+	default:
+		panic(string(msg))
 	}
-	panic(string(msg))
+	json.Unmarshal(msg, result)
+	return result
 }
 
 // Notion-hosted files
