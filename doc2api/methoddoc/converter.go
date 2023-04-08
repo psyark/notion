@@ -20,8 +20,8 @@ type converter struct {
 	returnType            returnTypeCoder // リターンタイプ
 }
 
-func (c *converter) convert(file *jen.File) error {
-	fmt.Println(c.url)
+func (c *converter) convert() error {
+	file := jen.NewFile("notion")
 
 	// URLの取得
 	res, err := http.Get(c.url)
@@ -62,7 +62,7 @@ func (c *converter) convert(file *jen.File) error {
 
 	c.output(file, sp.Doc)
 
-	return nil
+	return file.Save(fmt.Sprintf("../../client.%s.go", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " "))))
 }
 
 func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
@@ -135,21 +135,15 @@ func registerConverter(c converter) {
 
 // convertAll は登録された全てのconverterで変換を実行します
 func convertAll() error {
-	file := jen.NewFile("notion")
-
 	eg := errgroup.Group{}
 	for _, c := range registeredConverters {
 		c := c
 		eg.Go(func() error {
-			if err := c.convert(file); err != nil {
+			if err := c.convert(); err != nil {
 				return fmt.Errorf("convert: %s: %w", c.url, err)
 			}
 			return nil
 		})
 	}
-	if err := eg.Wait(); err != nil {
-		return err
-	}
-
-	return file.Save("../../client.methods.go")
+	return eg.Wait()
 }
