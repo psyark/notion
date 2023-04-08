@@ -22,6 +22,43 @@ type FileOrEmoji interface {
 	isFileOrEmoji()
 }
 
+func newFileOrEmoji(data []byte) FileOrEmoji {
+	switch string(getChild(data, "type")) {
+	case `"file"`:
+		return &NotionHostedFile{}
+	case `"external"`:
+		return &ExternalFile{}
+	case `"emoji"`:
+		return &Emoji{}
+	}
+	panic(string(data))
+}
+
+func newFile(data []byte) File {
+	switch string(getChild(data, "type")) {
+	case `"file"`:
+		return &NotionHostedFile{}
+	case `"external"`:
+		return &ExternalFile{}
+	}
+	panic(string(data))
+}
+
+// TODO 自動化
+func newParent(data []byte) Parent {
+	switch string(getChild(data, "type")) {
+	case `"page_id"`:
+		return &PageParent{}
+	case `"database_id"`:
+		return &DatabaseParent{}
+	case `"workspace"`:
+		return &WorkspaceParent{}
+	case `"block_id"`:
+		return &BlockParent{}
+	}
+	panic(string(data))
+}
+
 // https://developers.notion.com/reference/errors
 type Error struct {
 	Object  string `json:"object"`

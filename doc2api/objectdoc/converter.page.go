@@ -21,10 +21,7 @@ func init() {
 				Code:     "{\n    \"object\": \"page\",\n    \"id\": \"be633bf1-dfa0-436d-b259-571129a590e5\",\n    \"created_time\": \"2022-10-24T22:54:00.000Z\",\n    \"last_edited_time\": \"2023-03-08T18:25:00.000Z\",\n    \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n    },\n    \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n    },\n    \"cover\": null,\n    \"icon\": {\n        \"type\": \"emoji\",\n        \"emoji\": \"🐞\"\n    },\n    \"parent\": {\n        \"type\": \"database_id\",\n        \"database_id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    },\n    \"archived\": true,\n    \"properties\": {\n        \"Due date\": {\n            \"id\": \"M%3BBw\",\n            \"type\": \"date\",\n            \"date\": {\n                \"start\": \"2023-02-23\",\n                \"end\": null,\n                \"time_zone\": null\n            }\n        },\n        \"Status\": {\n            \"id\": \"Z%3ClH\",\n            \"type\": \"status\",\n            \"status\": {\n                \"id\": \"86ddb6ec-0627-47f8-800d-b65afd28be13\",\n                \"name\": \"Not started\",\n                \"color\": \"default\"\n            }\n        },\n        \"Title\": {\n            \"id\": \"title\",\n            \"type\": \"title\",\n            \"title\": [\n                {\n                    \"type\": \"text\",\n                    \"text\": {\n                        \"content\": \"Bug bash\",\n                        \"link\": null\n                    },\n                    \"annotations\": {\n                        \"bold\": false,\n                        \"italic\": false,\n                        \"strikethrough\": false,\n                        \"underline\": false,\n                        \"code\": false,\n                        \"color\": \"default\"\n                    },\n                    \"plain_text\": \"Bug bash\",\n                    \"href\": null\n                }\n            ]\n        }\n    },\n    \"url\": \"https://www.notion.so/Bug-bash-be633bf1dfa0436db259571129a590e5\"\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("Page").comment += "\n" + e.Code
-					return nil
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocParagraphElement{
 				Text: "All pages have a Parent. If the parent is a database, the property values conform to the schema laid out database's properties. Otherwise, the only property value is the title.\n\nPage content is available as blocks. The content can be read using retrieve block children and appended using append block children.\n",
@@ -144,9 +141,10 @@ func init() {
 				Description: "Page icon.",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Page").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("FileOrEmoji"),
-						comment:  e.Description,
+						name:        e.Property,
+						typeCode:    jen.Id("FileOrEmoji"),
+						comment:     e.Description,
+						isInterface: true,
 					})
 					return nil
 				},
@@ -156,9 +154,10 @@ func init() {
 				Description: "Page cover image.",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Page").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("File"),
-						comment:  e.Description,
+						name:        e.Property,
+						typeCode:    jen.Id("File"),
+						comment:     e.Description,
+						isInterface: true,
 					})
 					return nil
 				},
@@ -182,9 +181,10 @@ func init() {
 				ExampleValue: `{ "type": "database_id", "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce" }`,
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Page").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("Parent"),
-						comment:  e.Description,
+						name:        e.Property,
+						typeCode:    jen.Id("Parent"),
+						comment:     e.Description,
+						isInterface: true,
 					})
 					return nil
 				},

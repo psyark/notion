@@ -167,7 +167,11 @@ func (t *objectDocParametersElement) UnmarshalJSON(data []byte) error {
 	for r := range mapSlice {
 		m := map[string]string{}
 		for c := 0; c < raw.Cols; c++ {
-			m[raw.Data[fmt.Sprintf("h-%d", c)]] = stripMarkdown(raw.Data[fmt.Sprintf("%d-%d", r, c)])
+			key := raw.Data[fmt.Sprintf("h-%d", c)]
+			if key == "" {
+				key = "Property" // https://developers.notion.com/reference/emoji-object
+			}
+			m[key] = stripMarkdown(raw.Data[fmt.Sprintf("%d-%d", r, c)])
 		}
 		mapSlice[r] = m
 	}

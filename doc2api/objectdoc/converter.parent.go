@@ -20,7 +20,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "DatabaseParent", comment: e.Text})
+					b.add(&classStruct{name: "DatabaseParent", comment: e.Text, implements: []string{"Parent"}})
 					return nil
 				},
 			},
@@ -63,7 +63,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "PageParent", comment: e.Text})
+					b.add(&classStruct{name: "PageParent", comment: e.Text, implements: []string{"Parent"}})
 					return nil
 				},
 			},
@@ -106,7 +106,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Workspace parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "WorkspaceParent", comment: e.Text})
+					b.add(&classStruct{name: "WorkspaceParent", comment: e.Text, implements: []string{"Parent"}})
 					return nil
 				},
 			},
@@ -156,7 +156,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{name: "BlockParent", comment: e.Text})
+					b.add(&classStruct{name: "BlockParent", comment: e.Text, implements: []string{"Parent"}})
 					return nil
 				},
 			},

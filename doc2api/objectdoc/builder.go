@@ -64,20 +64,45 @@ func (c *classStruct) addField(f coder) {
 
 func (c *classStruct) code() jen.Code {
 	fields := []jen.Code{}
-	for _, field := range c.fields {
-		fields = append(fields, field.code())
+	hasInterface := false
+	for _, f := range c.fields {
+		fields = append(fields, f.code())
+		if f, ok := f.(*field); ok && f.isInterface {
+			hasInterface = true
+		}
 	}
-	code := jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...)
+	code := jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...).Line()
 	for _, ifName := range c.implements {
-		code.Line().Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + ifName).Params().Block()
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + ifName).Params().Block().Line()
+	}
+
+	// フィールドにインターフェイスを含むため、UnmarshalJSONで前処理を行う
+	if hasInterface {
+		bodyCodes := []jen.Code{}
+		for _, f := range c.fields {
+			fields = append(fields, f.code())
+			if f, ok := f.(*field); ok && f.isInterface {
+				interfaceName := (&jen.Statement{f.typeCode}).GoString()
+				bodyCodes = append(bodyCodes, jen.Id("o").Dot(strcase.UpperCamelCase(f.name)).Op("=").Id("new"+interfaceName).Call(
+					jen.Id("getChild").Call(jen.Id("data"), jen.Lit(f.name)),
+				))
+			}
+		}
+		bodyCodes = append(bodyCodes, jen.Type().Id("Alias").Id(c.name))
+		bodyCodes = append(bodyCodes, jen.Return().Qual("encoding/json", "Unmarshal").Call(
+			jen.Id("data"),
+			jen.Parens(jen.Op("*").Id("Alias")).Parens(jen.Id("o")),
+		))
+		code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(bodyCodes...).Line()
 	}
 	return code
 }
 
 type field struct {
-	name     string
-	typeCode jen.Code
-	comment  string
+	name        string
+	typeCode    jen.Code
+	comment     string
+	isInterface bool // このフィールドはinterfaceのため、UnmarshalJSONの作成を促します
 }
 
 func (f *field) code() jen.Code {

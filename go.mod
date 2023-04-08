@@ -10,6 +10,7 @@ require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/dave/jennifer v1.6.0
 	github.com/google/uuid v1.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/stoewer/go-strcase v1.3.0
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sync v0.1.0

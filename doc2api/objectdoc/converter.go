@@ -100,7 +100,7 @@ func (c converter) convert() error {
 }
 
 func createLocalCopy(remote objectDocElement) jen.Code {
-	typeName := strings.TrimPrefix(fmt.Sprintf("%T", remote), "*doc2api.")
+	typeName := strings.TrimPrefix(fmt.Sprintf("%T", remote), "*objectdoc.")
 	outputCode := jen.Func().Params(jen.Id("e").Op("*").Id(typeName), jen.Id("b").Op("*").Id("builder")).Error().Block(jen.Return().Nil().Comment("TODO"))
 
 	switch remote := remote.(type) {

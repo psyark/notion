@@ -20,14 +20,21 @@ type Client struct {
 }
 
 type callOptions struct {
-	path       string
-	method     string
-	bodyWriter io.Writer
-	params     any
-	result     any
+	path            string
+	method          string
+	bodyWriter      io.Writer // TODO
+	checkMarshaller bool
+	params          any
+	result          any
 }
 
 type callOption func(*callOptions)
+
+func checkMarshaller(value bool) callOption {
+	return func(co *callOptions) {
+		co.checkMarshaller = value
+	}
+}
 
 func (c *Client) call(ctx context.Context, options *callOptions) error {
 	payload, err := json.Marshal(options.params)
