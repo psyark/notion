@@ -155,7 +155,7 @@ func init() {
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "external"},
-							&field{name: "file", typeCode: jen.Id("ExternalFileData")},
+							&field{name: "external", typeCode: jen.Id("ExternalFileData")},
 						},
 					}
 					b.add(cs)

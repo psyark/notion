@@ -80,8 +80,8 @@ type NotionHostedFileData struct {
 
 // External files
 type ExternalFile struct {
-	Type string           `always:"external" json:"type"`
-	File ExternalFileData `json:"file"`
+	Type     string           `always:"external" json:"type"`
+	External ExternalFileData `json:"external"`
 }
 
 /*

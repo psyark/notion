@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 const APIVersion = "2022-06-28"
@@ -20,19 +21,18 @@ type Client struct {
 }
 
 type callOptions struct {
-	path            string
-	method          string
-	bodyWriter      io.Writer // TODO
-	checkMarshaller bool
-	params          any
-	result          any
+	path           string
+	method         string
+	validateResult string
+	params         any
+	result         any
 }
 
 type callOption func(*callOptions)
 
-func checkMarshaller(value bool) callOption {
+func validateResult(testName string) callOption {
 	return func(co *callOptions) {
-		co.checkMarshaller = value
+		co.validateResult = testName
 	}
 }
 
@@ -66,12 +66,6 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		return err
 	}
 
-	if options.bodyWriter != nil {
-		if _, err := options.bodyWriter.Write(resBody); err != nil {
-			return err
-		}
-	}
-
 	if res.StatusCode != http.StatusOK {
 		errBody := Error{}
 		if err := json.Unmarshal(resBody, &errBody); err != nil {
@@ -81,5 +75,39 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		}
 	}
 
-	return json.Unmarshal(resBody, &options.result)
+	if err := json.Unmarshal(resBody, &options.result); err != nil {
+		return err
+	}
+
+	if options.validateResult != "" {
+		got, err := json.Marshal(options.result)
+		if err != nil {
+			return err
+		}
+
+		got = normalizeJSON(got)
+		want := normalizeJSON(resBody)
+
+		if bytes.Equal(want, got) {
+			os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
+			os.Remove(fmt.Sprintf("testout/%v.got.json", options.validateResult))
+		} else {
+			if err := os.WriteFile(fmt.Sprintf("testout/%v.want.json", options.validateResult), want, 0666); err != nil {
+				return err
+			}
+			if err := os.WriteFile(fmt.Sprintf("testout/%v.got.json", options.validateResult), got, 0666); err != nil {
+				return err
+			}
+			return fmt.Errorf("validation failed: %v", options.validateResult)
+		}
+	}
+
+	return nil
+}
+
+func normalizeJSON(src []byte) []byte {
+	tmp := map[string]interface{}{}
+	json.Unmarshal(src, &tmp)
+	out, _ := json.MarshalIndent(tmp, "", "  ")
+	return out
 }

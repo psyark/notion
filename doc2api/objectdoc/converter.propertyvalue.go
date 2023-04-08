@@ -66,7 +66,10 @@ func init() {
 					cs := &classStruct{
 						name:    "TitlePropertyValue",
 						comment: e.Text,
-						fields:  []coder{&fixedStringField{name: "type", value: "title"}},
+						fields: []coder{
+							&field{typeCode: jen.Id("propertyValueCommon")}, // TODO 他のバリアントにも埋め込み
+							&fixedStringField{name: "type", value: "title"},
+						},
 					}
 					b.add(cs)
 					b.getClassInterface("PropertyValue").addVariant(cs)

@@ -59,7 +59,7 @@ Rich text objects contain the data that Notion uses to display formatted text, m
 type richTextCommon struct {
 	Annotations Annotations `json:"annotations"` // The information used to style the rich text object. Refer to the annotation object section below for details.
 	PlainText   string      `json:"plain_text"`  // The plain text without annotations.
-	Href        string      `json:"href"`        // The URL of any link or Notion mention in this text, if any.
+	Href        *string     `json:"href"`        // The URL of any link or Notion mention in this text, if any.
 }
 
 /*
@@ -402,6 +402,7 @@ type UserMention struct {
 
 // Text
 type TextRichText struct {
+	richTextCommon
 	Type string `always:"text" json:"type"`
 	Text Text   `json:"text"`
 }
@@ -451,6 +452,6 @@ Example rich text text object with link
 }
 */
 type Text struct {
-	Content string       `json:"content"` // The actual text content of the text.
-	Link    URLReference `json:"link"`    // An object with information about any inline link in this text, if included.   If the text contains an inline link, then the object key is url and the value is the URL’s string web address.   If the text doesn’t have any inline links, then the value is null.
+	Content string        `json:"content"` // The actual text content of the text.
+	Link    *URLReference `json:"link"`    // An object with information about any inline link in this text, if included.   If the text contains an inline link, then the object key is url and the value is the URL’s string web address.   If the text doesn’t have any inline links, then the value is null.
 }

@@ -2,8 +2,6 @@ package notion
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"os"
 	"testing"
 
@@ -21,10 +19,7 @@ func init() {
 
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
-	if p, err := cli.RetrievePage(ctx, "b05213d5c3af4de6924cc9b106ae93ec", checkMarshaller(true)); err != nil {
+	if _, err := cli.RetrievePage(ctx, "b05213d5c3af4de6924cc9b106ae93ec", validateResult("RetrievePage")); err != nil {
 		t.Fatal(err)
-	} else {
-		data, _ := json.MarshalIndent(p, "", "  ")
-		fmt.Println(string(data))
 	}
 }

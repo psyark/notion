@@ -103,6 +103,7 @@ Title property values
 The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-a-page) returns a maximum of 25 inline page or person references for a `title` property. If a `title` property includes more than 25 references, then you can use the [Retrieve a page property](https://developers.notion.com/reference/retrieve-a-page-property) endpoint for the specific `title` property to get its complete list of references.
 */
 type TitlePropertyValue struct {
+	propertyValueCommon
 	Type  string        `always:"title" json:"type"`
 	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }

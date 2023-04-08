@@ -17,10 +17,7 @@ func init() {
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.add(&classInterface{name: "RichText", comment: e.Text})
-					richTextCommon = &classStruct{
-						name:    "richTextCommon",
-						comment: e.Text,
-					}
+					richTextCommon = &classStruct{name: "richTextCommon", comment: e.Text}
 					b.add(richTextCommon)
 					return nil
 				},
@@ -88,7 +85,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					richTextCommon.addField(&field{
 						name:     e.Field,
-						typeCode: jen.String(),
+						typeCode: jen.Op("*").String(), // RetrivePageでnullを確認
 						comment:  e.Description,
 					})
 					return nil
@@ -571,6 +568,7 @@ func init() {
 						name:    "TextRichText",
 						comment: e.Text,
 						fields: []coder{
+							&field{typeCode: jen.Id(richTextCommon.name)},
 							&fixedStringField{name: "type", value: "text"},
 							&field{name: "text", typeCode: jen.Id("Text")},
 						},
@@ -608,7 +606,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Text").addField(&field{
 						name:     e.Field,
-						typeCode: jen.Id("URLReference"),
+						typeCode: jen.Op("*").Id("URLReference"), // RetrivePageでnullを確認
 						comment:  strings.ReplaceAll(e.Description, "\n", " "),
 					})
 					return nil
