@@ -66,7 +66,7 @@ func (c *converter) convert(file *jen.File) error {
 }
 
 func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
-	code := jen.Comment(doc.Title).Line().Comment(c.url).Line()
+	file.Comment(doc.Title).Line().Comment(c.url)
 	hasBodyParams := len(doc.API.filterParams("body")) != 0
 
 	methodName := strcase.UpperCamelCase(strings.ReplaceAll(doc.Title, " a ", " "))
@@ -100,7 +100,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 		params = jen.Id("params")
 	}
 
-	code.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.Returns(), jen.Error()).Block(
+	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.Returns(), jen.Error()).Block(
 		jen.Id("result").Op(":=").Add(c.returnType.New()).Values(),
 		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
 			jen.Id("method"): jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
@@ -122,10 +122,8 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 		for _, param := range c.localCopyOfBodyParams {
 			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
 		}
-		code.Type().Id(methodName + "Params").Struct(fields...).Line()
+		file.Type().Id(methodName + "Params").Struct(fields...).Line()
 	}
-
-	file.Add(*code...)
 }
 
 var registeredConverters []converter
