@@ -169,7 +169,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("Page").addField(&field{
 						name:     e.Property,
-						typeCode: jen.Map(jen.String()).Id("PropertyValue"),
+						typeCode: jen.Id("PropertyValueMap"),
 						comment:  strings.ReplaceAll(e.Description, "\n", " "),
 					})
 					return nil // TODO

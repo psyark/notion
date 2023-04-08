@@ -127,18 +127,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "PersonUser",
-						comment:    e.Text,
-						implements: []string{"User"},
-					})
-					b.getClassStruct("PersonUser").addField(&field{
-						typeCode: jen.Id("allUser"),
-					})
-					b.getClassStruct("PersonUser").addField(&fixedStringField{
-						name:  "type",
-						value: "person",
-					})
+					cs := &classStruct{
+						name:    "PersonUser",
+						comment: e.Text,
+						fields: []coder{
+							&field{typeCode: jen.Id("allUser")},
+							&fixedStringField{name: "type", value: "person"},
+						},
+					}
+					b.add(cs)
+					b.getClassInterface("User").addVariant(cs)
 					return nil
 				},
 			},
@@ -179,15 +177,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "BotUser",
 						comment: e.Text,
 						fields: []coder{
 							&field{typeCode: jen.Id(allUser.name)},
 							&fixedStringField{name: "type", value: "bot"},
 						},
-						implements: []string{"User"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("User").addVariant(cs)
 					return nil
 				},
 			},

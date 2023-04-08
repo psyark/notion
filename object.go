@@ -1,6 +1,7 @@
 package notion
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -17,6 +18,28 @@ type PageReference struct {
 }
 
 type RichTextArray []RichText
+
+type PropertyValueMap map[string]PropertyValue
+
+func (pvm *PropertyValueMap) UnmarshalJSON(data []byte) error {
+	x := map[string]json.RawMessage{}
+	if err := json.Unmarshal(data, &x); err != nil {
+		return err
+	}
+
+	*pvm = PropertyValueMap{}
+	for k, v := range x {
+		(*pvm)[k] = newPropertyValue(v)
+		fmt.Println(string(v))
+		fmt.Printf("%#v\n", (*pvm)[k])
+		json.Unmarshal(v, (*pvm)[k])
+		fmt.Printf("%#v\n", (*pvm)[k])
+	}
+
+	return nil
+	// type Alias PropertyValueMap
+	// return json.Unmarshal(data, (*Alias)(pvm))
+}
 
 // https://developers.notion.com/reference/errors
 type Error struct {

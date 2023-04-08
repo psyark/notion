@@ -154,7 +154,7 @@ func (c *classInterface) code() jen.Code {
 	for _, v := range c.variants {
 		code.Func().Params(jen.Id("_").Op("*").Id(v.name)).Id("is" + c.name).Params().Block().Line()
 		for _, f := range v.fields {
-			if f, ok := f.(*fixedStringField); ok {
+			if f, ok := f.(*fixedStringField); ok && f.name == "type" { // TODO: "type" の決め打ちを廃止
 				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Return().Op("&").Id(v.name).Values())
 			}
 		}

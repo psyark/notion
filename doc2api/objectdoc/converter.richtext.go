@@ -198,15 +198,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "EquationRichText",
 						comment: e.Text,
 						fields: []coder{
 							&field{typeCode: jen.Id(richTextCommon.name)},
 							&fixedStringField{name: "type", value: "equation"},
 						},
-						implements: []string{"RichText"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("RichText").addVariant(cs)
 					return nil
 				},
 			},
@@ -251,7 +252,7 @@ func init() {
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					b.add(&classInterface{name: "Mention", comment: e.Text})
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "MentionRichText",
 						comment: e.Text,
 						fields: []coder{
@@ -259,8 +260,9 @@ func init() {
 							&fixedStringField{name: "type", value: "mention"},
 							&field{name: "mention", typeCode: jen.Id("Mention")},
 						},
-						implements: []string{"RichText"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("RichText").addVariant(cs)
 					return nil
 				},
 			},
@@ -287,15 +289,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "DatabaseMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "database"},
 							&field{name: "database", typeCode: jen.Id("PageReference")},
 						},
-						implements: []string{"Mention"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
 					return nil
 				},
 			},
@@ -318,15 +321,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "DateMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "date"},
 							&field{name: "date", typeCode: jen.Id("DatePropertyValue")},
 						},
-						implements: []string{"Mention"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
 					return nil
 				},
 			},
@@ -349,15 +353,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Link Preview mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "LinkPreviewMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "link_preview"},
 							&field{name: "link_preview", typeCode: jen.Id("URLReference")},
 						},
-						implements: []string{"Mention"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
 					return nil
 				},
 			},
@@ -380,15 +385,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "PageMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "page"},
 							&field{name: "page", typeCode: jen.Id("PageReference")},
 						},
-						implements: []string{"Mention"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
 					return nil
 				},
 			},
@@ -411,18 +417,17 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "TemplateMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "template_mention"},
 							&field{name: "template_mention", typeCode: jen.Id("TemplateMentionData")},
 						},
-						implements: []string{"Mention"},
-					})
-					b.add(&classInterface{
-						name: "TemplateMentionData",
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
+					b.add(&classInterface{name: "TemplateMentionData"})
 					return nil
 				},
 			},
@@ -439,14 +444,15 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name: "TemplateMentionDate",
 						fields: []coder{
 							&fixedStringField{name: "type", value: e.Field},
 							&field{name: e.Field, typeCode: jen.String(), comment: e.Description},
 						},
-						implements: []string{"TemplateMentionData"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("TemplateMentionData").addVariant(cs)
 					return nil
 				},
 			}},
@@ -478,7 +484,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name: "TemplateMentionUser",
 						fields: []coder{
 							&fixedStringField{name: "type", value: e.Field},
@@ -488,8 +494,9 @@ func init() {
 								comment: e.Description,
 							},
 						},
-						implements: []string{"TemplateMentionData"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("TemplateMentionData").addVariant(cs)
 					return nil
 				},
 			}},
@@ -512,15 +519,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "User mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "UserMention",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "user"},
 							&field{name: "user", typeCode: jen.Id("PartialUser")},
 						},
-						implements: []string{"Mention"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("Mention").addVariant(cs)
 					return nil
 				},
 			},
@@ -559,15 +567,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "TextRichText",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "text"},
 							&field{name: "text", typeCode: jen.Id("Text")},
 						},
-						implements: []string{"RichText"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("RichText").addVariant(cs)
 					return nil
 				},
 			},
