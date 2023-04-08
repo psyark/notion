@@ -48,8 +48,8 @@ func init() {
 			&objectDocParametersElement{{
 				Field:        "type",
 				Type:         "string\u00a0(enum)",
-				Description:  "The type of the file object. Possible type values are:\u00a0\"external\",\u00a0\"file\".",
-				ExampleValue: "\"external\"",
+				Description:  `The type of the file object. Possible type values are: "external", "file".`,
+				ExampleValue: `"external"`,
 				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Field:        "external | file",
