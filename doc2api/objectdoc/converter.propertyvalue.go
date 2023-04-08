@@ -63,12 +63,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "TitlePropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "title"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "TitlePropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "title"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -112,12 +113,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich Text property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "RichTextPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "rich_text"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "RichTextPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "rich_text"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -159,12 +161,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "NumberPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "number"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "NumberPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -197,12 +200,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "SelectPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "select"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "SelectPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "select"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -275,12 +279,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "StatusPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "status"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "StatusPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "status"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -353,12 +358,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "MultiSelectPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "multi_select"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "MultiSelectPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "multi_select"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -437,12 +443,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "DatePropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "date"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "DatePropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -537,15 +544,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					cs := &classStruct{
 						name:    "FormulaPropertyValue",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "formula"},
 							&field{name: "formula", typeCode: jen.Id("Formula")},
 						},
-						implements: []string{"PropertyValue"},
-					})
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					b.add(&classInterface{name: "Formula"})
 					return nil
 				},
@@ -581,12 +589,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "String formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "StringFormula",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "string"}},
-						implements: []string{"Formula"},
-					})
+					cs := &classStruct{
+						name:    "StringFormula",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "string"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Formula").addVariant(cs)
 					return nil
 				},
 			},
@@ -604,12 +613,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "NumberFormula",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "number"}},
-						implements: []string{"Formula"},
-					})
+					cs := &classStruct{
+						name:    "NumberFormula",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Formula").addVariant(cs)
 					return nil
 				},
 			},
@@ -627,12 +637,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Boolean formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "BooleanFormula",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "boolean"}},
-						implements: []string{"Formula"},
-					})
+					cs := &classStruct{
+						name:    "BooleanFormula",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "boolean"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Formula").addVariant(cs)
 					return nil
 				},
 			},
@@ -650,12 +661,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "DateFormula",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "date"}},
-						implements: []string{"Formula"},
-					})
+					cs := &classStruct{
+						name:    "DateFormula",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Formula").addVariant(cs)
 					return nil
 				},
 			},
@@ -673,12 +685,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "RelationPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "relation"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "RelationPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "relation"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -711,15 +724,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "RollupPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "rollup"}},
-						implements: []string{"PropertyValue"},
-					})
-					b.add(&classInterface{
-						name: "Rollup",
-					})
+					cs := &classStruct{
+						name:    "RollupPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "rollup"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.add(&classInterface{name: "Rollup"})
 					return nil
 				},
 			},
@@ -748,12 +760,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "String rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "StringRollup",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "string"}},
-						implements: []string{"Rollup"},
-					})
+					cs := &classStruct{
+						name:    "StringRollup",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "string"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Rollup").addVariant(cs)
 					return nil
 				},
 			},
@@ -771,12 +784,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "NumberRollup",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "number"}},
-						implements: []string{"Rollup"},
-					})
+					cs := &classStruct{
+						name:    "NumberRollup",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Rollup").addVariant(cs)
 					return nil
 				},
 			},
@@ -794,12 +808,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "DateRollup",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "date"}},
-						implements: []string{"Rollup"},
-					})
+					cs := &classStruct{
+						name:    "DateRollup",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Rollup").addVariant(cs)
 					return nil
 				},
 			},
@@ -817,12 +832,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Array rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "ArrayRollup",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "array"}},
-						implements: []string{"Rollup"},
-					})
+					cs := &classStruct{
+						name:    "ArrayRollup",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "array"}},
+					}
+					b.add(cs)
+					b.getClassInterface("Rollup").addVariant(cs)
 					return nil
 				},
 			},
@@ -840,12 +856,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "PeoplePropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "people"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "PeoplePropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "people"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -883,12 +900,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "FilesPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "files"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "FilesPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "files"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -921,12 +939,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "CheckboxPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "checkbox"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "CheckboxPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "checkbox"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -955,12 +974,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "URL property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "UrlPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "url"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "UrlPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "url"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -989,12 +1009,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "EmailPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "email"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "EmailPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "email"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -1023,12 +1044,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Phone number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "PhoneNumberPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "phone_number"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "PhoneNumberPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "phone_number"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -1057,12 +1079,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "CreatedTimePropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "created_time"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "CreatedTimePropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "created_time"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -1080,12 +1103,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "CreatedByPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "created_by"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "CreatedByPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "created_by"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -1103,12 +1127,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "LastEditedTimePropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "last_edited_time"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "LastEditedTimePropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_time"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
@@ -1126,12 +1151,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
-						name:       "LastEditedByPropertyValue",
-						comment:    e.Text,
-						fields:     []coder{&fixedStringField{name: "type", value: "last_edited_by"}},
-						implements: []string{"PropertyValue"},
-					})
+					cs := &classStruct{
+						name:    "LastEditedByPropertyValue",
+						comment: e.Text,
+						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_by"}},
+					}
+					b.add(cs)
+					b.getClassInterface("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
