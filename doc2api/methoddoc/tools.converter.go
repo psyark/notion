@@ -90,12 +90,12 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	}
 
 	// APIのパスパラメータを引数化
-	for _, param := range doc.API.Params.filter("path") {
-		if param.Type != "string" {
-			panic(param.Type)
+	for _, param := range c.localCopyOfPathParams {
+		if param.typeCode == nil {
+			return fmt.Errorf("no typeCode for %s", param.Name)
 		}
 
-		methodParams = append(methodParams, jen.Id(param.Name).String())
+		methodParams = append(methodParams, jen.Id(param.Name).Add(param.typeCode))
 	}
 	// オプション構造体引数
 	if hasBodyParams {

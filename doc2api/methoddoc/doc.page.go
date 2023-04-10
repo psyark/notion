@@ -12,7 +12,7 @@ func init() {
 				In:       "path",
 				Name:     "page_id",
 				Type:     "string",
-				typeCode: nil, /*TODO*/
+				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
 			},
 		},
 	})

@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -19,7 +20,7 @@ func init() {
 
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrievePage(ctx, "b05213d5c3af4de6924cc9b106ae93ec", validateResult("RetrievePage")); err != nil {
+	if _, err := cli.RetrievePage(ctx, uuid.MustParse("b05213d5c3af4de6924cc9b106ae93ec"), validateResult("RetrievePage")); err != nil {
 		t.Fatal(err)
 	}
 }

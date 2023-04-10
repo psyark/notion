@@ -3,12 +3,13 @@ package notion
 import (
 	"context"
 	"fmt"
+	uuid "github.com/google/uuid"
 	"net/http"
 )
 
 // Retrieve a page
 // https://developers.notion.com/reference/retrieve-a-page
-func (c *Client) RetrievePage(ctx context.Context, page_id string, options ...callOption) (*Page, error) {
+func (c *Client) RetrievePage(ctx context.Context, page_id uuid.UUID, options ...callOption) (*Page, error) {
 	result := &Page{}
 	co := &callOptions{
 		method: http.MethodGet,
