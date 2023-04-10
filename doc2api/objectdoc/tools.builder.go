@@ -20,34 +20,47 @@ var _ = []coder{
 	independentComment(""),
 }
 
-type builder []coder
+type builder struct {
+	coders []coder
+	global *builder
+}
 
 func (b *builder) add(c coder) {
-	*b = append(*b, c)
+	b.coders = append(b.coders, c)
+}
+
+func (b *builder) addGlobal(c coder) {
+	b.global.add(c)
 }
 
 func (b *builder) statement() jen.Statement {
 	s := jen.Statement{}
-	for _, item := range *b {
+	for _, item := range b.coders {
 		s = append(s, jen.Line().Line(), item.code())
 	}
 	return s
 }
 
 func (b *builder) getClassInterface(name string) *classInterface {
-	for _, item := range *b {
+	for _, item := range b.coders {
 		if item, ok := item.(*classInterface); ok && item.name == name {
 			return item
 		}
+	}
+	if b.global != nil {
+		return b.global.getClassInterface(name)
 	}
 	return nil
 }
 
 func (b *builder) getClassStruct(name string) *classStruct {
-	for _, item := range *b {
+	for _, item := range b.coders {
 		if item, ok := item.(*classStruct); ok && item.name == name {
 			return item
 		}
+	}
+	if b.global != nil {
+		return b.global.getClassStruct(name)
 	}
 	return nil
 }

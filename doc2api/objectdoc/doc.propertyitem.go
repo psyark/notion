@@ -1,6 +1,8 @@
 package objectdoc
 
-import "github.com/dave/jennifer/jen"
+import (
+	"github.com/dave/jennifer/jen"
+)
 
 func init() {
 	registerConverter(converter{
@@ -182,16 +184,15 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNumber property value objects contain a number within the number property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("NumberPropertyItem").addField(&field{name: "number", typeCode: jen.Float64(), comment: e.Text})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Quantity\": {\n    \"object\": \"property_item\",\n    \"id\": \"XpXf\",\n    \"type\": \"number\",\n    \"number\": 1234\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Select property values",
@@ -209,41 +210,44 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nSelect property value objects contain the following data within the select property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("SelectPropertyItem").addField(&field{name: "select", typeCode: jen.Id("SelectPropertyItemData"), comment: e.Text})
+					b.add(&classStruct{name: "SelectPropertyItemData", comment: e.Text})
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
 				Property:     "id",
 				Type:         "string (UUIDv4)",
+				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("SelectPropertyItemData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					return nil
 				},
 			}, {
-				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
 				Property:     "name",
 				Type:         "string",
+				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
+				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("SelectPropertyItemData").addField(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
 				Property:     "color",
 				Type:         "string (enum)",
+				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
+				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("SelectPropertyItemData").addField(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Option\": {\n    \"object\": \"property_item\",\n    \"id\": \"%7CtzR\",\n    \"type\": \"select\",\n    \"select\": {\n      \"id\": \"64190ec9-e963-47cb-bc37-6a71d6b71206\",\n      \"name\": \"Option 1\",\n      \"color\": \"orange\"\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Multi-select property values",
@@ -261,14 +265,18 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nMulti-select property value objects contain an array of multi-select option values within the multi_select property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("MultiSelectPropertyItem").addField(&field{
+						name:     "multi_select",
+						typeCode: jen.Index().Id("MultiSelectPropertyItemData"),
+						comment:  e.Text,
+					})
+					b.add(&classStruct{name: "MultiSelectPropertyItemData", comment: e.Text})
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "Multi-select option values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Multi-select option values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParametersElement{{
 				Property:     "id",
@@ -276,7 +284,8 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("MultiSelectPropertyItemData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					return nil
 				},
 			}, {
 				Property:     "name",
@@ -284,7 +293,8 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("MultiSelectPropertyItemData").addField(e.asField(jen.String()))
+					return nil
 				},
 			}, {
 				Property:     "color",
@@ -292,16 +302,15 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("MultiSelectPropertyItemData").addField(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Tags\": {\n    \"object\": \"property_item\",\n    \"id\": \"z%7D%5C%3C\",\n    \"type\": \"multi_select\",\n    \"multi_select\": [\n      {\n        \"id\": \"91e6959e-7690-4f55-b8dd-d3da9debac45\",\n        \"name\": \"A\",\n        \"color\": \"orange\"\n      },\n      {\n        \"id\": \"2f998e2d-7b1c-485b-ba6b-5e6a815ec8f5\",\n        \"name\": \"B\",\n        \"color\": \"purple\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Date property values",
@@ -319,7 +328,9 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyItem").addField(&field{name: "date", typeCode: jen.Id("DatePropertyItemData"), comment: e.Text})
+					b.add(&classStruct{name: "DatePropertyItemData", comment: e.Text})
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
@@ -328,7 +339,8 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyItemData").addField(e.asField(jen.Id("ISO8601String")))
+					return nil
 				},
 			}, {
 				Property:     "end",
@@ -336,7 +348,8 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyItemData").addField(e.asField(jen.Id("ISO8601String")))
+					return nil
 				},
 			}, {
 				Property:     "time_zone",
@@ -344,16 +357,15 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("DatePropertyItemData").addField(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Shipment Time\": {\n    \"object\": \"property_item\",\n    \"id\": \"i%3Ahj\",\n    \"type\": \"date\",\n    \"date\": {\n      \"start\": \"2021-05-11T11:00:00.000-04:00\",\n      \"end\": null,\n      \"time_zone\": null\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Formula property values",
@@ -371,72 +383,57 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFormula property value objects represent the result of evaluating a formula described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("FormulaPropertyItem").addField(&field{
+						name:     "formula",
+						typeCode: jen.Id("Formula"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
 				Description: "The type of the formula result. Possible values are \"string\", \"number\", \"boolean\", and \"date\".",
 				Property:    "type",
 				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}},
 			&objectDocHeadingElement{
-				Text: "String formula property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "String formula property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nString formula property values contain an optional string within the string property.\n\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "\nString formula property values contain an optional string within the string property.\n\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Number formula property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Number formula property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nNumber formula property values contain an optional number within the number property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "\nNumber formula property values contain an optional number within the number property.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Boolean formula property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Boolean formula property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nBoolean formula property values contain a boolean within the boolean property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "\nBoolean formula property values contain a boolean within the boolean property.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Date formula property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Date formula property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nDate formula property values contain an optional date property value within the date property.",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "\nDate formula property values contain an optional date property value within the date property.",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Formula\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"formula\",\n    \"formula\": {\n      \"type\": \"number\",\n      \"number\": 1234\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Relation property values",
@@ -454,16 +451,19 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRelation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("RelationPropertyItem").addField(&field{
+						name:     "relation",
+						typeCode: jen.Index().Id("PageReference"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Project\": {\n    \"object\": \"list\",\n    \"results\": [\n      {\n        \"object\": \"property_item\",\n        \"id\": \"vYdV\",\n        \"type\": \"relation\",\n        \"relation\": {\n          \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"\n        }\n      }\n    ],\n    \"next_cursor\": null,\n    \"has_more\": true,\n    \"type\": \"property_item\",\n    \"property_item\": {\n      \"id\": \"vYdV\",\n      \"next_url\": null,\n      \"type\": \"relation\",\n      \"relation\": {}\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
@@ -481,16 +481,19 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRollup property value objects represent the result of evaluating a rollup described in the \ndatabase's properties. The property is returned as a list object of type property_item with a list of relation items used to computed the rollup under results. \n\nA rollup property item is also returned under the property_type key that describes the rollup aggregation and computed result. \n\nIn order to avoid timeouts, if the rollup has a with a large number of aggregations or properties the endpoint returns a next_cursor value that is used to determinate the aggregation value so far for the subset of relations that have been paginated through. \n\nOnce has_more is false, then the final rollup value is returned.  See the Pagination documentation for more information on pagination in the Notion API. \n\nComputing the values of following aggregations are not supported. Instead the endpoint returns a list of property_item objects for the rollup:\n* show_unique (Show unique values)\n* unique (Count unique values)\n* median(Median)",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getClassStruct("RollupPropertyItem").addField(&field{
+						name:     "rollup",
+						typeCode: jen.Id("Rollup"),
+						comment:  e.Text,
+					})
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
 				Description: "The type of rollup. Possible values are \"number\", \"date\", \"array\", \"unsupported\" and \"incomplete\".",
 				Property:    "type",
 				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Description: "Describes the aggregation used. \nPossible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original",
 				Property:    "function",

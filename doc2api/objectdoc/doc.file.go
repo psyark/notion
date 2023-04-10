@@ -12,10 +12,9 @@ func init() {
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
 					b.add(&classInterface{name: "File", comment: e.Body})
-					b.add(&classInterface{name: "FileOrEmoji"})
-
-					// TODO: 別ドキュメントの知識に依存しないように修正
-					b.getClassInterface("FileOrEmoji").addVariant(&classStruct{name: "Emoji", fields: []coder{&fixedStringField{name: "type", value: "emoji"}}})
+					if foe := b.getClassInterface("FileOrEmoji"); foe == nil {
+						b.addGlobal(&classInterface{name: "FileOrEmoji"})
+					}
 					return nil
 				},
 			},

@@ -37,31 +37,6 @@ func newFile(msg json.RawMessage) File {
 	return result
 }
 
-//
-type FileOrEmoji interface {
-	isFileOrEmoji()
-}
-
-func (_ *Emoji) isFileOrEmoji()            {}
-func (_ *NotionHostedFile) isFileOrEmoji() {}
-func (_ *ExternalFile) isFileOrEmoji()     {}
-
-func newFileOrEmoji(msg json.RawMessage) FileOrEmoji {
-	var result FileOrEmoji
-	switch string(getRawProperty(msg, "type")) {
-	case "\"emoji\"":
-		result = &Emoji{}
-	case "\"file\"":
-		result = &NotionHostedFile{}
-	case "\"external\"":
-		result = &ExternalFile{}
-	default:
-		panic(string(msg))
-	}
-	json.Unmarshal(msg, result)
-	return result
-}
-
 // Notion-hosted files
 type NotionHostedFile struct {
 	Type string               `always:"file" json:"type"`

@@ -11,7 +11,13 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classStruct{name: "Emoji", comment: e.Text})
+					cs := &classStruct{name: "Emoji", comment: e.Text}
+					b.add(cs)
+					if foe := b.getClassInterface("FileOrEmoji"); foe != nil {
+						foe.addVariant(cs)
+					} else {
+						b.addGlobal(&classInterface{name: "FileOrEmoji"})
+					}
 					return nil
 				},
 			},
