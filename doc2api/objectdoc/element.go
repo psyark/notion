@@ -3,6 +3,7 @@ package objectdoc
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -216,4 +217,20 @@ func (e *objectDocParameter) asField(typeCode jen.Code) *field {
 		typeCode: typeCode,
 		comment:  e.Description,
 	}
+}
+
+// asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (e *objectDocParameter) asFixedStringField() *fixedStringField {
+	ev := e.ExampleValue
+	if ev == "" {
+		ev = e.ExampleValues
+	}
+	if strings.HasPrefix(ev, `"`) && strings.HasSuffix(ev, `"`) {
+		return &fixedStringField{
+			name:    e.Property + e.Field,
+			value:   strings.TrimPrefix(strings.TrimSuffix(ev, `"`), `"`),
+			comment: e.Description,
+		}
+	}
+	panic(ev)
 }

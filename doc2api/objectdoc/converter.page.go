@@ -50,11 +50,8 @@ func init() {
 				Description:  `Always "page".`,
 				ExampleValue: `"page"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Page").addField(&fixedStringField{
-						name:    strings.TrimSuffix(e.Property, "*"),
-						value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
-						comment: e.Description,
-					})
+					e.Property = strings.TrimSuffix(e.Property, "*")
+					b.getClassStruct("Page").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {

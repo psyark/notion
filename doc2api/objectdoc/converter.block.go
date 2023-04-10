@@ -52,11 +52,8 @@ func init() {
 				Description:  `Always "block".`,
 				ExampleValue: `"block"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&fixedStringField{
-						name:    strings.TrimSuffix(e.Field, "*"),
-						value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
-						comment: e.Description,
-					})
+					e.Field = strings.TrimSuffix(e.Field, "*")
+					blockCommon.addField(e.asFixedStringField())
 					return nil
 				},
 			}, {

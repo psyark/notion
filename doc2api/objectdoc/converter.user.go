@@ -69,11 +69,8 @@ func init() {
 				Description:  `Always "user"`,
 				ExampleValue: `"user"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("PartialUser").addField(&fixedStringField{
-						name:    strings.TrimSuffix(e.Property, "*"),
-						value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
-						comment: e.Description,
-					})
+					e.Property = strings.TrimSuffix(e.Property, "*")
+					b.getClassStruct("PartialUser").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {

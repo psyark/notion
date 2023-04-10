@@ -1,8 +1,6 @@
 package objectdoc
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 )
 
@@ -32,11 +30,7 @@ func init() {
 				Description:   `Always "database_id".`,
 				ExampleValues: `"database_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("DatabaseParent").addField(&fixedStringField{
-						name:    e.Property,
-						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
-						comment: e.Description,
-					})
+					b.getClassStruct("DatabaseParent").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -73,11 +67,7 @@ func init() {
 				Description:   `Always "page_id".`,
 				ExampleValues: `"page_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("PageParent").addField(&fixedStringField{
-						name:    e.Property,
-						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
-						comment: e.Description,
-					})
+					b.getClassStruct("PageParent").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -121,11 +111,7 @@ func init() {
 				Description:   `Always "workspace".`,
 				ExampleValues: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("WorkspaceParent").addField(&fixedStringField{
-						name:    e.Property,
-						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
-						comment: e.Description,
-					})
+					b.getClassStruct("WorkspaceParent").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -169,11 +155,7 @@ func init() {
 				Description:   `Always "block_id".`,
 				ExampleValues: `"block_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BlockParent").addField(&fixedStringField{
-						name:    e.Property,
-						value:   strings.ReplaceAll(e.ExampleValues, `"`, ""),
-						comment: e.Description,
-					})
+					b.getClassStruct("BlockParent").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {

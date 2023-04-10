@@ -1,8 +1,6 @@
 package objectdoc
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 )
 
@@ -445,11 +443,7 @@ func init() {
 						name: "TemplateMentionUser",
 						fields: []coder{
 							&fixedStringField{name: "type", value: e.Field},
-							&fixedStringField{
-								name:    e.Field,
-								value:   strings.ReplaceAll(e.ExampleValue, `"`, ""),
-								comment: e.Description,
-							},
+							e.asFixedStringField(),
 						},
 					}
 					b.add(cs)

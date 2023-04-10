@@ -1,8 +1,6 @@
 package objectdoc
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 )
 
@@ -37,11 +35,7 @@ func init() {
 				Description:  `The constant string "emoji" that represents the object type.`,
 				ExampleValue: `"emoji"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Emoji").addField(&fixedStringField{
-						name:    e.Property,
-						value:   strings.ReplaceAll(e.Type, `"`, ""),
-						comment: e.Description,
-					})
+					b.getClassStruct("Emoji").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
