@@ -193,7 +193,7 @@ func convertAll() error {
 	for _, c := range global.coders {
 		if c, ok := c.(*abstractObject); ok {
 			sort.Slice(c.variants, func(i, j int) bool {
-				return c.variants[i].name < c.variants[j].name
+				return c.variants[i].getName() < c.variants[j].getName()
 			})
 		}
 	}

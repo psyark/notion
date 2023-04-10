@@ -12,9 +12,9 @@ func init() {
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.add(&abstractObject{name: "PropertyItem", comment: e.Text})
-					b.add(&abstractObject{name: "PropertyItemOrPropertyItemPagination"})
+					b.add(&abstractObject{name: "PropertyItemOrPropertyItemPagination", specifiedBy: "object"})
 					// TODO: PropertyItemOrPropertyItemPaginationの派生としてPropertyItemを登録
-					// b.getClassInterface("PropertyItemOrPropertyItemPagination").addVariant(b.getClassInterface("PropertyItem"))
+					// b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(b.getAbstractObject("PropertyItem"))
 					return nil
 				},
 			},

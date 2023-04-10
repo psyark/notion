@@ -10,6 +10,9 @@ import (
 // objectCoder はオブジェクトを作成するためのCoderです
 type objectCoder interface {
 	coder
+	getName() string
+	getFields() []coder
+	addField(coder, ...bool)
 }
 
 var _ = []objectCoder{
@@ -26,21 +29,19 @@ type specificObject struct {
 	fields  []coder
 }
 
+func (c *specificObject) getName() string {
+	return c.name
+}
+func (c *specificObject) getFields() []coder {
+	return c.fields
+}
+
 func (c *specificObject) addField(f coder, prepend ...bool) {
 	if len(prepend) != 0 {
 		c.fields = append([]coder{f}, c.fields...)
 	} else {
 		c.fields = append(c.fields, f)
 	}
-}
-
-// TODO 廃止
-// Deprecated: use abstractObject
-func (c *specificObject) createVariant(variant specificObject) *specificObject {
-	variant.fields = append([]coder{
-		&field{typeCode: jen.Id(c.name)},
-	}, variant.fields...)
-	return &variant
 }
 
 func (c *specificObject) code() jen.Code {
@@ -94,17 +95,24 @@ type abstractObject struct {
 	specifiedBy   string // "type", "object" など、バリアントを識別するためのプロパティ
 	fields        []coder
 	fieldsComment string
-	variants      []*specificObject
+	variants      []objectCoder
 }
 
-func (c *abstractObject) addField(f coder) {
+func (c *abstractObject) getName() string {
+	return c.name
+}
+func (c *abstractObject) getFields() []coder {
+	return c.fields
+}
+
+func (c *abstractObject) addField(f coder, prepend ...bool) {
 	c.fields = append(c.fields, f)
 }
 
-// addVariant は指定したclassStructをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
+// addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
 // - バリアントに対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切なバリアントを作成するUnmarshalerを作成
-func (c *abstractObject) addVariant(variant *specificObject) {
+func (c *abstractObject) addVariant(variant objectCoder) {
 	variant.addField(&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")}, true)
 	c.variants = append(c.variants, variant)
 }
@@ -127,18 +135,23 @@ func (c *abstractObject) code() jen.Code {
 
 	// バリアントにisメソッドを実装
 	cases := []jen.Code{}
+	specifiedBy := c.specifiedBy
+	if specifiedBy == "" {
+		specifiedBy = "type"
+		_, _ = fmt.Printf("%v にspecifiedByが指定されていません\n", c.name)
+	}
 	for _, v := range c.variants {
-		code.Func().Params(jen.Id("_").Op("*").Id(v.name)).Id("is" + c.name).Params().Block().Line()
+		code.Func().Params(jen.Id("_").Op("*").Id(v.getName())).Id("is" + c.name).Params().Block().Line()
 		found := false
-		for _, f := range v.fields {
-			if f, ok := f.(*fixedStringField); ok && f.name == "type" { // TODO: "type" の決め打ちを廃止
-				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(v.name).Values())
+		for _, f := range v.getFields() {
+			if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
+				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(v.getName()).Values())
 				found = true
 				break
 			}
 		}
 		if !found {
-			panic(fmt.Errorf("type not found for %v", v.name))
+			panic(fmt.Errorf("%s not found for %v", specifiedBy, v.getName()))
 		}
 	}
 
@@ -150,7 +163,7 @@ func (c *abstractObject) code() jen.Code {
 		code.Line().Type().Id(name).Struct(
 			jen.Id("value").Id(c.name),
 		).Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit("type"))).Block(cases...),
+			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(specifiedBy))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
 	}
