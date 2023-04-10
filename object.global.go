@@ -9,19 +9,19 @@ type FileOrEmoji interface {
 	isFileOrEmoji()
 }
 
-func (_ *NotionHostedFile) isFileOrEmoji() {}
-func (_ *ExternalFile) isFileOrEmoji()     {}
 func (_ *Emoji) isFileOrEmoji()            {}
+func (_ *ExternalFile) isFileOrEmoji()     {}
+func (_ *NotionHostedFile) isFileOrEmoji() {}
 
 func newFileOrEmoji(msg json.RawMessage) FileOrEmoji {
 	var result FileOrEmoji
 	switch string(getRawProperty(msg, "type")) {
-	case "\"file\"":
-		result = &NotionHostedFile{}
-	case "\"external\"":
-		result = &ExternalFile{}
 	case "\"emoji\"":
 		result = &Emoji{}
+	case "\"external\"":
+		result = &ExternalFile{}
+	case "\"file\"":
+		result = &NotionHostedFile{}
 	default:
 		panic(string(msg))
 	}

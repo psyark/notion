@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -186,6 +187,15 @@ func convertAll() error {
 	}
 	if err := eg.Wait(); err != nil {
 		return err
+	}
+
+	// グローバルビルダーはバリアントをソートし、冪等性を保ちます
+	for _, c := range global.coders {
+		if c, ok := c.(*classInterface); ok {
+			sort.Slice(c.variants, func(i, j int) bool {
+				return c.variants[i].name < c.variants[j].name
+			})
+		}
 	}
 
 	file := jen.NewFile("notion")

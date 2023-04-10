@@ -12,9 +12,7 @@ func init() {
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
 					b.add(&classInterface{name: "File", comment: e.Body})
-					if foe := b.getClassInterface("FileOrEmoji"); foe == nil {
-						b.addGlobal(&classInterface{name: "FileOrEmoji"})
-					}
+					b.addGlobalIfNotExists(&classInterface{name: "FileOrEmoji"})
 					return nil
 				},
 			},

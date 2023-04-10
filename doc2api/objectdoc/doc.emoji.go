@@ -13,11 +13,8 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					cs := &classStruct{name: "Emoji", comment: e.Text}
 					b.add(cs)
-					if foe := b.getClassInterface("FileOrEmoji"); foe != nil {
-						foe.addVariant(cs)
-					} else {
-						b.addGlobal(&classInterface{name: "FileOrEmoji"})
-					}
+					b.addGlobalIfNotExists(&classInterface{name: "FileOrEmoji"})
+					b.getClassInterface("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},

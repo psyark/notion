@@ -29,7 +29,18 @@ func (b *builder) add(c coder) {
 	b.coders = append(b.coders, c)
 }
 
-func (b *builder) addGlobal(c coder) {
+// addGlobalIfNotExists はグローバルビルダーに（そのコーダーが登録されていなければ）登録します
+func (b *builder) addGlobalIfNotExists(c coder) {
+	switch c := c.(type) {
+	case *classStruct:
+		if b.global.getClassStruct(c.name) != nil {
+			return
+		}
+	case *classInterface:
+		if b.global.getClassInterface(c.name) != nil {
+			return
+		}
+	}
 	b.global.add(c)
 }
 
