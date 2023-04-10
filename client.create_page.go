@@ -2,7 +2,6 @@ package notion
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -13,7 +12,7 @@ func (c *Client) CreatePage(ctx context.Context, params *CreatePageParams, optio
 	co := &callOptions{
 		method: http.MethodPost,
 		params: params,
-		path:   fmt.Sprintf("/v1/pages"),
+		path:   "/v1/pages",
 		result: result,
 	}
 	for _, o := range options {

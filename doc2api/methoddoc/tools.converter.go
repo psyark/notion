@@ -115,11 +115,16 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 		params = jen.Id("params")
 	}
 
+	pathCode := jen.Lit(path)
+	if len(pathParams) != 1 {
+		pathCode = jen.Qual("fmt", "Sprintf").Call(pathParams...)
+	}
+
 	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.returnType(), jen.Error()).Block(
 		jen.Id("result").Op(":=").Add(c.returnType.unmarshaller()).Values(),
 		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
 			jen.Id("method"): jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
-			jen.Id("path"):   jen.Qual("fmt", "Sprintf").Call(pathParams...),
+			jen.Id("path"):   pathCode,
 			jen.Id("params"): params,
 			jen.Id("result"): jen.Id("result"),
 		}),
