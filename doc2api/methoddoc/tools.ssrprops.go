@@ -104,7 +104,7 @@ type ssrPropsParam struct {
 func (p ssrPropsParam) compare(p2 ssrPropsParam) error {
 	s1 := &jen.Statement{p.Code()}
 	s2 := &jen.Statement{p2.Code()}
-	if s1.GoString() != (s2).GoString() {
+	if s1.GoString() != s2.GoString() {
 		return fmt.Errorf("mismatch: \n%#v\n%#v", s1, s2)
 	}
 	return nil
@@ -136,5 +136,5 @@ func (p ssrPropsParam) Code() jen.Code {
 	if p.Required {
 		dict[jen.Id("Required")] = jen.True()
 	}
-	return jen.Op("&").Id("SSRPropsDocAPIParam").Values(dict)
+	return jen.Id("ssrPropsParam").Values(dict)
 }

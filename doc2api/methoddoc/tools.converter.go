@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
@@ -15,9 +16,9 @@ import (
 
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
 type converter struct {
-	url                   string          // ドキュメントのURL
-	localCopyOfBodyParams []ssrPropsParam // ボディパラメータのローカルコピー
-	returnType            returnTypeCoder // リターンタイプ
+	url        string          // ドキュメントのURL
+	localCopy  []ssrPropsParam // パラメータのローカルコピー
+	returnType returnTypeCoder // リターンタイプ
 }
 
 func (c *converter) convert() error {
@@ -43,17 +44,33 @@ func (c *converter) convert() error {
 		return err
 	}
 
+	{
+		fileName := "tmp/" + strings.TrimPrefix(c.url, "https://developers.notion.com/reference/") + ".go"
+		if len(c.localCopy) == 0 {
+			localCopyCodes := []jen.Code{}
+			for _, p := range sp.Doc.API.Params {
+				localCopyCodes = append(localCopyCodes, &jen.Statement{jen.Line(), p.Code()})
+			}
+			gostr := jen.NewFile("tmp")
+			gostr.Var().Id("LOCAL_COPY").Op("=").Index().Id("ssrPropsParam").Values(jen.List(localCopyCodes...), jen.Line())
+			if err := gostr.Save(fileName); err != nil {
+				return err
+			}
+			return fmt.Errorf("localCopyが足りません (see %s)", fileName)
+		} else {
+			os.Remove(fileName)
+		}
+	}
+
 	// ローカルコピーとの比較
 	remoteMap := map[string]ssrPropsParam{}
 	for _, p := range sp.Doc.API.Params {
-		if p.In == "body" {
-			remoteMap[p.Name] = p
-		}
+		remoteMap[p.Name] = p
 	}
-	if len(remoteMap) != len(c.localCopyOfBodyParams) {
-		return fmt.Errorf("localCopyOfBodyParamsの数(%d)がリモート(%d)と一致しません", len(c.localCopyOfBodyParams), len(remoteMap))
+	if len(remoteMap) != len(c.localCopy) {
+		return fmt.Errorf("localCopyOfBodyParamsの数(%d)がリモート(%d)と一致しません", len(c.localCopy), len(remoteMap))
 	}
-	for _, local := range c.localCopyOfBodyParams {
+	for _, local := range c.localCopy {
 		if err := local.compare(remoteMap[local.Name]); err != nil {
 			return err
 		}
@@ -118,7 +135,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 
 	if hasBodyParams {
 		fields := []jen.Code{}
-		for _, param := range c.localCopyOfBodyParams {
+		for _, param := range c.localCopy {
 			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
 		}
 		file.Type().Id(methodName + "Params").Struct(fields...).Line()
