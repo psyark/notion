@@ -52,7 +52,7 @@ func init() {
 					propertyValueCommon.addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},
@@ -237,7 +237,7 @@ func init() {
 					b.getClassStruct("SelectPropertyValueData").addField(&field{
 						name:     e.Property,
 						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},
@@ -250,7 +250,7 @@ func init() {
 					b.getClassStruct("SelectPropertyValueData").addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},
@@ -263,7 +263,7 @@ func init() {
 					b.getClassStruct("SelectPropertyValueData").addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},
@@ -342,7 +342,7 @@ func init() {
 					b.getClassStruct("StatusPropertyValueData").addField(&field{
 						name:     e.Property,
 						typeCode: jen.String(),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},

@@ -607,7 +607,7 @@ func init() {
 					b.getClassStruct("Text").addField(&field{
 						name:     e.Field,
 						typeCode: jen.Op("*").Id("URLReference"), // RetrivePageでnullを確認
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil
 				},

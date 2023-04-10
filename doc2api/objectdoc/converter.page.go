@@ -170,7 +170,7 @@ func init() {
 					b.getClassStruct("Page").addField(&field{
 						name:     e.Property,
 						typeCode: jen.Id("PropertyValueMap"),
-						comment:  strings.ReplaceAll(e.Description, "\n", " "),
+						comment:  e.Description,
 					})
 					return nil // TODO
 				},
