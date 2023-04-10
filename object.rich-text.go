@@ -73,7 +73,7 @@ type Annotations struct {
 	Strikethrough bool   `json:"strikethrough"` // Whether the text is struck through.
 	Underline     bool   `json:"underline"`     // Whether the text is underlined.
 	Code          bool   `json:"code"`          // Whether the text is code style.
-	Color         string `json:"color"`         // Color of the text. Possible values include: - "blue"- "blue_background"- "brown"- "brown_background"- "default"- "gray"- "gray_background"- "green"- "green_background"- "orange"-"orange_background"- "pink"- "pink_background"- "purple"- "purple_background"- "red"- "red_background”- "yellow"- "yellow_background"
+	Color         string `json:"color"`         // Color of the text. Possible values include:   - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" -"orange_background" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background” - "yellow" - "yellow_background"
 }
 
 // Rich text type objects

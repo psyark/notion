@@ -99,11 +99,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Id("ISO8601String"),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -112,11 +108,7 @@ func init() {
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Id("PartialUser"),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -125,11 +117,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Id("ISO8601String"),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -138,11 +126,7 @@ func init() {
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Id("PartialUser"),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -151,11 +135,7 @@ func init() {
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Bool(),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -164,11 +144,7 @@ func init() {
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
-						name:     e.Field,
-						typeCode: jen.Bool(),
-						comment:  e.Description,
-					})
+					blockCommon.addField(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -242,11 +218,7 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BookmarkBlock").addField(&field{
-						name:     e.Field,
-						typeCode: jen.Index().Id("RichText"),
-						comment:  e.Description,
-					})
+					b.getClassStruct("BookmarkBlock").addField(e.asField(jen.Index().Id("RichText")))
 					return nil
 				},
 			}, {
@@ -254,11 +226,7 @@ func init() {
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BookmarkBlock").addField(&field{
-						name:     e.Field,
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					b.getClassStruct("BookmarkBlock").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},

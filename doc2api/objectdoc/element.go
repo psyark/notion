@@ -3,6 +3,8 @@ package objectdoc
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/dave/jennifer/jen"
 )
 
 var errUnmatch = fmt.Errorf("unmatch")
@@ -205,4 +207,13 @@ func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *build
 		}
 	}
 	return nil
+}
+
+// asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (e *objectDocParameter) asField(typeCode jen.Code) *field {
+	return &field{
+		name:     e.Property + e.Field,
+		typeCode: typeCode,
+		comment:  e.Description,
+	}
 }

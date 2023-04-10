@@ -50,11 +50,7 @@ func init() {
 				Description:  "The emoji character.",
 				ExampleValue: `"😻"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Emoji").addField(&field{
-						name:     e.Property,
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					b.getClassStruct("Emoji").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},

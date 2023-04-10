@@ -103,11 +103,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					allUser.addField(&field{
-						name:     e.Property,
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					allUser.addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -116,11 +112,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					allUser.addField(&field{
-						name:     e.Property,
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					allUser.addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -153,11 +145,7 @@ func init() {
 				Description: "Properties only present for non-bot users.",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.add(&classStruct{name: "PersonData", comment: e.Description})
-					b.getClassStruct("PersonUser").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("PersonData"),
-						comment:  e.Description,
-					})
+					b.getClassStruct("PersonUser").addField(e.asField(jen.Id("PersonData")))
 					return nil
 				},
 			}, {
@@ -204,11 +192,7 @@ func init() {
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getClassStruct("BotUser").comment += "\n\n" + e.ExampleValue
-					b.getClassStruct("BotUser").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("BotData"),
-						comment:  e.Description,
-					})
+					b.getClassStruct("BotUser").addField(e.asField(jen.Id("BotData")))
 					b.add(&classStruct{name: "BotData", comment: e.Description})
 					return nil
 				},
@@ -218,11 +202,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotData").addField(&field{
-						name:     e.Property,
-						typeCode: jen.Id("BotDataOwner"),
-						comment:  e.Description,
-					})
+					b.getClassStruct("BotData").addField(e.asField(jen.Id("BotDataOwner")))
 					b.add(&classStruct{name: "BotDataOwner", comment: e.Description})
 					return nil
 				},
@@ -245,11 +225,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotData").addField(&field{
-						name:     e.Property,
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					b.getClassStruct("BotData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
