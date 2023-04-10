@@ -69,23 +69,13 @@ type ssrPropsDoc struct {
 }
 
 type ssrPropsAPI struct {
-	Method string          `json:"method"` // post
-	Params []ssrPropsParam `json:"params"` // [map[_id:609176570b6bf20019821ce8 default: desc...
-	URL    string          `json:"url"`    // /v1/databases/{database_id}/query
+	Method string         `json:"method"` // post
+	Params ssrPropsParams `json:"params"` // [map[_id:609176570b6bf20019821ce8 default: desc...
+	URL    string         `json:"url"`    // /v1/databases/{database_id}/query
 	// Results    map[string]any  `json:"results"`              // map[codes:[map[code:{"object": "list","resu...
 	// APISetting string          `json:"apiSetting,omitempty"` // 606ecc2cd9e93b0044cf6e47
 	// Auth       string          `json:"auth"`                 // required
 	// Examples   map[string]any  `json:"examples,omitempty"`   // map[codes:[map[code:const { Client } = require(...
-}
-
-func (api *ssrPropsAPI) filterParams(in string) []ssrPropsParam {
-	params := []ssrPropsParam{}
-	for _, param := range api.Params {
-		if param.In == in {
-			params = append(params, param)
-		}
-	}
-	return params
 }
 
 type ssrPropsParam struct {
@@ -102,16 +92,18 @@ type ssrPropsParam struct {
 }
 
 func (p ssrPropsParam) compare(p2 ssrPropsParam) error {
-	s1 := &jen.Statement{p.Code()}
-	s2 := &jen.Statement{p2.Code()}
+	s1 := &jen.Statement{p.code()}
+	s2 := &jen.Statement{p2.code()}
 	if s1.GoString() != s2.GoString() {
 		return fmt.Errorf("mismatch: \n%#v\n%#v", s1, s2)
 	}
 	return nil
 }
 
-func (p ssrPropsParam) Code() jen.Code {
-	dict := jen.Dict{}
+func (p ssrPropsParam) code() jen.Code {
+	dict := jen.Dict{
+		jen.Id("typeCode"): jen.Nil().Comment("/*TODO*/"),
+	}
 	if p.Default != "" {
 		dict[jen.Id("Default")] = jen.Lit(p.Default)
 	}
@@ -137,4 +129,36 @@ func (p ssrPropsParam) Code() jen.Code {
 		dict[jen.Id("Required")] = jen.True()
 	}
 	return jen.Id("ssrPropsParam").Values(dict)
+}
+
+type ssrPropsParams []ssrPropsParam
+
+func (p ssrPropsParams) filter(in string) ssrPropsParams {
+	params := ssrPropsParams{}
+	for _, param := range p {
+		if param.In == in {
+			params = append(params, param)
+		}
+	}
+	return params
+}
+
+func (p ssrPropsParams) compare(p2 ssrPropsParams) error {
+	if len(p) != len(p2) {
+		return fmt.Errorf("mismatch: %d, %d", len(p), len(p2))
+	}
+	for i := range p {
+		if err := p[i].compare(p2[i]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p ssrPropsParams) code() jen.Code {
+	values := []jen.Code{}
+	for _, param := range p {
+		values = append(values, &jen.Statement{jen.Line(), param.code()})
+	}
+	return jen.Id("ssrPropsParams").Values(jen.List(values...), jen.Line())
 }

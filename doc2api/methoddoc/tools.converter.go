@@ -16,9 +16,10 @@ import (
 
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
 type converter struct {
-	url        string          // ドキュメントのURL
-	localCopy  []ssrPropsParam // パラメータのローカルコピー
-	returnType returnTypeCoder // リターンタイプ
+	url                   string          // ドキュメントのURL
+	localCopyOfPathParams []ssrPropsParam // pathパラメータのローカルコピー
+	localCopyOfBodyParams []ssrPropsParam // bodyパラメータのローカルコピー
+	returnType            returnTypeCoder // リターンタイプ
 }
 
 func (c *converter) convert() error {
@@ -44,46 +45,44 @@ func (c *converter) convert() error {
 		return err
 	}
 
-	{
-		fileName := "tmp/" + strings.TrimPrefix(c.url, "https://developers.notion.com/reference/") + ".go"
-		if len(c.localCopy) == 0 {
-			localCopyCodes := []jen.Code{}
-			for _, p := range sp.Doc.API.Params {
-				localCopyCodes = append(localCopyCodes, &jen.Statement{jen.Line(), p.Code()})
-			}
+	fileName := "tmp/" + strings.TrimPrefix(c.url, "https://developers.notion.com/reference/") + ".go"
+	os.Remove(fileName)
+
+	updateTmpFile := func() {
+		if len(c.localCopyOfPathParams) == 0 || len(c.localCopyOfBodyParams) == 0 {
 			gostr := jen.NewFile("tmp")
-			gostr.Var().Id("LOCAL_COPY").Op("=").Index().Id("ssrPropsParam").Values(jen.List(localCopyCodes...), jen.Line())
-			if err := gostr.Save(fileName); err != nil {
-				return err
+			if len(c.localCopyOfPathParams) == 0 {
+				gostr.Var().Id("PATH_PARAMS").Op("=").Add(sp.Doc.API.Params.filter("path").code())
 			}
-			return fmt.Errorf("localCopyが足りません (see %s)", fileName)
-		} else {
-			os.Remove(fileName)
+			if len(c.localCopyOfBodyParams) == 0 {
+				gostr.Var().Id("BODY_PARAMS").Op("=").Add(sp.Doc.API.Params.filter("body").code())
+			}
+			if err := gostr.Save(fileName); err != nil {
+				panic(err)
+			}
 		}
 	}
 
 	// ローカルコピーとの比較
-	remoteMap := map[string]ssrPropsParam{}
-	for _, p := range sp.Doc.API.Params {
-		remoteMap[p.Name] = p
+	if err := sp.Doc.API.Params.filter("path").compare(c.localCopyOfPathParams); err != nil {
+		updateTmpFile()
+		return fmt.Errorf("path params mismatch: %w", err)
 	}
-	if len(remoteMap) != len(c.localCopy) {
-		return fmt.Errorf("localCopyOfBodyParamsの数(%d)がリモート(%d)と一致しません", len(c.localCopy), len(remoteMap))
-	}
-	for _, local := range c.localCopy {
-		if err := local.compare(remoteMap[local.Name]); err != nil {
-			return err
-		}
+	if err := sp.Doc.API.Params.filter("body").compare(c.localCopyOfBodyParams); err != nil {
+		updateTmpFile()
+		return fmt.Errorf("body params mismatch: %w", err)
 	}
 
-	c.output(file, sp.Doc)
+	if err := c.output(file, sp.Doc); err != nil {
+		return err
+	}
 
 	return file.Save(fmt.Sprintf("../../client.%s.go", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " "))))
 }
 
-func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
+func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	file.Comment(doc.Title).Line().Comment(c.url)
-	hasBodyParams := len(doc.API.filterParams("body")) != 0
+	hasBodyParams := len(doc.API.Params.filter("body")) != 0
 
 	methodName := strcase.UpperCamelCase(strings.ReplaceAll(doc.Title, " a ", " "))
 	methodParams := []jen.Code{
@@ -91,7 +90,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 	}
 
 	// APIのパスパラメータを引数化
-	for _, param := range doc.API.filterParams("path") {
+	for _, param := range doc.API.Params.filter("path") {
 		if param.Type != "string" {
 			panic(param.Type)
 		}
@@ -135,11 +134,16 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) {
 
 	if hasBodyParams {
 		fields := []jen.Code{}
-		for _, param := range c.localCopy {
+		for _, param := range c.localCopyOfBodyParams {
+			if param.typeCode == nil {
+				return fmt.Errorf("no typeCode for %s", param.Name)
+			}
 			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
 		}
 		file.Type().Id(methodName + "Params").Struct(fields...).Line()
 	}
+
+	return nil
 }
 
 var registeredConverters []converter

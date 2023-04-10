@@ -15,6 +15,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
+					b.add(&classInterface{name: "Block", comment: e.Text})
 					blockCommon = &classStruct{name: "blockCommon", comment: e.Text}
 					b.add(blockCommon)
 					return nil
@@ -193,13 +194,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					v := blockCommon.createVariant(classStruct{
 						name: "BookmarkBlock",
 						fields: []coder{
-							&field{typeCode: jen.Id(blockCommon.name)},
 							&fixedStringField{name: "type", value: "bookmark"},
 						},
 					})
+					b.add(v)
+					b.getClassInterface("Block").addVariant(v)
 					return nil
 				},
 			},
