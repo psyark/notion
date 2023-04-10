@@ -17,6 +17,26 @@ func init() {
 		},
 	})
 	registerConverter(converter{
+		url:        "https://developers.notion.com/reference/retrieve-a-page-property",
+		returnType: returnsStructRef("PropertyItem"),
+		localCopyOfPathParams: ssrPropsParams{
+			{
+				Desc:     "Identifier for a Notion page",
+				In:       "path",
+				Name:     "page_id",
+				Type:     "string",
+				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+			},
+			{
+				Desc:     "Identifier for a page [property](https://developers.notion.com/reference/page#all-property-values)",
+				In:       "path",
+				Name:     "property_id",
+				Type:     "string",
+				typeCode: jen.String(),
+			},
+		},
+	})
+	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/post-page",
 		returnType: returnsStructRef("Page"),
 		localCopyOfBodyParams: ssrPropsParams{
