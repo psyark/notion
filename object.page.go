@@ -30,9 +30,18 @@ type Page struct {
 }
 
 func (o *Page) UnmarshalJSON(data []byte) error {
-	o.Icon = newFileOrEmoji(getRawProperty(data, "icon"))
-	o.Cover = newFile(getRawProperty(data, "cover"))
-	o.Parent = newParent(getRawProperty(data, "parent"))
 	type Alias Page
-	return json.Unmarshal(data, (*Alias)(o))
+	t := &struct {
+		*Alias
+		Icon   fileOrEmojiUnmarshaler `json:"icon"`
+		Cover  fileUnmarshaler        `json:"cover"`
+		Parent parentUnmarshaler      `json:"parent"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return err
+	}
+	o.Icon = t.Icon.value
+	o.Cover = t.Cover.value
+	o.Parent = t.Parent.value
+	return nil
 }

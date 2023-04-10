@@ -5,6 +5,7 @@ package notion
 
 // An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI.
 type Emoji struct {
+	fileOrEmojiCommon
 	Type  string `always:"emoji" json:"type"` // The constant string "emoji" that represents the object type.
 	Emoji string `json:"emoji"`               // The emoji character.
 }

@@ -7,17 +7,13 @@ import (
 )
 
 func init() {
-	var blockCommon *classStruct
-
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/block",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classInterface{name: "Block", comment: e.Text})
-					blockCommon = &classStruct{name: "blockCommon", comment: e.Text}
-					b.add(blockCommon)
+					b.add(&abstractObject{name: "Block", comment: e.Text})
 					return nil
 				},
 			},
@@ -25,15 +21,12 @@ func init() {
 				Code:     "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					blockCommon.comment += "\n\n" + e.Code
-					return nil
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocParagraphElement{
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					blockCommon.comment += "\n\n" + e.Text
+					b.getAbstractObject("Block").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -54,7 +47,7 @@ func init() {
 				ExampleValue: `"block"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					blockCommon.addField(e.asFixedStringField())
+					b.getAbstractObject("Block").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -63,7 +56,7 @@ func init() {
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
+					b.getAbstractObject("Block").addField(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
 						comment:  e.Description,
@@ -76,7 +69,7 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(&field{
+					b.getAbstractObject("Block").addField(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Id("Parent"),
 						comment:  e.Description,
@@ -97,7 +90,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Id("ISO8601String")))
+					b.getAbstractObject("Block").addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -106,7 +99,7 @@ func init() {
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Id("PartialUser")))
+					b.getAbstractObject("Block").addField(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -115,7 +108,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Id("ISO8601String")))
+					b.getAbstractObject("Block").addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -124,7 +117,7 @@ func init() {
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Id("PartialUser")))
+					b.getAbstractObject("Block").addField(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -133,7 +126,7 @@ func init() {
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Bool()))
+					b.getAbstractObject("Block").addField(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -142,7 +135,7 @@ func init() {
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					blockCommon.addField(e.asField(jen.Bool()))
+					b.getAbstractObject("Block").addField(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -157,14 +150,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block types that support child blocks",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					blockCommon.comment += "\n" + e.Text
+					b.getAbstractObject("Block").comment += "\n" + e.Text
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nSome block types contain nested blocks. The following block types support child blocks: \n\n- Bulleted list item\n- Callout \n- Child database\n- Child page\n- Column\n- Heading 1, when the is_toggleable property is true\n- Heading 2, when the is_toggleable property is true\n- Heading 3, when the is_toggleable property is true\n- Numbered list item\n- Paragraph \n- Quote\n- Synced block\n- Table\n- Template\n- To do\n- Toggle ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					blockCommon.comment += e.Text
+					b.getAbstractObject("Block").comment += e.Text
 					return nil
 				},
 			},
@@ -173,7 +166,7 @@ func init() {
 				Title: "The API does not support all block types.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					blockCommon.comment += "\n\n" + e.Title + "\n" + e.Body
+					b.getAbstractObject("Block").comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
@@ -194,21 +187,21 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					v := blockCommon.createVariant(classStruct{
+					v := &specificObject{
 						name: "BookmarkBlock",
 						fields: []coder{
 							&fixedStringField{name: "type", value: "bookmark"},
 						},
-					})
+					}
 					b.add(v)
-					b.getClassInterface("Block").addVariant(v)
+					b.getAbstractObject("Block").addVariant(v)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBookmark block objects contain the following information within the bookmark property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("BookmarkBlock").comment = strings.TrimSpace(e.Text)
+					b.getSpecificObject("BookmarkBlock").comment = strings.TrimSpace(e.Text)
 					return nil
 				},
 			},
@@ -217,7 +210,7 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BookmarkBlock").addField(e.asField(jen.Index().Id("RichText")))
+					b.getSpecificObject("BookmarkBlock").addField(e.asField(jen.Index().Id("RichText")))
 					return nil
 				},
 			}, {
@@ -225,7 +218,7 @@ func init() {
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BookmarkBlock").addField(e.asField(jen.String()))
+					b.getSpecificObject("BookmarkBlock").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -233,7 +226,7 @@ func init() {
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
+					b.getSpecificObject("BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
 					return nil
 				},
 			}}},

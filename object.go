@@ -20,13 +20,14 @@ type PageReference struct {
 type RichTextArray []RichText
 
 func (rta *RichTextArray) UnmarshalJSON(data []byte) error {
-	x := []json.RawMessage{}
-	if err := json.Unmarshal(data, &x); err != nil {
+	t := []richTextUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
 		return err
 	}
-	*rta = make([]RichText, len(x))
-	for i, m := range x {
-		(*rta)[i] = newRichText(m)
+
+	*rta = make([]RichText, len(t))
+	for i, u := range t {
+		(*rta)[i] = u.value
 	}
 	return nil
 }
@@ -34,13 +35,13 @@ func (rta *RichTextArray) UnmarshalJSON(data []byte) error {
 type PropertyValueMap map[string]PropertyValue
 
 func (pvm *PropertyValueMap) UnmarshalJSON(data []byte) error {
-	x := map[string]json.RawMessage{}
-	if err := json.Unmarshal(data, &x); err != nil {
+	t := map[string]propertyValueUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
 		return err
 	}
 	*pvm = PropertyValueMap{}
-	for k, v := range x {
-		(*pvm)[k] = newPropertyValue(v)
+	for k, v := range t {
+		(*pvm)[k] = v.value
 	}
 	return nil
 }

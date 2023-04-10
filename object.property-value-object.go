@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -13,9 +14,13 @@ A property value defines the identifier, type, and value of a page property in a
 
 Property values in the page object have a 25 page reference limit
 Any property value that has other pages in its value will only use the first 25 page references. Use the [Retrieve a page property](https://developers.notion.com/reference/retrieve-a-page-property) endpoint to paginate through the full value.
+Each page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
 */
 type PropertyValue interface {
 	isPropertyValue()
+}
+type propertyValueCommon struct {
+	Id string `json:"id"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
 func (_ *TitlePropertyValue) isPropertyValue()          {}
@@ -39,62 +44,56 @@ func (_ *CreatedByPropertyValue) isPropertyValue()      {}
 func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
 func (_ *LastEditedByPropertyValue) isPropertyValue()   {}
 
-func newPropertyValue(msg json.RawMessage) PropertyValue {
-	var result PropertyValue
-	switch string(getRawProperty(msg, "type")) {
-	case "\"title\"":
-		result = &TitlePropertyValue{}
-	case "\"rich_text\"":
-		result = &RichTextPropertyValue{}
-	case "\"number\"":
-		result = &NumberPropertyValue{}
-	case "\"select\"":
-		result = &SelectPropertyValue{}
-	case "\"status\"":
-		result = &StatusPropertyValue{}
-	case "\"multi_select\"":
-		result = &MultiSelectPropertyValue{}
-	case "\"date\"":
-		result = &DatePropertyValue{}
-	case "\"formula\"":
-		result = &FormulaPropertyValue{}
-	case "\"relation\"":
-		result = &RelationPropertyValue{}
-	case "\"rollup\"":
-		result = &RollupPropertyValue{}
-	case "\"people\"":
-		result = &PeoplePropertyValue{}
-	case "\"files\"":
-		result = &FilesPropertyValue{}
-	case "\"checkbox\"":
-		result = &CheckboxPropertyValue{}
-	case "\"url\"":
-		result = &UrlPropertyValue{}
-	case "\"email\"":
-		result = &EmailPropertyValue{}
-	case "\"phone_number\"":
-		result = &PhoneNumberPropertyValue{}
-	case "\"created_time\"":
-		result = &CreatedTimePropertyValue{}
-	case "\"created_by\"":
-		result = &CreatedByPropertyValue{}
-	case "\"last_edited_time\"":
-		result = &LastEditedTimePropertyValue{}
-	case "\"last_edited_by\"":
-		result = &LastEditedByPropertyValue{}
-	default:
-		panic(string(msg))
-	}
-	json.Unmarshal(msg, result)
-	return result
+type propertyValueUnmarshaler struct {
+	value PropertyValue
 }
 
-/*
-All property values
-Each page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
-*/
-type propertyValueCommon struct {
-	Id string `json:"id"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
+	case "\"title\"":
+		u.value = &TitlePropertyValue{}
+	case "\"rich_text\"":
+		u.value = &RichTextPropertyValue{}
+	case "\"number\"":
+		u.value = &NumberPropertyValue{}
+	case "\"select\"":
+		u.value = &SelectPropertyValue{}
+	case "\"status\"":
+		u.value = &StatusPropertyValue{}
+	case "\"multi_select\"":
+		u.value = &MultiSelectPropertyValue{}
+	case "\"date\"":
+		u.value = &DatePropertyValue{}
+	case "\"formula\"":
+		u.value = &FormulaPropertyValue{}
+	case "\"relation\"":
+		u.value = &RelationPropertyValue{}
+	case "\"rollup\"":
+		u.value = &RollupPropertyValue{}
+	case "\"people\"":
+		u.value = &PeoplePropertyValue{}
+	case "\"files\"":
+		u.value = &FilesPropertyValue{}
+	case "\"checkbox\"":
+		u.value = &CheckboxPropertyValue{}
+	case "\"url\"":
+		u.value = &UrlPropertyValue{}
+	case "\"email\"":
+		u.value = &EmailPropertyValue{}
+	case "\"phone_number\"":
+		u.value = &PhoneNumberPropertyValue{}
+	case "\"created_time\"":
+		u.value = &CreatedTimePropertyValue{}
+	case "\"created_by\"":
+		u.value = &CreatedByPropertyValue{}
+	case "\"last_edited_time\"":
+		u.value = &LastEditedTimePropertyValue{}
+	case "\"last_edited_by\"":
+		u.value = &LastEditedByPropertyValue{}
+	default:
+		return fmt.Errorf("unknown type: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
 }
 
 /*
@@ -209,50 +208,57 @@ type FormulaPropertyValue struct {
 type Formula interface {
 	isFormula()
 }
+type formulaCommon struct{}
 
 func (_ *StringFormula) isFormula()  {}
 func (_ *NumberFormula) isFormula()  {}
 func (_ *BooleanFormula) isFormula() {}
 func (_ *DateFormula) isFormula()    {}
 
-func newFormula(msg json.RawMessage) Formula {
-	var result Formula
-	switch string(getRawProperty(msg, "type")) {
+type formulaUnmarshaler struct {
+	value Formula
+}
+
+func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
-		result = &StringFormula{}
+		u.value = &StringFormula{}
 	case "\"number\"":
-		result = &NumberFormula{}
+		u.value = &NumberFormula{}
 	case "\"boolean\"":
-		result = &BooleanFormula{}
+		u.value = &BooleanFormula{}
 	case "\"date\"":
-		result = &DateFormula{}
+		u.value = &DateFormula{}
 	default:
-		panic(string(msg))
+		return fmt.Errorf("unknown type: %s", string(data))
 	}
-	json.Unmarshal(msg, result)
-	return result
+	return json.Unmarshal(data, u.value)
 }
 
 // String formula property values
 type StringFormula struct {
+	formulaCommon
 	Type   string `always:"string" json:"type"`
 	String string `json:"string"` //  String formula property values contain an optional string within the string property.
 }
 
 // Number formula property values
 type NumberFormula struct {
+	formulaCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number formula property values contain an optional number within the number property.
 }
 
 // Boolean formula property values
 type BooleanFormula struct {
+	formulaCommon
 	Type    string `always:"boolean" json:"type"`
 	Boolean bool   `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
 }
 
 // Date formula property values
 type DateFormula struct {
+	formulaCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date formula property values contain an optional date property value within the date property.
 }
@@ -289,50 +295,57 @@ type RollupPropertyValue struct {
 type Rollup interface {
 	isRollup()
 }
+type rollupCommon struct{}
 
 func (_ *StringRollup) isRollup() {}
 func (_ *NumberRollup) isRollup() {}
 func (_ *DateRollup) isRollup()   {}
 func (_ *ArrayRollup) isRollup()  {}
 
-func newRollup(msg json.RawMessage) Rollup {
-	var result Rollup
-	switch string(getRawProperty(msg, "type")) {
+type rollupUnmarshaler struct {
+	value Rollup
+}
+
+func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
-		result = &StringRollup{}
+		u.value = &StringRollup{}
 	case "\"number\"":
-		result = &NumberRollup{}
+		u.value = &NumberRollup{}
 	case "\"date\"":
-		result = &DateRollup{}
+		u.value = &DateRollup{}
 	case "\"array\"":
-		result = &ArrayRollup{}
+		u.value = &ArrayRollup{}
 	default:
-		panic(string(msg))
+		return fmt.Errorf("unknown type: %s", string(data))
 	}
-	json.Unmarshal(msg, result)
-	return result
+	return json.Unmarshal(data, u.value)
 }
 
 // String rollup property values
 type StringRollup struct {
+	rollupCommon
 	Type   string `always:"string" json:"type"`
 	String string `json:"string"` //  String rollup property values contain an optional string within the string property.
 }
 
 // Number rollup property values
 type NumberRollup struct {
+	rollupCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number rollup property values contain a number within the number property.
 }
 
 // Date rollup property values
 type DateRollup struct {
+	rollupCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date rollup property values contain a date property value within the date property.
 }
 
 // Array rollup property values
 type ArrayRollup struct {
+	rollupCommon
 	Type  string   `always:"array" json:"type"`
 	Array []Rollup `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
 }

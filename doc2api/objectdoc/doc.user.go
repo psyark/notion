@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	allUser := &classStruct{name: "allUser"}
+	allUser := &specificObject{name: "allUser"}
 
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/user",
@@ -16,8 +16,8 @@ func init() {
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					allUser.comment = e.Text
-					b.add(&classInterface{name: "User", comment: e.Text})
-					b.add(&classStruct{name: "PartialUser", comment: e.Text})
+					b.add(&abstractObject{name: "User", comment: e.Text})
+					b.add(&specificObject{name: "PartialUser", comment: e.Text})
 					b.add(allUser)
 					allUser.addField(&field{typeCode: jen.Id("PartialUser")})
 					return nil
@@ -70,7 +70,7 @@ func init() {
 				ExampleValue: `"user"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					e.Property = strings.TrimSuffix(e.Property, "*")
-					b.getClassStruct("PartialUser").addField(e.asFixedStringField())
+					b.getSpecificObject("PartialUser").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -79,7 +79,7 @@ func init() {
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("PartialUser").addField(&field{
+					b.getSpecificObject("PartialUser").addField(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
 						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
 						comment:  e.Description,
@@ -116,7 +116,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "PersonUser",
 						comment: e.Text,
 						fields: []coder{
@@ -125,14 +125,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("User").addVariant(cs)
+					b.getAbstractObject("User").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nUser objects that represent people have the type property set to \"person\". These objects also have the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("PersonUser").comment += e.Text
+					b.getSpecificObject("PersonUser").comment += e.Text
 					return nil
 				},
 			},
@@ -141,8 +141,8 @@ func init() {
 				Type:        "object",
 				Description: "Properties only present for non-bot users.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.add(&classStruct{name: "PersonData", comment: e.Description})
-					b.getClassStruct("PersonUser").addField(e.asField(jen.Id("PersonData")))
+					b.add(&specificObject{name: "PersonData", comment: e.Description})
+					b.getSpecificObject("PersonUser").addField(e.asField(jen.Id("PersonData")))
 					return nil
 				},
 			}, {
@@ -151,7 +151,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("PersonData").addField(&field{
+					b.getSpecificObject("PersonData").addField(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -162,7 +162,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "BotUser",
 						comment: e.Text,
 						fields: []coder{
@@ -171,14 +171,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("User").addVariant(cs)
+					b.getAbstractObject("User").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("BotUser").comment += e.Text
+					b.getSpecificObject("BotUser").comment += e.Text
 					return nil
 				},
 			},
@@ -188,9 +188,9 @@ func init() {
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotUser").comment += "\n\n" + e.ExampleValue
-					b.getClassStruct("BotUser").addField(e.asField(jen.Id("BotData")))
-					b.add(&classStruct{name: "BotData", comment: e.Description})
+					b.getSpecificObject("BotUser").comment += "\n\n" + e.ExampleValue
+					b.getSpecificObject("BotUser").addField(e.asField(jen.Id("BotData")))
+					b.add(&specificObject{name: "BotData", comment: e.Description})
 					return nil
 				},
 			}, {
@@ -199,8 +199,8 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotData").addField(e.asField(jen.Id("BotDataOwner")))
-					b.add(&classStruct{name: "BotDataOwner", comment: e.Description})
+					b.getSpecificObject("BotData").addField(e.asField(jen.Id("BotDataOwner")))
+					b.add(&specificObject{name: "BotDataOwner", comment: e.Description})
 					return nil
 				},
 			}, {
@@ -209,7 +209,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotDataOwner").addField(&field{
+					b.getSpecificObject("BotDataOwner").addField(&field{
 						name:     "type",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -222,7 +222,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("BotData").addField(e.asField(jen.String()))
+					b.getSpecificObject("BotData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},

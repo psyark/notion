@@ -11,15 +11,15 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.add(&classInterface{name: "File", comment: e.Body})
-					b.addGlobalIfNotExists(&classInterface{name: "FileOrEmoji"})
+					b.add(&abstractObject{name: "File", comment: e.Body})
+					b.addGlobalIfNotExists(&abstractObject{name: "FileOrEmoji"})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "File objects contain data about a file that is uploaded to Notion, or data about an external file that is linked to in Notion. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassInterface("File").comment += "\n\n" + e.Text
+					b.getAbstractObject("File").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -38,7 +38,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Page, embed, image, video, file, pdf, and bookmark block types all contain file objects. Icon and cover page object values also contain file objects.\n\nEach file object includes the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassInterface("File").comment += "\n\n" + e.Text
+					b.getAbstractObject("File").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -58,7 +58,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "NotionHostedFile",
 						comment: e.Text,
 						fields: []coder{
@@ -67,15 +67,15 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("File").addVariant(cs)
-					b.getClassInterface("FileOrEmoji").addVariant(cs)
+					b.getAbstractObject("File").addVariant(cs)
+					b.getAbstractObject("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAll Notion-hosted files have a\u00a0type\u00a0of\u00a0\"file\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "NotionHostedFileData",
 						comment: e.Text,
 					})
@@ -88,7 +88,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("NotionHostedFileData").addField(e.asField(jen.String()))
+					b.getSpecificObject("NotionHostedFileData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -97,14 +97,14 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("NotionHostedFileData").addField(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("NotionHostedFileData").addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "You can retrieve links to Notion-hosted files via the Retrieve block children endpoint. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("NotionHostedFileData").comment += "\n" + e.Text
+					b.getSpecificObject("NotionHostedFileData").comment += "\n" + e.Text
 					return nil
 				},
 			},
@@ -139,7 +139,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "ExternalFile",
 						comment: e.Text,
 						fields: []coder{
@@ -148,15 +148,15 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("File").addVariant(cs)
-					b.getClassInterface("FileOrEmoji").addVariant(cs)
+					b.getAbstractObject("File").addVariant(cs)
+					b.getAbstractObject("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAn external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of \"external\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "ExternalFileData",
 						comment: e.Text,
 					})
@@ -169,14 +169,14 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("ExternalFileData").addField(e.asField(jen.String()))
+					b.getSpecificObject("ExternalFileData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "The Notion API supports adding, retrieving, and updating links to external files.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("ExternalFileData").comment += "\n\n" + e.Text
+					b.getSpecificObject("ExternalFileData").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -279,7 +279,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassInterface("File").comment += "\n\n" + e.Body
+					b.getAbstractObject("File").comment += "\n\n" + e.Body
 					return nil
 				},
 			},

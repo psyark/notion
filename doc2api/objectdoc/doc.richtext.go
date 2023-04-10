@@ -5,8 +5,7 @@ import (
 )
 
 func init() {
-	var richTextCommon *classStruct
-	annotations := &classStruct{name: "Annotations"}
+	annotations := &specificObject{name: "Annotations"}
 
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/rich-text",
@@ -14,9 +13,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classInterface{name: "RichText", comment: e.Text})
-					richTextCommon = &classStruct{name: "richTextCommon", comment: e.Text}
-					b.add(richTextCommon)
+					b.add(&abstractObject{name: "RichText", comment: e.Text})
 					return nil
 				},
 			},
@@ -25,7 +22,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					richTextCommon.comment += "\n\n" + e.Code
+					b.getAbstractObject("RichText").comment += "\n\n" + e.Code
 					return nil
 				},
 			}}},
@@ -55,7 +52,7 @@ func init() {
 				Description:  "The information used to style the rich text object. Refer to the annotation object section below for details.",
 				ExampleValue: "Refer to the annotation object section below for examples.",
 				output: func(e *objectDocParameter, b *builder) error {
-					richTextCommon.addField(e.asField(jen.Id(annotations.name)))
+					b.getAbstractObject("RichText").addField(e.asField(jen.Id(annotations.name)))
 					return nil
 				},
 			}, {
@@ -64,7 +61,7 @@ func init() {
 				Description:  "The plain text without annotations.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					richTextCommon.addField(e.asField(jen.String()))
+					b.getAbstractObject("RichText").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -73,7 +70,7 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					richTextCommon.addField(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
+					b.getAbstractObject("RichText").addField(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
@@ -157,23 +154,22 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "EquationRichText",
 						comment: e.Text,
 						fields: []coder{
-							&field{typeCode: jen.Id(richTextCommon.name)},
 							&fixedStringField{name: "type", value: "equation"},
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("RichText").addVariant(cs)
+					b.getAbstractObject("RichText").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNotion supports inline LaTeX equations as rich text object’s with a type value of \"equation\". The corresponding equation type object contains the following: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("EquationRichText").comment += e.Text
+					b.getSpecificObject("EquationRichText").comment += e.Text
 					return nil
 				},
 			},
@@ -183,14 +179,14 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("EquationRichText").addField(e.asField(jen.String()))
+					b.getSpecificObject("EquationRichText").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "Example rich text equation object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("EquationRichText").comment += "\n\n" + e.Text
+					b.getSpecificObject("EquationRichText").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -199,32 +195,31 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("EquationRichText").comment += "\n" + e.Code
+					b.getSpecificObject("EquationRichText").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classInterface{name: "Mention", comment: e.Text})
-					cs := &classStruct{
+					b.add(&abstractObject{name: "Mention", comment: e.Text})
+					cs := &specificObject{
 						name:    "MentionRichText",
 						comment: e.Text,
 						fields: []coder{
-							&field{typeCode: jen.Id(richTextCommon.name)},
 							&fixedStringField{name: "type", value: "mention"},
 							&field{name: "mention", typeCode: jen.Id("Mention")},
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("RichText").addVariant(cs)
+					b.getAbstractObject("RichText").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nMention objects represent an inline mention of a database, date, link preview mention, page, template mention, or user. A mention is created in the Notion UI when a user types\u00a0@\u00a0followed by the name of the reference.\n\nIf a rich text object’s type value is \"mention\", then the corresponding mention object contains the following:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassInterface("Mention").comment += e.Text
+					b.getAbstractObject("Mention").comment += e.Text
 					return nil
 				},
 			},
@@ -244,7 +239,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "DatabaseMention",
 						comment: e.Text,
 						fields: []coder{
@@ -253,14 +248,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
+					b.getAbstractObject("Mention").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDatabase mentions contain a database reference within the corresponding\u00a0database\u00a0field. A database reference is an object with an\u00a0id\u00a0key and a string value (UUIDv4) corresponding to a database ID.\n\nIf an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a database mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("DatabaseMention").comment += e.Text
+					b.getSpecificObject("DatabaseMention").comment += e.Text
 					return nil
 				},
 			},
@@ -269,14 +264,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("DatabaseMention").comment += "\n" + e.Code
+					b.getSpecificObject("DatabaseMention").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "DateMention",
 						comment: e.Text,
 						fields: []coder{
@@ -285,14 +280,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
+					b.getAbstractObject("Mention").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate mentions contain a\u00a0date property value object\u00a0within the corresponding\u00a0date\u00a0field.\n\nExample rich text mention object for a date mention",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("DateMention").comment += e.Text
+					b.getSpecificObject("DateMention").comment += e.Text
 					return nil
 				},
 			},
@@ -301,14 +296,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("DateMention").comment += "\n" + e.Code
+					b.getSpecificObject("DateMention").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Link Preview mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "LinkPreviewMention",
 						comment: e.Text,
 						fields: []coder{
@@ -317,14 +312,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
+					b.getAbstractObject("Mention").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nIf a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.\n\nExample rich text mention object for a link_preview mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("LinkPreviewMention").comment += e.Text
+					b.getSpecificObject("LinkPreviewMention").comment += e.Text
 					return nil
 				},
 			},
@@ -333,14 +328,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("LinkPreviewMention").comment += "\n" + e.Code
+					b.getSpecificObject("LinkPreviewMention").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Page mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "PageMention",
 						comment: e.Text,
 						fields: []coder{
@@ -349,14 +344,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
+					b.getAbstractObject("Mention").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nPage mentions contain a page reference within the corresponding\u00a0page\u00a0field. A page reference is an object with an\u00a0id\u00a0property and a string value (UUIDv4) corresponding to a page ID.\n\nIf an integration doesn’t have access to the mentioned page, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a page mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("PageMention").comment += e.Text
+					b.getSpecificObject("PageMention").comment += e.Text
 					return nil
 				},
 			},
@@ -365,14 +360,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("PageMention").comment += "\n" + e.Code
+					b.getSpecificObject("PageMention").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "TemplateMention",
 						comment: e.Text,
 						fields: []coder{
@@ -381,15 +376,15 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
-					b.add(&classInterface{name: "TemplateMentionData"})
+					b.getAbstractObject("Mention").addVariant(cs)
+					b.add(&abstractObject{name: "TemplateMentionData"})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThe content inside a template button in the Notion UI can include placeholder date and user mentions that populate when a template is duplicated. Template mention type objects contain these populated values. \n\nTemplate mention rich text objects contain a\u00a0template_mention\u00a0object with a nested\u00a0type\u00a0key that is either\u00a0\"template_mention_date\"\u00a0or\u00a0\"template_mention_user\".\n\nIf the\u00a0type\u00a0key is\u00a0\"template_mention_date\", then the rich text object contains the following template_mention_date field:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("TemplateMention").comment += e.Text
+					b.getSpecificObject("TemplateMention").comment += e.Text
 					return nil
 				},
 			},
@@ -399,7 +394,7 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name: "TemplateMentionDate",
 						fields: []coder{
 							&fixedStringField{name: "type", value: e.Field},
@@ -407,14 +402,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("TemplateMentionData").addVariant(cs)
+					b.getAbstractObject("TemplateMentionData").addVariant(cs)
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a template_mention_date mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("TemplateMentionDate").comment += e.Text
+					b.getSpecificObject("TemplateMentionDate").comment += e.Text
 					return nil
 				},
 			},
@@ -423,7 +418,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("TemplateMentionDate").comment += "\n" + e.Code
+					b.getSpecificObject("TemplateMentionDate").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
@@ -439,7 +434,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name: "TemplateMentionUser",
 						fields: []coder{
 							&fixedStringField{name: "type", value: e.Field},
@@ -447,14 +442,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("TemplateMentionData").addVariant(cs)
+					b.getAbstractObject("TemplateMentionData").addVariant(cs)
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a template_mention_user mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("TemplateMentionUser").comment += e.Text
+					b.getSpecificObject("TemplateMentionUser").comment += e.Text
 					return nil
 				},
 			},
@@ -463,14 +458,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("TemplateMentionUser").comment += "\n" + e.Code
+					b.getSpecificObject("TemplateMentionUser").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "User mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "UserMention",
 						comment: e.Text,
 						fields: []coder{
@@ -479,14 +474,14 @@ func init() {
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("Mention").addVariant(cs)
+					b.getAbstractObject("Mention").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"user\", then the corresponding user field contains a\u00a0user object. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("UserMention").comment += e.Text
+					b.getSpecificObject("UserMention").comment += e.Text
 					return nil
 				},
 			},
@@ -495,14 +490,14 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("UserMention").comment += "\n" + e.Body
+					b.getSpecificObject("UserMention").comment += "\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a user mention",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("UserMention").comment += "\n\n" + e.Text
+					b.getSpecificObject("UserMention").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -511,31 +506,30 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("UserMention").comment += "\n" + e.Code
+					b.getSpecificObject("UserMention").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "TextRichText",
 						comment: e.Text,
 						fields: []coder{
-							&field{typeCode: jen.Id(richTextCommon.name)},
 							&fixedStringField{name: "type", value: "text"},
 							&field{name: "text", typeCode: jen.Id("Text")},
 						},
 					}
 					b.add(cs)
-					b.getClassInterface("RichText").addVariant(cs)
+					b.getAbstractObject("RichText").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classStruct{name: "Text", comment: e.Text})
+					b.add(&specificObject{name: "Text", comment: e.Text})
 					return nil
 				},
 			},
@@ -545,7 +539,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Text").addField(e.asField(jen.String()))
+					b.getSpecificObject("Text").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -554,14 +548,14 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Text").addField(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					b.getSpecificObject("Text").addField(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "Example rich text text object without link ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("Text").comment += "\n\n" + e.Text
+					b.getSpecificObject("Text").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -570,14 +564,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("Text").comment += "\n" + e.Code
+					b.getSpecificObject("Text").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Example rich text text object with link ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getClassStruct("Text").comment += "\n\n" + e.Text
+					b.getSpecificObject("Text").comment += "\n\n" + e.Text
 					return nil
 				},
 			},
@@ -586,7 +580,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getClassStruct("Text").comment += "\n" + e.Code
+					b.getSpecificObject("Text").comment += "\n" + e.Code
 					return nil
 				},
 			}}},
@@ -595,7 +589,7 @@ func init() {
 				Title: "Rich text object limits",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassInterface("RichText").comment += "\n\n" + e.Title + "\n" + e.Body
+					b.getAbstractObject("RichText").comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},

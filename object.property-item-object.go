@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -13,6 +14,15 @@ A property_item object describes the identifier, type, and value of a page prope
 */
 type PropertyItem interface {
 	isPropertyItem()
+}
+
+/*
+
+Each page property item object contains the following keys. In addition, it will contain a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
+*/
+type propertyItemCommon struct {
+	Object string `always:"property_item" json:"object"` // Always "property_item".
+	Id     string `json:"id"`                            // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
 func (_ *TitlePropertyItem) isPropertyItem()          {}
@@ -35,62 +45,61 @@ func (_ *CreatedByPropertyItem) isPropertyItem()      {}
 func (_ *LastEditedTimePropertyItem) isPropertyItem() {}
 func (_ *LastEditedByPropertyItem) isPropertyItem()   {}
 
-func newPropertyItem(msg json.RawMessage) PropertyItem {
-	var result PropertyItem
-	switch string(getRawProperty(msg, "type")) {
-	case "\"title\"":
-		result = &TitlePropertyItem{}
-	case "\"rich_text\"":
-		result = &RichTextPropertyItem{}
-	case "\"number\"":
-		result = &NumberPropertyItem{}
-	case "\"select\"":
-		result = &SelectPropertyItem{}
-	case "\"multi_select\"":
-		result = &MultiSelectPropertyItem{}
-	case "\"date\"":
-		result = &DatePropertyItem{}
-	case "\"formula\"":
-		result = &FormulaPropertyItem{}
-	case "\"relation\"":
-		result = &RelationPropertyItem{}
-	case "\"rollup\"":
-		result = &RollupPropertyItem{}
-	case "\"people\"":
-		result = &PeoplePropertyItem{}
-	case "\"files\"":
-		result = &FilesPropertyItem{}
-	case "\"checkbox\"":
-		result = &CheckboxPropertyItem{}
-	case "\"url\"":
-		result = &UrlPropertyItem{}
-	case "\"email\"":
-		result = &EmailPropertyItem{}
-	case "\"phone_number\"":
-		result = &PhoneNumberPropertyItem{}
-	case "\"created_time\"":
-		result = &CreatedTimePropertyItem{}
-	case "\"created_by\"":
-		result = &CreatedByPropertyItem{}
-	case "\"last_edited_time\"":
-		result = &LastEditedTimePropertyItem{}
-	case "\"last_edited_by\"":
-		result = &LastEditedByPropertyItem{}
-	default:
-		panic(string(msg))
-	}
-	json.Unmarshal(msg, result)
-	return result
+type propertyItemUnmarshaler struct {
+	value PropertyItem
 }
 
-/*
-All property items
-Each page property item object contains the following keys. In addition, it will contain a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
-*/
-type propertyItemCommon struct {
-	Object string `always:"property_item" json:"object"` // Always "property_item".
-	Id     string `json:"id"`                            // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
+	case "\"title\"":
+		u.value = &TitlePropertyItem{}
+	case "\"rich_text\"":
+		u.value = &RichTextPropertyItem{}
+	case "\"number\"":
+		u.value = &NumberPropertyItem{}
+	case "\"select\"":
+		u.value = &SelectPropertyItem{}
+	case "\"multi_select\"":
+		u.value = &MultiSelectPropertyItem{}
+	case "\"date\"":
+		u.value = &DatePropertyItem{}
+	case "\"formula\"":
+		u.value = &FormulaPropertyItem{}
+	case "\"relation\"":
+		u.value = &RelationPropertyItem{}
+	case "\"rollup\"":
+		u.value = &RollupPropertyItem{}
+	case "\"people\"":
+		u.value = &PeoplePropertyItem{}
+	case "\"files\"":
+		u.value = &FilesPropertyItem{}
+	case "\"checkbox\"":
+		u.value = &CheckboxPropertyItem{}
+	case "\"url\"":
+		u.value = &UrlPropertyItem{}
+	case "\"email\"":
+		u.value = &EmailPropertyItem{}
+	case "\"phone_number\"":
+		u.value = &PhoneNumberPropertyItem{}
+	case "\"created_time\"":
+		u.value = &CreatedTimePropertyItem{}
+	case "\"created_by\"":
+		u.value = &CreatedByPropertyItem{}
+	case "\"last_edited_time\"":
+		u.value = &LastEditedTimePropertyItem{}
+	case "\"last_edited_by\"":
+		u.value = &LastEditedByPropertyItem{}
+	default:
+		return fmt.Errorf("unknown type: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
 }
+
+//
+type PropertyItemOrPropertyItemPagination interface {
+	isPropertyItemOrPropertyItemPagination()
+}
+type propertyItemOrPropertyItemPaginationCommon struct{}
 
 /*
 Paginated property values

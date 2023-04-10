@@ -11,10 +11,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					cs := &classStruct{name: "Emoji", comment: e.Text}
+					cs := &specificObject{name: "Emoji", comment: e.Text}
 					b.add(cs)
-					b.addGlobalIfNotExists(&classInterface{name: "FileOrEmoji"})
-					b.getClassInterface("FileOrEmoji").addVariant(cs)
+					b.addGlobalIfNotExists(&abstractObject{name: "FileOrEmoji"})
+					b.getAbstractObject("FileOrEmoji").addVariant(cs)
 					return nil
 				},
 			},
@@ -38,7 +38,7 @@ func init() {
 				Description:  `The constant string "emoji" that represents the object type.`,
 				ExampleValue: `"emoji"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Emoji").addField(e.asFixedStringField())
+					b.getSpecificObject("Emoji").addField(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -47,7 +47,7 @@ func init() {
 				Description:  "The emoji character.",
 				ExampleValue: `"😻"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("Emoji").addField(e.asField(jen.String()))
+					b.getSpecificObject("Emoji").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},

@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -19,28 +20,31 @@ Parenting rules:
 type Parent interface {
 	isParent()
 }
+type parentCommon struct{}
 
 func (_ *DatabaseParent) isParent()  {}
 func (_ *PageParent) isParent()      {}
 func (_ *WorkspaceParent) isParent() {}
 func (_ *BlockParent) isParent()     {}
 
-func newParent(msg json.RawMessage) Parent {
-	var result Parent
-	switch string(getRawProperty(msg, "type")) {
+type parentUnmarshaler struct {
+	value Parent
+}
+
+func (u *parentUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
 	case "\"database_id\"":
-		result = &DatabaseParent{}
+		u.value = &DatabaseParent{}
 	case "\"page_id\"":
-		result = &PageParent{}
+		u.value = &PageParent{}
 	case "\"workspace\"":
-		result = &WorkspaceParent{}
+		u.value = &WorkspaceParent{}
 	case "\"block_id\"":
-		result = &BlockParent{}
+		u.value = &BlockParent{}
 	default:
-		panic(string(msg))
+		return fmt.Errorf("unknown type: %s", string(data))
 	}
-	json.Unmarshal(msg, result)
-	return result
+	return json.Unmarshal(data, u.value)
 }
 
 /*
@@ -52,6 +56,7 @@ Database parent
 }
 */
 type DatabaseParent struct {
+	parentCommon
 	Type       string    `always:"database_id" json:"type"` // Always "database_id".
 	DatabaseId uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
 }
@@ -65,6 +70,7 @@ Page parent
 }
 */
 type PageParent struct {
+	parentCommon
 	Type   string    `always:"page_id" json:"type"` // Always "page_id".
 	PageId uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
 }
@@ -79,6 +85,7 @@ A page with a workspace parent is a top-level page within a Notion workspace. Th
 }
 */
 type WorkspaceParent struct {
+	parentCommon
 	Type      string `always:"workspace" json:"type"` // Always "workspace".
 	Workspace bool   `json:"workspace"`               // Always true.
 }
@@ -93,6 +100,7 @@ A page may have a block parent if it is created inline in a chunk of text, or is
 }
 */
 type BlockParent struct {
+	parentCommon
 	Type    string    `always:"block_id" json:"type"` // Always "block_id".
 	BlockId uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
 }

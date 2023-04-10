@@ -191,7 +191,7 @@ func convertAll() error {
 
 	// グローバルビルダーはバリアントをソートし、冪等性を保ちます
 	for _, c := range global.coders {
-		if c, ok := c.(*classInterface); ok {
+		if c, ok := c.(*abstractObject); ok {
 			sort.Slice(c.variants, func(i, j int) bool {
 				return c.variants[i].name < c.variants[j].name
 			})

@@ -5,15 +5,13 @@ import (
 )
 
 func init() {
-	var propertyValueCommon *classStruct
-
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/property-value-object",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&classInterface{name: "PropertyValue", comment: e.Text})
+					b.add(&abstractObject{name: "PropertyValue", comment: e.Text})
 					return nil
 				},
 			},
@@ -22,22 +20,18 @@ func init() {
 				Title: "Property values in the page object have a 25 page reference limit",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassInterface("PropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					b.getAbstractObject("PropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "All property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					propertyValueCommon = &classStruct{name: "propertyValueCommon", comment: e.Text}
-					b.add(propertyValueCommon)
-					return nil
-				},
+				Text:   "All property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
 				Text: "\nEach page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					propertyValueCommon.comment += e.Text
+					b.getAbstractObject("PropertyValue").comment += e.Text
 					return nil
 				},
 			},
@@ -47,7 +41,7 @@ func init() {
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
 				ExampleValue: `"f%5C%5C%3Ap"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					propertyValueCommon.addField(e.asField(jen.String()))
+					b.getAbstractObject("PropertyValue").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -60,20 +54,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "TitlePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "title"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nTitle property value objects contain an array of rich text objects within the title property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("TitlePropertyValue").addField(&field{
+					b.getSpecificObject("TitlePropertyValue").addField(&field{
 						name:     "title",
 						typeCode: jen.Id("RichTextArray"),
 						comment:  e.Text,
@@ -103,27 +97,27 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("TitlePropertyValue").comment += "\n\n" + e.Body
+					b.getSpecificObject("TitlePropertyValue").comment += "\n\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Rich Text property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "RichTextPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "rich_text"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nRich Text property value objects contain an array of rich text objects within the rich_text property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("RichTextPropertyValue").addField(&field{
+					b.getSpecificObject("RichTextPropertyValue").addField(&field{
 						name:     "rich_text",
 						typeCode: jen.Id("RichTextArray"),
 						comment:  e.Text,
@@ -151,27 +145,27 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("RichTextPropertyValue").comment += "\n\n" + e.Body
+					b.getSpecificObject("RichTextPropertyValue").comment += "\n\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "NumberPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber property value objects contain a number within the number property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("NumberPropertyValue").addField(&field{
+					b.getSpecificObject("NumberPropertyValue").addField(&field{
 						name:     "number",
 						typeCode: jen.Float64(),
 						comment:  e.Text,
@@ -197,25 +191,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "SelectPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "select"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nSelect property value objects contain the following data within the select property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("SelectPropertyValue").addField(&field{
+					b.getSpecificObject("SelectPropertyValue").addField(&field{
 						name:     "select",
 						typeCode: jen.Id("SelectPropertyValueData"),
 						comment:  e.Text,
 					})
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "SelectPropertyValueData",
 						comment: e.Text,
 					})
@@ -228,7 +222,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("SelectPropertyValueData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("SelectPropertyValueData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}, {
@@ -237,7 +231,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("SelectPropertyValueData").addField(e.asField(jen.String()))
+					b.getSpecificObject("SelectPropertyValueData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -246,7 +240,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("SelectPropertyValueData").addField(e.asField(jen.String()))
+					b.getSpecificObject("SelectPropertyValueData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -264,25 +258,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "StatusPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "status"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nStatus property value objects contain the following data within the status property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("StatusPropertyValue").addField(&field{
+					b.getSpecificObject("StatusPropertyValue").addField(&field{
 						name:     "status",
 						typeCode: jen.Id("StatusPropertyValueData"),
 						comment:  e.Text,
 					})
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "StatusPropertyValueData",
 						comment: e.Text,
 					})
@@ -295,7 +289,7 @@ func init() {
 				Description:  "ID of the option.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("StatusPropertyValueData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("StatusPropertyValueData").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}, {
@@ -304,7 +298,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.",
 				ExampleValue: `"In progress"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("StatusPropertyValueData").addField(e.asField(jen.String()))
+					b.getSpecificObject("StatusPropertyValueData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -313,7 +307,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("StatusPropertyValueData").addField(e.asField(jen.String()))
+					b.getSpecificObject("StatusPropertyValueData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -331,20 +325,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "MultiSelectPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "multi_select"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nMulti-select property value objects contain an array of multi-select option values within the multi_select property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("MultiSelectPropertyValue").addField(&field{
+					b.getSpecificObject("MultiSelectPropertyValue").addField(&field{
 						name:     "multi_select",
 						typeCode: jen.Index().Id("MultiSelectOption"),
 						comment:  e.Text,
@@ -355,7 +349,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select option values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "MultiSelectOption",
 						comment: e.Text,
 					})
@@ -368,7 +362,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("MultiSelectOption").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("MultiSelectOption").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}, {
@@ -377,7 +371,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("MultiSelectOption").addField(e.asField(jen.String()))
+					b.getSpecificObject("MultiSelectOption").addField(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -386,7 +380,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("MultiSelectOption").addField(e.asField(jen.String()))
+					b.getSpecificObject("MultiSelectOption").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -404,25 +398,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "DatePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("DatePropertyValue").addField(&field{
+					b.getSpecificObject("DatePropertyValue").addField(&field{
 						name:     "date",
 						typeCode: jen.Id("DatePropertyValueData"),
 						comment:  e.Text,
 					})
-					b.add(&classStruct{
+					b.add(&specificObject{
 						name:    "DatePropertyValueData",
 						comment: e.Text,
 					})
@@ -435,7 +429,7 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("DatePropertyValueData").addField(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("DatePropertyValueData").addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -444,7 +438,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("DatePropertyValueData").addField(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("DatePropertyValueData").addField(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -453,7 +447,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getClassStruct("DatePropertyValueData").addField(e.asField(jen.String()))
+					b.getSpecificObject("DatePropertyValueData").addField(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -493,24 +487,24 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "FormulaPropertyValue",
 						comment: e.Text,
 						fields: []coder{
 							&fixedStringField{name: "type", value: "formula"},
 							&field{name: "formula", typeCode: jen.Id("Formula")},
 						},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
-					b.add(&classInterface{name: "Formula"})
+					b.getAbstractObject("PropertyValue").addVariant(cs)
+					b.add(&abstractObject{name: "Formula"})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nFormula property value objects represent the result of evaluating a formula described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("FormulaPropertyValue").comment += e.Text
+					b.getSpecificObject("FormulaPropertyValue").comment += e.Text
 					return nil
 				},
 			},
@@ -519,7 +513,7 @@ func init() {
 				Title: "Formula values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("FormulaPropertyValue").comment += "\n" + e.Title + "\n" + e.Body
+					b.getSpecificObject("FormulaPropertyValue").comment += "\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
@@ -538,20 +532,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "String formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "StringFormula",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "string"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Formula").addVariant(cs)
+					b.getAbstractObject("Formula").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nString formula property values contain an optional string within the string property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("StringFormula").addField(&field{
+					b.getSpecificObject("StringFormula").addField(&field{
 						name:     "string",
 						typeCode: jen.String(),
 						comment:  e.Text,
@@ -562,20 +556,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "NumberFormula",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Formula").addVariant(cs)
+					b.getAbstractObject("Formula").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber formula property values contain an optional number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("NumberFormula").addField(&field{
+					b.getSpecificObject("NumberFormula").addField(&field{
 						name:     "number",
 						typeCode: jen.Float64(),
 						comment:  e.Text,
@@ -586,20 +580,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Boolean formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "BooleanFormula",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "boolean"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Formula").addVariant(cs)
+					b.getAbstractObject("Formula").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBoolean formula property values contain a boolean within the boolean property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("BooleanFormula").addField(&field{
+					b.getSpecificObject("BooleanFormula").addField(&field{
 						name:     "boolean",
 						typeCode: jen.Bool(),
 						comment:  e.Text,
@@ -610,20 +604,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "DateFormula",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Formula").addVariant(cs)
+					b.getAbstractObject("Formula").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate formula property values contain an optional date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("DateFormula").addField(&field{
+					b.getSpecificObject("DateFormula").addField(&field{
 						name:     "date",
 						typeCode: jen.Id("DatePropertyValue"),
 						comment:  e.Text,
@@ -634,25 +628,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "RelationPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "relation"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nRelation property value objects contain an array of page references within the\u00a0relation property. A page reference is an object with an id key and a string value (UUIDv4) corresponding to a page ID in another database.\n\nA relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.\n\nNote that updating a relation property value with an empty array will clear the list.  ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("RelationPropertyValue").comment += e.Text
-					b.getClassStruct("RelationPropertyValue").addField(&field{
+					b.getSpecificObject("RelationPropertyValue").comment += e.Text
+					b.getSpecificObject("RelationPropertyValue").addField(&field{
 						name:     "relation",
 						typeCode: jen.Index().Id("PageReference"),
 					})
-					b.getClassStruct("RelationPropertyValue").addField(&field{
+					b.getSpecificObject("RelationPropertyValue").addField(&field{
 						name:     "has_more",
 						typeCode: jen.Bool(),
 					})
@@ -673,21 +667,21 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "RollupPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "rollup"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
-					b.add(&classInterface{name: "Rollup"})
+					b.getAbstractObject("PropertyValue").addVariant(cs)
+					b.add(&abstractObject{name: "Rollup"})
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nRollup property value objects represent the result of evaluating a rollup described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a rollup cannot be updated directly.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("RollupPropertyValue").comment += e.Text
+					b.getSpecificObject("RollupPropertyValue").comment += e.Text
 					return nil
 				},
 			},
@@ -702,27 +696,27 @@ func init() {
 				Title: "Rollup values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("RollupPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					b.getSpecificObject("RollupPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "String rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "StringRollup",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "string"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Rollup").addVariant(cs)
+					b.getAbstractObject("Rollup").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nString rollup property values contain an optional string within the string property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("StringRollup").addField(&field{
+					b.getSpecificObject("StringRollup").addField(&field{
 						name:     "string",
 						typeCode: jen.String(),
 						comment:  e.Text,
@@ -733,20 +727,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "NumberRollup",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "number"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Rollup").addVariant(cs)
+					b.getAbstractObject("Rollup").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber rollup property values contain a number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("NumberRollup").addField(&field{
+					b.getSpecificObject("NumberRollup").addField(&field{
 						name:     "number",
 						typeCode: jen.Float64(),
 						comment:  e.Text,
@@ -757,20 +751,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "DateRollup",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "date"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Rollup").addVariant(cs)
+					b.getAbstractObject("Rollup").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate rollup property values contain a date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("DateRollup").addField(&field{
+					b.getSpecificObject("DateRollup").addField(&field{
 						name:     "date",
 						typeCode: jen.Id("DatePropertyValue"),
 						comment:  e.Text,
@@ -781,20 +775,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Array rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &classStruct{
+					cs := &specificObject{
 						name:    "ArrayRollup",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "array"}},
 					}
 					b.add(cs)
-					b.getClassInterface("Rollup").addVariant(cs)
+					b.getAbstractObject("Rollup").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nArray rollup property values contain an array of number, date, or string objects within the results property. \n\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("ArrayRollup").addField(&field{
+					b.getSpecificObject("ArrayRollup").addField(&field{
 						name:     "array",
 						typeCode: jen.Index().Id("Rollup"),
 						comment:  e.Text,
@@ -805,20 +799,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "PeoplePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "people"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("PeoplePropertyValue").addField(&field{
+					b.getSpecificObject("PeoplePropertyValue").addField(&field{
 						name:     "user",
 						typeCode: jen.Id("User"),
 						comment:  e.Text,
@@ -842,27 +836,27 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("PeoplePropertyValue").comment += "\n\n" + e.Body
+					b.getSpecificObject("PeoplePropertyValue").comment += "\n\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Files property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "FilesPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "files"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("FilesPropertyValue").addField(&field{
+					b.getSpecificObject("FilesPropertyValue").addField(&field{
 						name:     "files",
 						typeCode: jen.Index().Id("File"),
 						comment:  e.Text,
@@ -881,27 +875,27 @@ func init() {
 				Title: "When updating a file property, the value will be overwritten by the array of files passed.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.getClassStruct("FilesPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					b.getSpecificObject("FilesPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Checkbox property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "CheckboxPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "checkbox"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nCheckbox property value objects contain a boolean within the checkbox property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("CheckboxPropertyValue").addField(&field{
+					b.getSpecificObject("CheckboxPropertyValue").addField(&field{
 						name:     "checkbox",
 						typeCode: jen.Bool(),
 						comment:  e.Text,
@@ -923,20 +917,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "URL property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "UrlPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "url"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nURL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("UrlPropertyValue").addField(&field{
+					b.getSpecificObject("UrlPropertyValue").addField(&field{
 						name:     "url",
 						typeCode: jen.String(),
 						comment:  e.Text,
@@ -958,20 +952,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "EmailPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "email"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nEmail property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("EmailPropertyValue").addField(&field{
+					b.getSpecificObject("EmailPropertyValue").addField(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Text,
@@ -993,20 +987,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Phone number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "PhoneNumberPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "phone_number"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nPhone number property value objects contain a string within the phone_number property. No structure is enforced.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("PhoneNumberPropertyValue").addField(&field{
+					b.getSpecificObject("PhoneNumberPropertyValue").addField(&field{
 						name:     "phone_number",
 						typeCode: jen.String(),
 						comment:  e.Text,
@@ -1028,20 +1022,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "CreatedTimePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "created_time"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nCreated time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned. \n\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("CreatedTimePropertyValue").addField(&field{
+					b.getSpecificObject("CreatedTimePropertyValue").addField(&field{
 						name:     "created_time",
 						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Text,
@@ -1052,20 +1046,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "CreatedByPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "created_by"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nCreated by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("CreatedByPropertyValue").addField(&field{
+					b.getSpecificObject("CreatedByPropertyValue").addField(&field{
 						name:     "created_by",
 						typeCode: jen.Id("User"),
 						comment:  e.Text,
@@ -1076,20 +1070,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "LastEditedTimePropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_time"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nLast edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("LastEditedTimePropertyValue").addField(&field{
+					b.getSpecificObject("LastEditedTimePropertyValue").addField(&field{
 						name:     "last_edited_time",
 						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Text,
@@ -1100,20 +1094,20 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := propertyValueCommon.createVariant(classStruct{
+					cs := &specificObject{
 						name:    "LastEditedByPropertyValue",
 						comment: e.Text,
 						fields:  []coder{&fixedStringField{name: "type", value: "last_edited_by"}},
-					})
+					}
 					b.add(cs)
-					b.getClassInterface("PropertyValue").addVariant(cs)
+					b.getAbstractObject("PropertyValue").addVariant(cs)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getClassStruct("LastEditedByPropertyValue").addField(&field{
+					b.getSpecificObject("LastEditedByPropertyValue").addField(&field{
 						name:     "last_edited_by",
 						typeCode: jen.Id("User"),
 						comment:  e.Text,

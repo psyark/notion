@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -12,22 +13,25 @@ import (
 type User interface {
 	isUser()
 }
+type userCommon struct{}
 
 func (_ *PersonUser) isUser() {}
 func (_ *BotUser) isUser()    {}
 
-func newUser(msg json.RawMessage) User {
-	var result User
-	switch string(getRawProperty(msg, "type")) {
+type userUnmarshaler struct {
+	value User
+}
+
+func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
 	case "\"person\"":
-		result = &PersonUser{}
+		u.value = &PersonUser{}
 	case "\"bot\"":
-		result = &BotUser{}
+		u.value = &BotUser{}
 	default:
-		panic(string(msg))
+		return fmt.Errorf("unknown type: %s", string(data))
 	}
-	json.Unmarshal(msg, result)
-	return result
+	return json.Unmarshal(data, u.value)
 }
 
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
@@ -65,6 +69,7 @@ People
 User objects that represent people have the type property set to "person". These objects also have the following properties:
 */
 type PersonUser struct {
+	userCommon
 	allUser
 	Type   string     `always:"person" json:"type"`
 	Person PersonData `json:"person"` // Properties only present for non-bot users.
@@ -95,6 +100,7 @@ A user object's type property is"bot" when the user object represents a bot. A b
 }
 */
 type BotUser struct {
+	userCommon
 	allUser
 	Type string  `always:"bot" json:"type"`
 	Bot  BotData `json:"bot"` // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.

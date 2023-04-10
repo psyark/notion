@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -12,74 +13,6 @@ import (
 A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects.
 
  For example, the following block object represents a Heading 2 in the Notion UI:
-*/
-type Block interface {
-	isBlock()
-}
-
-func (_ *BookmarkBlock) isBlock() {}
-
-func newBlock(msg json.RawMessage) Block {
-	var result Block
-	switch string(getRawProperty(msg, "type")) {
-	case "\"bookmark\"":
-		result = &BookmarkBlock{}
-	default:
-		panic(string(msg))
-	}
-	json.Unmarshal(msg, result)
-	return result
-}
-
-/*
-A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects.
-
- For example, the following block object represents a Heading 2 in the Notion UI:
-
-{
-	"object": "block",
-	"id": "c02fc1d3-db8b-45c5-a222-27595b15aea7",
-	"parent": {
-		"type": "page_id",
-		"page_id": "59833787-2cf9-4fdf-8782-e53db20768a5"
-	},
-	"created_time": "2022-03-01T19:05:00.000Z",
-	"last_edited_time": "2022-07-06T19:41:00.000Z",
-	"created_by": {
-		"object": "user",
-		"id": "ee5f0f84-409a-440f-983a-a5315961c6e4"
-	},
-	"last_edited_by": {
-		"object": "user",
-		"id": "ee5f0f84-409a-440f-983a-a5315961c6e4"
-	},
-	"has_children": false,
-	"archived": false,
-	"type": "heading_2",
-	"heading_2": {
-		"rich_text": [
-			{
-				"type": "text",
-				"text": {
-					"content": "Lacinato kale",
-					"link": null
-				},
-				"annotations": {
-					"bold": false,
-					"italic": false,
-					"strikethrough": false,
-					"underline": false,
-					"code": false,
-					"color": "green"
-				},
-				"plain_text": "Lacinato kale",
-				"href": null
-			}
-		],
-		"color": "default",
-    "is_toggleable": false
-	}
-}
 
 Use the Retrieve block children endpoint to list all of the blocks on a page.
 
@@ -106,6 +39,9 @@ Some block types contain nested blocks. The following block types support child 
 The API does not support all block types.
 Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a `type` set to `"unsupported"`.
 */
+type Block interface {
+	isBlock()
+}
 type blockCommon struct {
 	Object         string        `always:"block" json:"object"` // Always "block".
 	Id             uuid.UUID     `json:"id"`                    // Identifier for the block.
@@ -116,6 +52,22 @@ type blockCommon struct {
 	LastEditedBy   PartialUser   `json:"last_edited_by"`        // User who last edited the block.
 	Archived       bool          `json:"archived"`              // The archived status of the block.
 	HasChildren    bool          `json:"has_children"`          // Whether or not the block has children blocks nested within it.
+}
+
+func (_ *BookmarkBlock) isBlock() {}
+
+type blockUnmarshaler struct {
+	value Block
+}
+
+func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
+	switch string(getRawProperty(data, "type")) {
+	case "\"bookmark\"":
+		u.value = &BookmarkBlock{}
+	default:
+		return fmt.Errorf("unknown type: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
 }
 
 // Block type objects
