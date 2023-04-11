@@ -2,6 +2,7 @@ package objectdoc
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -12,7 +13,7 @@ type objectCoder interface {
 	coder
 	getName() string
 	getFields() []coder
-	addField(coder, ...bool)
+	addFields(...coder) objectCoder
 }
 
 var _ = []objectCoder{
@@ -20,28 +21,44 @@ var _ = []objectCoder{
 	&abstractObject{},
 }
 
-// specificObject は"type"や"object"キーで区別される各オブジェクトです
-// （例：type="external" である ExternalFile）
-// 生成されるGoコードではstructポインタで表現されます
-type specificObject struct {
+type objectCommon struct {
 	name    string
 	comment string
 	fields  []coder
 }
 
-func (c *specificObject) getName() string {
+func (c *objectCommon) getName() string {
 	return c.name
 }
-func (c *specificObject) getFields() []coder {
+func (c *objectCommon) getFields() []coder {
 	return c.fields
 }
 
-func (c *specificObject) addField(f coder, prepend ...bool) {
-	if len(prepend) != 0 {
-		c.fields = append([]coder{f}, c.fields...)
-	} else {
-		c.fields = append(c.fields, f)
-	}
+// addFields はこのオブジェクトにフィールドを追加します
+// ただし、無名フィールドは有名フィールドより前に追加されます
+func (c *objectCommon) addFields(fields ...coder) objectCoder {
+	c.fields = append(c.fields, fields...)
+	sort.SliceStable(c.fields, func(i, j int) bool {
+		isAnon := func(c coder) bool {
+			if c, ok := c.(*field); ok && c.name == "" {
+				return true
+			}
+			return false
+		}
+		return isAnon(c.fields[i]) && !isAnon(c.fields[j])
+	})
+	return c
+}
+
+func (c *objectCommon) code() jen.Code {
+	panic("!")
+}
+
+// specificObject は"type"や"object"キーで区別される各オブジェクトです
+// （例：type="external" である ExternalFile）
+// 生成されるGoコードではstructポインタで表現されます
+type specificObject struct {
+	objectCommon
 }
 
 func (c *specificObject) code() jen.Code {
@@ -90,30 +107,17 @@ func (c *specificObject) code() jen.Code {
 // （例：File）
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
 type abstractObject struct {
-	name          string
-	comment       string
+	objectCommon
 	specifiedBy   string // "type", "object" など、バリアントを識別するためのプロパティ
-	fields        []coder
 	fieldsComment string
 	variants      []objectCoder
-}
-
-func (c *abstractObject) getName() string {
-	return c.name
-}
-func (c *abstractObject) getFields() []coder {
-	return c.fields
-}
-
-func (c *abstractObject) addField(f coder, prepend ...bool) {
-	c.fields = append(c.fields, f)
 }
 
 // addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
 // - バリアントに対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切なバリアントを作成するUnmarshalerを作成
 func (c *abstractObject) addVariant(variant objectCoder) {
-	variant.addField(&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")}, true)
+	variant.addFields(&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")})
 	c.variants = append(c.variants, variant)
 }
 

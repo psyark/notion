@@ -45,8 +45,8 @@ func (u *fileUnmarshaler) UnmarshalJSON(data []byte) error {
 
 // Notion-hosted files
 type NotionHostedFile struct {
-	fileOrEmojiCommon
 	fileCommon
+	fileOrEmojiCommon
 	Type string               `always:"file" json:"type"`
 	File NotionHostedFileData `json:"file"`
 }
@@ -63,8 +63,8 @@ type NotionHostedFileData struct {
 
 // External files
 type ExternalFile struct {
-	fileOrEmojiCommon
 	fileCommon
+	fileOrEmojiCommon
 	Type     string           `always:"external" json:"type"`
 	External ExternalFileData `json:"external"`
 }

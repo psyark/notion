@@ -21,6 +21,7 @@ type PropertyItem interface {
 Each page property item object contains the following keys. In addition, it will contain a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
 */
 type propertyItemCommon struct {
+	propertyItemOrPropertyItemPaginationCommon
 	Object string `always:"property_item" json:"object"` // Always "property_item".
 	Id     string `json:"id"`                            // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
@@ -95,17 +96,12 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, u.value)
 }
 
-//
-type PropertyItemOrPropertyItemPagination interface {
-	isPropertyItemOrPropertyItemPagination()
-}
-type propertyItemOrPropertyItemPaginationCommon struct{}
-
 /*
 Paginated property values
 The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
 */
-type PaginatedPropertyValue struct {
+type PaginatedPropertyItem struct {
+	paginationCommon
 	Object       string         `always:"list" json:"object"`        // Always "list".
 	Type         string         `always:"property_item" json:"type"` // Always "property_item".
 	Results      []PropertyItem `json:"results"`                     // List of property_item objects.

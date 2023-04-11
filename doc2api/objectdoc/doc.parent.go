@@ -11,16 +11,16 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the \"parent\". Parent information is represented by a consistent parent object throughout the API.\n\nParenting rules:\n* Pages can be parented by other pages, databases, blocks, or by the whole workspace.\n* Blocks can be parented by pages, databases, or blocks.\n* Databases can be parented by pages, blocks, or by the whole workspace.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&abstractObject{name: "Parent", comment: e.Text})
+					b.addAbstractObject("Parent", e.Text)
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Database parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{name: "DatabaseParent", comment: e.Text}
-					b.add(cs)
-					b.getAbstractObject("Parent").addVariant(cs)
+					b.getAbstractObject("Parent").addVariant(
+						b.addSpecificObject("DatabaseParent", e.Text),
+					)
 					return nil
 				},
 			},
@@ -30,7 +30,7 @@ func init() {
 				Description:   `Always "database_id".`,
 				ExampleValues: `"database_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatabaseParent").addField(e.asFixedStringField())
+					b.getSpecificObject("DatabaseParent").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -39,7 +39,7 @@ func init() {
 				Description:   "The ID of the database that this page belongs to.",
 				ExampleValues: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatabaseParent").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("DatabaseParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}},
@@ -55,9 +55,9 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{name: "PageParent", comment: e.Text}
-					b.add(cs)
-					b.getAbstractObject("Parent").addVariant(cs)
+					b.getAbstractObject("Parent").addVariant(
+						b.addSpecificObject("PageParent", e.Text),
+					)
 					return nil
 				},
 			},
@@ -67,7 +67,7 @@ func init() {
 				Description:   `Always "page_id".`,
 				ExampleValues: `"page_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PageParent").addField(e.asFixedStringField())
+					b.getSpecificObject("PageParent").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -76,7 +76,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"59833787-2cf9-4fdf-8782-e53db20768a5"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PageParent").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("PageParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}},
@@ -92,9 +92,9 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Workspace parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{name: "WorkspaceParent", comment: e.Text}
-					b.add(cs)
-					b.getAbstractObject("Parent").addVariant(cs)
+					b.getAbstractObject("Parent").addVariant(
+						b.addSpecificObject("WorkspaceParent", e.Text),
+					)
 					return nil
 				},
 			},
@@ -111,7 +111,7 @@ func init() {
 				Description:   `Always "workspace".`,
 				ExampleValues: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("WorkspaceParent").addField(e.asFixedStringField())
+					b.getSpecificObject("WorkspaceParent").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -120,7 +120,7 @@ func init() {
 				Description:   "Always true.",
 				ExampleValues: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("WorkspaceParent").addField(e.asField(jen.Bool()))
+					b.getSpecificObject("WorkspaceParent").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}},
@@ -136,9 +136,9 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{name: "BlockParent", comment: e.Text}
-					b.add(cs)
-					b.getAbstractObject("Parent").addVariant(cs)
+					b.getAbstractObject("Parent").addVariant(
+						b.addSpecificObject("BlockParent", e.Text),
+					)
 					return nil
 				},
 			},
@@ -155,7 +155,7 @@ func init() {
 				Description:   `Always "block_id".`,
 				ExampleValues: `"block_id"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BlockParent").addField(e.asFixedStringField())
+					b.getSpecificObject("BlockParent").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -164,7 +164,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BlockParent").addField(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("BlockParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}},

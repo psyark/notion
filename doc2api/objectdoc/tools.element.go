@@ -221,16 +221,17 @@ func (e *objectDocParameter) asField(typeCode jen.Code) *field {
 
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
 func (e *objectDocParameter) asFixedStringField() *fixedStringField {
-	ev := e.ExampleValue
-	if ev == "" {
-		ev = e.ExampleValues
-	}
-	if strings.HasPrefix(ev, `"`) && strings.HasSuffix(ev, `"`) {
-		return &fixedStringField{
-			name:    e.Property + e.Field,
-			value:   strings.TrimPrefix(strings.TrimSuffix(ev, `"`), `"`),
-			comment: e.Description,
+	for _, value := range []string{e.ExampleValue, e.ExampleValues, e.Type} {
+		if value != "" {
+			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
+				return &fixedStringField{
+					name:    e.Property + e.Field,
+					value:   strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`),
+					comment: e.Description,
+				}
+			}
+			panic(value)
 		}
 	}
-	panic(ev)
+	panic("asFixedStringField")
 }

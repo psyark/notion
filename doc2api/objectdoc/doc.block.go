@@ -13,7 +13,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&abstractObject{name: "Block", comment: e.Text})
+					b.addAbstractObject("Block", e.Text)
 					return nil
 				},
 			},
@@ -47,7 +47,7 @@ func init() {
 				ExampleValue: `"block"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					b.getAbstractObject("Block").addField(e.asFixedStringField())
+					b.getAbstractObject("Block").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -56,7 +56,7 @@ func init() {
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(&field{
+					b.getAbstractObject("Block").addFields(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
 						comment:  e.Description,
@@ -69,7 +69,7 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(&field{
+					b.getAbstractObject("Block").addFields(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
 						typeCode: jen.Id("Parent"),
 						comment:  e.Description,
@@ -90,7 +90,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Id("ISO8601String")))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -99,7 +99,7 @@ func init() {
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Id("PartialUser")))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -108,7 +108,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Id("ISO8601String")))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -117,7 +117,7 @@ func init() {
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Id("PartialUser")))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -126,7 +126,7 @@ func init() {
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Bool()))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -135,7 +135,7 @@ func init() {
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Block").addField(e.asField(jen.Bool()))
+					b.getAbstractObject("Block").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -173,28 +173,23 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block type objects",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(independentComment(e.Text))
+					b.addComment(e.Text)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(independentComment(strings.TrimSpace(e.Text)))
+					b.addComment(strings.TrimSpace(e.Text))
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					v := &specificObject{
-						name: "BookmarkBlock",
-						fields: []coder{
-							&fixedStringField{name: "type", value: "bookmark"},
-						},
-					}
-					b.add(v)
-					b.getAbstractObject("Block").addVariant(v)
+					b.getAbstractObject("Block").addVariant(
+						b.addSpecificObject("BookmarkBlock", "").addFields(&fixedStringField{name: "type", value: "bookmark"}),
+					)
 					return nil
 				},
 			},
@@ -210,7 +205,7 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BookmarkBlock").addField(e.asField(jen.Index().Id("RichText")))
+					b.getSpecificObject("BookmarkBlock").addFields(e.asField(jen.Index().Id("RichText")))
 					return nil
 				},
 			}, {
@@ -218,7 +213,7 @@ func init() {
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BookmarkBlock").addField(e.asField(jen.String()))
+					b.getSpecificObject("BookmarkBlock").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},

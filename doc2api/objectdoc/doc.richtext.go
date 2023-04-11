@@ -5,15 +5,13 @@ import (
 )
 
 func init() {
-	annotations := &specificObject{name: "Annotations"}
-
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/rich-text",
 		localCopy: []objectDocElement{
 			&objectDocParagraphElement{
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&abstractObject{name: "RichText", comment: e.Text})
+					b.addAbstractObject("RichText", e.Text)
 					return nil
 				},
 			},
@@ -52,7 +50,7 @@ func init() {
 				Description:  "The information used to style the rich text object. Refer to the annotation object section below for details.",
 				ExampleValue: "Refer to the annotation object section below for examples.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addField(e.asField(jen.Id(annotations.name)))
+					b.getAbstractObject("RichText").addFields(e.asField(jen.Id("Annotations")))
 					return nil
 				},
 			}, {
@@ -61,7 +59,7 @@ func init() {
 				Description:  "The plain text without annotations.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addField(e.asField(jen.String()))
+					b.getAbstractObject("RichText").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -70,22 +68,21 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addField(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
+					b.getAbstractObject("RichText").addFields(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "The annotation object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(annotations)
-					annotations.comment = e.Text
+					b.addSpecificObject("Annotations", e.Text)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAll rich text objects contain an annotations object that sets the styling for the rich text. annotations includes the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					annotations.comment += "\n" + e.Text
+					b.getSpecificObject("Annotations").comment += "\n" + e.Text
 					return nil
 				},
 			},
@@ -95,7 +92,7 @@ func init() {
 				Description:  "Whether the text is bolded.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.Bool()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -104,7 +101,7 @@ func init() {
 				Description:  "Whether the text is italicized.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.Bool()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -113,7 +110,7 @@ func init() {
 				Description:  "Whether the text is struck through.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.Bool()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -122,7 +119,7 @@ func init() {
 				Description:  "Whether the text is underlined.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.Bool()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -131,7 +128,7 @@ func init() {
 				Description:  "Whether the text is code style.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.Bool()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -140,29 +137,25 @@ func init() {
 				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					annotations.addField(e.asField(jen.String()))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "Rich text type objects",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(independentComment(e.Text))
+					b.addComment(e.Text)
 					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "EquationRichText",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("RichText").addVariant(
+						b.addSpecificObject("EquationRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "equation"},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("RichText").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -179,7 +172,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("EquationRichText").addField(e.asField(jen.String()))
+					b.getSpecificObject("EquationRichText").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -202,17 +195,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.add(&abstractObject{name: "Mention", comment: e.Text})
-					cs := &specificObject{
-						name:    "MentionRichText",
-						comment: e.Text,
-						fields: []coder{
+					b.addAbstractObject("Mention", e.Text)
+					b.getAbstractObject("RichText").addVariant(
+						b.addSpecificObject("MentionRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "mention"},
 							&field{name: "mention", typeCode: jen.Id("Mention")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("RichText").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -239,16 +228,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "DatabaseMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("DatabaseMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "database"},
 							&field{name: "database", typeCode: jen.Id("PageReference")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -271,16 +256,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "DateMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("DateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "date"},
 							&field{name: "date", typeCode: jen.Id("DatePropertyValue")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -303,16 +284,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Link Preview mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "LinkPreviewMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("LinkPreviewMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "link_preview"},
 							&field{name: "link_preview", typeCode: jen.Id("URLReference")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -335,16 +312,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "PageMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("PageMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "page"},
 							&field{name: "page", typeCode: jen.Id("PageReference")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -367,17 +340,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "TemplateMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("TemplateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "template_mention"},
 							&field{name: "template_mention", typeCode: jen.Id("TemplateMentionData")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
-					b.add(&abstractObject{name: "TemplateMentionData"})
+						),
+					)
+					b.addAbstractObject("TemplateMentionData", "")
 					return nil
 				},
 			},
@@ -394,15 +363,12 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					cs := &specificObject{
-						name: "TemplateMentionDate",
-						fields: []coder{
+					b.getAbstractObject("TemplateMentionData").addVariant(
+						b.addSpecificObject("TemplateMentionDate", "").addFields(
 							&fixedStringField{name: "type", value: e.Field},
 							&field{name: e.Field, typeCode: jen.String(), comment: e.Description},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("TemplateMentionData").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			}},
@@ -434,15 +400,12 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					cs := &specificObject{
-						name: "TemplateMentionUser",
-						fields: []coder{
+					b.getAbstractObject("TemplateMentionData").addVariant(
+						b.addSpecificObject("TemplateMentionUser", "").addFields(
 							&fixedStringField{name: "type", value: e.Field},
 							e.asFixedStringField(),
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("TemplateMentionData").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			}},
@@ -465,16 +428,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "User mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "UserMention",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("Mention").addVariant(
+						b.addSpecificObject("UserMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "user"},
 							&field{name: "user", typeCode: jen.Id("PartialUser")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("Mention").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
@@ -513,23 +472,19 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					cs := &specificObject{
-						name:    "TextRichText",
-						comment: e.Text,
-						fields: []coder{
+					b.getAbstractObject("RichText").addVariant(
+						b.addSpecificObject("TextRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "text"},
 							&field{name: "text", typeCode: jen.Id("Text")},
-						},
-					}
-					b.add(cs)
-					b.getAbstractObject("RichText").addVariant(cs)
+						),
+					)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.add(&specificObject{name: "Text", comment: e.Text})
+					b.addSpecificObject("Text", e.Text)
 					return nil
 				},
 			},
@@ -539,7 +494,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addField(e.asField(jen.String()))
+					b.getSpecificObject("Text").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -548,7 +503,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addField(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					b.getSpecificObject("Text").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 					return nil
 				},
 			}},

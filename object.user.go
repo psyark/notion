@@ -10,10 +10,39 @@ import (
 // https://developers.notion.com/reference/user
 
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
+type PartialUser struct {
+	Object string    `always:"user" json:"object"` // Always "user"
+	Id     uuid.UUID `json:"id"`                   // Unique identifier for this user.
+}
+
+/*
+The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
+
+Where user objects appear in the API
+
+
+User objects appear in the API in nearly all objects returned by the API, including:
+* Block object under created_by and last_edited_by.
+* Page object under created_by and last_edited_by and in people property items.
+* Database object under created_by and last_edited_by.
+* Rich text object, as user mentions.
+* Property object when the property is a people property.
+
+User objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.
+*/
 type User interface {
 	isUser()
 }
-type userCommon struct{}
+
+/*
+
+All users
+These fields are shared by all users, including people and bots. Fields marked with * are always present.
+*/
+type userCommon struct {
+	Name      string `json:"name"`       // User's name, as displayed in Notion.
+	AvatarUrl string `json:"avatar_url"` // Chosen avatar image.
+}
 
 func (_ *PersonUser) isUser() {}
 func (_ *BotUser) isUser()    {}
@@ -34,43 +63,12 @@ func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, u.value)
 }
 
-// The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
-type PartialUser struct {
-	Object string    `always:"user" json:"object"` // Always "user"
-	Id     uuid.UUID `json:"id"`                   // Unique identifier for this user.
-}
-
-/*
-The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
-
-Where user objects appear in the API
-
-
-User objects appear in the API in nearly all objects returned by the API, including:
-* Block object under created_by and last_edited_by.
-* Page object under created_by and last_edited_by and in people property items.
-* Database object under created_by and last_edited_by.
-* Rich text object, as user mentions.
-* Property object when the property is a people property.
-
-User objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.
-
-All users
-These fields are shared by all users, including people and bots. Fields marked with * are always present.
-*/
-type allUser struct {
-	PartialUser
-	Name      string `json:"name"`       // User's name, as displayed in Notion.
-	AvatarUrl string `json:"avatar_url"` // Chosen avatar image.
-}
-
 /*
 People
 User objects that represent people have the type property set to "person". These objects also have the following properties:
 */
 type PersonUser struct {
 	userCommon
-	allUser
 	Type   string     `always:"person" json:"type"`
 	Person PersonData `json:"person"` // Properties only present for non-bot users.
 }
@@ -101,7 +99,6 @@ A user object's type property is"bot" when the user object represents a bot. A b
 */
 type BotUser struct {
 	userCommon
-	allUser
 	Type string  `always:"bot" json:"type"`
 	Bot  BotData `json:"bot"` // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
 }

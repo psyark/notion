@@ -1,6 +1,8 @@
 package objectdoc
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 )
 
@@ -21,23 +23,31 @@ type builder struct {
 	global *builder
 }
 
-func (b *builder) add(c coder) {
-	b.coders = append(b.coders, c)
+func (b *builder) addComment(comment string) {
+	b.coders = append(b.coders, independentComment(comment))
 }
 
-// addGlobalIfNotExists はグローバルビルダーに（そのコーダーが登録されていなければ）登録します
-func (b *builder) addGlobalIfNotExists(c coder) {
-	switch c := c.(type) {
-	case *specificObject:
-		if b.global.getSpecificObject(c.name) != nil {
-			return
-		}
-	case *abstractObject:
-		if b.global.getAbstractObject(c.name) != nil {
-			return
-		}
+func (b *builder) addSpecificObject(name string, comment string) *specificObject {
+	o := &specificObject{}
+	o.name = strings.TrimSpace(name)
+	o.comment = comment
+	b.coders = append(b.coders, o)
+	return o
+}
+
+func (b *builder) addAbstractObject(name string, comment string) *abstractObject {
+	o := &abstractObject{}
+	o.name = strings.TrimSpace(name)
+	o.comment = comment
+	b.coders = append(b.coders, o)
+	return o
+}
+
+func (b *builder) addAbstractObjectToGlobalIfNotExists(name string) *abstractObject {
+	if o := b.global.getAbstractObject(name); o != nil {
+		return o
 	}
-	b.global.add(c)
+	return b.global.addAbstractObject(name, "")
 }
 
 func (b *builder) statement() jen.Statement {
