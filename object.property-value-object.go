@@ -140,8 +140,8 @@ func (_ *NumberPropertyValue) isPropertyValue() {}
 // Select property values
 type SelectPropertyValue struct {
 	propertyValueCommon
-	Type   string                  `always:"select" json:"type"`
-	Select SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
+	Type   string                   `always:"select" json:"type"`
+	Select *SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
 }
 
 func (_ *SelectPropertyValue) isPropertyValue() {}
@@ -194,8 +194,8 @@ type MultiSelectOption struct {
 // Date property values
 type DatePropertyValue struct {
 	propertyValueCommon
-	Type string                `always:"date" json:"type"`
-	Date DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
+	Type string                 `always:"date" json:"type"`
+	Date *DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
 
 func (_ *DatePropertyValue) isPropertyValue() {}
@@ -401,8 +401,8 @@ The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) e
 */
 type PeoplePropertyValue struct {
 	propertyValueCommon
-	Type string `always:"people" json:"type"`
-	User User   `json:"user"` //  People property value objects contain an array of user objects within the people property.
+	Type   string `always:"people" json:"type"`
+	People Users  `json:"people"` //  People property value objects contain an array of user objects within the people property.
 }
 
 func (_ *PeoplePropertyValue) isPropertyValue() {}
@@ -433,8 +433,8 @@ func (_ *CheckboxPropertyValue) isPropertyValue() {}
 // URL property values
 type UrlPropertyValue struct {
 	propertyValueCommon
-	Type string `always:"url" json:"type"`
-	Url  string `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
+	Type string        `always:"url" json:"type"`
+	Url  nullv4.String `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
 }
 
 func (_ *UrlPropertyValue) isPropertyValue() {}
@@ -442,8 +442,8 @@ func (_ *UrlPropertyValue) isPropertyValue() {}
 // Email property values
 type EmailPropertyValue struct {
 	propertyValueCommon
-	Type  string `always:"email" json:"type"`
-	Email string `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
+	Type  string        `always:"email" json:"type"`
+	Email nullv4.String `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
 }
 
 func (_ *EmailPropertyValue) isPropertyValue() {}

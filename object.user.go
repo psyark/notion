@@ -72,6 +72,20 @@ func (u *userUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
+type Users []User
+
+func (a *Users) UnmarshalJSON(data []byte) error {
+	t := []userUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*a = make([]User, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
+}
+
 /*
 People
 User objects that represent people have the type property set to "person". These objects also have the following properties:

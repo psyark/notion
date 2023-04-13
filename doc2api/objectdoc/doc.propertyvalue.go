@@ -198,7 +198,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("SelectPropertyValue").addFields(&field{
 						name:     "select",
-						typeCode: jen.Id("SelectPropertyValueData"),
+						typeCode: jen.Op("*").Id("SelectPropertyValueData"), // null
 						comment:  e.Text,
 					})
 					b.addSpecificObject("SelectPropertyValueData", e.Text)
@@ -390,7 +390,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("DatePropertyValue").addFields(&field{
 						name:     "date",
-						typeCode: jen.Id("DatePropertyValueData"),
+						typeCode: jen.Op("*").Id("DatePropertyValueData"), // null
 						comment:  e.Text,
 					})
 					b.addSpecificObject("DatePropertyValueData", e.Text)
@@ -761,8 +761,8 @@ func init() {
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("PeoplePropertyValue").addFields(&field{
-						name:     "user",
-						typeCode: jen.Id("User"),
+						name:     "people",
+						typeCode: jen.Id("Users"),
 						comment:  e.Text,
 					})
 					return nil
@@ -874,7 +874,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("UrlPropertyValue").addFields(&field{
 						name:     "url",
-						typeCode: jen.String(),
+						typeCode: jen.Qual("gopkg.in/guregu/null.v4", "String"),
 						comment:  e.Text,
 					})
 					return nil
@@ -907,7 +907,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("EmailPropertyValue").addFields(&field{
 						name:     "email",
-						typeCode: jen.String(),
+						typeCode: jen.Qual("gopkg.in/guregu/null.v4", "String"),
 						comment:  e.Text,
 					})
 					return nil

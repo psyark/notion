@@ -41,12 +41,17 @@ func TestUpdatePage(t *testing.T) {
 		{},
 		{
 			Properties: PropertyValueMap{
-				"Number": &NumberPropertyValue{Type: "number", Number: null.FloatFromPtr(nil)},
+				// TODO Typeの省略
+				"Number":   &NumberPropertyValue{Type: "number", Number: null.FloatFromPtr(nil)},
+				"Date":     &DatePropertyValue{Type: "date"},
+				"Checkbox": &CheckboxPropertyValue{Type: "checkbox"},
 			},
 		},
 		{
 			Properties: PropertyValueMap{
-				"Number": &NumberPropertyValue{Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
+				"Number":   &NumberPropertyValue{Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
+				"Date":     &DatePropertyValue{Type: "date"},
+				"Checkbox": &CheckboxPropertyValue{Type: "checkbox"},
 			},
 		},
 	}
