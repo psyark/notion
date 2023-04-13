@@ -13,7 +13,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("Block", e.Text)
+					b.addAbstractObject("Block", "type", e.Text)
 					return nil
 				},
 			},

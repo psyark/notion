@@ -160,14 +160,10 @@ func (c *abstractObject) code() jen.Code {
 
 	// バリアントにisメソッドを実装
 	cases := []jen.Code{}
-	specifiedBy := c.specifiedBy
-	if specifiedBy == "" {
-		specifiedBy = "type"
-		_, _ = fmt.Printf("%v にspecifiedByが指定されていません\n", c.name)
-	}
+
 	for _, variant := range c.variants {
 		code.Func().Params(jen.Id("_").Op("*").Id(variant.getName())).Id("is" + c.name).Params().Block().Line()
-		sf := variant.getSpecifyingField(specifiedBy)
+		sf := variant.getSpecifyingField(c.specifiedBy)
 		switch variant := variant.(type) {
 		case *specificObject:
 			cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.getName()).Values())
@@ -191,7 +187,7 @@ func (c *abstractObject) code() jen.Code {
 		code.Line().Type().Id(name).Struct(
 			jen.Id("value").Id(c.name),
 		).Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(specifiedBy))).Block(cases...),
+			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
 	}

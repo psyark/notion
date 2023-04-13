@@ -11,7 +11,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("RichText", e.Text)
+					b.addAbstractObject("RichText", "type", e.Text)
 					return nil
 				},
 			},
@@ -195,7 +195,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addAbstractObject("Mention", e.Text)
+					b.addAbstractObject("Mention", "type", e.Text)
 					b.getAbstractObject("RichText").addVariant(
 						b.addSpecificObject("MentionRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "mention"},
@@ -346,7 +346,7 @@ func init() {
 							&field{name: "template_mention", typeCode: jen.Id("TemplateMentionData")},
 						),
 					)
-					b.addAbstractObject("TemplateMentionData", "")
+					b.addAbstractObject("TemplateMentionData", "type", "")
 					return nil
 				},
 			},

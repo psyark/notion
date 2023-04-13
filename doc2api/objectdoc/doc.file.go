@@ -11,8 +11,8 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.addAbstractObject("File", e.Body)
-					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji")
+					b.addAbstractObject("File", "type", e.Body)
+					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type")
 					return nil
 				},
 			},

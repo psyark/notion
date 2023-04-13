@@ -11,7 +11,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("PropertyValue", e.Text)
+					b.addAbstractObject("PropertyValue", "type", e.Text)
 					return nil
 				},
 			},
@@ -467,7 +467,7 @@ func init() {
 							&field{name: "formula", typeCode: jen.Id("Formula")},
 						),
 					)
-					b.addAbstractObject("Formula", "")
+					b.addAbstractObject("Formula", "type", "")
 					return nil
 				},
 			},
@@ -632,7 +632,7 @@ func init() {
 							&fixedStringField{name: "type", value: "rollup"},
 						),
 					)
-					b.addAbstractObject("Rollup", "")
+					b.addAbstractObject("Rollup", "type", "")
 					return nil
 				},
 			},

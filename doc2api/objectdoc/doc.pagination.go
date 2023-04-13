@@ -43,7 +43,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Pagination ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addAbstractObjectToGlobalIfNotExists("Pagination")
+					b.addAbstractObjectToGlobalIfNotExists("Pagination", "type")
 					return nil
 				},
 			},

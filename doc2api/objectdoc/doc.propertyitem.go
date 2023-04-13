@@ -11,8 +11,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("PropertyItem", e.Text)
-					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination").specifiedBy = "object"
+					b.addAbstractObject("PropertyItem", "type", e.Text)
+					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
 					// TODO: PropertyItemOrPropertyItemPaginationの派生としてPropertyItemを登録
 					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(b.getAbstractObject("PropertyItem"))
 					return nil
@@ -60,7 +60,7 @@ func init() {
 				Text: "Paginated property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					// b.getAbstractObject("PropertyItemPagination")
-					b.addAbstractObjectToGlobalIfNotExists("Pagination")
+					b.addAbstractObjectToGlobalIfNotExists("Pagination", "type")
 					pip := b.addSpecificObject("PropertyItemPagination", e.Text)
 					b.getAbstractObject("Pagination").addVariant(pip)
 					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(pip)

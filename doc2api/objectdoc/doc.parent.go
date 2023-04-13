@@ -11,7 +11,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the \"parent\". Parent information is represented by a consistent parent object throughout the API.\n\nParenting rules:\n* Pages can be parented by other pages, databases, blocks, or by the whole workspace.\n* Blocks can be parented by pages, databases, or blocks.\n* Databases can be parented by pages, blocks, or by the whole workspace.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("Parent", e.Text)
+					b.addAbstractObject("Parent", "type", e.Text)
 					return nil
 				},
 			},

@@ -35,19 +35,20 @@ func (b *builder) addSpecificObject(name string, comment string) *specificObject
 	return o
 }
 
-func (b *builder) addAbstractObject(name string, comment string) *abstractObject {
+func (b *builder) addAbstractObject(name string, specifiedBy string, comment string) *abstractObject {
 	o := &abstractObject{}
 	o.name = strings.TrimSpace(name)
+	o.specifiedBy = specifiedBy
 	o.comment = comment
 	b.coders = append(b.coders, o)
 	return o
 }
 
-func (b *builder) addAbstractObjectToGlobalIfNotExists(name string) *abstractObject {
+func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy string) *abstractObject {
 	if o := b.global.getAbstractObject(name); o != nil {
 		return o
 	}
-	return b.global.addAbstractObject(name, "")
+	return b.global.addAbstractObject(name, specifiedBy, "")
 }
 
 func (b *builder) statement() jen.Statement {

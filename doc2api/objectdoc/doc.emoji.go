@@ -11,7 +11,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji").addVariant(
+					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type").addVariant(
 						b.addSpecificObject("Emoji", e.Text),
 					)
 					return nil
