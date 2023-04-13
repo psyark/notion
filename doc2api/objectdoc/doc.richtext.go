@@ -117,7 +117,7 @@ func init() {
 				Property:     "underline",
 				Type:         "boolean",
 				Description:  "Whether the text is underlined.",
-				ExampleValue: "",
+				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil

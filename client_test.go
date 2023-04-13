@@ -31,3 +31,10 @@ func TestRetrievePagePropertyItem_a(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestUpdatePage(t *testing.T) {
+	ctx := context.Background()
+	if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), &UpdatePageParams{}, validateResult("TestUpdatePage")); err != nil {
+		t.Fatal(err)
+	}
+}

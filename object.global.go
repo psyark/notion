@@ -20,6 +20,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"emoji\"":
 		u.value = &Emoji{}
@@ -28,7 +32,7 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"file\"":
 		u.value = &NotionHostedFile{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling FileOrEmoji: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -64,11 +68,15 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"property_item\"":
 		u.value = &PropertyItemPagination{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling Pagination: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -90,6 +98,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "object" field of the message.
 */
 func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "object")) {
 	case "\"property_item\"":
 		t := &propertyItemUnmarshaler{}
@@ -101,7 +113,7 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 	case "\"list\"":
 		u.value = &PropertyItemPagination{}
 	default:
-		return fmt.Errorf("data has unknown object field: %s", string(data))
+		return fmt.Errorf("unmarshaling PropertyItemOrPropertyItemPagination: data has unknown object field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

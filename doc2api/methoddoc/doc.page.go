@@ -4,39 +4,6 @@ import "github.com/dave/jennifer/jen"
 
 func init() {
 	registerConverter(converter{
-		url:        "https://developers.notion.com/reference/retrieve-a-page",
-		returnType: returnsStructRef("Page"),
-		localCopyOfPathParams: ssrPropsParams{
-			{
-				Desc:     "Identifier for a Notion page",
-				In:       "path",
-				Name:     "page_id",
-				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
-			},
-		},
-	})
-	registerConverter(converter{
-		url:        "https://developers.notion.com/reference/retrieve-a-page-property",
-		returnType: returnsInterface("PropertyItemOrPropertyItemPagination"),
-		localCopyOfPathParams: ssrPropsParams{
-			{
-				Desc:     "Identifier for a Notion page",
-				In:       "path",
-				Name:     "page_id",
-				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
-			},
-			{
-				Desc:     "Identifier for a page [property](https://developers.notion.com/reference/page#all-property-values)",
-				In:       "path",
-				Name:     "property_id",
-				Type:     "string",
-				typeCode: jen.String(),
-			},
-		},
-	})
-	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/post-page",
 		returnType: returnsStructRef("Page"),
 		localCopyOfBodyParams: ssrPropsParams{
@@ -76,6 +43,87 @@ func init() {
 				Name:     "cover",
 				Type:     "json",
 				typeCode: jen.Id("File"),
+			},
+		},
+	})
+
+	registerConverter(converter{
+		url:        "https://developers.notion.com/reference/retrieve-a-page",
+		returnType: returnsStructRef("Page"),
+		localCopyOfPathParams: ssrPropsParams{
+			{
+				Desc:     "Identifier for a Notion page",
+				In:       "path",
+				Name:     "page_id",
+				Type:     "string",
+				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+			},
+		},
+	})
+
+	registerConverter(converter{
+		url:        "https://developers.notion.com/reference/retrieve-a-page-property",
+		returnType: returnsInterface("PropertyItemOrPropertyItemPagination"),
+		localCopyOfPathParams: ssrPropsParams{
+			{
+				Desc:     "Identifier for a Notion page",
+				In:       "path",
+				Name:     "page_id",
+				Type:     "string",
+				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+			},
+			{
+				Desc:     "Identifier for a page [property](https://developers.notion.com/reference/page#all-property-values)",
+				In:       "path",
+				Name:     "property_id",
+				Type:     "string",
+				typeCode: jen.String(),
+			},
+		},
+	})
+
+	registerConverter(converter{
+		url:        "https://developers.notion.com/reference/patch-page",
+		returnType: returnsStructRef("Page"),
+		localCopyOfPathParams: ssrPropsParams{
+			{
+				Desc:     "The identifier for the Notion page to be updated.",
+				In:       "path",
+				Name:     "page_id",
+				Type:     "string",
+				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+			},
+		},
+		localCopyOfBodyParams: ssrPropsParams{
+			{
+				Desc:      "The property values to update for the page. The keys are the names or IDs of the property and the values are property values. If a page property ID is not included, then it is not changed.",
+				In:        "body",
+				Name:      "properties",
+				Type:      "json",
+				typeCode:  jen.Id("PropertyValueMap"),
+				omitEmpty: true,
+			},
+			{
+				Desc:     "Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.",
+				In:       "body",
+				Name:     "archived",
+				Type:     "boolean",
+				typeCode: jen.Bool(),
+			},
+			{
+				Desc:     "A page icon for the page. Supported types are [external file object](https://developers.notion.com/reference/file-object) or [emoji object](https://developers.notion.com/reference/emoji-object).",
+				In:       "body",
+				Name:     "icon",
+				Type:     "json",
+				typeCode: jen.Id("FileOrEmoji"), // TODO ExternalFileOrEmoji
+			},
+			{
+				Desc:      "A cover image for the page. Only [external file objects](https://developers.notion.com/reference/file-object) are supported.",
+				In:        "body",
+				Name:      "cover",
+				Type:      "json",
+				typeCode:  jen.Op("*").Id("ExternalFile"),
+				omitEmpty: true,
 			},
 		},
 	})

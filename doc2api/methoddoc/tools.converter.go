@@ -130,7 +130,11 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 			if param.typeCode == nil {
 				return fmt.Errorf("no typeCode for %s", param.Name)
 			}
-			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": param.Name}).Comment(param.Desc))
+			jsonTag := param.Name
+			if param.omitEmpty {
+				jsonTag += ",omitempty"
+			}
+			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": jsonTag}).Comment(param.Desc))
 		}
 		file.Type().Id(methodName + "Params").Struct(fields...).Line()
 	}

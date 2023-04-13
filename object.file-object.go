@@ -32,13 +32,17 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *fileUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"file\"":
 		u.value = &NotionHostedFile{}
 	case "\"external\"":
 		u.value = &ExternalFile{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling File: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

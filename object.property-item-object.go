@@ -35,6 +35,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"title\"":
 		u.value = &TitlePropertyItem{}
@@ -75,7 +79,7 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"last_edited_by\"":
 		u.value = &LastEditedByPropertyItem{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling PropertyItem: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -137,7 +141,7 @@ func (o *TitlePropertyItem) UnmarshalJSON(data []byte) error {
 		Title richTextUnmarshaler `json:"title"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling TitlePropertyItem: %w", err)
 	}
 	o.Title = t.Title.value
 	return nil
@@ -159,7 +163,7 @@ func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
 		RichText richTextUnmarshaler `json:"rich_text"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling RichTextPropertyItem: %w", err)
 	}
 	o.RichText = t.RichText.value
 	return nil

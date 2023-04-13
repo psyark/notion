@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -38,7 +39,7 @@ func (o *Page) UnmarshalJSON(data []byte) error {
 		Parent parentUnmarshaler      `json:"parent"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling Page: %w", err)
 	}
 	o.Icon = t.Icon.value
 	o.Cover = t.Cover.value

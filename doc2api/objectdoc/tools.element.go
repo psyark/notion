@@ -40,9 +40,9 @@ type objectDocHeadingElement struct {
 
 func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocHeadingElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Text != remote.Text {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.output != nil {
 		return e.output(e, b)
 	} else {
@@ -58,9 +58,9 @@ type objectDocParagraphElement struct {
 
 func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocParagraphElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Text != remote.Text {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.output != nil {
 		return e.output(e, b)
 	} else {
@@ -76,9 +76,9 @@ type objectDocAPIHeaderElement struct {
 
 func (e *objectDocAPIHeaderElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocAPIHeaderElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Title != remote.Title {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.output != nil {
 		return e.output(e, b)
 	} else {
@@ -93,14 +93,14 @@ type objectDocCodeElement struct {
 
 func (e *objectDocCodeElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocCodeElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if len(e.Codes) != len(remote.Codes) {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else {
 		for i, code := range e.Codes {
 			rc := remote.Codes[i]
 			if code.Name != rc.Name || code.Language != rc.Language || code.Code != rc.Code {
-				return errUnmatch
+				return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, code, rc)
 			} else if code.output != nil {
 				if err := code.output(code, b); err != nil {
 					return err
@@ -128,9 +128,9 @@ type objectDocCalloutElement struct {
 
 func (e *objectDocCalloutElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocCalloutElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Type != remote.Type || e.Title != remote.Title || e.Body != remote.Body {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.output != nil {
 		return e.output(e, b)
 	} else {
@@ -142,9 +142,9 @@ type objectDocParametersElement []*objectDocParameter
 
 func (e *objectDocParametersElement) checkAndOutput(remote objectDocElement, b *builder) error {
 	if remote, ok := remote.(*objectDocParametersElement); !ok {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if len(*e) != len(*remote) {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else {
 		for i, param := range *e {
 			if err := param.checkAndOutput((*remote)[i], b); err != nil {
@@ -201,7 +201,7 @@ type objectDocParameter struct {
 
 func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *builder) error {
 	if e.Property != remote.Property || e.Field != remote.Field || e.Type != remote.Type || e.Description != remote.Description || e.ExampleValue != remote.ExampleValue || e.ExampleValues != remote.ExampleValues {
-		return errUnmatch
+		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.output != nil {
 		if err := e.output(e, b); err != nil {
 			return err

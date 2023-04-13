@@ -32,6 +32,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"title\"":
 		u.value = &TitlePropertyValue{}
@@ -74,7 +78,7 @@ func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"last_edited_by\"":
 		u.value = &LastEditedByPropertyValue{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling PropertyValue: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -126,8 +130,8 @@ func (_ *RichTextPropertyValue) isPropertyValue() {}
 // Number property values
 type NumberPropertyValue struct {
 	propertyValueCommon
-	Type   string  `always:"number" json:"type"`
-	Number float64 `json:"number"` //  Number property value objects contain a number within the number property.
+	Type   string   `always:"number" json:"type"`
+	Number *float64 `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
 func (_ *NumberPropertyValue) isPropertyValue() {}
@@ -234,6 +238,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
 		u.value = &StringFormula{}
@@ -244,7 +252,7 @@ func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"date\"":
 		u.value = &DateFormula{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling Formula: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -330,6 +338,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
 		u.value = &StringRollup{}
@@ -340,7 +352,7 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"array\"":
 		u.value = &ArrayRollup{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling Rollup: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

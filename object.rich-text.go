@@ -50,6 +50,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"equation\"":
 		u.value = &EquationRichText{}
@@ -58,7 +62,7 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"text\"":
 		u.value = &TextRichText{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling RichText: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -146,6 +150,10 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"database\"":
 		u.value = &DatabaseMention{}
@@ -160,7 +168,7 @@ func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"user\"":
 		u.value = &UserMention{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling Mention: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -339,13 +347,17 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"template_mention_date\"":
 		u.value = &TemplateMentionDate{}
 	case "\"template_mention_user\"":
 		u.value = &TemplateMentionUser{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling TemplateMentionData: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

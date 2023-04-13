@@ -161,7 +161,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("NumberPropertyValue").addFields(&field{
 						name:     "number",
-						typeCode: jen.Float64(),
+						typeCode: jen.Op("*").Float64(), // null
 						comment:  e.Text,
 					})
 					return nil

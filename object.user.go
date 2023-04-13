@@ -53,13 +53,17 @@ UnmarshalJSON unmarshals a JSON message and sets the value field to the appropri
 according to the "type" field of the message.
 */
 func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
 	switch string(getRawProperty(data, "type")) {
 	case "\"person\"":
 		u.value = &PersonUser{}
 	case "\"bot\"":
 		u.value = &BotUser{}
 	default:
-		return fmt.Errorf("data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshaling User: data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
