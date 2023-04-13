@@ -100,8 +100,9 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 Paginated property values
 The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
 */
-type PaginatedPropertyItem struct {
+type PropertyItemPagination struct {
 	paginationCommon
+	propertyItemOrPropertyItemPaginationCommon
 	Object       string         `always:"list" json:"object"`        // Always "list".
 	Type         string         `always:"property_item" json:"type"` // Always "property_item".
 	Results      []PropertyItem `json:"results"`                     // List of property_item objects.

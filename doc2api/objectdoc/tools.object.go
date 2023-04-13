@@ -14,6 +14,7 @@ type objectCoder interface {
 	getName() string
 	getFields() []coder
 	addFields(...coder) objectCoder
+	getSpecifyingField(specifiedBy string) *fixedStringField
 }
 
 var _ = []objectCoder{
@@ -32,6 +33,15 @@ func (c *objectCommon) getName() string {
 }
 func (c *objectCommon) getFields() []coder {
 	return c.fields
+}
+
+func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
+	for _, f := range c.fields {
+		if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
+			return f
+		}
+	}
+	panic(fmt.Errorf("%s not found for %v", specifiedBy, c.name))
 }
 
 // addFields はこのオブジェクトにフィールドを追加します
@@ -61,6 +71,11 @@ type specificObject struct {
 	objectCommon
 }
 
+func (c *specificObject) addFields(fields ...coder) objectCoder {
+	c.objectCommon.addFields(fields...)
+	return c
+}
+
 func (c *specificObject) code() jen.Code {
 	fields := []jen.Code{}
 	hasInterface := false
@@ -87,6 +102,7 @@ func (c *specificObject) code() jen.Code {
 
 		bodyCodes = append(bodyCodes, jen.Return().Nil())
 
+		// プロパティ用UnmarshalJSON
 		code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.Type().Id("Alias").Id(c.name),
 			jen.Id("t").Op(":=").Op("&").Struct(
@@ -121,6 +137,11 @@ func (c *abstractObject) addVariant(variant objectCoder) {
 	c.variants = append(c.variants, variant)
 }
 
+func (c *abstractObject) addFields(fields ...coder) objectCoder {
+	c.objectCommon.addFields(fields...)
+	return c
+}
+
 func (c *abstractObject) code() jen.Code {
 	// インターフェイス本体とisメソッド
 	code := jen.Comment(c.comment).Line().Type().Id(c.name).Interface(jen.Id("is" + c.name).Params()).Line()
@@ -144,24 +165,27 @@ func (c *abstractObject) code() jen.Code {
 		specifiedBy = "type"
 		_, _ = fmt.Printf("%v にspecifiedByが指定されていません\n", c.name)
 	}
-	for _, v := range c.variants {
-		code.Func().Params(jen.Id("_").Op("*").Id(v.getName())).Id("is" + c.name).Params().Block().Line()
-		found := false
-		for _, f := range v.getFields() {
-			if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
-				cases = append(cases, jen.Case(jen.Lit(`"`+f.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(v.getName()).Values())
-				found = true
-				break
-			}
-		}
-		if !found {
-			panic(fmt.Errorf("%s not found for %v", specifiedBy, v.getName()))
+	for _, variant := range c.variants {
+		code.Func().Params(jen.Id("_").Op("*").Id(variant.getName())).Id("is" + c.name).Params().Block().Line()
+		sf := variant.getSpecifyingField(specifiedBy)
+		switch variant := variant.(type) {
+		case *specificObject:
+			cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.getName()).Values())
+		case *abstractObject:
+			cases = append(cases,
+				jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.getName())+"Unmarshaler").Values(),
+				jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
+				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
+				jen.Return().Nil(),
+			)
+		default:
+			panic(fmt.Sprintf("%#v", variant))
 		}
 	}
 
 	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit("unknown type: %s"), jen.String().Call(jen.Id("data")))))
 
-	// Unmarshaler
+	// variant Unmarshaler
 	if len(c.variants) != 0 {
 		name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
 		code.Line().Type().Id(name).Struct(

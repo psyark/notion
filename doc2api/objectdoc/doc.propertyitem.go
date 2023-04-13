@@ -61,16 +61,16 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					// b.getAbstractObject("PropertyItemPagination")
 					b.addAbstractObjectToGlobalIfNotExists("Pagination")
-					b.getAbstractObject("Pagination").addVariant(
-						b.addSpecificObject("PaginatedPropertyItem", e.Text),
-					)
+					pip := b.addSpecificObject("PropertyItemPagination", e.Text)
+					b.getAbstractObject("Pagination").addVariant(pip)
+					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(pip)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThe title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").comment += e.Text
+					b.getSpecificObject("PropertyItemPagination").comment += e.Text
 					return nil
 				},
 			},
@@ -80,7 +80,7 @@ func init() {
 				Description:  `Always "list".`,
 				ExampleValue: `"list"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").addFields(e.asFixedStringField())
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -89,7 +89,7 @@ func init() {
 				Description:  `Always "property_item".`,
 				ExampleValue: `"property_item"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").addFields(e.asFixedStringField())
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -98,7 +98,7 @@ func init() {
 				Description:  "List of property_item objects.",
 				ExampleValue: "[{\"object\": \"property_item\", \"id\": \"vYdV\", \"type\": \"relation\", \"relation\": { \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"}}... ]",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").addFields(e.asField(jen.Index().Id("PropertyItem")))
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.Index().Id("PropertyItem")))
 					return nil
 				},
 			}, {
@@ -107,7 +107,7 @@ func init() {
 				Description:  "A property_item object that describes the property.",
 				ExampleValue: `{"id": "title", "next_url": null, "type": "title", "title": {}}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").addFields(e.asField(jen.Id("PropertyItem")))
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.Id("PropertyItem")))
 					return nil
 				},
 			}, {
@@ -116,7 +116,7 @@ func init() {
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyItem").addFields(e.asField(jen.String()))
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},

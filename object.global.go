@@ -53,7 +53,7 @@ type paginationCommon struct {
 	Object     string `always:"list" json:"object"` // The constant string "list".
 }
 
-func (_ *PaginatedPropertyItem) isPagination() {}
+func (_ *PropertyItemPagination) isPagination() {}
 
 type paginationUnmarshaler struct {
 	value Pagination
@@ -62,7 +62,7 @@ type paginationUnmarshaler struct {
 func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"property_item\"":
-		u.value = &PaginatedPropertyItem{}
+		u.value = &PropertyItemPagination{}
 	default:
 		return fmt.Errorf("unknown type: %s", string(data))
 	}
@@ -75,7 +75,8 @@ type PropertyItemOrPropertyItemPagination interface {
 }
 type propertyItemOrPropertyItemPaginationCommon struct{}
 
-func (_ *PropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (_ *PropertyItem) isPropertyItemOrPropertyItemPagination()           {}
+func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
 
 type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 	value PropertyItemOrPropertyItemPagination
@@ -84,7 +85,14 @@ type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "object")) {
 	case "\"property_item\"":
-		u.value = &PropertyItem{}
+		t := &propertyItemUnmarshaler{}
+		if err := json.Unmarshal(data, t); err != nil {
+			return err
+		}
+		u.value = t.value
+		return nil
+	case "\"list\"":
+		u.value = &PropertyItemPagination{}
 	default:
 		return fmt.Errorf("unknown type: %s", string(data))
 	}
