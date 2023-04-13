@@ -197,34 +197,35 @@ func (c *abstractObject) code() jen.Code {
 		}
 	}
 
-	// バリアントにisメソッドを実装
-	cases := []jen.Code{}
-
-	for _, variant := range c.variants {
-		sf := variant.getSpecifyingField(c.specifiedBy)
-		switch variant := variant.(type) {
-		case *specificObject:
-			cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.getName()).Values())
-		case *abstractObject:
-			cases = append(cases,
-				jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.getName())+"Unmarshaler").Values(),
-				jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
-				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
-				jen.Return().Nil(),
-			)
-		default:
-			panic(fmt.Sprintf("%#v", variant))
-		}
-	}
-
-	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit("unknown type: %s"), jen.String().Call(jen.Id("data")))))
-
 	// variant Unmarshaler
 	if len(c.variants) != 0 {
+		cases := []jen.Code{}
+
+		for _, variant := range c.variants {
+			sf := variant.getSpecifyingField(c.specifiedBy)
+			switch variant := variant.(type) {
+			case *specificObject:
+				cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.getName()).Values())
+			case *abstractObject:
+				cases = append(cases,
+					jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.getName())+"Unmarshaler").Values(),
+					jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
+					jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
+					jen.Return().Nil(),
+				)
+			default:
+				panic(fmt.Sprintf("%#v", variant))
+			}
+		}
+
+		cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit("unknown type: %s"), jen.String().Call(jen.Id("data")))))
+
 		name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
 		code.Line().Type().Id(name).Struct(
 			jen.Id("value").Id(c.name),
-		).Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+		)
+		code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.specifiedBy))
+		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()

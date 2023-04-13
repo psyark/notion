@@ -15,6 +15,10 @@ type fileOrEmojiUnmarshaler struct {
 	value FileOrEmoji
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"emoji\"":
@@ -51,6 +55,10 @@ type paginationUnmarshaler struct {
 	value Pagination
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"property_item\"":
@@ -69,11 +77,15 @@ type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 	value PropertyItemOrPropertyItemPagination
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "object" field of the message.
+*/
 func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "object")) {
 	case "\"property_item\"":
 		t := &propertyItemUnmarshaler{}
-		if err := json.Unmarshal(data, t); err != nil {
+		if err := t.UnmarshalJSON(data); err != nil {
 			return err
 		}
 		u.value = t.value

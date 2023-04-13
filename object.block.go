@@ -58,6 +58,10 @@ type blockUnmarshaler struct {
 	value Block
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"bookmark\"":

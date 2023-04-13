@@ -45,6 +45,10 @@ type richTextUnmarshaler struct {
 	value RichText
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"equation\"":
@@ -119,6 +123,10 @@ type mentionUnmarshaler struct {
 	value Mention
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"database\"":
@@ -304,6 +312,10 @@ type templateMentionDataUnmarshaler struct {
 	value TemplateMentionData
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"template_mention_date\"":

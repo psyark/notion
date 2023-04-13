@@ -27,6 +27,10 @@ type propertyValueUnmarshaler struct {
 	value PropertyValue
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"title\"":
@@ -207,6 +211,10 @@ type formulaUnmarshaler struct {
 	value Formula
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
@@ -295,6 +303,10 @@ type rollupUnmarshaler struct {
 	value Rollup
 }
 
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
 func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch string(getRawProperty(data, "type")) {
 	case "\"string\"":
