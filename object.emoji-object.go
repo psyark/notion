@@ -9,3 +9,5 @@ type Emoji struct {
 	Type  string `always:"emoji" json:"type"` // The constant string "emoji" that represents the object type.
 	Emoji string `json:"emoji"`               // The emoji character.
 }
+
+func (_ *Emoji) isFileOrEmoji() {}

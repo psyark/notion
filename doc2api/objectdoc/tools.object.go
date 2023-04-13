@@ -15,6 +15,7 @@ type objectCoder interface {
 	getFields() []coder
 	addFields(...coder) objectCoder
 	getSpecifyingField(specifiedBy string) *fixedStringField
+	addParent(*abstractObject)
 }
 
 var _ = []objectCoder{
@@ -26,6 +27,7 @@ type objectCommon struct {
 	name    string
 	comment string
 	fields  []coder
+	parents []*abstractObject
 }
 
 func (c *objectCommon) getName() string {
@@ -42,6 +44,18 @@ func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField 
 		}
 	}
 	panic(fmt.Errorf("%s not found for %v", specifiedBy, c.name))
+}
+func (c *objectCommon) addParent(parent *abstractObject) {
+	c.parents = append(c.parents, parent)
+}
+
+func (c *objectCommon) getAncestors() []*abstractObject {
+	ancestors := []*abstractObject{}
+	for _, a := range c.parents {
+		ancestors = append(ancestors, a)
+		ancestors = append(ancestors, a.getAncestors()...)
+	}
+	return ancestors
 }
 
 // addFields はこのオブジェクトにフィールドを追加します
@@ -77,22 +91,31 @@ func (c *specificObject) addFields(fields ...coder) objectCoder {
 }
 
 func (c *specificObject) code() jen.Code {
-	fields := []jen.Code{}
+	code := jen.Line()
 	hasInterface := false
-	for _, f := range c.fields {
-		fields = append(fields, f.code())
-		if f, ok := f.(*field); ok && f.isInterface {
-			hasInterface = true
+
+	// struct本体
+	{
+		fields := []jen.Code{}
+		for _, f := range c.fields {
+			fields = append(fields, f.code())
+			if f, ok := f.(*field); ok && f.isInterface {
+				hasInterface = true
+			}
 		}
+		code.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...).Line()
 	}
-	code := jen.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...).Line()
+
+	// インターフェイスを実装
+	for _, a := range c.getAncestors() {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + a.name).Params().Block().Line()
+	}
 
 	// フィールドにインターフェイスを含むため、UnmarshalJSONで前処理を行う
 	if hasInterface {
 		tmpFields := []jen.Code{jen.Op("*").Id("Alias")}
 		bodyCodes := []jen.Code{}
 		for _, f := range c.fields {
-			fields = append(fields, f.code())
 			if f, ok := f.(*field); ok && f.isInterface {
 				interfaceName := (&jen.Statement{f.typeCode}).GoString()
 				tmpFields = append(tmpFields, jen.Id(strcase.UpperCamelCase(f.name)).Id(strcase.LowerCamelCase(interfaceName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
@@ -133,7 +156,10 @@ type abstractObject struct {
 // - バリアントに対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切なバリアントを作成するUnmarshalerを作成
 func (c *abstractObject) addVariant(variant objectCoder) {
-	variant.addFields(&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")})
+	variant.addFields(
+		// TODO: なくてもいいのでは
+		&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")},
+	).addParent(c)
 	c.variants = append(c.variants, variant)
 }
 
@@ -143,8 +169,22 @@ func (c *abstractObject) addFields(fields ...coder) objectCoder {
 }
 
 func (c *abstractObject) code() jen.Code {
+	code := jen.Line()
+
+	if c.comment != "" {
+		code.Comment(c.comment).Line()
+	}
+
 	// インターフェイス本体とisメソッド
-	code := jen.Comment(c.comment).Line().Type().Id(c.name).Interface(jen.Id("is" + c.name).Params()).Line()
+	{
+		methods := []jen.Code{
+			jen.Id("is" + c.name).Params(),
+		}
+		for _, a := range c.parents {
+			methods = append(methods, jen.Id("is"+a.name).Params())
+		}
+		code.Type().Id(c.name).Interface(methods...).Line()
+	}
 
 	// 共通フィールド
 	// if len(c.fields) != 0 {
@@ -162,7 +202,6 @@ func (c *abstractObject) code() jen.Code {
 	cases := []jen.Code{}
 
 	for _, variant := range c.variants {
-		code.Func().Params(jen.Id("_").Op("*").Id(variant.getName())).Id("is" + c.name).Params().Block().Line()
 		sf := variant.getSpecifyingField(c.specifiedBy)
 		switch variant := variant.(type) {
 		case *specificObject:

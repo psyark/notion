@@ -24,9 +24,6 @@ type File interface {
 }
 type fileCommon struct{}
 
-func (_ *NotionHostedFile) isFile() {}
-func (_ *ExternalFile) isFile()     {}
-
 type fileUnmarshaler struct {
 	value File
 }
@@ -51,6 +48,9 @@ type NotionHostedFile struct {
 	File NotionHostedFileData `json:"file"`
 }
 
+func (_ *NotionHostedFile) isFile()        {}
+func (_ *NotionHostedFile) isFileOrEmoji() {}
+
 /*
 
 All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:
@@ -68,6 +68,9 @@ type ExternalFile struct {
 	Type     string           `always:"external" json:"type"`
 	External ExternalFileData `json:"external"`
 }
+
+func (_ *ExternalFile) isFile()        {}
+func (_ *ExternalFile) isFileOrEmoji() {}
 
 /*
 

@@ -22,11 +22,6 @@ type Parent interface {
 }
 type parentCommon struct{}
 
-func (_ *DatabaseParent) isParent()  {}
-func (_ *PageParent) isParent()      {}
-func (_ *WorkspaceParent) isParent() {}
-func (_ *BlockParent) isParent()     {}
-
 type parentUnmarshaler struct {
 	value Parent
 }
@@ -61,6 +56,8 @@ type DatabaseParent struct {
 	DatabaseId uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
 }
 
+func (_ *DatabaseParent) isParent() {}
+
 /*
 Page parent
 
@@ -74,6 +71,8 @@ type PageParent struct {
 	Type   string    `always:"page_id" json:"type"` // Always "page_id".
 	PageId uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
 }
+
+func (_ *PageParent) isParent() {}
 
 /*
 Workspace parent
@@ -90,6 +89,8 @@ type WorkspaceParent struct {
 	Workspace bool   `json:"workspace"`               // Always true.
 }
 
+func (_ *WorkspaceParent) isParent() {}
+
 /*
 Block parent
 A page may have a block parent if it is created inline in a chunk of text, or is located beneath another block like a toggle or bullet block. The parent property is an object containing the following keys:
@@ -104,3 +105,5 @@ type BlockParent struct {
 	Type    string    `always:"block_id" json:"type"` // Always "block_id".
 	BlockId uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
 }
+
+func (_ *BlockParent) isParent() {}

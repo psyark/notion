@@ -41,10 +41,6 @@ type richTextCommon struct {
 	Href        *string     `json:"href"`        // The URL of any link or Notion mention in this text, if any.
 }
 
-func (_ *EquationRichText) isRichText() {}
-func (_ *MentionRichText) isRichText()  {}
-func (_ *TextRichText) isRichText()     {}
-
 type richTextUnmarshaler struct {
 	value RichText
 }
@@ -107,6 +103,8 @@ type EquationRichText struct {
 	Expression string `json:"expression"` // The LaTeX string representing the inline equation.
 }
 
+func (_ *EquationRichText) isRichText() {}
+
 /*
 Mention
 Mention objects represent an inline mention of a database, date, link preview mention, page, template mention, or user. A mention is created in the Notion UI when a user types @ followed by the name of the reference.
@@ -117,13 +115,6 @@ type Mention interface {
 	isMention()
 }
 type mentionCommon struct{}
-
-func (_ *DatabaseMention) isMention()    {}
-func (_ *DateMention) isMention()        {}
-func (_ *LinkPreviewMention) isMention() {}
-func (_ *PageMention) isMention()        {}
-func (_ *TemplateMention) isMention()    {}
-func (_ *UserMention) isMention()        {}
 
 type mentionUnmarshaler struct {
 	value Mention
@@ -155,6 +146,8 @@ type MentionRichText struct {
 	Type    string  `always:"mention" json:"type"`
 	Mention Mention `json:"mention"`
 }
+
+func (_ *MentionRichText) isRichText() {}
 
 /*
 Database mention type object
@@ -189,6 +182,8 @@ type DatabaseMention struct {
 	Database PageReference `json:"database"`
 }
 
+func (_ *DatabaseMention) isMention() {}
+
 /*
 Date mention type object
 Date mentions contain a date property value object within the corresponding date field.
@@ -221,6 +216,8 @@ type DateMention struct {
 	Date DatePropertyValue `json:"date"`
 }
 
+func (_ *DateMention) isMention() {}
+
 /*
 Link Preview mention type object
 If a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.
@@ -251,6 +248,8 @@ type LinkPreviewMention struct {
 	Type        string       `always:"link_preview" json:"type"`
 	LinkPreview URLReference `json:"link_preview"`
 }
+
+func (_ *LinkPreviewMention) isMention() {}
 
 /*
 Page mention type object
@@ -285,6 +284,8 @@ type PageMention struct {
 	Page PageReference `json:"page"`
 }
 
+func (_ *PageMention) isMention() {}
+
 /*
 Template mention type object
 The content inside a template button in the Notion UI can include placeholder date and user mentions that populate when a template is duplicated. Template mention type objects contain these populated values.
@@ -299,14 +300,12 @@ type TemplateMention struct {
 	TemplateMention TemplateMentionData `json:"template_mention"`
 }
 
-//
+func (_ *TemplateMention) isMention() {}
+
 type TemplateMentionData interface {
 	isTemplateMentionData()
 }
 type templateMentionDataCommon struct{}
-
-func (_ *TemplateMentionDate) isTemplateMentionData() {}
-func (_ *TemplateMentionUser) isTemplateMentionData() {}
 
 type templateMentionDataUnmarshaler struct {
 	value TemplateMentionData
@@ -353,6 +352,8 @@ type TemplateMentionDate struct {
 	TemplateMentionDate string `json:"template_mention_date"` // The type of the date mention. Possible values include: "today" and "now".
 }
 
+func (_ *TemplateMentionDate) isTemplateMentionData() {}
+
 /*
 Example rich text mention object for a template_mention_user mention
 {
@@ -381,6 +382,8 @@ type TemplateMentionUser struct {
 	Type                string `always:"template_mention_user" json:"type"`
 	TemplateMentionUser string `always:"me" json:"template_mention_user"` // The type of the user mention. The only possible value is "me".
 }
+
+func (_ *TemplateMentionUser) isTemplateMentionData() {}
 
 /*
 User mention type object
@@ -415,12 +418,16 @@ type UserMention struct {
 	User PartialUser `json:"user"`
 }
 
+func (_ *UserMention) isMention() {}
+
 // Text
 type TextRichText struct {
 	richTextCommon
 	Type string `always:"text" json:"type"`
 	Text Text   `json:"text"`
 }
+
+func (_ *TextRichText) isRichText() {}
 
 /*
 

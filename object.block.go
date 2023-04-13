@@ -54,8 +54,6 @@ type blockCommon struct {
 	HasChildren    bool          `json:"has_children"`          // Whether or not the block has children blocks nested within it.
 }
 
-func (_ *BookmarkBlock) isBlock() {}
-
 type blockUnmarshaler struct {
 	value Block
 }
@@ -92,3 +90,5 @@ type BookmarkBlock struct {
 	Caption []RichText `json:"caption"` // The caption for the bookmark.
 	Url     string     `json:"url"`     // The link for the bookmark.
 }
+
+func (_ *BookmarkBlock) isBlock() {}

@@ -23,27 +23,6 @@ type propertyValueCommon struct {
 	Id string `json:"id"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
-func (_ *TitlePropertyValue) isPropertyValue()          {}
-func (_ *RichTextPropertyValue) isPropertyValue()       {}
-func (_ *NumberPropertyValue) isPropertyValue()         {}
-func (_ *SelectPropertyValue) isPropertyValue()         {}
-func (_ *StatusPropertyValue) isPropertyValue()         {}
-func (_ *MultiSelectPropertyValue) isPropertyValue()    {}
-func (_ *DatePropertyValue) isPropertyValue()           {}
-func (_ *FormulaPropertyValue) isPropertyValue()        {}
-func (_ *RelationPropertyValue) isPropertyValue()       {}
-func (_ *RollupPropertyValue) isPropertyValue()         {}
-func (_ *PeoplePropertyValue) isPropertyValue()         {}
-func (_ *FilesPropertyValue) isPropertyValue()          {}
-func (_ *CheckboxPropertyValue) isPropertyValue()       {}
-func (_ *UrlPropertyValue) isPropertyValue()            {}
-func (_ *EmailPropertyValue) isPropertyValue()          {}
-func (_ *PhoneNumberPropertyValue) isPropertyValue()    {}
-func (_ *CreatedTimePropertyValue) isPropertyValue()    {}
-func (_ *CreatedByPropertyValue) isPropertyValue()      {}
-func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
-func (_ *LastEditedByPropertyValue) isPropertyValue()   {}
-
 type propertyValueUnmarshaler struct {
 	value PropertyValue
 }
@@ -107,6 +86,8 @@ type TitlePropertyValue struct {
 	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
+func (_ *TitlePropertyValue) isPropertyValue() {}
+
 /*
 Rich Text property values
 
@@ -118,6 +99,8 @@ type RichTextPropertyValue struct {
 	RichText RichTextArray `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
+func (_ *RichTextPropertyValue) isPropertyValue() {}
+
 // Number property values
 type NumberPropertyValue struct {
 	propertyValueCommon
@@ -125,12 +108,16 @@ type NumberPropertyValue struct {
 	Number float64 `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
+func (_ *NumberPropertyValue) isPropertyValue() {}
+
 // Select property values
 type SelectPropertyValue struct {
 	propertyValueCommon
 	Type   string                  `always:"select" json:"type"`
 	Select SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
 }
+
+func (_ *SelectPropertyValue) isPropertyValue() {}
 
 /*
 
@@ -149,6 +136,8 @@ type StatusPropertyValue struct {
 	Status StatusPropertyValueData `json:"status"` //  Status property value objects contain the following data within the status property:
 }
 
+func (_ *StatusPropertyValue) isPropertyValue() {}
+
 /*
 
 Status property value objects contain the following data within the status property:
@@ -166,6 +155,8 @@ type MultiSelectPropertyValue struct {
 	MultiSelect []MultiSelectOption `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
 
+func (_ *MultiSelectPropertyValue) isPropertyValue() {}
+
 // Multi-select option values
 type MultiSelectOption struct {
 	Id    uuid.UUID `json:"id"`    // ID of the option.  When updating a multi-select property, you can use either name or id.
@@ -179,6 +170,8 @@ type DatePropertyValue struct {
 	Type string                `always:"date" json:"type"`
 	Date DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
+
+func (_ *DatePropertyValue) isPropertyValue() {}
 
 /*
 
@@ -204,16 +197,12 @@ type FormulaPropertyValue struct {
 	Formula Formula `json:"formula"`
 }
 
-//
+func (_ *FormulaPropertyValue) isPropertyValue() {}
+
 type Formula interface {
 	isFormula()
 }
 type formulaCommon struct{}
-
-func (_ *StringFormula) isFormula()  {}
-func (_ *NumberFormula) isFormula()  {}
-func (_ *BooleanFormula) isFormula() {}
-func (_ *DateFormula) isFormula()    {}
 
 type formulaUnmarshaler struct {
 	value Formula
@@ -242,12 +231,16 @@ type StringFormula struct {
 	String string `json:"string"` //  String formula property values contain an optional string within the string property.
 }
 
+func (_ *StringFormula) isFormula() {}
+
 // Number formula property values
 type NumberFormula struct {
 	formulaCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number formula property values contain an optional number within the number property.
 }
+
+func (_ *NumberFormula) isFormula() {}
 
 // Boolean formula property values
 type BooleanFormula struct {
@@ -256,12 +249,16 @@ type BooleanFormula struct {
 	Boolean bool   `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
 }
 
+func (_ *BooleanFormula) isFormula() {}
+
 // Date formula property values
 type DateFormula struct {
 	formulaCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date formula property values contain an optional date property value within the date property.
 }
+
+func (_ *DateFormula) isFormula() {}
 
 /*
 Relation property values
@@ -278,6 +275,8 @@ type RelationPropertyValue struct {
 	HasMore  bool            `json:"has_more"`
 }
 
+func (_ *RelationPropertyValue) isPropertyValue() {}
+
 /*
 Rollup property values
 Rollup property value objects represent the result of evaluating a rollup described in the
@@ -291,16 +290,12 @@ type RollupPropertyValue struct {
 	Type string `always:"rollup" json:"type"`
 }
 
-//
+func (_ *RollupPropertyValue) isPropertyValue() {}
+
 type Rollup interface {
 	isRollup()
 }
 type rollupCommon struct{}
-
-func (_ *StringRollup) isRollup() {}
-func (_ *NumberRollup) isRollup() {}
-func (_ *DateRollup) isRollup()   {}
-func (_ *ArrayRollup) isRollup()  {}
 
 type rollupUnmarshaler struct {
 	value Rollup
@@ -329,12 +324,16 @@ type StringRollup struct {
 	String string `json:"string"` //  String rollup property values contain an optional string within the string property.
 }
 
+func (_ *StringRollup) isRollup() {}
+
 // Number rollup property values
 type NumberRollup struct {
 	rollupCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number rollup property values contain a number within the number property.
 }
+
+func (_ *NumberRollup) isRollup() {}
 
 // Date rollup property values
 type DateRollup struct {
@@ -343,12 +342,16 @@ type DateRollup struct {
 	Date DatePropertyValue `json:"date"` //  Date rollup property values contain a date property value within the date property.
 }
 
+func (_ *DateRollup) isRollup() {}
+
 // Array rollup property values
 type ArrayRollup struct {
 	rollupCommon
 	Type  string   `always:"array" json:"type"`
 	Array []Rollup `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
 }
+
+func (_ *ArrayRollup) isRollup() {}
 
 /*
 People property values
@@ -360,6 +363,8 @@ type PeoplePropertyValue struct {
 	Type string `always:"people" json:"type"`
 	User User   `json:"user"` //  People property value objects contain an array of user objects within the people property.
 }
+
+func (_ *PeoplePropertyValue) isPropertyValue() {}
 
 /*
 Files property values
@@ -373,12 +378,16 @@ type FilesPropertyValue struct {
 	Files []File `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
+func (_ *FilesPropertyValue) isPropertyValue() {}
+
 // Checkbox property values
 type CheckboxPropertyValue struct {
 	propertyValueCommon
 	Type     string `always:"checkbox" json:"type"`
 	Checkbox bool   `json:"checkbox"` //  Checkbox property value objects contain a boolean within the checkbox property.
 }
+
+func (_ *CheckboxPropertyValue) isPropertyValue() {}
 
 // URL property values
 type UrlPropertyValue struct {
@@ -387,12 +396,16 @@ type UrlPropertyValue struct {
 	Url  string `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
 }
 
+func (_ *UrlPropertyValue) isPropertyValue() {}
+
 // Email property values
 type EmailPropertyValue struct {
 	propertyValueCommon
 	Type  string `always:"email" json:"type"`
 	Email string `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
 }
+
+func (_ *EmailPropertyValue) isPropertyValue() {}
 
 // Phone number property values
 type PhoneNumberPropertyValue struct {
@@ -401,12 +414,16 @@ type PhoneNumberPropertyValue struct {
 	PhoneNumber string `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 }
 
+func (_ *PhoneNumberPropertyValue) isPropertyValue() {}
+
 // Created time property values
 type CreatedTimePropertyValue struct {
 	propertyValueCommon
 	Type        string        `always:"created_time" json:"type"`
 	CreatedTime ISO8601String `json:"created_time"` //  Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
+
+func (_ *CreatedTimePropertyValue) isPropertyValue() {}
 
 // Created by property values
 type CreatedByPropertyValue struct {
@@ -415,6 +432,8 @@ type CreatedByPropertyValue struct {
 	CreatedBy User   `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
+func (_ *CreatedByPropertyValue) isPropertyValue() {}
+
 // Last edited time property values
 type LastEditedTimePropertyValue struct {
 	propertyValueCommon
@@ -422,9 +441,13 @@ type LastEditedTimePropertyValue struct {
 	LastEditedTime ISO8601String `json:"last_edited_time"` //  Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
+func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
+
 // Last edited by property values
 type LastEditedByPropertyValue struct {
 	propertyValueCommon
 	Type         string `always:"last_edited_by" json:"type"`
 	LastEditedBy User   `json:"last_edited_by"` //  Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
+
+func (_ *LastEditedByPropertyValue) isPropertyValue() {}
