@@ -87,7 +87,9 @@ func (c *specificObject) code() jen.Code {
 	{
 		fields := []jen.Code{}
 		for _, p := range c.parents {
-			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+			if p.hasCommonField() {
+				fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+			}
 		}
 		for _, f := range c.fields {
 			fields = append(fields, f.code())
@@ -157,6 +159,18 @@ func (c *abstractObject) addFields(fields ...coder) objectCoder {
 	return c
 }
 
+func (c *abstractObject) hasCommonField() bool {
+	if len(c.fields) != 0 {
+		return true
+	}
+	for _, p := range c.parents {
+		if p.hasCommonField() {
+			return true
+		}
+	}
+	return false
+}
+
 func (c *abstractObject) code() jen.Code {
 	code := jen.Line()
 
@@ -169,28 +183,29 @@ func (c *abstractObject) code() jen.Code {
 		methods := []jen.Code{
 			jen.Id("is" + c.name).Params(),
 		}
-		for _, a := range c.parents {
-			methods = append(methods, jen.Id("is"+a.name).Params())
+		for _, p := range c.parents {
+			methods = append(methods, jen.Id("is"+p.name).Params())
 		}
 		code.Type().Id(c.name).Interface(methods...).Line()
 	}
 
 	// 共通フィールド
-	// TODO 不要な共通フィールドを省略
-	// if len(c.fields) != 0 {
-	// }
 	{
-		if c.fieldsComment != "" {
-			code.Comment(c.fieldsComment).Line()
-		}
 		fields := []jen.Code{}
 		for _, p := range c.parents {
-			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+			if p.hasCommonField() {
+				fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+			}
 		}
 		for _, f := range c.fields {
 			fields = append(fields, f.code())
 		}
-		code.Type().Id(strcase.LowerCamelCase(c.name) + "Common").Struct(fields...).Line()
+		if len(fields) != 0 {
+			if c.fieldsComment != "" {
+				code.Comment(c.fieldsComment).Line()
+			}
+			code.Type().Id(strcase.LowerCamelCase(c.name) + "Common").Struct(fields...).Line()
+		}
 	}
 
 	// バリアントにisメソッドを実装

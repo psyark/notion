@@ -114,7 +114,6 @@ If a rich text object’s type value is "mention", then the corresponding mentio
 type Mention interface {
 	isMention()
 }
-type mentionCommon struct{}
 
 type mentionUnmarshaler struct {
 	value Mention
@@ -177,7 +176,6 @@ Example rich text mention object for a database mention
 }
 */
 type DatabaseMention struct {
-	mentionCommon
 	Type     string        `always:"database" json:"type"`
 	Database PageReference `json:"database"`
 }
@@ -211,7 +209,6 @@ Example rich text mention object for a date mention
 }
 */
 type DateMention struct {
-	mentionCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"`
 }
@@ -244,7 +241,6 @@ Example rich text mention object for a link_preview mention
 }
 */
 type LinkPreviewMention struct {
-	mentionCommon
 	Type        string       `always:"link_preview" json:"type"`
 	LinkPreview URLReference `json:"link_preview"`
 }
@@ -279,7 +275,6 @@ Example rich text mention object for a page mention
 }
 */
 type PageMention struct {
-	mentionCommon
 	Type string        `always:"page" json:"type"`
 	Page PageReference `json:"page"`
 }
@@ -295,7 +290,6 @@ Template mention rich text objects contain a template_mention object with a ne
 If the type key is "template_mention_date", then the rich text object contains the following template_mention_date field:
 */
 type TemplateMention struct {
-	mentionCommon
 	Type            string              `always:"template_mention" json:"type"`
 	TemplateMention TemplateMentionData `json:"template_mention"`
 }
@@ -305,7 +299,6 @@ func (_ *TemplateMention) isMention() {}
 type TemplateMentionData interface {
 	isTemplateMentionData()
 }
-type templateMentionDataCommon struct{}
 
 type templateMentionDataUnmarshaler struct {
 	value TemplateMentionData
@@ -347,7 +340,6 @@ Example rich text mention object for a template_mention_date mention
 }
 */
 type TemplateMentionDate struct {
-	templateMentionDataCommon
 	Type                string `always:"template_mention_date" json:"type"`
 	TemplateMentionDate string `json:"template_mention_date"` // The type of the date mention. Possible values include: "today" and "now".
 }
@@ -378,7 +370,6 @@ Example rich text mention object for a template_mention_user mention
 }
 */
 type TemplateMentionUser struct {
-	templateMentionDataCommon
 	Type                string `always:"template_mention_user" json:"type"`
 	TemplateMentionUser string `always:"me" json:"template_mention_user"` // The type of the user mention. The only possible value is "me".
 }
@@ -413,7 +404,6 @@ Example rich text mention object for a user mention
 }
 */
 type UserMention struct {
-	mentionCommon
 	Type string      `always:"user" json:"type"`
 	User PartialUser `json:"user"`
 }

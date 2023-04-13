@@ -10,7 +10,6 @@ import (
 type FileOrEmoji interface {
 	isFileOrEmoji()
 }
-type fileOrEmojiCommon struct{}
 
 type fileOrEmojiUnmarshaler struct {
 	value FileOrEmoji
@@ -65,7 +64,6 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 type PropertyItemOrPropertyItemPagination interface {
 	isPropertyItemOrPropertyItemPagination()
 }
-type propertyItemOrPropertyItemPaginationCommon struct{}
 
 type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 	value PropertyItemOrPropertyItemPagination

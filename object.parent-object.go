@@ -20,7 +20,6 @@ Parenting rules:
 type Parent interface {
 	isParent()
 }
-type parentCommon struct{}
 
 type parentUnmarshaler struct {
 	value Parent
@@ -51,7 +50,6 @@ Database parent
 }
 */
 type DatabaseParent struct {
-	parentCommon
 	Type       string    `always:"database_id" json:"type"` // Always "database_id".
 	DatabaseId uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
 }
@@ -67,7 +65,6 @@ Page parent
 }
 */
 type PageParent struct {
-	parentCommon
 	Type   string    `always:"page_id" json:"type"` // Always "page_id".
 	PageId uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
 }
@@ -84,7 +81,6 @@ A page with a workspace parent is a top-level page within a Notion workspace. Th
 }
 */
 type WorkspaceParent struct {
-	parentCommon
 	Type      string `always:"workspace" json:"type"` // Always "workspace".
 	Workspace bool   `json:"workspace"`               // Always true.
 }
@@ -101,7 +97,6 @@ A page may have a block parent if it is created inline in a chunk of text, or is
 }
 */
 type BlockParent struct {
-	parentCommon
 	Type    string    `always:"block_id" json:"type"` // Always "block_id".
 	BlockId uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
 }

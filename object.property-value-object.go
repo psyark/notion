@@ -202,7 +202,6 @@ func (_ *FormulaPropertyValue) isPropertyValue() {}
 type Formula interface {
 	isFormula()
 }
-type formulaCommon struct{}
 
 type formulaUnmarshaler struct {
 	value Formula
@@ -226,7 +225,6 @@ func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 
 // String formula property values
 type StringFormula struct {
-	formulaCommon
 	Type   string `always:"string" json:"type"`
 	String string `json:"string"` //  String formula property values contain an optional string within the string property.
 }
@@ -235,7 +233,6 @@ func (_ *StringFormula) isFormula() {}
 
 // Number formula property values
 type NumberFormula struct {
-	formulaCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number formula property values contain an optional number within the number property.
 }
@@ -244,7 +241,6 @@ func (_ *NumberFormula) isFormula() {}
 
 // Boolean formula property values
 type BooleanFormula struct {
-	formulaCommon
 	Type    string `always:"boolean" json:"type"`
 	Boolean bool   `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
 }
@@ -253,7 +249,6 @@ func (_ *BooleanFormula) isFormula() {}
 
 // Date formula property values
 type DateFormula struct {
-	formulaCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date formula property values contain an optional date property value within the date property.
 }
@@ -295,7 +290,6 @@ func (_ *RollupPropertyValue) isPropertyValue() {}
 type Rollup interface {
 	isRollup()
 }
-type rollupCommon struct{}
 
 type rollupUnmarshaler struct {
 	value Rollup
@@ -319,7 +313,6 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 
 // String rollup property values
 type StringRollup struct {
-	rollupCommon
 	Type   string `always:"string" json:"type"`
 	String string `json:"string"` //  String rollup property values contain an optional string within the string property.
 }
@@ -328,7 +321,6 @@ func (_ *StringRollup) isRollup() {}
 
 // Number rollup property values
 type NumberRollup struct {
-	rollupCommon
 	Type   string  `always:"number" json:"type"`
 	Number float64 `json:"number"` //  Number rollup property values contain a number within the number property.
 }
@@ -337,7 +329,6 @@ func (_ *NumberRollup) isRollup() {}
 
 // Date rollup property values
 type DateRollup struct {
-	rollupCommon
 	Type string            `always:"date" json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date rollup property values contain a date property value within the date property.
 }
@@ -346,7 +337,6 @@ func (_ *DateRollup) isRollup() {}
 
 // Array rollup property values
 type ArrayRollup struct {
-	rollupCommon
 	Type  string   `always:"array" json:"type"`
 	Array []Rollup `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
 }
