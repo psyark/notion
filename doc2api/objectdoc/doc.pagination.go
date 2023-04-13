@@ -82,7 +82,7 @@ func init() {
 				Type:        "boolean",
 				Description: "Whether the response includes the end of the list. false if there are no more results. Otherwise, true.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Pagination").addFields(e.asField(jen.Bool(), false))
+					b.getAbstractObject("Pagination").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -91,7 +91,7 @@ func init() {
 				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.\n\nOnly available when has_more is true.",
 				output: func(e *objectDocParameter, b *builder) error {
 					// RetrievePagePropertyItemでnullを確認
-					b.getAbstractObject("Pagination").addFields(e.asField(jen.Id("*").String(), false))
+					b.getAbstractObject("Pagination").addFields(e.asField(jen.Id("*").String()))
 					return nil
 				},
 			}, {

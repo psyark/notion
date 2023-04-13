@@ -44,7 +44,7 @@ func init() {
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
 				ExampleValue: "\"f%5C%5C%3Ap\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("PropertyItem").addFields(e.asField(jen.String(), false))
+					b.getAbstractObject("PropertyItem").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -98,7 +98,7 @@ func init() {
 				Description:  "List of property_item objects.",
 				ExampleValue: "[{\"object\": \"property_item\", \"id\": \"vYdV\", \"type\": \"relation\", \"relation\": { \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"}}... ]",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.Id("PropertyItems"), false))
+					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.Id("PropertyItems")))
 					return nil
 				},
 			}, {
@@ -114,7 +114,7 @@ func init() {
 						&field{name: "title", typeCode: jen.Struct()}, // TODO omitempty
 					)
 					b.getSpecificObject("PropertyItemPagination").addFields(
-						e.asField(jen.Id("PaginatedPropertyInfo"), false),
+						e.asField(jen.Id("PaginatedPropertyInfo")),
 					)
 					return nil
 				},
@@ -124,7 +124,7 @@ func init() {
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String(), false))
+					b.getSpecificObject("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
 					return nil
 				},
 			}},
@@ -144,7 +144,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					// ドキュメントには "array of rich text" と書いてあるが間違い
 					b.getSpecificObject("TitlePropertyItem").addFields(
-						&field{name: "title", typeCode: jen.Id("RichText"), comment: e.Text, isInterface: true},
+						&interfaceField{name: "title", typeName: "RichText", comment: e.Text},
 					)
 					return nil
 				},
@@ -171,7 +171,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					// ドキュメントには "array of rich text" と書いてあるが間違い
 					b.getSpecificObject("RichTextPropertyItem").addFields(
-						&field{name: "rich_text", typeCode: jen.Id("RichText"), comment: e.Text, isInterface: true},
+						&interfaceField{name: "rich_text", typeName: "RichText", comment: e.Text},
 					)
 					return nil
 				},
@@ -231,7 +231,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID"), false))
+					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}, {
@@ -240,7 +240,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -249,7 +249,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -292,7 +292,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID"), false))
+					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
 					return nil
 				},
 			}, {
@@ -301,7 +301,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -310,7 +310,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -345,7 +345,7 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String"), false))
+					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -354,7 +354,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String"), false))
+					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -363,7 +363,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},

@@ -82,7 +82,7 @@ func (c *specificObject) code() jen.Code {
 		}
 		for _, f := range c.fields {
 			fields = append(fields, f.code())
-			if f, ok := f.(*field); ok && f.isInterface {
+			if _, ok := f.(*interfaceField); ok {
 				hasInterface = true
 			}
 		}
@@ -99,10 +99,9 @@ func (c *specificObject) code() jen.Code {
 		tmpFields := []jen.Code{jen.Op("*").Id("Alias")}
 		bodyCodes := []jen.Code{}
 		for _, f := range c.fields {
-			if f, ok := f.(*field); ok && f.isInterface {
-				typeName := (&jen.Statement{f.typeCode}).GoString()
+			if f, ok := f.(*interfaceField); ok {
 				fieldName := strcase.UpperCamelCase(f.name)
-				tmpFields = append(tmpFields, jen.Id(fieldName).Id(strcase.LowerCamelCase(typeName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
+				tmpFields = append(tmpFields, jen.Id(fieldName).Id(strcase.LowerCamelCase(f.typeName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
 				bodyCodes = append(bodyCodes, jen.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value").Line())
 			}
 		}

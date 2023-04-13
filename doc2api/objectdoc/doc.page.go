@@ -73,7 +73,7 @@ func init() {
 				Description:  "Date and time when this page was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String"), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -82,7 +82,7 @@ func init() {
 				Description:  "User who created the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser"), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -91,7 +91,7 @@ func init() {
 				Description:  "Date and time when this page was updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String"), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -100,7 +100,7 @@ func init() {
 				Description:  "User who last edited the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser"), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser")))
 					return nil
 				},
 			}, {
@@ -109,7 +109,7 @@ func init() {
 				Description:  "The archived status of the page.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -117,12 +117,7 @@ func init() {
 				Type:        `File Object (only type of "external" is supported currently) or Emoji object`,
 				Description: "Page icon.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(&field{
-						name:        e.Property,
-						typeCode:    jen.Id("FileOrEmoji"),
-						comment:     e.Description,
-						isInterface: true,
-					})
+					b.getSpecificObject("Page").addFields(e.asInterfaceField("FileOrEmoji"))
 					return nil
 				},
 			}, {
@@ -130,12 +125,7 @@ func init() {
 				Type:        `File object (only type of "external" is supported currently)`,
 				Description: "Page cover image.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(&field{
-						name:        e.Property,
-						typeCode:    jen.Id("File"),
-						comment:     e.Description,
-						isInterface: true,
-					})
+					b.getSpecificObject("Page").addFields(e.asInterfaceField("File"))
 					return nil
 				},
 			}, {
@@ -144,7 +134,7 @@ func init() {
 				Description:  "Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well.\n\nIf parent.type is \"page_id\" or \"workspace\", then the only valid key is title.\n\nIf parent.type is \"database_id\", then the keys and values of this field are determined by the properties  of the database this page belongs to.\n\nkey string\nName of a property as it appears in Notion.\n\nvalue object\nSee Property value object.",
 				ExampleValue: `{ "id": "A%40Hk" }`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PropertyValueMap"), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PropertyValueMap")))
 					return nil // TODO
 				},
 			}, {
@@ -153,12 +143,7 @@ func init() {
 				Description:  "Information about the page's parent. See Parent object.",
 				ExampleValue: `{ "type": "database_id", "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce" }`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(&field{
-						name:        e.Property,
-						typeCode:    jen.Id("Parent"),
-						comment:     e.Description,
-						isInterface: true,
-					})
+					b.getSpecificObject("Page").addFields(e.asInterfaceField("Parent"))
 					return nil
 				},
 			}, {
@@ -167,7 +152,7 @@ func init() {
 				Description:  "The URL of the Notion page.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Page").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("Page").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},

@@ -50,7 +50,7 @@ func init() {
 				Description:  "The information used to style the rich text object. Refer to the annotation object section below for details.",
 				ExampleValue: "Refer to the annotation object section below for examples.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addFields(e.asField(jen.Id("Annotations"), false))
+					b.getAbstractObject("RichText").addFields(e.asField(jen.Id("Annotations")))
 					return nil
 				},
 			}, {
@@ -59,7 +59,7 @@ func init() {
 				Description:  "The plain text without annotations.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addFields(e.asField(jen.String(), false))
+					b.getAbstractObject("RichText").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -68,7 +68,7 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addFields(e.asField(jen.Op("*").String(), false)) // RetrivePageでnullを確認
+					b.getAbstractObject("RichText").addFields(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
@@ -92,7 +92,7 @@ func init() {
 				Description:  "Whether the text is bolded.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -101,7 +101,7 @@ func init() {
 				Description:  "Whether the text is italicized.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -110,16 +110,16 @@ func init() {
 				Description:  "Whether the text is struck through.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
 				Property:     "underline",
 				Type:         "boolean",
 				Description:  "Whether the text is underlined.",
-				ExampleValue: "false",
+				ExampleValue: "",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -128,7 +128,7 @@ func init() {
 				Description:  "Whether the text is code style.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.Bool()))
 					return nil
 				},
 			}, {
@@ -137,7 +137,7 @@ func init() {
 				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Annotations").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("Annotations").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -172,7 +172,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("EquationRichText").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("EquationRichText").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -494,7 +494,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("Text").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -503,7 +503,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addFields(e.asField(jen.Op("*").Id("URLReference"), false)) // RetrivePageでnullを確認
+					b.getSpecificObject("Text").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 					return nil
 				},
 			}},

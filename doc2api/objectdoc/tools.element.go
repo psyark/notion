@@ -211,16 +211,24 @@ func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *build
 }
 
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (e *objectDocParameter) asField(typeCode jen.Code, isInterface bool) *field {
+func (e *objectDocParameter) asField(typeCode jen.Code) *field {
 	return &field{
-		name:        e.Property + e.Field,
-		typeCode:    typeCode,
-		comment:     e.Description,
-		isInterface: isInterface,
+		name:     e.Property + e.Field,
+		typeCode: typeCode,
+		comment:  e.Description,
 	}
 }
 
-// asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+// asInterfaceField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (e *objectDocParameter) asInterfaceField(typeName string) *interfaceField {
+	return &interfaceField{
+		name:     e.Property + e.Field,
+		typeName: typeName,
+		comment:  e.Description,
+	}
+}
+
+// asFixedStringField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
 func (e *objectDocParameter) asFixedStringField() *fixedStringField {
 	for _, value := range []string{e.ExampleValue, e.ExampleValues, e.Type} {
 		if value != "" {

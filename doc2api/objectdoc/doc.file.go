@@ -80,7 +80,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -89,7 +89,7 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.Id("ISO8601String"), false))
+					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}},
@@ -153,7 +153,7 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("ExternalFileData").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("ExternalFileData").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},

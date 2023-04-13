@@ -7,11 +7,11 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
+// 一般的なフィールド
 type field struct {
-	name        string
-	typeCode    jen.Code
-	comment     string
-	isInterface bool // このフィールドはinterfaceのため、UnmarshalJSONの作成を促します
+	name     string
+	typeCode jen.Code
+	comment  string
 }
 
 func (f *field) code() jen.Code {
@@ -26,6 +26,26 @@ func (f *field) code() jen.Code {
 	return code
 }
 
+// インターフェイスが入るフィールド
+type interfaceField struct {
+	name     string
+	typeName string
+	comment  string
+}
+
+func (f *interfaceField) code() jen.Code {
+	goName := strcase.UpperCamelCase(f.name)
+	code := jen.Id(goName).Id(f.typeName)
+	if f.name != "" {
+		code.Tag(map[string]string{"json": f.name})
+	}
+	if f.comment != "" {
+		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
+	}
+	return code
+}
+
+// 固定文字列が入るフィールド
 type fixedStringField struct {
 	name    string
 	value   string
