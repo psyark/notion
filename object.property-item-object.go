@@ -80,41 +80,91 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, u.value)
 }
 
+type PropertyItems []PropertyItem
+
+func (a *PropertyItems) UnmarshalJSON(data []byte) error {
+	t := []propertyItemUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*a = make([]PropertyItem, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
+}
+
 /*
 Paginated property values
 The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
 */
 type PropertyItemPagination struct {
 	paginationCommon
-	Object       string         `always:"list" json:"object"`        // Always "list".
-	Type         string         `always:"property_item" json:"type"` // Always "property_item".
-	Results      []PropertyItem `json:"results"`                     // List of property_item objects.
-	PropertyItem PropertyItem   `json:"property_item"`               // A property_item object that describes the property.
-	NextUrl      string         `json:"next_url"`                    // The URL the user can request to get the next page of results.
+	Object       string        `always:"list" json:"object"`        // Always "list".
+	Type         string        `always:"property_item" json:"type"` // Always "property_item".
+	Results      PropertyItems `json:"results"`                     // List of property_item objects.
+	PropertyItem PropertyItem  `json:"property_item"`               // A property_item object that describes the property.
+	NextUrl      string        `json:"next_url"`                    // The URL the user can request to get the next page of results.
 }
 
 func (_ *PropertyItemPagination) isPagination()                           {}
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
+func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {
+	type Alias PropertyItemPagination
+	t := &struct {
+		*Alias
+		PropertyItem propertyItemUnmarshaler `json:"property_item"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return err
+	}
+	o.PropertyItem = t.PropertyItem.value
+	return nil
+}
 
 // Title property values
 type TitlePropertyItem struct {
 	propertyItemCommon
-	Type  string        `always:"title" json:"type"`
-	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
+	Type  string   `always:"title" json:"type"`
+	Title RichText `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
 func (_ *TitlePropertyItem) isPropertyItem()                         {}
 func (_ *TitlePropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *TitlePropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias TitlePropertyItem
+	t := &struct {
+		*Alias
+		Title richTextUnmarshaler `json:"title"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return err
+	}
+	o.Title = t.Title.value
+	return nil
+}
 
 // Rich Text property values
 type RichTextPropertyItem struct {
 	propertyItemCommon
-	Type     string        `always:"rich_text" json:"type"`
-	RichText RichTextArray `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	Type     string   `always:"rich_text" json:"type"`
+	RichText RichText `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 func (_ *RichTextPropertyItem) isPropertyItem()                         {}
 func (_ *RichTextPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias RichTextPropertyItem
+	t := &struct {
+		*Alias
+		RichText richTextUnmarshaler `json:"rich_text"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return err
+	}
+	o.RichText = t.RichText.value
+	return nil
+}
 
 // Number property values
 type NumberPropertyItem struct {

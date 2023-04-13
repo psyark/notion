@@ -211,11 +211,12 @@ func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *build
 }
 
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (e *objectDocParameter) asField(typeCode jen.Code) *field {
+func (e *objectDocParameter) asField(typeCode jen.Code, isInterface bool) *field {
 	return &field{
-		name:     e.Property + e.Field,
-		typeCode: typeCode,
-		comment:  e.Description,
+		name:        e.Property + e.Field,
+		typeCode:    typeCode,
+		comment:     e.Description,
+		isInterface: isInterface,
 	}
 }
 

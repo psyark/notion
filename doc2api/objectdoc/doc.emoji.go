@@ -46,7 +46,7 @@ func init() {
 				Description:  "The emoji character.",
 				ExampleValue: `"😻"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Emoji").addFields(e.asField(jen.String()))
+					b.getSpecificObject("Emoji").addFields(e.asField(jen.String(), false))
 					return nil
 				},
 			}},

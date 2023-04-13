@@ -90,9 +90,9 @@ Bookmark block objects contain the following information within the bookmark pro
 */
 type BookmarkBlock struct {
 	blockCommon
-	Type    string     `always:"bookmark" json:"type"`
-	Caption []RichText `json:"caption"` // The caption for the bookmark.
-	Url     string     `json:"url"`     // The link for the bookmark.
+	Type    string        `always:"bookmark" json:"type"`
+	Caption RichTextArray `json:"caption"` // The caption for the bookmark.
+	Url     string        `json:"url"`     // The link for the bookmark.
 }
 
 func (_ *BookmarkBlock) isBlock() {}

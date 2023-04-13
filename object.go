@@ -17,21 +17,7 @@ type PageReference struct {
 	Id uuid.UUID `json:"id"`
 }
 
-type RichTextArray []RichText
-
-func (rta *RichTextArray) UnmarshalJSON(data []byte) error {
-	t := []richTextUnmarshaler{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-
-	*rta = make([]RichText, len(t))
-	for i, u := range t {
-		(*rta)[i] = u.value
-	}
-	return nil
-}
-
+// TODO 自動化
 type PropertyValueMap map[string]PropertyValue
 
 func (pvm *PropertyValueMap) UnmarshalJSON(data []byte) error {

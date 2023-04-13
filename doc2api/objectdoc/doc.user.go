@@ -95,7 +95,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("User").addFields(e.asField(jen.String()))
+					b.getAbstractObject("User").addFields(e.asField(jen.String(), false))
 					return nil
 				},
 			}, {
@@ -104,7 +104,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("User").addFields(e.asField(jen.String()))
+					b.getAbstractObject("User").addFields(e.asField(jen.String(), false))
 					return nil
 				},
 			}},
@@ -132,7 +132,7 @@ func init() {
 				Description: "Properties only present for non-bot users.",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.addSpecificObject("PersonData", e.Description)
-					b.getSpecificObject("PersonUser").addFields(e.asField(jen.Id("PersonData")))
+					b.getSpecificObject("PersonUser").addFields(e.asField(jen.Id("PersonData"), false))
 					return nil
 				},
 			}, {
@@ -174,7 +174,7 @@ func init() {
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getSpecificObject("BotUser").comment += "\n\n" + e.ExampleValue
-					b.getSpecificObject("BotUser").addFields(e.asField(jen.Id("BotData")))
+					b.getSpecificObject("BotUser").addFields(e.asField(jen.Id("BotData"), false))
 					b.addSpecificObject("BotData", e.Description)
 					return nil
 				},
@@ -184,7 +184,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotData").addFields(e.asField(jen.Id("BotDataOwner")))
+					b.getSpecificObject("BotData").addFields(e.asField(jen.Id("BotDataOwner"), false))
 					b.addSpecificObject("BotDataOwner", e.Description)
 					return nil
 				},
@@ -207,7 +207,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("BotData").addFields(e.asField(jen.String(), false))
 					return nil
 				},
 			}},

@@ -133,6 +133,8 @@ type abstractObject struct {
 	specifiedBy   string // "type", "object" など、バリアントを識別するためのプロパティ
 	fieldsComment string
 	variants      []objectCoder
+	listName      string // このインターフェイスのスライスの名前（UnmarshalJSONが作成されます）
+	strMapName    string // このインターフェイスのmap[string]の名前（UnmarshalJSONが作成されます）
 }
 
 // addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
@@ -229,6 +231,25 @@ func (c *abstractObject) code() jen.Code {
 			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
+	}
+
+	if c.listName != "" {
+		code.Line().Type().Id(c.listName).Index().Id(c.name)
+		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+				jen.Return().Err(),
+			),
+			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name), jen.Len(jen.Id("t"))),
+			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+				jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
+			),
+			jen.Return().Nil(),
+		)
+	}
+
+	if c.strMapName != "" {
+
 	}
 
 	return code

@@ -63,6 +63,20 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, u.value)
 }
 
+type RichTextArray []RichText
+
+func (a *RichTextArray) UnmarshalJSON(data []byte) error {
+	t := []richTextUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*a = make([]RichText, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
+}
+
 /*
 The annotation object
 
