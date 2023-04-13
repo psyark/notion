@@ -59,9 +59,13 @@ func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"bot\"":
 		u.value = &BotUser{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *userUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 /*

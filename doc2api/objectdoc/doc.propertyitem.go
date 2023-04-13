@@ -107,8 +107,14 @@ func init() {
 				Description:  "A property_item object that describes the property.",
 				ExampleValue: `{"id": "title", "next_url": null, "type": "title", "title": {}}`,
 				output: func(e *objectDocParameter, b *builder) error {
+					// TODO 良い名前
+					b.addSpecificObject("PaginatedPropertyInfo", e.Description).addFields(
+						&field{name: "id", typeCode: jen.String()},
+						&field{name: "type", typeCode: jen.String()},
+						&field{name: "title", typeCode: jen.Struct()}, // TODO omitempty
+					)
 					b.getSpecificObject("PropertyItemPagination").addFields(
-						e.asField(jen.Id("PropertyItem"), true),
+						e.asField(jen.Id("PaginatedPropertyInfo"), false),
 					)
 					return nil
 				},
@@ -118,7 +124,7 @@ func init() {
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.String(), false))
+					b.getSpecificObject("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String(), false))
 					return nil
 				},
 			}},

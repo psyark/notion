@@ -74,9 +74,13 @@ func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"last_edited_by\"":
 		u.value = &LastEditedByPropertyValue{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *propertyValueUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 /*
@@ -226,9 +230,13 @@ func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"date\"":
 		u.value = &DateFormula{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *formulaUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 // String formula property values
@@ -318,9 +326,13 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"array\"":
 		u.value = &ArrayRollup{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *rollupUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 // String rollup property values

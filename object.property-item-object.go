@@ -75,9 +75,13 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"last_edited_by\"":
 		u.value = &LastEditedByPropertyItem{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *propertyItemUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 type PropertyItems []PropertyItem
@@ -100,26 +104,21 @@ The title, rich_text, relation and people property items of are returned as a pa
 */
 type PropertyItemPagination struct {
 	paginationCommon
-	Object       string        `always:"list" json:"object"`        // Always "list".
-	Type         string        `always:"property_item" json:"type"` // Always "property_item".
-	Results      PropertyItems `json:"results"`                     // List of property_item objects.
-	PropertyItem PropertyItem  `json:"property_item"`               // A property_item object that describes the property.
-	NextUrl      string        `json:"next_url"`                    // The URL the user can request to get the next page of results.
+	Object       string                `always:"list" json:"object"`        // Always "list".
+	Type         string                `always:"property_item" json:"type"` // Always "property_item".
+	Results      PropertyItems         `json:"results"`                     // List of property_item objects.
+	PropertyItem PaginatedPropertyInfo `json:"property_item"`               // A property_item object that describes the property.
 }
 
 func (_ *PropertyItemPagination) isPagination()                           {}
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
-func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {
-	type Alias PropertyItemPagination
-	t := &struct {
-		*Alias
-		PropertyItem propertyItemUnmarshaler `json:"property_item"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return err
-	}
-	o.PropertyItem = t.PropertyItem.value
-	return nil
+
+// A property_item object that describes the property.
+type PaginatedPropertyInfo struct {
+	Id      string   `json:"id"`
+	Type    string   `json:"type"`
+	Title   struct{} `json:"title"`
+	NextUrl *string  `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 
 // Title property values

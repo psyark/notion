@@ -58,9 +58,13 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"text\"":
 		u.value = &TextRichText{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *richTextUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 type RichTextArray []RichText
@@ -156,9 +160,13 @@ func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"user\"":
 		u.value = &UserMention{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *mentionUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 // Mention
@@ -337,9 +345,13 @@ func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"template_mention_user\"":
 		u.value = &TemplateMentionUser{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *templateMentionDataUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 /*

@@ -67,9 +67,13 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"bookmark\"":
 		u.value = &BookmarkBlock{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *blockUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 // Block type objects

@@ -90,7 +90,8 @@ func init() {
 				Type:        "string",
 				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.\n\nOnly available when has_more is true.",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("Pagination").addFields(e.asField(jen.String(), false))
+					// RetrievePagePropertyItemでnullを確認
+					b.getAbstractObject("Pagination").addFields(e.asField(jen.Id("*").String(), false))
 					return nil
 				},
 			}, {

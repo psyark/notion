@@ -100,9 +100,10 @@ func (c *specificObject) code() jen.Code {
 		bodyCodes := []jen.Code{}
 		for _, f := range c.fields {
 			if f, ok := f.(*field); ok && f.isInterface {
-				interfaceName := (&jen.Statement{f.typeCode}).GoString()
-				tmpFields = append(tmpFields, jen.Id(strcase.UpperCamelCase(f.name)).Id(strcase.LowerCamelCase(interfaceName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
-				bodyCodes = append(bodyCodes, jen.Id("o").Dot(strcase.UpperCamelCase(f.name)).Op("=").Id("t").Dot(strcase.UpperCamelCase(f.name)).Dot("value").Line())
+				typeName := (&jen.Statement{f.typeCode}).GoString()
+				fieldName := strcase.UpperCamelCase(f.name)
+				tmpFields = append(tmpFields, jen.Id(fieldName).Id(strcase.LowerCamelCase(typeName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
+				bodyCodes = append(bodyCodes, jen.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value").Line())
 			}
 		}
 
@@ -220,7 +221,7 @@ func (c *abstractObject) code() jen.Code {
 			}
 		}
 
-		cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit("unknown type: %s"), jen.String().Call(jen.Id("data")))))
+		cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("data has unknown %s field: %%s", c.specifiedBy)), jen.String().Call(jen.Id("data")))))
 
 		name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
 		code.Line().Type().Id(name).Struct(
@@ -231,8 +232,12 @@ func (c *abstractObject) code() jen.Code {
 			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
+		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+			jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
+		).Line()
 	}
 
+	// リスト
 	if c.listName != "" {
 		code.Line().Type().Id(c.listName).Index().Id(c.name)
 		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(

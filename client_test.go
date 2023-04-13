@@ -2,7 +2,6 @@ package notion
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -28,9 +27,7 @@ func TestRetrievePage(t *testing.T) {
 
 func TestRetrievePagePropertyItem_a(t *testing.T) {
 	ctx := context.Background()
-	if v, err := cli.RetrievePagePropertyItem(ctx, uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf"), "title", validateResult("RetrievePage")); err != nil {
+	if _, err := cli.RetrievePagePropertyItem(ctx, uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf"), "title", validateResult("TestRetrievePagePropertyItem_a")); err != nil {
 		t.Fatal(err)
-	} else {
-		fmt.Println(v)
 	}
 }

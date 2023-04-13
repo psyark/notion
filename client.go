@@ -75,7 +75,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		}
 	}
 
-	if err := json.Unmarshal(resBody, &options.result); err != nil {
+	if err := json.Unmarshal(resBody, options.result); err != nil {
 		return err
 	}
 

@@ -28,9 +28,13 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"file\"":
 		u.value = &NotionHostedFile{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *fileOrEmojiUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 /*
@@ -46,9 +50,9 @@ type Pagination interface {
 If an endpoint supports pagination, then the response object contains the below fields.
 */
 type paginationCommon struct {
-	HasMore    bool   `json:"has_more"`             // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
-	NextCursor string `json:"next_cursor"`          // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  Only available when has_more is true.
-	Object     string `always:"list" json:"object"` // The constant string "list".
+	HasMore    bool    `json:"has_more"`             // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
+	NextCursor *string `json:"next_cursor"`          // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  Only available when has_more is true.
+	Object     string  `always:"list" json:"object"` // The constant string "list".
 }
 
 type paginationUnmarshaler struct {
@@ -64,9 +68,13 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 	case "\"property_item\"":
 		u.value = &PropertyItemPagination{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown type field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *paginationUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
 
 type PropertyItemOrPropertyItemPagination interface {
@@ -93,7 +101,11 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 	case "\"list\"":
 		u.value = &PropertyItemPagination{}
 	default:
-		return fmt.Errorf("unknown type: %s", string(data))
+		return fmt.Errorf("data has unknown object field: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
+}
+
+func (u *propertyItemOrPropertyItemPaginationUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
 }
