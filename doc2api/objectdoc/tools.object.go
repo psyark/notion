@@ -2,7 +2,6 @@ package objectdoc
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -59,18 +58,8 @@ func (c *objectCommon) getAncestors() []*abstractObject {
 }
 
 // addFields はこのオブジェクトにフィールドを追加します
-// ただし、無名フィールドは有名フィールドより前に追加されます
 func (c *objectCommon) addFields(fields ...coder) objectCoder {
 	c.fields = append(c.fields, fields...)
-	sort.SliceStable(c.fields, func(i, j int) bool {
-		isAnon := func(c coder) bool {
-			if c, ok := c.(*field); ok && c.name == "" {
-				return true
-			}
-			return false
-		}
-		return isAnon(c.fields[i]) && !isAnon(c.fields[j])
-	})
 	return c
 }
 
@@ -97,6 +86,9 @@ func (c *specificObject) code() jen.Code {
 	// struct本体
 	{
 		fields := []jen.Code{}
+		for _, p := range c.parents {
+			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+		}
 		for _, f := range c.fields {
 			fields = append(fields, f.code())
 			if f, ok := f.(*field); ok && f.isInterface {
@@ -156,10 +148,7 @@ type abstractObject struct {
 // - バリアントに対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切なバリアントを作成するUnmarshalerを作成
 func (c *abstractObject) addVariant(variant objectCoder) {
-	variant.addFields(
-		// TODO: なくてもいいのでは
-		&field{typeCode: jen.Id(strcase.LowerCamelCase(c.name) + "Common")},
-	).addParent(c)
+	variant.addParent(c)
 	c.variants = append(c.variants, variant)
 }
 
@@ -187,16 +176,22 @@ func (c *abstractObject) code() jen.Code {
 	}
 
 	// 共通フィールド
+	// TODO 不要な共通フィールドを省略
 	// if len(c.fields) != 0 {
 	// }
-	if c.fieldsComment != "" {
-		code.Comment(c.fieldsComment).Line()
+	{
+		if c.fieldsComment != "" {
+			code.Comment(c.fieldsComment).Line()
+		}
+		fields := []jen.Code{}
+		for _, p := range c.parents {
+			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+		}
+		for _, f := range c.fields {
+			fields = append(fields, f.code())
+		}
+		code.Type().Id(strcase.LowerCamelCase(c.name) + "Common").Struct(fields...).Line()
 	}
-	fields := []jen.Code{}
-	for _, f := range c.fields {
-		fields = append(fields, f.code())
-	}
-	code.Type().Id(strcase.LowerCamelCase(c.name) + "Common").Struct(fields...).Line()
 
 	// バリアントにisメソッドを実装
 	cases := []jen.Code{}
