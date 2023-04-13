@@ -19,8 +19,10 @@ var _ = []coder{
 }
 
 type builder struct {
-	coders []coder
-	global *builder
+	fileName string
+	url      string
+	coders   []coder
+	global   *builder
 }
 
 func (b *builder) addComment(comment string) {

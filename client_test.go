@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"gopkg.in/guregu/null.v4"
 )
 
 var cli *Client
@@ -36,20 +37,16 @@ func TestRetrievePagePropertyItem_a(t *testing.T) {
 func TestUpdatePage(t *testing.T) {
 	ctx := context.Background()
 
-	numref := func(num float64) *float64 {
-		return &num
-	}
-
 	cases := []*UpdatePageParams{
 		{},
 		{
 			Properties: PropertyValueMap{
-				"Number": &NumberPropertyValue{Type: "number", Number: nil},
+				"Number": &NumberPropertyValue{Type: "number", Number: null.FloatFromPtr(nil)},
 			},
 		},
 		{
 			Properties: PropertyValueMap{
-				"Number": &NumberPropertyValue{Type: "number", Number: numref(rand.Float64() * 1000)},
+				"Number": &NumberPropertyValue{Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
 			},
 		},
 	}
