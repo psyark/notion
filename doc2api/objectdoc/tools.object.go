@@ -11,8 +11,6 @@ import (
 type objectCoder interface {
 	coder
 	getName() string
-	getFields() []coder
-	addFields(...coder) objectCoder
 	getSpecifyingField(specifiedBy string) *fixedStringField
 	addParent(*abstractObject)
 }
@@ -31,9 +29,6 @@ type objectCommon struct {
 
 func (c *objectCommon) getName() string {
 	return c.name
-}
-func (c *objectCommon) getFields() []coder {
-	return c.fields
 }
 
 func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
@@ -57,12 +52,6 @@ func (c *objectCommon) getAncestors() []*abstractObject {
 	return ancestors
 }
 
-// addFields はこのオブジェクトにフィールドを追加します
-func (c *objectCommon) addFields(fields ...coder) objectCoder {
-	c.fields = append(c.fields, fields...)
-	return c
-}
-
 func (c *objectCommon) code() jen.Code {
 	panic("!")
 }
@@ -74,8 +63,8 @@ type specificObject struct {
 	objectCommon
 }
 
-func (c *specificObject) addFields(fields ...coder) objectCoder {
-	c.objectCommon.addFields(fields...)
+func (c *specificObject) addFields(fields ...coder) *specificObject {
+	c.fields = append(c.fields, fields...)
 	return c
 }
 
@@ -154,8 +143,8 @@ func (c *abstractObject) addVariant(variant objectCoder) {
 	c.variants = append(c.variants, variant)
 }
 
-func (c *abstractObject) addFields(fields ...coder) objectCoder {
-	c.objectCommon.addFields(fields...)
+func (c *abstractObject) addFields(fields ...coder) *abstractObject {
+	c.fields = append(c.fields, fields...)
 	return c
 }
 
