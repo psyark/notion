@@ -841,7 +841,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("CheckboxPropertyValue").addFields(&field{
 						name:     "checkbox",
-						typeCode: jen.Bool(),
+						typeCode: jen.Bool(), // null や undefined は通らない
 						comment:  e.Text,
 					})
 					return nil

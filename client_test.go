@@ -2,6 +2,7 @@ package notion
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"os"
 	"testing"
@@ -44,21 +45,24 @@ func TestUpdatePage(t *testing.T) {
 				// TODO Typeの省略
 				"Number":   &NumberPropertyValue{Type: "number", Number: null.FloatFromPtr(nil)},
 				"Date":     &DatePropertyValue{Type: "date"},
-				"Checkbox": &CheckboxPropertyValue{Type: "checkbox"},
+				"Checkbox": &CheckboxPropertyValue{Type: "checkbox", Checkbox: false},
 			},
 		},
 		{
 			Properties: PropertyValueMap{
 				"Number":   &NumberPropertyValue{Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
 				"Date":     &DatePropertyValue{Type: "date"},
-				"Checkbox": &CheckboxPropertyValue{Type: "checkbox"},
+				"Checkbox": &CheckboxPropertyValue{Type: "checkbox", Checkbox: true},
 			},
 		},
 	}
 
-	for _, params := range cases {
-		if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), params, validateResult("TestUpdatePage")); err != nil {
-			t.Fatal(err)
-		}
+	for i, params := range cases {
+		params := params
+		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
+			if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), params, validateResult("TestUpdatePage")); err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
