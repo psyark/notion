@@ -2,6 +2,7 @@ package notion
 
 import (
 	"context"
+	"math/rand"
 	"os"
 	"testing"
 
@@ -34,7 +35,28 @@ func TestRetrievePagePropertyItem_a(t *testing.T) {
 
 func TestUpdatePage(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), &UpdatePageParams{}, validateResult("TestUpdatePage")); err != nil {
-		t.Fatal(err)
+
+	numref := func(num float64) *float64 {
+		return &num
+	}
+
+	cases := []*UpdatePageParams{
+		{},
+		{
+			Properties: PropertyValueMap{
+				"Number": &NumberPropertyValue{Type: "number", Number: nil},
+			},
+		},
+		{
+			Properties: PropertyValueMap{
+				"Number": &NumberPropertyValue{Type: "number", Number: numref(rand.Float64() * 1000)},
+			},
+		},
+	}
+
+	for _, params := range cases {
+		if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), params, validateResult("TestUpdatePage")); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
