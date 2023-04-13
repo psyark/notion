@@ -1,7 +1,6 @@
 package notion
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -15,21 +14,6 @@ type URLReference struct {
 
 type PageReference struct {
 	Id uuid.UUID `json:"id"`
-}
-
-// TODO 自動化
-type PropertyValueMap map[string]PropertyValue
-
-func (pvm *PropertyValueMap) UnmarshalJSON(data []byte) error {
-	t := map[string]propertyValueUnmarshaler{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	*pvm = PropertyValueMap{}
-	for k, v := range t {
-		(*pvm)[k] = v.value
-	}
-	return nil
 }
 
 // https://developers.notion.com/reference/errors

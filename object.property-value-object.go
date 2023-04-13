@@ -83,6 +83,20 @@ func (u *propertyValueUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
+type PropertyValueMap map[string]PropertyValue
+
+func (m *PropertyValueMap) UnmarshalJSON(data []byte) error {
+	t := map[string]propertyValueUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	*m = PropertyValueMap{}
+	for k, u := range t {
+		(*m)[k] = u.value
+	}
+	return nil
+}
+
 /*
 Title property values
 

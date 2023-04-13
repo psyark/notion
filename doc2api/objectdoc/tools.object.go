@@ -252,8 +252,20 @@ func (c *abstractObject) code() jen.Code {
 		)
 	}
 
+	// マップ
 	if c.strMapName != "" {
-
+		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name)
+		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+				jen.Return().Err(),
+			),
+			jen.Op("*").Id("m").Op("=").Id(c.strMapName).Values(),
+			jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+				jen.Parens(jen.Op("*").Id("m")).Index(jen.Id("k")).Op("=").Id("u").Dot("value"),
+			),
+			jen.Return().Nil(),
+		)
 	}
 
 	return code
