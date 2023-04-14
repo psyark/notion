@@ -109,7 +109,7 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 */
 type TitlePropertyValue struct {
 	propertyValueCommon
-	Type  string        `always:"title" json:"type"`
+	Type  alwaysTitle   `json:"type"`
 	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
@@ -122,8 +122,8 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 */
 type RichTextPropertyValue struct {
 	propertyValueCommon
-	Type     string        `always:"rich_text" json:"type"`
-	RichText RichTextArray `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	Type     alwaysRichText `json:"type"`
+	RichText RichTextArray  `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 func (_ *RichTextPropertyValue) isPropertyValue() {}
@@ -131,7 +131,7 @@ func (_ *RichTextPropertyValue) isPropertyValue() {}
 // Number property values
 type NumberPropertyValue struct {
 	propertyValueCommon
-	Type   string       `always:"number" json:"type"`
+	Type   alwaysNumber `json:"type"`
 	Number nullv4.Float `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
@@ -140,7 +140,7 @@ func (_ *NumberPropertyValue) isPropertyValue() {}
 // Select property values
 type SelectPropertyValue struct {
 	propertyValueCommon
-	Type   string                   `always:"select" json:"type"`
+	Type   alwaysSelect             `json:"type"`
 	Select *SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
 }
 
@@ -159,7 +159,7 @@ type SelectPropertyValueData struct {
 // Status property values
 type StatusPropertyValue struct {
 	propertyValueCommon
-	Type   string                  `always:"status" json:"type"`
+	Type   alwaysStatus            `json:"type"`
 	Status StatusPropertyValueData `json:"status"` //  Status property value objects contain the following data within the status property:
 }
 
@@ -178,7 +178,7 @@ type StatusPropertyValueData struct {
 // Multi-select property values
 type MultiSelectPropertyValue struct {
 	propertyValueCommon
-	Type        string              `always:"multi_select" json:"type"`
+	Type        alwaysMultiSelect   `json:"type"`
 	MultiSelect []MultiSelectOption `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
 
@@ -194,7 +194,7 @@ type MultiSelectOption struct {
 // Date property values
 type DatePropertyValue struct {
 	propertyValueCommon
-	Type string                 `always:"date" json:"type"`
+	Type alwaysDate             `json:"type"`
 	Date *DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
 
@@ -220,8 +220,8 @@ Formulas returned in page objects are subject to a 25 page reference limitation.
 */
 type FormulaPropertyValue struct {
 	propertyValueCommon
-	Type    string  `always:"formula" json:"type"`
-	Formula Formula `json:"formula"`
+	Type    alwaysFormula `json:"type"`
+	Formula Formula       `json:"formula"`
 }
 
 func (_ *FormulaPropertyValue) isPropertyValue() {}
@@ -264,31 +264,31 @@ func (u *formulaUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // String formula property values
 type StringFormula struct {
-	Type   string `always:"string" json:"type"`
-	String string `json:"string"` //  String formula property values contain an optional string within the string property.
+	Type   alwaysString `json:"type"`
+	String string       `json:"string"` //  String formula property values contain an optional string within the string property.
 }
 
 func (_ *StringFormula) isFormula() {}
 
 // Number formula property values
 type NumberFormula struct {
-	Type   string  `always:"number" json:"type"`
-	Number float64 `json:"number"` //  Number formula property values contain an optional number within the number property.
+	Type   alwaysNumber `json:"type"`
+	Number float64      `json:"number"` //  Number formula property values contain an optional number within the number property.
 }
 
 func (_ *NumberFormula) isFormula() {}
 
 // Boolean formula property values
 type BooleanFormula struct {
-	Type    string `always:"boolean" json:"type"`
-	Boolean bool   `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
+	Type    alwaysBoolean `json:"type"`
+	Boolean bool          `json:"boolean"` //  Boolean formula property values contain a boolean within the boolean property.
 }
 
 func (_ *BooleanFormula) isFormula() {}
 
 // Date formula property values
 type DateFormula struct {
-	Type string            `always:"date" json:"type"`
+	Type alwaysDate        `json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date formula property values contain an optional date property value within the date property.
 }
 
@@ -304,7 +304,7 @@ Note that updating a relation property value with an empty array will clear the 
 */
 type RelationPropertyValue struct {
 	propertyValueCommon
-	Type     string          `always:"relation" json:"type"`
+	Type     alwaysRelation  `json:"type"`
 	Relation []PageReference `json:"relation"`
 	HasMore  bool            `json:"has_more"`
 }
@@ -321,7 +321,7 @@ Rollups returned in page objects are subject to a 25 page reference limitation. 
 */
 type RollupPropertyValue struct {
 	propertyValueCommon
-	Type string `always:"rollup" json:"type"`
+	Type alwaysRollup `json:"type"`
 }
 
 func (_ *RollupPropertyValue) isPropertyValue() {}
@@ -364,23 +364,23 @@ func (u *rollupUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // String rollup property values
 type StringRollup struct {
-	Type   string `always:"string" json:"type"`
-	String string `json:"string"` //  String rollup property values contain an optional string within the string property.
+	Type   alwaysString `json:"type"`
+	String string       `json:"string"` //  String rollup property values contain an optional string within the string property.
 }
 
 func (_ *StringRollup) isRollup() {}
 
 // Number rollup property values
 type NumberRollup struct {
-	Type   string  `always:"number" json:"type"`
-	Number float64 `json:"number"` //  Number rollup property values contain a number within the number property.
+	Type   alwaysNumber `json:"type"`
+	Number float64      `json:"number"` //  Number rollup property values contain a number within the number property.
 }
 
 func (_ *NumberRollup) isRollup() {}
 
 // Date rollup property values
 type DateRollup struct {
-	Type string            `always:"date" json:"type"`
+	Type alwaysDate        `json:"type"`
 	Date DatePropertyValue `json:"date"` //  Date rollup property values contain a date property value within the date property.
 }
 
@@ -388,8 +388,8 @@ func (_ *DateRollup) isRollup() {}
 
 // Array rollup property values
 type ArrayRollup struct {
-	Type  string   `always:"array" json:"type"`
-	Array []Rollup `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
+	Type  alwaysArray `json:"type"`
+	Array []Rollup    `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
 }
 
 func (_ *ArrayRollup) isRollup() {}
@@ -401,8 +401,8 @@ The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) e
 */
 type PeoplePropertyValue struct {
 	propertyValueCommon
-	Type   string `always:"people" json:"type"`
-	People Users  `json:"people"` //  People property value objects contain an array of user objects within the people property.
+	Type   alwaysPeople `json:"type"`
+	People Users        `json:"people"` //  People property value objects contain an array of user objects within the people property.
 }
 
 func (_ *PeoplePropertyValue) isPropertyValue() {}
@@ -415,8 +415,8 @@ Although we do not support uploading files, if you pass a `file` object containi
 */
 type FilesPropertyValue struct {
 	propertyValueCommon
-	Type  string `always:"files" json:"type"`
-	Files []File `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
+	Type  alwaysFiles `json:"type"`
+	Files []File      `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
 func (_ *FilesPropertyValue) isPropertyValue() {}
@@ -424,8 +424,8 @@ func (_ *FilesPropertyValue) isPropertyValue() {}
 // Checkbox property values
 type CheckboxPropertyValue struct {
 	propertyValueCommon
-	Type     string `always:"checkbox" json:"type"`
-	Checkbox bool   `json:"checkbox"` //  Checkbox property value objects contain a boolean within the checkbox property.
+	Type     alwaysCheckbox `json:"type"`
+	Checkbox bool           `json:"checkbox"` //  Checkbox property value objects contain a boolean within the checkbox property.
 }
 
 func (_ *CheckboxPropertyValue) isPropertyValue() {}
@@ -433,7 +433,7 @@ func (_ *CheckboxPropertyValue) isPropertyValue() {}
 // URL property values
 type UrlPropertyValue struct {
 	propertyValueCommon
-	Type string        `always:"url" json:"type"`
+	Type alwaysUrl     `json:"type"`
 	Url  nullv4.String `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
 }
 
@@ -442,7 +442,7 @@ func (_ *UrlPropertyValue) isPropertyValue() {}
 // Email property values
 type EmailPropertyValue struct {
 	propertyValueCommon
-	Type  string        `always:"email" json:"type"`
+	Type  alwaysEmail   `json:"type"`
 	Email nullv4.String `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
 }
 
@@ -451,8 +451,8 @@ func (_ *EmailPropertyValue) isPropertyValue() {}
 // Phone number property values
 type PhoneNumberPropertyValue struct {
 	propertyValueCommon
-	Type        string `always:"phone_number" json:"type"`
-	PhoneNumber string `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+	Type        alwaysPhoneNumber `json:"type"`
+	PhoneNumber string            `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 }
 
 func (_ *PhoneNumberPropertyValue) isPropertyValue() {}
@@ -460,8 +460,8 @@ func (_ *PhoneNumberPropertyValue) isPropertyValue() {}
 // Created time property values
 type CreatedTimePropertyValue struct {
 	propertyValueCommon
-	Type        string        `always:"created_time" json:"type"`
-	CreatedTime ISO8601String `json:"created_time"` //  Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
+	Type        alwaysCreatedTime `json:"type"`
+	CreatedTime ISO8601String     `json:"created_time"` //  Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *CreatedTimePropertyValue) isPropertyValue() {}
@@ -469,8 +469,8 @@ func (_ *CreatedTimePropertyValue) isPropertyValue() {}
 // Created by property values
 type CreatedByPropertyValue struct {
 	propertyValueCommon
-	Type      string `always:"created_by" json:"type"`
-	CreatedBy User   `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
+	Type      alwaysCreatedBy `json:"type"`
+	CreatedBy User            `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *CreatedByPropertyValue) isPropertyValue() {}
@@ -478,8 +478,8 @@ func (_ *CreatedByPropertyValue) isPropertyValue() {}
 // Last edited time property values
 type LastEditedTimePropertyValue struct {
 	propertyValueCommon
-	Type           string        `always:"last_edited_time" json:"type"`
-	LastEditedTime ISO8601String `json:"last_edited_time"` //  Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
+	Type           alwaysLastEditedTime `json:"type"`
+	LastEditedTime ISO8601String        `json:"last_edited_time"` //  Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
@@ -487,8 +487,8 @@ func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
 // Last edited by property values
 type LastEditedByPropertyValue struct {
 	propertyValueCommon
-	Type         string `always:"last_edited_by" json:"type"`
-	LastEditedBy User   `json:"last_edited_by"` //  Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
+	Type         alwaysLastEditedBy `json:"type"`
+	LastEditedBy User               `json:"last_edited_by"` //  Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *LastEditedByPropertyValue) isPropertyValue() {}

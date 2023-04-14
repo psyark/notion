@@ -22,8 +22,8 @@ type PropertyItem interface {
 Each page property item object contains the following keys. In addition, it will contain a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
 */
 type propertyItemCommon struct {
-	Object string `always:"property_item" json:"object"` // Always "property_item".
-	Id     string `json:"id"`                            // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+	Object alwaysPropertyItem `json:"object"` // Always "property_item".
+	Id     string             `json:"id"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
 type propertyItemUnmarshaler struct {
@@ -108,10 +108,10 @@ The title, rich_text, relation and people property items of are returned as a pa
 */
 type PropertyItemPagination struct {
 	paginationCommon
-	Object       string                `always:"list" json:"object"`        // Always "list".
-	Type         string                `always:"property_item" json:"type"` // Always "property_item".
-	Results      PropertyItems         `json:"results"`                     // List of property_item objects.
-	PropertyItem PaginatedPropertyInfo `json:"property_item"`               // A property_item object that describes the property.
+	Object       alwaysList            `json:"object"`        // Always "list".
+	Type         alwaysPropertyItem    `json:"type"`          // Always "property_item".
+	Results      PropertyItems         `json:"results"`       // List of property_item objects.
+	PropertyItem PaginatedPropertyInfo `json:"property_item"` // A property_item object that describes the property.
 }
 
 func (_ *PropertyItemPagination) isPagination()                           {}
@@ -128,8 +128,8 @@ type PaginatedPropertyInfo struct {
 // Title property values
 type TitlePropertyItem struct {
 	propertyItemCommon
-	Type  string   `always:"title" json:"type"`
-	Title RichText `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
+	Type  alwaysTitle `json:"type"`
+	Title RichText    `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
 func (_ *TitlePropertyItem) isPropertyItem()                         {}
@@ -150,8 +150,8 @@ func (o *TitlePropertyItem) UnmarshalJSON(data []byte) error {
 // Rich Text property values
 type RichTextPropertyItem struct {
 	propertyItemCommon
-	Type     string   `always:"rich_text" json:"type"`
-	RichText RichText `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	Type     alwaysRichText `json:"type"`
+	RichText RichText       `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 func (_ *RichTextPropertyItem) isPropertyItem()                         {}
@@ -172,8 +172,8 @@ func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
 // Number property values
 type NumberPropertyItem struct {
 	propertyItemCommon
-	Type   string  `always:"number" json:"type"`
-	Number float64 `json:"number"` //  Number property value objects contain a number within the number property.
+	Type   alwaysNumber `json:"type"`
+	Number float64      `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
 func (_ *NumberPropertyItem) isPropertyItem()                         {}
@@ -182,7 +182,7 @@ func (_ *NumberPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Select property values
 type SelectPropertyItem struct {
 	propertyItemCommon
-	Type   string                 `always:"select" json:"type"`
+	Type   alwaysSelect           `json:"type"`
 	Select SelectPropertyItemData `json:"select"` //  Select property value objects contain the following data within the select property:
 }
 
@@ -202,7 +202,7 @@ type SelectPropertyItemData struct {
 // Multi-select property values
 type MultiSelectPropertyItem struct {
 	propertyItemCommon
-	Type        string                        `always:"multi_select" json:"type"`
+	Type        alwaysMultiSelect             `json:"type"`
 	MultiSelect []MultiSelectPropertyItemData `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
 
@@ -222,7 +222,7 @@ type MultiSelectPropertyItemData struct {
 // Date property values
 type DatePropertyItem struct {
 	propertyItemCommon
-	Type string               `always:"date" json:"type"`
+	Type alwaysDate           `json:"type"`
 	Date DatePropertyItemData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
 
@@ -242,8 +242,8 @@ type DatePropertyItemData struct {
 // Formula property values
 type FormulaPropertyItem struct {
 	propertyItemCommon
-	Type    string  `always:"formula" json:"type"`
-	Formula Formula `json:"formula"` //  Formula property value objects represent the result of evaluating a formula described in the  database's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
+	Type    alwaysFormula `json:"type"`
+	Formula Formula       `json:"formula"` //  Formula property value objects represent the result of evaluating a formula described in the  database's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
 }
 
 func (_ *FormulaPropertyItem) isPropertyItem()                         {}
@@ -252,7 +252,7 @@ func (_ *FormulaPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Relation property values
 type RelationPropertyItem struct {
 	propertyItemCommon
-	Type     string          `always:"relation" json:"type"`
+	Type     alwaysRelation  `json:"type"`
 	Relation []PageReference `json:"relation"` //  Relation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.
 }
 
@@ -262,8 +262,8 @@ func (_ *RelationPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Rollup property values
 type RollupPropertyItem struct {
 	propertyItemCommon
-	Type   string `always:"rollup" json:"type"`
-	Rollup Rollup `json:"rollup"` //  Rollup property value objects represent the result of evaluating a rollup described in the  database's properties. The property is returned as a list object of type property_item with a list of relation items used to computed the rollup under results.   A rollup property item is also returned under the property_type key that describes the rollup aggregation and computed result.   In order to avoid timeouts, if the rollup has a with a large number of aggregations or properties the endpoint returns a next_cursor value that is used to determinate the aggregation value so far for the subset of relations that have been paginated through.   Once has_more is false, then the final rollup value is returned.  See the Pagination documentation for more information on pagination in the Notion API.   Computing the values of following aggregations are not supported. Instead the endpoint returns a list of property_item objects for the rollup: * show_unique (Show unique values) * unique (Count unique values) * median(Median)
+	Type   alwaysRollup `json:"type"`
+	Rollup Rollup       `json:"rollup"` //  Rollup property value objects represent the result of evaluating a rollup described in the  database's properties. The property is returned as a list object of type property_item with a list of relation items used to computed the rollup under results.   A rollup property item is also returned under the property_type key that describes the rollup aggregation and computed result.   In order to avoid timeouts, if the rollup has a with a large number of aggregations or properties the endpoint returns a next_cursor value that is used to determinate the aggregation value so far for the subset of relations that have been paginated through.   Once has_more is false, then the final rollup value is returned.  See the Pagination documentation for more information on pagination in the Notion API.   Computing the values of following aggregations are not supported. Instead the endpoint returns a list of property_item objects for the rollup: * show_unique (Show unique values) * unique (Count unique values) * median(Median)
 }
 
 func (_ *RollupPropertyItem) isPropertyItem()                         {}
@@ -272,7 +272,7 @@ func (_ *RollupPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // People property values
 type PeoplePropertyItem struct {
 	propertyItemCommon
-	Type string `always:"people" json:"type"`
+	Type alwaysPeople `json:"type"`
 }
 
 func (_ *PeoplePropertyItem) isPropertyItem()                         {}
@@ -281,7 +281,7 @@ func (_ *PeoplePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Files property values
 type FilesPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"files" json:"type"`
+	Type alwaysFiles `json:"type"`
 }
 
 func (_ *FilesPropertyItem) isPropertyItem()                         {}
@@ -290,7 +290,7 @@ func (_ *FilesPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Checkbox property values
 type CheckboxPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"checkbox" json:"type"`
+	Type alwaysCheckbox `json:"type"`
 }
 
 func (_ *CheckboxPropertyItem) isPropertyItem()                         {}
@@ -299,7 +299,7 @@ func (_ *CheckboxPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // URL property values
 type UrlPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"url" json:"type"`
+	Type alwaysUrl `json:"type"`
 }
 
 func (_ *UrlPropertyItem) isPropertyItem()                         {}
@@ -308,7 +308,7 @@ func (_ *UrlPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Email property values
 type EmailPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"email" json:"type"`
+	Type alwaysEmail `json:"type"`
 }
 
 func (_ *EmailPropertyItem) isPropertyItem()                         {}
@@ -317,7 +317,7 @@ func (_ *EmailPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Phone number property values
 type PhoneNumberPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"phone_number" json:"type"`
+	Type alwaysPhoneNumber `json:"type"`
 }
 
 func (_ *PhoneNumberPropertyItem) isPropertyItem()                         {}
@@ -326,7 +326,7 @@ func (_ *PhoneNumberPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Created time property values
 type CreatedTimePropertyItem struct {
 	propertyItemCommon
-	Type string `always:"created_time" json:"type"`
+	Type alwaysCreatedTime `json:"type"`
 }
 
 func (_ *CreatedTimePropertyItem) isPropertyItem()                         {}
@@ -335,7 +335,7 @@ func (_ *CreatedTimePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Created by property values
 type CreatedByPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"created_by" json:"type"`
+	Type alwaysCreatedBy `json:"type"`
 }
 
 func (_ *CreatedByPropertyItem) isPropertyItem()                         {}
@@ -344,7 +344,7 @@ func (_ *CreatedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Last edited time property values
 type LastEditedTimePropertyItem struct {
 	propertyItemCommon
-	Type string `always:"last_edited_time" json:"type"`
+	Type alwaysLastEditedTime `json:"type"`
 }
 
 func (_ *LastEditedTimePropertyItem) isPropertyItem()                         {}
@@ -353,7 +353,7 @@ func (_ *LastEditedTimePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 // Last edited by property values
 type LastEditedByPropertyItem struct {
 	propertyItemCommon
-	Type string `always:"last_edited_by" json:"type"`
+	Type alwaysLastEditedBy `json:"type"`
 }
 
 func (_ *LastEditedByPropertyItem) isPropertyItem()                         {}

@@ -43,15 +43,15 @@ type Block interface {
 	isBlock()
 }
 type blockCommon struct {
-	Object         string        `always:"block" json:"object"` // Always "block".
-	Id             uuid.UUID     `json:"id"`                    // Identifier for the block.
-	Parent         Parent        `json:"parent"`                // Information about the block's parent. See Parent object.
-	CreatedTime    ISO8601String `json:"created_time"`          // Date and time when this block was created. Formatted as an ISO 8601 date time string.
-	CreatedBy      PartialUser   `json:"created_by"`            // User who created the block.
-	LastEditedTime ISO8601String `json:"last_edited_time"`      // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
-	LastEditedBy   PartialUser   `json:"last_edited_by"`        // User who last edited the block.
-	Archived       bool          `json:"archived"`              // The archived status of the block.
-	HasChildren    bool          `json:"has_children"`          // Whether or not the block has children blocks nested within it.
+	Object         alwaysBlock   `json:"object"`           // Always "block".
+	Id             uuid.UUID     `json:"id"`               // Identifier for the block.
+	Parent         Parent        `json:"parent"`           // Information about the block's parent. See Parent object.
+	CreatedTime    ISO8601String `json:"created_time"`     // Date and time when this block was created. Formatted as an ISO 8601 date time string.
+	CreatedBy      PartialUser   `json:"created_by"`       // User who created the block.
+	LastEditedTime ISO8601String `json:"last_edited_time"` // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
+	LastEditedBy   PartialUser   `json:"last_edited_by"`   // User who last edited the block.
+	Archived       bool          `json:"archived"`         // The archived status of the block.
+	HasChildren    bool          `json:"has_children"`     // Whether or not the block has children blocks nested within it.
 }
 
 type blockUnmarshaler struct {
@@ -98,9 +98,9 @@ Bookmark block objects contain the following information within the bookmark pro
 */
 type BookmarkBlock struct {
 	blockCommon
-	Type    string        `always:"bookmark" json:"type"`
-	Caption RichTextArray `json:"caption"` // The caption for the bookmark.
-	Url     string        `json:"url"`     // The link for the bookmark.
+	Type    alwaysBookmark `json:"type"`
+	Caption RichTextArray  `json:"caption"` // The caption for the bookmark.
+	Url     string         `json:"url"`     // The link for the bookmark.
 }
 
 func (_ *BookmarkBlock) isBlock() {}

@@ -62,8 +62,8 @@ Database parent
 }
 */
 type DatabaseParent struct {
-	Type       string    `always:"database_id" json:"type"` // Always "database_id".
-	DatabaseId uuid.UUID `json:"database_id"`               // The ID of the database that this page belongs to.
+	Type       alwaysDatabaseId `json:"type"`        // Always "database_id".
+	DatabaseId uuid.UUID        `json:"database_id"` // The ID of the database that this page belongs to.
 }
 
 func (_ *DatabaseParent) isParent() {}
@@ -77,8 +77,8 @@ Page parent
 }
 */
 type PageParent struct {
-	Type   string    `always:"page_id" json:"type"` // Always "page_id".
-	PageId uuid.UUID `json:"page_id"`               // The ID of the page that this page belongs to.
+	Type   alwaysPageId `json:"type"`    // Always "page_id".
+	PageId uuid.UUID    `json:"page_id"` // The ID of the page that this page belongs to.
 }
 
 func (_ *PageParent) isParent() {}
@@ -93,8 +93,8 @@ A page with a workspace parent is a top-level page within a Notion workspace. Th
 }
 */
 type WorkspaceParent struct {
-	Type      string `always:"workspace" json:"type"` // Always "workspace".
-	Workspace bool   `json:"workspace"`               // Always true.
+	Type      alwaysWorkspace `json:"type"`      // Always "workspace".
+	Workspace bool            `json:"workspace"` // Always true.
 }
 
 func (_ *WorkspaceParent) isParent() {}
@@ -109,8 +109,8 @@ A page may have a block parent if it is created inline in a chunk of text, or is
 }
 */
 type BlockParent struct {
-	Type    string    `always:"block_id" json:"type"` // Always "block_id".
-	BlockId uuid.UUID `json:"block_id"`               // The ID of the page that this page belongs to.
+	Type    alwaysBlockId `json:"type"`     // Always "block_id".
+	BlockId uuid.UUID     `json:"block_id"` // The ID of the page that this page belongs to.
 }
 
 func (_ *BlockParent) isParent() {}

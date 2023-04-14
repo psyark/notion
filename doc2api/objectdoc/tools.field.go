@@ -54,7 +54,7 @@ type fixedStringField struct {
 
 func (f *fixedStringField) code() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
-	code := jen.Id(goName).String().Tag(map[string]string{"json": f.name, "always": f.value})
+	code := jen.Id(goName).Id("always" + strcase.UpperCamelCase(f.value)).Tag(map[string]string{"json": f.name})
 	if f.comment != "" {
 		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
 	}

@@ -179,6 +179,22 @@ func convertAll() error {
 				return fmt.Errorf("fetchAndBuild: %s: %w", c.url, err)
 			} else {
 				builders = append(builders, b)
+				for _, c := range b.coders {
+					switch c := c.(type) {
+					case *abstractObject:
+						for _, f := range c.fields {
+							if f, ok := f.(*fixedStringField); ok {
+								global.addAlwaysStringIfNotExists(f.value)
+							}
+						}
+					case *specificObject:
+						for _, f := range c.fields {
+							if f, ok := f.(*fixedStringField); ok {
+								global.addAlwaysStringIfNotExists(f.value)
+							}
+						}
+					}
+				}
 			}
 			return nil
 		})

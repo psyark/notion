@@ -53,7 +53,7 @@ func (u *fileUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // Notion-hosted files
 type NotionHostedFile struct {
-	Type string               `always:"file" json:"type"`
+	Type alwaysFile           `json:"type"`
 	File NotionHostedFileData `json:"file"`
 }
 
@@ -72,7 +72,7 @@ type NotionHostedFileData struct {
 
 // External files
 type ExternalFile struct {
-	Type     string           `always:"external" json:"type"`
+	Type     alwaysExternal   `json:"type"`
 	External ExternalFileData `json:"external"`
 }
 

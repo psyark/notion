@@ -125,8 +125,8 @@ Example rich text equation object
 */
 type EquationRichText struct {
 	richTextCommon
-	Type       string `always:"equation" json:"type"`
-	Expression string `json:"expression"` // The LaTeX string representing the inline equation.
+	Type       alwaysEquation `json:"type"`
+	Expression string         `json:"expression"` // The LaTeX string representing the inline equation.
 }
 
 func (_ *EquationRichText) isRichText() {}
@@ -180,8 +180,8 @@ func (u *mentionUnmarshaler) MarshalJSON() ([]byte, error) {
 // Mention
 type MentionRichText struct {
 	richTextCommon
-	Type    string  `always:"mention" json:"type"`
-	Mention Mention `json:"mention"`
+	Type    alwaysMention `json:"type"`
+	Mention Mention       `json:"mention"`
 }
 
 func (_ *MentionRichText) isRichText() {}
@@ -214,8 +214,8 @@ Example rich text mention object for a database mention
 }
 */
 type DatabaseMention struct {
-	Type     string        `always:"database" json:"type"`
-	Database PageReference `json:"database"`
+	Type     alwaysDatabase `json:"type"`
+	Database PageReference  `json:"database"`
 }
 
 func (_ *DatabaseMention) isMention() {}
@@ -247,7 +247,7 @@ Example rich text mention object for a date mention
 }
 */
 type DateMention struct {
-	Type string            `always:"date" json:"type"`
+	Type alwaysDate        `json:"type"`
 	Date DatePropertyValue `json:"date"`
 }
 
@@ -279,8 +279,8 @@ Example rich text mention object for a link_preview mention
 }
 */
 type LinkPreviewMention struct {
-	Type        string       `always:"link_preview" json:"type"`
-	LinkPreview URLReference `json:"link_preview"`
+	Type        alwaysLinkPreview `json:"type"`
+	LinkPreview URLReference      `json:"link_preview"`
 }
 
 func (_ *LinkPreviewMention) isMention() {}
@@ -313,7 +313,7 @@ Example rich text mention object for a page mention
 }
 */
 type PageMention struct {
-	Type string        `always:"page" json:"type"`
+	Type alwaysPage    `json:"type"`
 	Page PageReference `json:"page"`
 }
 
@@ -328,8 +328,8 @@ Template mention rich text objects contain a template_mention object with a ne
 If the type key is "template_mention_date", then the rich text object contains the following template_mention_date field:
 */
 type TemplateMention struct {
-	Type            string              `always:"template_mention" json:"type"`
-	TemplateMention TemplateMentionData `json:"template_mention"`
+	Type            alwaysTemplateMention `json:"type"`
+	TemplateMention TemplateMentionData   `json:"template_mention"`
 }
 
 func (_ *TemplateMention) isMention() {}
@@ -390,8 +390,8 @@ Example rich text mention object for a template_mention_date mention
 }
 */
 type TemplateMentionDate struct {
-	Type                string `always:"template_mention_date" json:"type"`
-	TemplateMentionDate string `json:"template_mention_date"` // The type of the date mention. Possible values include: "today" and "now".
+	Type                alwaysTemplateMentionDate `json:"type"`
+	TemplateMentionDate string                    `json:"template_mention_date"` // The type of the date mention. Possible values include: "today" and "now".
 }
 
 func (_ *TemplateMentionDate) isTemplateMentionData() {}
@@ -420,8 +420,8 @@ Example rich text mention object for a template_mention_user mention
 }
 */
 type TemplateMentionUser struct {
-	Type                string `always:"template_mention_user" json:"type"`
-	TemplateMentionUser string `always:"me" json:"template_mention_user"` // The type of the user mention. The only possible value is "me".
+	Type                alwaysTemplateMentionUser `json:"type"`
+	TemplateMentionUser alwaysMe                  `json:"template_mention_user"` // The type of the user mention. The only possible value is "me".
 }
 
 func (_ *TemplateMentionUser) isTemplateMentionData() {}
@@ -454,7 +454,7 @@ Example rich text mention object for a user mention
 }
 */
 type UserMention struct {
-	Type string      `always:"user" json:"type"`
+	Type alwaysUser  `json:"type"`
 	User PartialUser `json:"user"`
 }
 
@@ -463,8 +463,8 @@ func (_ *UserMention) isMention() {}
 // Text
 type TextRichText struct {
 	richTextCommon
-	Type string `always:"text" json:"type"`
-	Text Text   `json:"text"`
+	Type alwaysText `json:"type"`
+	Text Text       `json:"text"`
 }
 
 func (_ *TextRichText) isRichText() {}
