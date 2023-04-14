@@ -26,7 +26,9 @@ func (_ *DatabasePagination) isPagination() {}
 
 type PagePagination struct {
 	paginationCommon
-	Type alwaysPage `json:"type"`
+	Type    alwaysPage `json:"type"`
+	Page    struct{}   `json:"page"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
+	Results []Page     `json:"results"`
 }
 
 func (_ *PagePagination) isPagination() {}

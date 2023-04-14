@@ -412,7 +412,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Op("*").Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -421,7 +421,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Op("*").String()))
 					return nil
 				},
 			}},

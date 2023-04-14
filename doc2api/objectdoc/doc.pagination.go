@@ -138,11 +138,16 @@ func init() {
 				Field:       "{type}",
 				Type:        "paginated list object",
 				output: func(e *objectDocParameter, b *builder) error {
+					// TODO 各バリアントを定義
+					b.getSpecificObject("PagePagination").addFields(
+						&field{name: "page", typeCode: jen.Struct(), comment: e.Description},
+						&field{name: "results", typeCode: jen.Index().Id("Page")},
+					)
 					b.getSpecificObject("PropertyItemPagination").addFields(
 						&field{name: "property_item", typeCode: jen.Id("PaginatedPropertyInfo"), comment: e.Description},
 						&field{name: "results", typeCode: jen.Id("PropertyItems")},
 					)
-					return nil // 各バリアントで定義
+					return nil
 				},
 			}},
 			&objectDocHeadingElement{

@@ -69,3 +69,10 @@ func TestUpdatePage(t *testing.T) {
 		})
 	}
 }
+
+func TestQueryDatabase(t *testing.T) {
+	ctx := context.Background()
+	if _, err := cli.QueryDatabase(ctx, uuid.MustParse("edd0404128004a83bd29deb729221ec7"), &QueryDatabaseParams{}, validateResult("TestQueryDatabase")); err != nil {
+		t.Fatal(err)
+	}
+}
