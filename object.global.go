@@ -103,6 +103,8 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 		return nil
 	}
 	switch string(getRawProperty(data, "object")) {
+	case "\"list\"":
+		u.value = &PropertyItemPagination{}
 	case "\"property_item\"":
 		t := &propertyItemUnmarshaler{}
 		if err := t.UnmarshalJSON(data); err != nil {
@@ -110,8 +112,6 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 		}
 		u.value = t.value
 		return nil
-	case "\"list\"":
-		u.value = &PropertyItemPagination{}
 	default:
 		return fmt.Errorf("unmarshaling PropertyItemOrPropertyItemPagination: data has unknown object field: %s", string(data))
 	}

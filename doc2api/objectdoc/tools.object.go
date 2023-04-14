@@ -10,7 +10,6 @@ import (
 // objectCoder はオブジェクトを作成するためのCoderです
 type objectCoder interface {
 	coder
-	getName() string
 	getSpecifyingField(specifiedBy string) *fixedStringField
 	addParent(*abstractObject)
 }
@@ -25,10 +24,6 @@ type objectCommon struct {
 	comment string
 	fields  []coder
 	parents []*abstractObject
-}
-
-func (c *objectCommon) getName() string {
-	return c.name
 }
 
 func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
@@ -181,6 +176,7 @@ func (c *abstractObject) code() jen.Code {
 	}
 
 	// 共通フィールド
+	// TODO specificObjectと共通化
 	{
 		fields := []jen.Code{}
 		for _, p := range c.parents {
@@ -207,10 +203,10 @@ func (c *abstractObject) code() jen.Code {
 			sf := variant.getSpecifyingField(c.specifiedBy)
 			switch variant := variant.(type) {
 			case *specificObject:
-				cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.getName()).Values())
+				cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
 			case *abstractObject:
 				cases = append(cases,
-					jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.getName())+"Unmarshaler").Values(),
+					jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
 					jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
 					jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
 					jen.Return().Nil(),

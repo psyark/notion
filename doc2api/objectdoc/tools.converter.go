@@ -199,7 +199,7 @@ func convertAll() error {
 	for _, c := range global.coders {
 		if c, ok := c.(*abstractObject); ok {
 			sort.Slice(c.variants, func(i, j int) bool {
-				return c.variants[i].getName() < c.variants[j].getName()
+				return c.variants[i].getSpecifyingField(c.specifiedBy).value < c.variants[j].getSpecifyingField(c.specifiedBy).value
 			})
 		}
 	}
