@@ -234,9 +234,14 @@ type StatusProperty struct {
 
 func (_ *StatusProperty) isProperty() {}
 
+/*
+Title
+A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.
+*/
 type TitleProperty struct {
 	propertyCommon
-	Type alwaysTitle `json:"type"`
+	Type  alwaysTitle `json:"type"`
+	Title struct{}    `json:"title"`
 }
 
 func (_ *TitleProperty) isProperty() {}

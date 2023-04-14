@@ -655,9 +655,7 @@ func init() {
 				Code:     "\"Status\": {\n  \"id\": \"biOx\",\n  \"name\": \"Status\",\n  \"type\": \"status\",\n  \"status\": {\n    \"options\": [\n      {\n        \"id\": \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\",\n        \"name\": \"Not started\",\n        \"color\": \"default\"\n      },\n      {\n        \"id\": \"330aeafb-598c-4e1c-bc13-1148aa5963d3\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\",\n        \"name\": \"Done\",\n        \"color\": \"green\"\n      }\n    ],\n    \"groups\": [\n      {\n        \"id\": \"b9d42483-e576-4858-a26f-ed940a5f678f\",\n        \"name\": \"To-do\",\n        \"color\": \"gray\",\n        \"option_ids\": [\n          \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\"\n        ]\n      },\n      {\n        \"id\": \"cf4952eb-1265-46ec-86ab-4bded4fa2e3b\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\",\n        \"option_ids\": [\n          \"330aeafb-598c-4e1c-bc13-1148aa5963d3\"\n        ]\n      },\n      {\n        \"id\": \"4fa7348e-ae74-46d9-9585-e773caca6f40\",\n        \"name\": \"Complete\",\n        \"color\": \"green\",\n        \"option_ids\": [\n          \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\"\n        ]\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocCalloutElement{
 				Body:  "Update these values from the Notion UI, instead.",
@@ -670,13 +668,18 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("TitleProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("TitleProperty").addFields(&field{
+						name:     "title",
+						typeCode: jen.Struct(),
+					}).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
