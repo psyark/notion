@@ -171,6 +171,25 @@ func convertAll() error {
 	global := &builder{fileName: "../../object.global.go"}
 	builders := []*builder{global}
 
+	copyAlways := func(b *builder) {
+		for _, c := range b.coders {
+			switch c := c.(type) {
+			case *abstractObject:
+				for _, f := range c.fields {
+					if f, ok := f.(*fixedStringField); ok {
+						global.addAlwaysStringIfNotExists(f.value)
+					}
+				}
+			case *specificObject:
+				for _, f := range c.fields {
+					if f, ok := f.(*fixedStringField); ok {
+						global.addAlwaysStringIfNotExists(f.value)
+					}
+				}
+			}
+		}
+	}
+
 	eg := errgroup.Group{}
 	for _, c := range registeredConverters {
 		c := c
@@ -179,22 +198,7 @@ func convertAll() error {
 				return fmt.Errorf("fetchAndBuild: %s: %w", c.url, err)
 			} else {
 				builders = append(builders, b)
-				for _, c := range b.coders {
-					switch c := c.(type) {
-					case *abstractObject:
-						for _, f := range c.fields {
-							if f, ok := f.(*fixedStringField); ok {
-								global.addAlwaysStringIfNotExists(f.value)
-							}
-						}
-					case *specificObject:
-						for _, f := range c.fields {
-							if f, ok := f.(*fixedStringField); ok {
-								global.addAlwaysStringIfNotExists(f.value)
-							}
-						}
-					}
-				}
+				copyAlways(b)
 			}
 			return nil
 		})
@@ -202,6 +206,8 @@ func convertAll() error {
 	if err := eg.Wait(); err != nil {
 		return err
 	}
+
+	copyAlways(global)
 
 	// グローバルビルダーをソートし、冪等性を保ちます
 	sort.Slice(global.coders, func(i, j int) bool {

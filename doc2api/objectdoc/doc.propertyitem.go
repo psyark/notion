@@ -13,7 +13,6 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.addAbstractObject("PropertyItem", "type", e.Text).listName = "PropertyItems"
 					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-					// TODO: PropertyItemOrPropertyItemPaginationの派生としてPropertyItemを登録
 					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(b.getAbstractObject("PropertyItem"))
 					return nil
 				},
@@ -59,48 +58,32 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Paginated property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					// b.getAbstractObject("PropertyItemPagination")
-					b.addAbstractObjectToGlobalIfNotExists("Pagination", "type")
-					pip := b.addSpecificObject("PropertyItemPagination", e.Text)
-					b.getAbstractObject("Pagination").addVariant(pip)
-					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(pip)
+					// doc.pagination.go で作成
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
-				Text: "\nThe title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information. ",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").comment += e.Text
-					return nil
-				},
+				Text:   "\nThe title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information. ",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocParametersElement{{
 				Property:     "object",
 				Type:         `"list"`,
 				Description:  `Always "list".`,
 				ExampleValue: `"list"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "type",
 				Type:         `"property_item"`,
 				Description:  `Always "property_item".`,
 				ExampleValue: `"property_item"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "results",
 				Type:         "list",
 				Description:  "List of property_item objects.",
 				ExampleValue: "[{\"object\": \"property_item\", \"id\": \"vYdV\", \"type\": \"relation\", \"relation\": { \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"}}... ]",
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PropertyItemPagination").addFields(e.asField(jen.Id("PropertyItems")))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "property_item",
 				Type:         "object",
@@ -112,9 +95,6 @@ func init() {
 						&field{name: "id", typeCode: jen.String()},
 						&field{name: "type", typeCode: jen.String()},
 						&field{name: "title", typeCode: jen.Struct()}, // TODO omitempty
-					)
-					b.getSpecificObject("PropertyItemPagination").addFields(
-						e.asField(jen.Id("PaginatedPropertyInfo")),
 					)
 					return nil
 				},

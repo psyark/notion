@@ -2,10 +2,12 @@ package notion
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
@@ -50,7 +52,7 @@ func TestUpdatePage(t *testing.T) {
 		{
 			Properties: PropertyValueMap{
 				"Number":   &NumberPropertyValue{Number: null.FloatFrom(rand.Float64() * 1000)},
-				"Date":     &DatePropertyValue{},
+				"Date":     &DatePropertyValue{Date: &DatePropertyValueData{Start: time.Now().Format(time.RFC3339)}},
 				"Checkbox": &CheckboxPropertyValue{Checkbox: true},
 			},
 		},
@@ -60,6 +62,8 @@ func TestUpdatePage(t *testing.T) {
 		params := params
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
 			if _, err := cli.UpdatePage(ctx, uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961"), params, validateResult("TestUpdatePage")); err != nil {
+				x, _ := json.MarshalIndent(params, "", "  ")
+				fmt.Println(string(x))
 				t.Fatal(err)
 			}
 		})

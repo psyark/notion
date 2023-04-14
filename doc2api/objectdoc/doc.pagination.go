@@ -1,6 +1,11 @@
 package objectdoc
 
-import "github.com/dave/jennifer/jen"
+import (
+	"strings"
+
+	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
+)
 
 func init() {
 	registerConverter(converter{
@@ -114,13 +119,29 @@ func init() {
 				Field:       "type",
 				Type:        "\"block\"\n\n\"comment\"\n\n\"database\"\n\n\"page\"\n\n\"page_or_database\"\n\n\"property_item\"\n\n\"user\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // 各バリアントで定義
+					// 各種バリアントを作成
+					for _, name := range strings.Split(e.Type, "\n\n") {
+						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
+						b.getAbstractObject("Pagination").addVariant(
+							b.addSpecificObject(strcase.UpperCamelCase(name)+"Pagination", "").addFields(
+								&fixedStringField{name: "type", value: name},
+							),
+						)
+					}
+					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addVariant(
+						b.getSpecificObject("PropertyItemPagination"),
+					)
+					return nil
 				},
 			}, {
 				Description: "An object containing type-specific pagination information. For\u00a0property_items, the value corresponds to the\u00a0paginated page property type. For all other types, the value is an empty object.",
 				Field:       "{type}",
 				Type:        "paginated list object",
 				output: func(e *objectDocParameter, b *builder) error {
+					b.getSpecificObject("PropertyItemPagination").addFields(
+						&field{name: "property_item", typeCode: jen.Id("PaginatedPropertyInfo"), comment: e.Description},
+						&field{name: "results", typeCode: jen.Id("PropertyItems")},
+					)
 					return nil // 各バリアントで定義
 				},
 			}},

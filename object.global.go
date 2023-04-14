@@ -73,8 +73,20 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	switch string(getRawProperty(data, "type")) {
+	case "\"block\"":
+		u.value = &BlockPagination{}
+	case "\"comment\"":
+		u.value = &CommentPagination{}
+	case "\"database\"":
+		u.value = &DatabasePagination{}
+	case "\"page\"":
+		u.value = &PagePagination{}
+	case "\"page_or_database\"":
+		u.value = &PageOrDatabasePagination{}
 	case "\"property_item\"":
 		u.value = &PropertyItemPagination{}
+	case "\"user\"":
+		u.value = &UserPagination{}
 	default:
 		return fmt.Errorf("unmarshaling Pagination: data has unknown type field: %s", string(data))
 	}
@@ -162,6 +174,12 @@ type alwaysCheckbox string
 
 func (s alwaysCheckbox) MarshalJSON() ([]byte, error) {
 	return []byte("\"checkbox\""), nil
+}
+
+type alwaysComment string
+
+func (s alwaysComment) MarshalJSON() ([]byte, error) {
+	return []byte("\"comment\""), nil
 }
 
 type alwaysCreatedBy string
@@ -294,6 +312,12 @@ type alwaysPageId string
 
 func (s alwaysPageId) MarshalJSON() ([]byte, error) {
 	return []byte("\"page_id\""), nil
+}
+
+type alwaysPageOrDatabase string
+
+func (s alwaysPageOrDatabase) MarshalJSON() ([]byte, error) {
+	return []byte("\"page_or_database\""), nil
 }
 
 type alwaysPeople string

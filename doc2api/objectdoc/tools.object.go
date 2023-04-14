@@ -41,8 +41,14 @@ func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField 
 			return f
 		}
 	}
-	panic(fmt.Errorf("%s not found for %v", specifiedBy, c.name))
+	for _, p := range c.parents {
+		if f := p.getSpecifyingField(specifiedBy); f != nil {
+			return f
+		}
+	}
+	return nil
 }
+
 func (c *objectCommon) addParent(parent *abstractObject) {
 	c.parents = append(c.parents, parent)
 }
