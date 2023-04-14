@@ -47,8 +47,35 @@ func (c *objectCommon) getAncestors() []*abstractObject {
 	return ancestors
 }
 
+func (c *objectCommon) fieldCodes() []jen.Code {
+	fields := []jen.Code{}
+	for _, p := range c.parents {
+		if p.hasCommonField() {
+			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+		}
+	}
+	for _, f := range c.fields {
+		fields = append(fields, f.code())
+	}
+	return fields
+}
+
 func (c *objectCommon) code() jen.Code {
-	panic("!")
+	code := &jen.Statement{}
+	if c.comment != "" {
+		code.Comment(c.comment).Line()
+	}
+
+	return code.Type().Id(c.name).Struct(c.fieldCodes()...).Line()
+}
+
+func (c *objectCommon) hasInterface() bool {
+	for _, f := range c.fields {
+		if _, ok := f.(*interfaceField); ok {
+			return true
+		}
+	}
+	return false
 }
 
 // specificObject は"type"や"object"キーで区別される各オブジェクトです
@@ -64,25 +91,8 @@ func (c *specificObject) addFields(fields ...coder) *specificObject {
 }
 
 func (c *specificObject) code() jen.Code {
-	code := jen.Line()
-	hasInterface := false
-
 	// struct本体
-	{
-		fields := []jen.Code{}
-		for _, p := range c.parents {
-			if p.hasCommonField() {
-				fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
-			}
-		}
-		for _, f := range c.fields {
-			fields = append(fields, f.code())
-			if _, ok := f.(*interfaceField); ok {
-				hasInterface = true
-			}
-		}
-		code.Comment(c.comment).Line().Type().Id(c.name).Struct(fields...).Line()
-	}
+	code := &jen.Statement{c.objectCommon.code()}
 
 	// インターフェイスを実装
 	for _, a := range c.getAncestors() {
@@ -90,7 +100,7 @@ func (c *specificObject) code() jen.Code {
 	}
 
 	// フィールドにインターフェイスを含むため、UnmarshalJSONで前処理を行う
-	if hasInterface {
+	if c.hasInterface() {
 		tmpFields := []jen.Code{jen.Op("*").Id("Alias")}
 		bodyCodes := []jen.Code{}
 		for _, f := range c.fields {
@@ -103,7 +113,6 @@ func (c *specificObject) code() jen.Code {
 
 		bodyCodes = append(bodyCodes, jen.Return().Nil())
 
-		// プロパティ用UnmarshalJSON
 		code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.Type().Id("Alias").Id(c.name),
 			jen.Id("t").Op(":=").Op("&").Struct(
@@ -176,23 +185,12 @@ func (c *abstractObject) code() jen.Code {
 	}
 
 	// 共通フィールド
-	// TODO specificObjectと共通化
-	{
-		fields := []jen.Code{}
-		for _, p := range c.parents {
-			if p.hasCommonField() {
-				fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
-			}
-		}
-		for _, f := range c.fields {
-			fields = append(fields, f.code())
-		}
-		if len(fields) != 0 {
-			if c.fieldsComment != "" {
-				code.Comment(c.fieldsComment).Line()
-			}
-			code.Type().Id(strcase.LowerCamelCase(c.name) + "Common").Struct(fields...).Line()
-		}
+	if len(c.fieldCodes()) != 0 {
+		name, comment := c.name, c.comment
+		c.name = strcase.LowerCamelCase(c.name) + "Common"
+		c.comment = c.fieldsComment
+		code.Add(c.objectCommon.code())
+		c.name, c.comment = name, comment
 	}
 
 	// variant Unmarshaler
