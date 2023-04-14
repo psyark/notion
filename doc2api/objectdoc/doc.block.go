@@ -58,7 +58,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getAbstractObject("Block").addFields(&field{
 						name:     strings.TrimSuffix(e.Field, "*"),
-						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						typeCode: UUID,
 						comment:  e.Description,
 					})
 					return nil

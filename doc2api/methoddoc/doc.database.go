@@ -12,7 +12,7 @@ func init() {
 				In:       "path",
 				Name:     "database_id",
 				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+				typeCode: UUID,
 			},
 		},
 		localCopyOfBodyParams: ssrPropsParams{
@@ -47,6 +47,19 @@ func init() {
 				Name:     "page_size",
 				Type:     "int",
 				typeCode: jen.Int(),
+			},
+		},
+	})
+	registerConverter(converter{
+		url:        "https://developers.notion.com/reference/retrieve-a-database",
+		returnType: returnsStructRef("Database"),
+		localCopyOfPathParams: ssrPropsParams{
+			{
+				Desc:     "An identifier for the Notion database.",
+				In:       "path",
+				Name:     "database_id",
+				Type:     "string",
+				typeCode: UUID,
 			},
 		},
 	})

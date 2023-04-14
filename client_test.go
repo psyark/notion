@@ -76,3 +76,10 @@ func TestQueryDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestRetrieveDatabase(t *testing.T) {
+	ctx := context.Background()
+	if _, err := cli.RetrieveDatabase(ctx, uuid.MustParse("edd0404128004a83bd29deb729221ec7"), validateResult("RetrieveDatabase")); err != nil {
+		t.Fatal(err)
+	}
+}

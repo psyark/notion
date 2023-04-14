@@ -76,7 +76,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getSpecificObject("PartialUser").addFields(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
-						typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+						typeCode: UUID,
 						comment:  e.Description,
 					})
 					return nil

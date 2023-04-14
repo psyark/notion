@@ -56,7 +56,7 @@ func init() {
 				In:       "path",
 				Name:     "page_id",
 				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+				typeCode: UUID,
 			},
 		},
 	})
@@ -70,7 +70,7 @@ func init() {
 				In:       "path",
 				Name:     "page_id",
 				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+				typeCode: UUID,
 			},
 			{
 				Desc:     "Identifier for a page [property](https://developers.notion.com/reference/page#all-property-values)",
@@ -91,7 +91,7 @@ func init() {
 				In:       "path",
 				Name:     "page_id",
 				Type:     "string",
-				typeCode: jen.Qual("github.com/google/uuid", "UUID"),
+				typeCode: UUID,
 			},
 		},
 		localCopyOfBodyParams: ssrPropsParams{

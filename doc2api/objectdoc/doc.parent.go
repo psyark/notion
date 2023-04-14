@@ -39,7 +39,7 @@ func init() {
 				Description:   "The ID of the database that this page belongs to.",
 				ExampleValues: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatabaseParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("DatabaseParent").addFields(e.asField(UUID))
 					return nil
 				},
 			}},
@@ -76,7 +76,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"59833787-2cf9-4fdf-8782-e53db20768a5"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PageParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("PageParent").addFields(e.asField(UUID))
 					return nil
 				},
 			}},
@@ -164,7 +164,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BlockParent").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("BlockParent").addFields(e.asField(UUID))
 					return nil
 				},
 			}},

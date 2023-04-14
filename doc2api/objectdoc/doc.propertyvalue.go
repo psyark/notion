@@ -211,7 +211,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyValueData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("SelectPropertyValueData").addFields(e.asField(UUID))
 					return nil
 				},
 			}, {
@@ -273,7 +273,7 @@ func init() {
 				Description:  "ID of the option.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyValueData").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("StatusPropertyValueData").addFields(e.asField(UUID))
 					return nil
 				},
 			}, {
@@ -341,7 +341,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectOption").addFields(e.asField(jen.Qual("github.com/google/uuid", "UUID")))
+					b.getSpecificObject("MultiSelectOption").addFields(e.asField(UUID))
 					return nil
 				},
 			}, {

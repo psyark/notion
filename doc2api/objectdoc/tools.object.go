@@ -239,45 +239,43 @@ func (c *abstractObject) code() jen.Code {
 
 func (c *abstractObject) variantUnmarshaler() jen.Code {
 	code := &jen.Statement{}
-	if len(c.variants) != 0 {
-		cases := []jen.Code{}
+	cases := []jen.Code{}
 
-		for _, variant := range c.variants {
-			sf := variant.getSpecifyingField(c.specifiedBy)
-			switch variant := variant.(type) {
-			case *specificObject:
-				cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
-			case *abstractObject:
-				cases = append(cases,
-					jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
-					jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
-					jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
-					jen.Return().Nil(),
-				)
-			default:
-				panic(fmt.Sprintf("%#v", variant))
-			}
-		}
-
-		cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name, c.specifiedBy)), jen.String().Call(jen.Id("data")))))
-
-		name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
-		code.Line().Type().Id(name).Struct(
-			jen.Id("value").Id(c.name),
-		)
-		code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.specifiedBy))
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
-				jen.Id("u").Dot("value").Op("=").Nil(),
+	for _, variant := range c.variants {
+		sf := variant.getSpecifyingField(c.specifiedBy)
+		switch variant := variant.(type) {
+		case *specificObject:
+			cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
+		case *abstractObject:
+			cases = append(cases,
+				jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
+				jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
+				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
 				jen.Return().Nil(),
-			),
-			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
-			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
-		).Line()
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-			jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
-		).Line()
+			)
+		default:
+			panic(fmt.Sprintf("%#v", variant))
+		}
 	}
+
+	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name, c.specifiedBy)), jen.String().Call(jen.Id("data")))))
+
+	name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
+	code.Line().Type().Id(name).Struct(
+		jen.Id("value").Id(c.name),
+	)
+	code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.specifiedBy))
+	code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+		jen.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
+			jen.Id("u").Dot("value").Op("=").Nil(),
+			jen.Return().Nil(),
+		),
+		jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
+		jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
+	).Line()
+	code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+		jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
+	).Line()
 
 	return code
 }
