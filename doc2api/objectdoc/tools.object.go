@@ -7,9 +7,14 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
+type namer interface {
+	getName() string
+}
+
 // objectCoder はオブジェクトを作成するためのCoderです
 type objectCoder interface {
 	coder
+	namer
 	getSpecifyingField(specifiedBy string) *fixedStringField
 	addParent(*abstractObject)
 }
@@ -24,6 +29,10 @@ type objectCommon struct {
 	comment string
 	fields  []coder
 	parents []*abstractObject
+}
+
+func (c *objectCommon) getName() string {
+	return c.name
 }
 
 func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {

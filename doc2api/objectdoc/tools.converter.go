@@ -205,10 +205,10 @@ func convertAll() error {
 
 	// グローバルビルダーをソートし、冪等性を保ちます
 	sort.Slice(global.coders, func(i, j int) bool {
-		o1, ok1 := global.coders[i].(*abstractObject)
-		o2, ok2 := global.coders[j].(*abstractObject)
+		o1, ok1 := global.coders[i].(namer)
+		o2, ok2 := global.coders[j].(namer)
 		if ok1 && ok2 {
-			return o1.name < o2.name
+			return o1.getName() < o2.getName()
 		}
 		return false
 	})

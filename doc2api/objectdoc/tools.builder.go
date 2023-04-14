@@ -107,10 +107,13 @@ func (c independentComment) code() jen.Code {
 type alwaysString string
 
 func (c alwaysString) code() jen.Code {
-	name := "always" + strcase.UpperCamelCase(string(c))
-	code := jen.Type().Id(name).String().Line()
-	code.Func().Params(jen.Id("s").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+	code := jen.Type().Id(c.getName()).String().Line()
+	code.Func().Params(jen.Id("s").Id(c.getName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),
 	)
 	return code
+}
+
+func (c alwaysString) getName() string {
+	return "always" + strcase.UpperCamelCase(string(c))
 }
