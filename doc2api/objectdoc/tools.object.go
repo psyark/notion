@@ -69,15 +69,6 @@ func (c *objectCommon) code() jen.Code {
 	return code.Type().Id(c.name).Struct(c.fieldCodes()...).Line()
 }
 
-func (c *objectCommon) hasInterface() bool {
-	for _, f := range c.fields {
-		if _, ok := f.(*interfaceField); ok {
-			return true
-		}
-	}
-	return false
-}
-
 // specificObject は"type"や"object"キーで区別される各オブジェクトです
 // （例：type="external" である ExternalFile）
 // 生成されるGoコードではstructポインタで表現されます
@@ -99,32 +90,32 @@ func (c *specificObject) code() jen.Code {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + a.name).Params().Block().Line()
 	}
 
-	// フィールドにインターフェイスを含むため、UnmarshalJSONで前処理を行う
-	if c.hasInterface() {
+	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
+	{
 		tmpFields := []jen.Code{jen.Op("*").Id("Alias")}
-		bodyCodes := []jen.Code{}
+		retrieveCodes := []jen.Code{}
 		for _, f := range c.fields {
 			if f, ok := f.(*interfaceField); ok {
 				fieldName := strcase.UpperCamelCase(f.name)
 				tmpFields = append(tmpFields, jen.Id(fieldName).Id(strcase.LowerCamelCase(f.typeName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
-				bodyCodes = append(bodyCodes, jen.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value").Line())
+				retrieveCodes = append(retrieveCodes, jen.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value").Line())
 			}
 		}
 
-		bodyCodes = append(bodyCodes, jen.Return().Nil())
-
-		code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Type().Id("Alias").Id(c.name),
-			jen.Id("t").Op(":=").Op("&").Struct(
-				tmpFields...,
-			).Values(jen.Dict{
-				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
-			}),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
-				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name)), jen.Err()),
-			),
-			(&jen.Statement{}).Add(bodyCodes...),
-		).Line()
+		if len(retrieveCodes) != 0 {
+			code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+				jen.Type().Id("Alias").Id(c.name),
+				jen.Id("t").Op(":=").Op("&").Struct(
+					tmpFields...,
+				).Values(jen.Dict{
+					jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
+				}),
+				jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
+					jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name)), jen.Err()),
+				),
+				(&jen.Statement{}).Add(retrieveCodes...).Return().Nil(),
+			).Line()
+		}
 	}
 	return code
 }
@@ -194,6 +185,45 @@ func (c *abstractObject) code() jen.Code {
 	}
 
 	// variant Unmarshaler
+	code.Add(c.variantUnmarshaler())
+
+	// リスト
+	if c.listName != "" {
+		code.Line().Type().Id(c.listName).Index().Id(c.name)
+		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+				jen.Return().Err(),
+			),
+			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name), jen.Len(jen.Id("t"))),
+			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+				jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
+			),
+			jen.Return().Nil(),
+		)
+	}
+
+	// マップ
+	if c.strMapName != "" {
+		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name)
+		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+				jen.Return().Err(),
+			),
+			jen.Op("*").Id("m").Op("=").Id(c.strMapName).Values(),
+			jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+				jen.Parens(jen.Op("*").Id("m")).Index(jen.Id("k")).Op("=").Id("u").Dot("value"),
+			),
+			jen.Return().Nil(),
+		)
+	}
+
+	return code
+}
+
+func (c *abstractObject) variantUnmarshaler() jen.Code {
+	code := &jen.Statement{}
 	if len(c.variants) != 0 {
 		cases := []jen.Code{}
 
@@ -232,38 +262,6 @@ func (c *abstractObject) code() jen.Code {
 		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 			jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
 		).Line()
-	}
-
-	// リスト
-	if c.listName != "" {
-		code.Line().Type().Id(c.listName).Index().Id(c.name)
-		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Err(),
-			),
-			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name), jen.Len(jen.Id("t"))),
-			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
-				jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
-			),
-			jen.Return().Nil(),
-		)
-	}
-
-	// マップ
-	if c.strMapName != "" {
-		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name)
-		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Err(),
-			),
-			jen.Op("*").Id("m").Op("=").Id(c.strMapName).Values(),
-			jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
-				jen.Parens(jen.Op("*").Id("m")).Index(jen.Id("k")).Op("=").Id("u").Dot("value"),
-			),
-			jen.Return().Nil(),
-		)
 	}
 
 	return code
