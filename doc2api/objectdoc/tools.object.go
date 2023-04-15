@@ -122,15 +122,15 @@ func (c *specificObject) code() jen.Code {
 	// struct本体
 	code := &jen.Statement{c.objectCommon.code()}
 
+	// インターフェイスを実装
+	for _, a := range c.getAncestors() {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + a.name).Params().Block().Line()
+	}
+
 	// type object
 	if len(c.typeObject.fields) != 0 {
 		c.typeObject.name = c.name + "Data"
 		code.Add(c.typeObject.code())
-	}
-
-	// インターフェイスを実装
-	for _, a := range c.getAncestors() {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + a.name).Params().Block().Line()
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う

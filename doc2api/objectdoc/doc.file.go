@@ -60,7 +60,6 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					cs := b.addSpecificObject("NotionHostedFile", e.Text).addFields(
 						&fixedStringField{name: "type", value: "file"},
-						&field{name: "file", typeCode: jen.Id("NotionHostedFileData")},
 					)
 					b.getAbstractObject("File").addVariant(cs)
 					b.getAbstractObject("FileOrEmoji").addVariant(cs)
@@ -70,7 +69,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nAll Notion-hosted files have a\u00a0type\u00a0of\u00a0\"file\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addSpecificObject("NotionHostedFileData", e.Text)
+					b.getSpecificObject("NotionHostedFile").typeObject.comment = e.Text
 					return nil
 				},
 			},
@@ -80,7 +79,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("NotionHostedFile").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -89,14 +88,14 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("NotionHostedFileData").addFields(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("NotionHostedFile").typeObject.addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "You can retrieve links to Notion-hosted files via the Retrieve block children endpoint. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("NotionHostedFileData").comment += "\n" + e.Text
+					b.getSpecificObject("NotionHostedFile").typeObject.comment += "\n" + e.Text
 					return nil
 				},
 			},

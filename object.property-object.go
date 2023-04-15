@@ -312,11 +312,12 @@ type SelectProperty struct {
 	Type   alwaysSelect       `json:"type"`
 	Select SelectPropertyData `json:"select"`
 }
+
+func (_ *SelectProperty) isProperty() {}
+
 type SelectPropertyData struct {
 	Options []SelectPropertyOption `json:"options"`
 }
-
-func (_ *SelectProperty) isProperty() {}
 
 // Status
 type StatusProperty struct {
