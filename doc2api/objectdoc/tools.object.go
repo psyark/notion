@@ -75,6 +75,11 @@ func (c *objectCommon) fieldCodes() []jen.Code {
 	return fields
 }
 
+func (c *objectCommon) addFields(fields ...coder) *objectCommon {
+	c.fields = append(c.fields, fields...)
+	return c
+}
+
 func (c *objectCommon) code() jen.Code {
 	code := &jen.Statement{}
 	if c.comment != "" {
@@ -89,6 +94,7 @@ func (c *objectCommon) code() jen.Code {
 // 生成されるGoコードではstructポインタで表現されます
 type specificObject struct {
 	objectCommon
+	typeObject objectCommon // typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 }
 
 func (c *specificObject) addFields(fields ...coder) *specificObject {
@@ -97,8 +103,30 @@ func (c *specificObject) addFields(fields ...coder) *specificObject {
 }
 
 func (c *specificObject) code() jen.Code {
+	if len(c.typeObject.fields) != 0 {
+		typeField := c.getSpecifyingField("type")
+		if typeField != nil {
+			var valueOfTypeField *field
+			for _, f := range c.fields {
+				if f, ok := f.(*field); ok && f.name == typeField.value {
+					valueOfTypeField = f
+					break
+				}
+			}
+			if valueOfTypeField == nil {
+				c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name + "Data")})
+			}
+		}
+	}
+
 	// struct本体
 	code := &jen.Statement{c.objectCommon.code()}
+
+	// type object
+	if len(c.typeObject.fields) != 0 {
+		c.typeObject.name = c.name + "Data"
+		code.Add(c.typeObject.code())
+	}
 
 	// インターフェイスを実装
 	for _, a := range c.getAncestors() {

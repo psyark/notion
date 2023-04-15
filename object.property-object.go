@@ -281,13 +281,19 @@ func (o *RelationProperty) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+/*
+Rich text
+A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.
+*/
 type RichTextProperty struct {
 	propertyCommon
-	Type alwaysRichText `json:"type"`
+	Type     alwaysRichText `json:"type"`
+	RichText struct{}       `json:"rich_text"`
 }
 
 func (_ *RichTextProperty) isProperty() {}
 
+// Rollup
 type RollupProperty struct {
 	propertyCommon
 	Type alwaysRollup `json:"type"`
@@ -295,9 +301,19 @@ type RollupProperty struct {
 
 func (_ *RollupProperty) isProperty() {}
 
+/*
+
+A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
+
+The select type object contains an array of objects representing the available options. Each option object includes the following fields:
+*/
 type SelectProperty struct {
 	propertyCommon
-	Type alwaysSelect `json:"type"`
+	Type   alwaysSelect       `json:"type"`
+	Select SelectPropertyData `json:"select"`
+}
+type SelectPropertyData struct {
+	Options []SelectPropertyOption `json:"options"`
 }
 
 func (_ *SelectProperty) isProperty() {}
@@ -323,9 +339,16 @@ type TitleProperty struct {
 
 func (_ *TitleProperty) isProperty() {}
 
+/*
+URL
+A URL database property is represented in the Notion UI as a column that contains URL values.
+
+The url type object is empty. There is no additional property configuration.
+*/
 type UrlProperty struct {
 	propertyCommon
 	Type alwaysUrl `json:"type"`
+	Url  struct{}  `json:"url"`
 }
 
 func (_ *UrlProperty) isProperty() {}
@@ -420,6 +443,18 @@ type SinglePropertyRelationData struct{}
 type DualPropertyRelationData struct {
 	SyncedPropertyId   string `json:"synced_property_id"`   // The id of the corresponding property that is updated in the related database when this property is changed.
 	SyncedPropertyName string `json:"synced_property_name"` // The name of the corresponding property that is updated in the related database when this property is changed.
+}
+
+/*
+
+A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
+
+The select type object contains an array of objects representing the available options. Each option object includes the following fields:
+*/
+type SelectPropertyOption struct {
+	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Id    uuid.UUID `json:"id"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
+	Name  string    `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for select values.
 }
 
 type StatusPropertyData struct {

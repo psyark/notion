@@ -472,37 +472,38 @@ func init() {
 				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocCalloutElement{
-				Body:  "",
-				Title: "To update a database relation property via the API, share the related parent database with the integration.",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "",
+				Title:  "To update a database relation property via the API, share the related parent database with the integration.",
+				Type:   "info",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "Rich text",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextProperty").addFields(
+						&field{name: "rich_text", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Project description\": {\n  \"id\": \"NZZ%3B\",\n  \"name\": \"Project description\",\n  \"type\": \"rich_text\",\n  \"rich_text\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Rollup ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
@@ -563,38 +564,48 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("SelectProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row. \n\nThe select type object contains an array of objects representing the available options. Each option object includes the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("SelectProperty").comment = e.Text
+					b.getSpecificObject("SelectProperty").typeObject.addFields(
+						// TODO 共通化
+						&field{name: "options", typeCode: jen.Index().Id("SelectPropertyOption")},
+					)
+					b.addSpecificObject("SelectPropertyOption", e.Text)
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
-				ExampleValue: "- \"red\"",
 				Field:        "color",
 				Type:         "string (enum)",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
+				ExampleValue: `- "red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
 				Field:        "id",
 				Type:         "string",
+				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(UUID))
+					return nil
 				},
 			}, {
-				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
 				Field:        "name",
 				Type:         "string",
+				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for select values.",
+				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -705,12 +716,10 @@ func init() {
 				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocCalloutElement{
-				Body:  "Update these values from the Notion UI, instead.",
-				Title: "It is not possible to update a status database property's `name` or `options` values via the API.",
-				Type:  "warning",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "Update these values from the Notion UI, instead.",
+				Title:  "It is not possible to update a status database property's `name` or `options` values via the API.",
+				Type:   "warning",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "Title",
@@ -733,45 +742,41 @@ func init() {
 				Code:     "\"Project name\": {\n  \"id\": \"title\",\n  \"name\": \"Project name\",\n  \"type\": \"title\",\n  \"title\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocCalloutElement{
-				Body:  "The API throws errors if you send a request to [Create a database](https://developers.notion.com/reference/create-a-database) without a `title` property, or if you attempt to [Update a database](https://developers.notion.com/reference/update-a-database) to add or remove a `title` property.",
-				Title: "All databases require one, and only one, `title` property.",
-				Type:  "warning",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "The API throws errors if you send a request to [Create a database](https://developers.notion.com/reference/create-a-database) without a `title` property, or if you attempt to [Update a database](https://developers.notion.com/reference/update-a-database) to add or remove a `title` property.",
+				Title:  "All databases require one, and only one, `title` property.",
+				Type:   "warning",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocCalloutElement{
-				Body:  "A `title` database property is a type of column in a database. \n\nA database `title` defines the title of the database and is found on the [database object](https://developers.notion.com/reference/database#all-databases). \n\nEvery database requires both a database `title` and a `title` database property.",
-				Title: "Title database property vs. database title",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "A `title` database property is a type of column in a database. \n\nA database `title` defines the title of the database and is found on the [database object](https://developers.notion.com/reference/database#all-databases). \n\nEvery database requires both a database `title` and a `title` database property.",
+				Title:  "Title database property vs. database title",
+				Type:   "info",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "URL",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("UrlProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA URL database property is represented in the Notion UI as a column that contains URL values. \n\nThe url type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("UrlProperty").addFields(
+						&field{name: "url", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Project URL\": {\n  \"id\": \"BZKU\",\n  \"name\": \"Project URL\",\n  \"type\": \"url\",\n  \"url\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 		},
 	})
