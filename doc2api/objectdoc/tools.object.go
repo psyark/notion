@@ -7,14 +7,21 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-type namer interface {
-	getName() string
+// symbolCoder はソースコードのトップレベルに置かれる、名前を持つシンボルの生成器です。
+type symbolCoder interface {
+	symbolCode() jen.Code
+	name() string
+}
+
+var _ = []symbolCoder{
+	&specificObject{},
+	&abstractObject{},
+	alwaysString(""),
 }
 
 // objectCoder はオブジェクトを作成するためのCoderです
 type objectCoder interface {
-	coder
-	namer
+	symbolCoder
 	getSpecifyingField(specifiedBy string) *fixedStringField
 	addParent(*abstractObject)
 }
@@ -25,14 +32,14 @@ var _ = []objectCoder{
 }
 
 type objectCommon struct {
-	name    string
+	name_   string
 	comment string
-	fields  []coder
+	fields  []fieldCoder
 	parents []*abstractObject
 }
 
-func (c *objectCommon) getName() string {
-	return c.name
+func (c *objectCommon) name() string {
+	return c.name_
 }
 
 func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
@@ -66,27 +73,27 @@ func (c *objectCommon) fieldCodes() []jen.Code {
 	fields := []jen.Code{}
 	for _, p := range c.parents {
 		if p.hasCommonField() {
-			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name)+"Common"))
+			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name())+"Common"))
 		}
 	}
 	for _, f := range c.fields {
-		fields = append(fields, f.code())
+		fields = append(fields, f.fieldCode())
 	}
 	return fields
 }
 
-func (c *objectCommon) addFields(fields ...coder) *objectCommon {
+func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {
 	c.fields = append(c.fields, fields...)
 	return c
 }
 
-func (c *objectCommon) code() jen.Code {
+func (c *objectCommon) symbolCode() jen.Code {
 	code := &jen.Statement{}
 	if c.comment != "" {
 		code.Comment(c.comment).Line()
 	}
 
-	return code.Type().Id(c.name).Struct(c.fieldCodes()...).Line()
+	return code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
 }
 
 // specificObject は"type"や"object"キーで区別される各オブジェクトです
@@ -101,12 +108,12 @@ type specificObject struct {
 	typeObject objectCommon
 }
 
-func (c *specificObject) addFields(fields ...coder) *specificObject {
+func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 	c.fields = append(c.fields, fields...)
 	return c
 }
 
-func (c *specificObject) code() jen.Code {
+func (c *specificObject) symbolCode() jen.Code {
 	if len(c.typeObject.fields) != 0 {
 		typeField := c.getSpecifyingField("type")
 		if typeField != nil {
@@ -118,23 +125,23 @@ func (c *specificObject) code() jen.Code {
 				}
 			}
 			if valueOfTypeField == nil {
-				c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name + "Data")})
+				c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name() + "Data")})
 			}
 		}
 	}
 
 	// struct本体
-	code := &jen.Statement{c.objectCommon.code()}
+	code := &jen.Statement{c.objectCommon.symbolCode()}
 
 	// インターフェイスを実装
 	for _, a := range c.getAncestors() {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name)).Id("is" + a.name).Params().Block().Line()
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + a.name()).Params().Block().Line()
 	}
 
 	// type object
 	if len(c.typeObject.fields) != 0 {
-		c.typeObject.name = c.name + "Data"
-		code.Add(c.typeObject.code())
+		c.typeObject.name_ = c.name() + "Data"
+		code.Add(c.typeObject.symbolCode())
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
@@ -150,15 +157,15 @@ func (c *specificObject) code() jen.Code {
 		}
 
 		if len(retrieveCodes) != 0 {
-			code.Func().Params(jen.Id("o").Op("*").Id(c.name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-				jen.Type().Id("Alias").Id(c.name),
+			code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+				jen.Type().Id("Alias").Id(c.name()),
 				jen.Id("t").Op(":=").Op("&").Struct(
 					tmpFields...,
 				).Values(jen.Dict{
 					jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
 				}),
 				jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
-					jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name)), jen.Err()),
+					jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
 				),
 				(&jen.Statement{}).Add(retrieveCodes...).Return().Nil(),
 			).Line()
@@ -188,7 +195,7 @@ func (c *abstractObject) addVariant(variant objectCoder) *abstractObject {
 	return c
 }
 
-func (c *abstractObject) addFields(fields ...coder) *abstractObject {
+func (c *abstractObject) addFields(fields ...fieldCoder) *abstractObject {
 	c.fields = append(c.fields, fields...)
 	return c
 }
@@ -205,7 +212,7 @@ func (c *abstractObject) hasCommonField() bool {
 	return false
 }
 
-func (c *abstractObject) code() jen.Code {
+func (c *abstractObject) symbolCode() jen.Code {
 	code := jen.Line()
 
 	if c.comment != "" {
@@ -215,21 +222,22 @@ func (c *abstractObject) code() jen.Code {
 	// インターフェイス本体とisメソッド
 	{
 		methods := []jen.Code{
-			jen.Id("is" + c.name).Params(),
+			jen.Id("is" + c.name()).Params(),
 		}
 		for _, p := range c.parents {
-			methods = append(methods, jen.Id("is"+p.name).Params())
+			methods = append(methods, jen.Id("is"+p.name()).Params())
 		}
-		code.Type().Id(c.name).Interface(methods...).Line()
+		code.Type().Id(c.name()).Interface(methods...).Line()
 	}
 
 	// 共通フィールド
 	if len(c.fieldCodes()) != 0 {
-		name, comment := c.name, c.comment
-		c.name = strcase.LowerCamelCase(c.name) + "Common"
+		// TODO 一時変数を使わないで値をコピーする
+		name, comment := c.name_, c.comment
+		c.name_ = strcase.LowerCamelCase(c.name_) + "Common"
 		c.comment = c.fieldsComment
-		code.Add(c.objectCommon.code())
-		c.name, c.comment = name, comment
+		code.Add(c.objectCommon.symbolCode())
+		c.name_, c.comment = name, comment
 	}
 
 	// variant Unmarshaler
@@ -237,13 +245,13 @@ func (c *abstractObject) code() jen.Code {
 
 	// リスト
 	if c.listName != "" {
-		code.Line().Type().Id(c.listName).Index().Id(c.name)
+		code.Line().Type().Id(c.listName).Index().Id(c.name())
 		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name())+"Unmarshaler").Values(),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
 				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.listName)), jen.Err()),
 			),
-			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name), jen.Len(jen.Id("t"))),
+			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name()), jen.Len(jen.Id("t"))),
 			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
 				jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
 			),
@@ -253,9 +261,9 @@ func (c *abstractObject) code() jen.Code {
 
 	// マップ
 	if c.strMapName != "" {
-		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name)
+		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name())
 		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
+			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name())+"Unmarshaler").Values(),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
 				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.strMapName)), jen.Err()),
 			),
@@ -282,10 +290,10 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 
 		switch variant := variant.(type) {
 		case *specificObject:
-			cases = append(cases, caseCode.Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
+			cases = append(cases, caseCode.Id("u").Dot("value").Op("=").Op("&").Id(variant.name()).Values())
 		case *abstractObject:
 			cases = append(cases,
-				caseCode.Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
+				caseCode.Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name())+"Unmarshaler").Values(),
 				jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
 				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
 				jen.Return().Nil(),
@@ -295,12 +303,12 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 		}
 	}
 
-	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name, c.specifiedBy)), jen.String().Call(jen.Id("data")))))
+	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.specifiedBy)), jen.String().Call(jen.Id("data")))))
 
 	if len(c.variants) != 0 {
-		name := strcase.LowerCamelCase(c.name) + "Unmarshaler"
+		name := strcase.LowerCamelCase(c.name()) + "Unmarshaler"
 		code.Line().Type().Id(name).Struct(
-			jen.Id("value").Id(c.name),
+			jen.Id("value").Id(c.name()),
 		)
 		code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.specifiedBy))
 		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(

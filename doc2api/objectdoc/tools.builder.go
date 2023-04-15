@@ -8,23 +8,12 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-type coder interface {
-	code() jen.Code
-}
-
-var _ = []coder{
-	&specificObject{},
-	&abstractObject{},
-	&field{},
-	&fixedStringField{},
-	&interfaceField{},
-	alwaysString(""),
-}
-
+// builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
+// 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは冪等に保たれます
 type builder struct {
 	fileName string
 	url      string
-	coders   []coder
+	coders   []symbolCoder
 
 	// Deprecated:
 	global *builder // TODO ローカル/グローバルビルダーを作るのではなく、唯一のビルダーを作る
@@ -32,7 +21,7 @@ type builder struct {
 
 func (b *builder) addSpecificObject(name string, comment string) *specificObject {
 	o := &specificObject{}
-	o.name = strings.TrimSpace(name)
+	o.name_ = strings.TrimSpace(name)
 	o.comment = comment
 	b.coders = append(b.coders, o)
 	return o
@@ -40,7 +29,7 @@ func (b *builder) addSpecificObject(name string, comment string) *specificObject
 
 func (b *builder) addAbstractObject(name string, specifiedBy string, comment string) *abstractObject {
 	o := &abstractObject{}
-	o.name = strings.TrimSpace(name)
+	o.name_ = strings.TrimSpace(name)
 	o.specifiedBy = specifiedBy
 	o.comment = comment
 	b.coders = append(b.coders, o)
@@ -66,14 +55,14 @@ func (b *builder) addAlwaysStringIfNotExists(value string) {
 func (b *builder) statement() jen.Statement {
 	s := jen.Statement{}
 	for _, item := range b.coders {
-		s = append(s, jen.Line().Line(), item.code())
+		s = append(s, jen.Line().Line(), item.symbolCode())
 	}
 	return s
 }
 
 func (b *builder) getAbstractObject(name string) *abstractObject {
 	for _, item := range b.coders {
-		if item, ok := item.(*abstractObject); ok && item.name == name {
+		if item, ok := item.(*abstractObject); ok && item.name() == name {
 			return item
 		}
 	}
@@ -85,7 +74,7 @@ func (b *builder) getAbstractObject(name string) *abstractObject {
 
 func (b *builder) getSpecificObject(name string) *specificObject {
 	for _, item := range b.coders {
-		if item, ok := item.(*specificObject); ok && item.name == name {
+		if item, ok := item.(*specificObject); ok && item.name() == name {
 			return item
 		}
 	}
@@ -97,14 +86,14 @@ func (b *builder) getSpecificObject(name string) *specificObject {
 
 type alwaysString string
 
-func (c alwaysString) code() jen.Code {
-	code := jen.Type().Id(c.getName()).String().Line()
-	code.Func().Params(jen.Id("s").Id(c.getName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+func (c alwaysString) symbolCode() jen.Code {
+	code := jen.Type().Id(c.name()).String().Line()
+	code.Func().Params(jen.Id("s").Id(c.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),
 	)
 	return code
 }
 
-func (c alwaysString) getName() string {
+func (c alwaysString) name() string {
 	return "always" + strcase.UpperCamelCase(string(c))
 }

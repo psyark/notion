@@ -7,6 +7,17 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
+// fieldCoderはstructフィールドのコード生成器です
+type fieldCoder interface {
+	fieldCode() jen.Code
+}
+
+var _ = []fieldCoder{
+	&field{},
+	&interfaceField{},
+	&fixedStringField{},
+}
+
 // 一般的なフィールド
 type field struct {
 	name      string
@@ -15,7 +26,7 @@ type field struct {
 	omitEmpty bool
 }
 
-func (f *field) code() jen.Code {
+func (f *field) fieldCode() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).Add(f.typeCode)
 
@@ -41,7 +52,7 @@ type interfaceField struct {
 	comment  string
 }
 
-func (f *interfaceField) code() jen.Code {
+func (f *interfaceField) fieldCode() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).Id(f.typeName)
 	if f.name != "" {
@@ -60,7 +71,7 @@ type fixedStringField struct {
 	comment string
 }
 
-func (f *fixedStringField) code() jen.Code {
+func (f *fixedStringField) fieldCode() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).Id("always" + strcase.UpperCamelCase(f.value)).Tag(map[string]string{"json": f.name})
 	if f.comment != "" {
