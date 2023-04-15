@@ -161,7 +161,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("NumberPropertyValue").addFields(&field{
 						name:     "number",
-						typeCode: jen.Qual("gopkg.in/guregu/null.v4", "Float"), // null
+						typeCode: NullFloat,
 						comment:  e.Text,
 					})
 					return nil

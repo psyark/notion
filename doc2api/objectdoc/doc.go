@@ -7,4 +7,5 @@ import "github.com/dave/jennifer/jen"
 var (
 	UUID       = jen.Qual("github.com/google/uuid", "UUID")
 	NullString = jen.Qual("gopkg.in/guregu/null.v4", "String")
+	NullFloat  = jen.Qual("gopkg.in/guregu/null.v4", "Float")
 )
