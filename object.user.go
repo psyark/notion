@@ -19,30 +19,6 @@ type detailedUserCommon struct {
 	AvatarUrl nullv4.String `json:"avatar_url"` // Chosen avatar image.
 }
 
-type detailedUserUnmarshaler struct {
-	value DetailedUser
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *detailedUserUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
-	}
-	switch string(getRawProperty(data, "type")) {
-	default:
-		return fmt.Errorf("unmarshaling DetailedUser: data has unknown type field: %s", string(data))
-	}
-	return json.Unmarshal(data, u.value)
-}
-
-func (u *detailedUserUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
-}
-
 /*
 The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
 
