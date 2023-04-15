@@ -132,7 +132,6 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					cs := b.addSpecificObject("ExternalFile", e.Text).addFields(
 						&fixedStringField{name: "type", value: "external"},
-						&field{name: "external", typeCode: jen.Id("ExternalFileData")},
 					)
 					b.getAbstractObject("File").addVariant(cs)
 					b.getAbstractObject("FileOrEmoji").addVariant(cs)
@@ -142,7 +141,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nAn external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of \"external\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addSpecificObject("ExternalFileData", e.Text)
+					b.getSpecificObject("ExternalFile").typeObject.comment = e.Text
 					return nil
 				},
 			},
@@ -152,14 +151,14 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("ExternalFileData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("ExternalFile").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "The Notion API supports adding, retrieving, and updating links to external files.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("ExternalFileData").comment += "\n\n" + e.Text
+					b.getSpecificObject("ExternalFile").typeObject.comment += "\n\n" + e.Text
 					return nil
 				},
 			},

@@ -95,6 +95,7 @@ func (c *objectCommon) code() jen.Code {
 type specificObject struct {
 	objectCommon
 	typeObject objectCommon // typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
+	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
 }
 
 func (c *specificObject) addFields(fields ...coder) *specificObject {

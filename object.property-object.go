@@ -175,6 +175,10 @@ type FormulaProperty struct {
 
 func (_ *FormulaProperty) isProperty() {}
 
+type FormulaPropertyData struct {
+	Expression string `json:"expression"` // The formula that is used to compute the values for this property.   Refer to the Notion help center for information about formula syntax.
+}
+
 /*
 Last edited by
 A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values.
@@ -217,6 +221,10 @@ type MultiSelectProperty struct {
 
 func (_ *MultiSelectProperty) isProperty() {}
 
+type MultiSelectPropertyData struct {
+	Options []MultiSelectPropertyOption `json:"options"`
+}
+
 /*
 Number
 A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:
@@ -228,6 +236,10 @@ type NumberProperty struct {
 }
 
 func (_ *NumberProperty) isProperty() {}
+
+type NumberPropertyData struct {
+	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include:   - argentine_peso - baht - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound  - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
+}
 
 /*
 People
@@ -323,10 +335,15 @@ type SelectPropertyData struct {
 type StatusProperty struct {
 	propertyCommon
 	Type   alwaysStatus       `json:"type"`
-	Status StatusPropertyData `json:"status"` //  A status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects.   The options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields:
+	Status StatusPropertyData `json:"status"`
 }
 
 func (_ *StatusProperty) isProperty() {}
+
+type StatusPropertyData struct {
+	Options []StatusPropertyDataOption `json:"options"`
+	Groups  []StatusPropertyDataGroup  `json:"groups"`
+}
 
 /*
 Title
@@ -354,28 +371,10 @@ type UrlProperty struct {
 
 func (_ *UrlProperty) isProperty() {}
 
-/*
-
-A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.
-
-The formula type object defines the expression in the following fields:
-*/
-type FormulaPropertyData struct {
-	Expression string `json:"expression"` // The formula that is used to compute the values for this property.   Refer to the Notion help center for information about formula syntax.
-}
-
-type MultiSelectPropertyData struct {
-	Options []MultiSelectPropertyOption `json:"options"`
-}
-
 type MultiSelectPropertyOption struct {
 	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
 	Id    uuid.UUID `json:"id"`    // An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.
 	Name  string    `json:"name"`  // The name of the option as it appears in Notion.  Note: Commas (",") are not valid for multi-select properties.
-}
-
-type NumberPropertyData struct {
-	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include:   - argentine_peso - baht - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound  - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
 }
 
 /*
@@ -422,8 +421,8 @@ func (u *relationUnmarshaler) MarshalJSON() ([]byte, error) {
 // undocumented
 type SinglePropertyRelation struct {
 	relationCommon
-	Type           alwaysSingleProperty       `json:"type"`
-	SingleProperty SinglePropertyRelationData `json:"single_property"`
+	Type           alwaysSingleProperty `json:"type"`
+	SingleProperty struct{}             `json:"single_property"`
 }
 
 func (_ *SinglePropertyRelation) isRelation() {}
@@ -437,10 +436,6 @@ type DualPropertyRelation struct {
 
 func (_ *DualPropertyRelation) isRelation() {}
 
-// undocumented
-type SinglePropertyRelationData struct{}
-
-// undocumented
 type DualPropertyRelationData struct {
 	SyncedPropertyId   string `json:"synced_property_id"`   // The id of the corresponding property that is updated in the related database when this property is changed.
 	SyncedPropertyName string `json:"synced_property_name"` // The name of the corresponding property that is updated in the related database when this property is changed.
@@ -456,11 +451,6 @@ type SelectPropertyOption struct {
 	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
 	Id    uuid.UUID `json:"id"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
 	Name  string    `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for select values.
-}
-
-type StatusPropertyData struct {
-	Options []StatusPropertyDataOption `json:"options"`
-	Groups  []StatusPropertyDataGroup  `json:"groups"`
 }
 
 /*

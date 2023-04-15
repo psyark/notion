@@ -215,10 +215,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression. \n\nThe formula type object defines the expression in the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("FormulaProperty").addFields(
-						&field{name: "formula", typeCode: jen.Id("FormulaPropertyData")},
-					).comment += e.Text
-					b.addSpecificObject("FormulaPropertyData", e.Text)
+					b.getSpecificObject("FormulaProperty").comment += e.Text
 					return nil
 				},
 			},
@@ -228,7 +225,7 @@ func init() {
 				Description:  "The formula that is used to compute the values for this property. \n\nRefer to the Notion help center for information about formula syntax.",
 				ExampleValue: `"prop(\"Price\") * 2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("FormulaPropertyData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("FormulaProperty").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -286,11 +283,9 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options. \n\nThe multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("MultiSelectProperty").addFields(
-						&field{name: "multi_select", typeCode: jen.Id("MultiSelectPropertyData")},
-					).comment += e.Text
+					b.getSpecificObject("MultiSelectProperty").comment += e.Text
 					// TODO 似たようなオブジェクトの共通化
-					b.addSpecificObject("MultiSelectPropertyData", "").addFields(
+					b.getSpecificObject("MultiSelectProperty").typeObject.addFields(
 						&field{name: "options", typeCode: jen.Index().Id("MultiSelectPropertyOption")},
 					)
 					b.addSpecificObject("MultiSelectPropertyOption", "")
@@ -341,10 +336,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("NumberProperty").addFields(
-						&field{name: "number", typeCode: jen.Id("NumberPropertyData")},
-					).comment += e.Text
-					b.addSpecificObject("NumberPropertyData", "")
+					b.getSpecificObject("NumberProperty").comment += e.Text
 					return nil
 				},
 			},
@@ -354,7 +346,7 @@ func init() {
 				Description:  "The way that the number is displayed in Notion. Potential values include: \n\n- argentine_peso\n- baht\n- canadian_dollar\n- chilean_peso\n- colombian_peso\n- danish_krone\n- dirham\n- dollar\n- euro\n- forint\n- franc\n- hong_kong_dollar\n- koruna\n- krona\n- leu\n- lira\n-  mexican_peso\n- new_taiwan_dollar\n- new_zealand_dollar\n- norwegian_krone\n- number\n- number_with_commas\n- percent\n- philippine_peso\n- pound \n- rand\n- real\n- ringgit\n- riyal\n- ruble\n- rupee\n- rupiah\n- shekel\n- singapore_dollar\n- uruguayan_peso\n- yen,\n- yuan\n- won\n- zloty",
 				ExampleValue: `"percent"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("NumberPropertyData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("NumberProperty").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -424,16 +416,13 @@ func init() {
 					b.addAbstractObject("Relation", "type", e.Text).addVariant(
 						b.addSpecificObject("SinglePropertyRelation", "undocumented").addFields(
 							&fixedStringField{name: "type", value: "single_property"},
-							&field{name: "single_property", typeCode: jen.Id("SinglePropertyRelationData")},
+							&field{name: "single_property", typeCode: jen.Struct()},
 						),
 					).addVariant(
 						b.addSpecificObject("DualPropertyRelation", "undocumented").addFields(
 							&fixedStringField{name: "type", value: "dual_property"},
-							&field{name: "dual_property", typeCode: jen.Id("DualPropertyRelationData")},
 						),
 					)
-					b.addSpecificObject("SinglePropertyRelationData", "undocumented")
-					b.addSpecificObject("DualPropertyRelationData", "undocumented")
 					return nil
 				},
 			},
@@ -452,7 +441,7 @@ func init() {
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DualPropertyRelationData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -461,7 +450,7 @@ func init() {
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"Ingredients"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DualPropertyRelationData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -626,10 +615,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects. \n\nThe options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("StatusProperty").addFields(
-						&field{name: "status", typeCode: jen.Id("StatusPropertyData"), comment: e.Text},
-					)
-					b.addSpecificObject("StatusPropertyData", "").addFields(
+					b.getSpecificObject("StatusProperty").typeObject.addFields(
 						&field{name: "options", typeCode: jen.Index().Id("StatusPropertyDataOption")},
 						&field{name: "groups", typeCode: jen.Index().Id("StatusPropertyDataGroup")},
 					)
