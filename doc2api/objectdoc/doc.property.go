@@ -159,27 +159,28 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("EmailProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAn email database property is represented in the Notion UI as a column that contains email values. \n\nThe email type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("EmailProperty").addFields(&field{name: "email", typeCode: jen.Struct()}).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Contact email\": {\n  \"id\": \"oZbC\",\n  \"name\": \"Contact email\",\n  \"type\": \"email\",\n  \"email\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FilesProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocCalloutElement{
@@ -187,157 +188,181 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FilesProperty").comment += "\n" + e.Body
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FilesProperty").addFields(&field{name: "files", typeCode: jen.Struct()}).comment += "\n" + e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Product image\": {\n  \"id\": \"pb%3E%5B\",\n  \"name\": \"Product image\",\n  \"type\": \"files\",\n  \"files\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Formula",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FormulaProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression. \n\nThe formula type object defines the expression in the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FormulaProperty").addFields(
+						&field{name: "formula", typeCode: jen.Id("FormulaPropertyData")},
+					).comment += e.Text
+					b.addSpecificObject("FormulaPropertyData", e.Text)
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The formula that is used to compute the values for this property. \n\nRefer to the Notion help center for information about formula syntax.",
-				ExampleValue: "\"prop(\\\"Price\\\") * 2\"",
 				Field:        "expression",
 				Type:         "string",
+				Description:  "The formula that is used to compute the values for this property. \n\nRefer to the Notion help center for information about formula syntax.",
+				ExampleValue: `"prop(\"Price\") * 2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FormulaPropertyData").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Updated price\": {\n  \"id\": \"YU%7C%40\",\n  \"name\": \"Updated price\",\n  \"type\": \"formula\",\n  \"formula\": {\n    \"expression\": \"prop(\\\"Price\\\") * 2\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Last edited by ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedByProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values. \n\nThe last_edited_by type object is empty. There is no additional property configuration.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedByProperty").addFields(
+						&field{name: "last_edited_by", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Last edited time",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedTimeProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values. \n\nThe last_edited_time type object is empty. There is no additional property configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedTimeProperty").addFields(
+						&field{name: "last_edited_time", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Last edited time\": {\n  \"id\": \"jGdo\",\n  \"name\": \"Last edited time\",\n  \"type\": \"last_edited_time\",\n  \"last_edited_time\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Multi-select ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("MultiSelectProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options. \n\nThe multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("MultiSelectProperty").addFields(
+						&field{name: "multi_select", typeCode: jen.Id("MultiSelectPropertyData")},
+					).comment += e.Text
+					// TODO 似たようなオブジェクトの共通化
+					b.addSpecificObject("MultiSelectPropertyData", "").addFields(
+						&field{name: "options", typeCode: jen.Index().Id("MultiSelectPropertyOption")},
+					)
+					b.addSpecificObject("MultiSelectPropertyOption", "")
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
-				ExampleValue: "\"blue\"",
 				Field:        "color",
 				Type:         "string (enum)",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
+				ExampleValue: `"blue"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
 				Field:        "id",
 				Type:         "string",
+				Description:  "An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(UUID))
+					return nil
 				},
 			}, {
-				Description:  "The name of the option as it appears in Notion.\n\nNote: Commas (\",\") are not valid for multi-select properties.",
-				ExampleValue: "\"Fruit\"",
 				Field:        "name",
 				Type:         "string",
+				Description:  "The name of the option as it appears in Notion.\n\nNote: Commas (\",\") are not valid for multi-select properties.",
+				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Store availability\": {\n  \"id\": \"flsb\",\n  \"name\": \"Store availability\",\n  \"type\": \"multi_select\",\n  \"multi_select\": {\n    \"options\": [\n      {\n        \"id\": \"5de29601-9c24-4b04-8629-0bca891c5120\",\n        \"name\": \"Duc Loi Market\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"385890b8-fe15-421b-b214-b02959b0f8d9\",\n        \"name\": \"Rainbow Grocery\",\n        \"color\": \"gray\"\n      },\n      {\n        \"id\": \"72ac0a6c-9e00-4e8c-80c5-720e4373e0b9\",\n        \"name\": \"Nijiya Market\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"9556a8f7-f4b0-4e11-b277-f0af1f8c9490\",\n        \"name\": \"Gus's Community Market\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Number",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("NumberProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("NumberProperty").addFields(
+						&field{name: "number", typeCode: jen.Id("NumberPropertyData")},
+					).comment += e.Text
+					b.addSpecificObject("NumberPropertyData", "")
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The way that the number is displayed in Notion. Potential values include: \n\n- argentine_peso\n- baht\n- canadian_dollar\n- chilean_peso\n- colombian_peso\n- danish_krone\n- dirham\n- dollar\n- euro\n- forint\n- franc\n- hong_kong_dollar\n- koruna\n- krona\n- leu\n- lira\n-  mexican_peso\n- new_taiwan_dollar\n- new_zealand_dollar\n- norwegian_krone\n- number\n- number_with_commas\n- percent\n- philippine_peso\n- pound \n- rand\n- real\n- ringgit\n- riyal\n- ruble\n- rupee\n- rupiah\n- shekel\n- singapore_dollar\n- uruguayan_peso\n- yen,\n- yuan\n- won\n- zloty",
-				ExampleValue: "\"percent\"",
 				Field:        "format",
 				Type:         "string (enum)",
+				Description:  "The way that the number is displayed in Notion. Potential values include: \n\n- argentine_peso\n- baht\n- canadian_dollar\n- chilean_peso\n- colombian_peso\n- danish_krone\n- dirham\n- dollar\n- euro\n- forint\n- franc\n- hong_kong_dollar\n- koruna\n- krona\n- leu\n- lira\n-  mexican_peso\n- new_taiwan_dollar\n- new_zealand_dollar\n- norwegian_krone\n- number\n- number_with_commas\n- percent\n- philippine_peso\n- pound \n- rand\n- real\n- ringgit\n- riyal\n- ruble\n- rupee\n- rupiah\n- shekel\n- singapore_dollar\n- uruguayan_peso\n- yen,\n- yuan\n- won\n- zloty",
+				ExampleValue: `"percent"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("NumberPropertyData").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Price\"{\n  \"id\": \"%7B%5D_P\",\n  \"name\": \"Price\",\n  \"type\": \"number\",\n  \"number\": {\n    \"format\": \"dollar\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "People ",

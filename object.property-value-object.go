@@ -93,7 +93,7 @@ type PropertyValueMap map[string]PropertyValue
 func (m *PropertyValueMap) UnmarshalJSON(data []byte) error {
 	t := map[string]propertyValueUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling PropertyValueMap: %w", err)
 	}
 	*m = PropertyValueMap{}
 	for k, u := range t {
@@ -225,6 +225,18 @@ type FormulaPropertyValue struct {
 }
 
 func (_ *FormulaPropertyValue) isPropertyValue() {}
+func (o *FormulaPropertyValue) UnmarshalJSON(data []byte) error {
+	type Alias FormulaPropertyValue
+	t := &struct {
+		*Alias
+		Formula formulaUnmarshaler `json:"formula"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling FormulaPropertyValue: %w", err)
+	}
+	o.Formula = t.Formula.value
+	return nil
+}
 
 type Formula interface {
 	isFormula()
@@ -264,8 +276,8 @@ func (u *formulaUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // String formula property values
 type StringFormula struct {
-	Type   alwaysString `json:"type"`
-	String string       `json:"string"` //  String formula property values contain an optional string within the string property.
+	Type   alwaysString  `json:"type"`
+	String nullv4.String `json:"string"` //  String formula property values contain an optional string within the string property.
 }
 
 func (_ *StringFormula) isFormula() {}
@@ -452,7 +464,7 @@ func (_ *EmailPropertyValue) isPropertyValue() {}
 type PhoneNumberPropertyValue struct {
 	propertyValueCommon
 	Type        alwaysPhoneNumber `json:"type"`
-	PhoneNumber string            `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+	PhoneNumber nullv4.String     `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 }
 
 func (_ *PhoneNumberPropertyValue) isPropertyValue() {}
@@ -470,7 +482,7 @@ func (_ *CreatedTimePropertyValue) isPropertyValue() {}
 type CreatedByPropertyValue struct {
 	propertyValueCommon
 	Type      alwaysCreatedBy `json:"type"`
-	CreatedBy User            `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
+	CreatedBy PartialUser     `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *CreatedByPropertyValue) isPropertyValue() {}
@@ -492,3 +504,15 @@ type LastEditedByPropertyValue struct {
 }
 
 func (_ *LastEditedByPropertyValue) isPropertyValue() {}
+func (o *LastEditedByPropertyValue) UnmarshalJSON(data []byte) error {
+	type Alias LastEditedByPropertyValue
+	t := &struct {
+		*Alias
+		LastEditedBy userUnmarshaler `json:"last_edited_by"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling LastEditedByPropertyValue: %w", err)
+	}
+	o.LastEditedBy = t.LastEditedBy.value
+	return nil
+}

@@ -464,7 +464,7 @@ func init() {
 					b.getAbstractObject("PropertyValue").addVariant(
 						b.addSpecificObject("FormulaPropertyValue", e.Text).addFields(
 							&fixedStringField{name: "type", value: "formula"},
-							&field{name: "formula", typeCode: jen.Id("Formula")},
+							&interfaceField{name: "formula", typeName: "Formula"},
 						),
 					)
 					b.addAbstractObject("Formula", "type", "")
@@ -515,7 +515,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("StringFormula").addFields(&field{
 						name:     "string",
-						typeCode: jen.String(),
+						typeCode: NullString,
 						comment:  e.Text,
 					})
 					return nil
@@ -874,7 +874,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("UrlPropertyValue").addFields(&field{
 						name:     "url",
-						typeCode: jen.Qual("gopkg.in/guregu/null.v4", "String"),
+						typeCode: NullString,
 						comment:  e.Text,
 					})
 					return nil
@@ -907,7 +907,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("EmailPropertyValue").addFields(&field{
 						name:     "email",
-						typeCode: jen.Qual("gopkg.in/guregu/null.v4", "String"),
+						typeCode: NullString,
 						comment:  e.Text,
 					})
 					return nil
@@ -940,7 +940,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("PhoneNumberPropertyValue").addFields(&field{
 						name:     "phone_number",
-						typeCode: jen.String(),
+						typeCode: NullString,
 						comment:  e.Text,
 					})
 					return nil
@@ -995,7 +995,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("CreatedByPropertyValue").addFields(&field{
 						name:     "created_by",
-						typeCode: jen.Id("User"),
+						typeCode: jen.Id("PartialUser"),
 						comment:  e.Text,
 					})
 					return nil
@@ -1037,9 +1037,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("LastEditedByPropertyValue").addFields(&field{
+					// TODO 状況によってUserとPartialUserが変わる？要検証
+					b.getSpecificObject("LastEditedByPropertyValue").addFields(&interfaceField{
 						name:     "last_edited_by",
-						typeCode: jen.Id("User"),
+						typeName: "User",
 						comment:  e.Text,
 					})
 					return nil

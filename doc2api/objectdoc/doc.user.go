@@ -13,8 +13,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addSpecificObject("PartialUser", e.Text)
-					b.addAbstractObject("User", "type", e.Text).listName = "Users"
+					b.addAbstractObject("DetailedUser", "type", e.Text)
+					b.addAbstractObject("User", "type", e.Text).addVariant(
+						b.addSpecificObject("PartialUser", e.Text),
+					).listName = "Users"
 					return nil
 				},
 			},
@@ -65,7 +67,7 @@ func init() {
 				ExampleValue: `"user"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					e.Property = strings.TrimSuffix(e.Property, "*")
-					b.getSpecificObject("PartialUser").addFields(e.asFixedStringField())
+					b.getAbstractObject("User").addFields(e.asFixedStringField())
 					return nil
 				},
 			}, {
@@ -74,7 +76,7 @@ func init() {
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PartialUser").addFields(&field{
+					b.getAbstractObject("User").addFields(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
 						typeCode: UUID,
 						comment:  e.Description,
@@ -95,7 +97,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("User").addFields(e.asField(jen.String()))
+					b.getAbstractObject("DetailedUser").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -104,18 +106,18 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("User").addFields(e.asField(jen.String()))
+					b.getAbstractObject("DetailedUser").addFields(e.asField(NullString))
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("User").addVariant(
-						b.addSpecificObject("PersonUser", e.Text).addFields(
-							&fixedStringField{name: "type", value: "person"},
-						),
+					so := b.addSpecificObject("PersonUser", e.Text).addFields(
+						&fixedStringField{name: "type", value: "person"},
 					)
+					so.addParent(b.getAbstractObject("DetailedUser"))
+					b.getAbstractObject("User").addVariant(so)
 					return nil
 				},
 			},
@@ -152,11 +154,11 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("User").addVariant(
-						b.addSpecificObject("BotUser", e.Text).addFields(
-							&fixedStringField{name: "type", value: "bot"},
-						),
+					so := b.addSpecificObject("BotUser", e.Text).addFields(
+						&fixedStringField{name: "type", value: "bot"},
 					)
+					so.addParent(b.getAbstractObject("DetailedUser"))
+					b.getAbstractObject("User").addVariant(so)
 					return nil
 				},
 			},

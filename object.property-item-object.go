@@ -93,7 +93,7 @@ type PropertyItems []PropertyItem
 func (a *PropertyItems) UnmarshalJSON(data []byte) error {
 	t := []propertyItemUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling PropertyItems: %w", err)
 	}
 	*a = make([]PropertyItem, len(t))
 	for i, u := range t {

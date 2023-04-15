@@ -27,6 +27,7 @@ func (f *field) code() jen.Code {
 }
 
 // インターフェイスが入るフィールド
+// TODO 自動判別するようにしたい
 type interfaceField struct {
 	name     string
 	typeName string

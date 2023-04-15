@@ -150,9 +150,10 @@ type abstractObject struct {
 // addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
 // - バリアントに対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切なバリアントを作成するUnmarshalerを作成
-func (c *abstractObject) addVariant(variant objectCoder) {
+func (c *abstractObject) addVariant(variant objectCoder) *abstractObject {
 	variant.addParent(c)
 	c.variants = append(c.variants, variant)
+	return c
 }
 
 func (c *abstractObject) addFields(fields ...coder) *abstractObject {
@@ -208,7 +209,7 @@ func (c *abstractObject) code() jen.Code {
 		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Err(),
+				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.listName)), jen.Err()),
 			),
 			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name), jen.Len(jen.Id("t"))),
 			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
@@ -224,7 +225,7 @@ func (c *abstractObject) code() jen.Code {
 		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name)+"Unmarshaler").Values(),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Err(),
+				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.strMapName)), jen.Err()),
 			),
 			jen.Op("*").Id("m").Op("=").Id(c.strMapName).Values(),
 			jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
@@ -242,13 +243,17 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 	cases := []jen.Code{}
 
 	for _, variant := range c.variants {
-		sf := variant.getSpecifyingField(c.specifiedBy)
+		caseCode := jen.Case(jen.Lit(""))
+		if sf := variant.getSpecifyingField(c.specifiedBy); sf != nil {
+			caseCode = jen.Case(jen.Lit(`"` + sf.value + `"`))
+		}
+
 		switch variant := variant.(type) {
 		case *specificObject:
-			cases = append(cases, jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
+			cases = append(cases, caseCode.Id("u").Dot("value").Op("=").Op("&").Id(variant.name).Values())
 		case *abstractObject:
 			cases = append(cases,
-				jen.Case(jen.Lit(`"`+sf.value+`"`)).Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
+				caseCode.Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name)+"Unmarshaler").Values(),
 				jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
 				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
 				jen.Return().Nil(),

@@ -89,7 +89,7 @@ type PropertyMap map[string]Property
 func (m *PropertyMap) UnmarshalJSON(data []byte) error {
 	t := map[string]propertyUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+		return fmt.Errorf("unmarshaling PropertyMap: %w", err)
 	}
 	*m = PropertyMap{}
 	for k, u := range t {
@@ -134,51 +134,97 @@ type DateProperty struct {
 
 func (_ *DateProperty) isProperty() {}
 
+/*
+Email
+An email database property is represented in the Notion UI as a column that contains email values.
+
+The email type object is empty. There is no additional property configuration.
+*/
 type EmailProperty struct {
 	propertyCommon
-	Type alwaysEmail `json:"type"`
+	Type  alwaysEmail `json:"type"`
+	Email struct{}    `json:"email"`
 }
 
 func (_ *EmailProperty) isProperty() {}
 
+/*
+Files
+The Notion API does not yet support uploading files to Notion.
+A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.
+*/
 type FilesProperty struct {
 	propertyCommon
-	Type alwaysFiles `json:"type"`
+	Type  alwaysFiles `json:"type"`
+	Files struct{}    `json:"files"`
 }
 
 func (_ *FilesProperty) isProperty() {}
 
+/*
+Formula
+A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.
+
+The formula type object defines the expression in the following fields:
+*/
 type FormulaProperty struct {
 	propertyCommon
-	Type alwaysFormula `json:"type"`
+	Type    alwaysFormula       `json:"type"`
+	Formula FormulaPropertyData `json:"formula"`
 }
 
 func (_ *FormulaProperty) isProperty() {}
 
+/*
+Last edited by
+A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values.
+
+The last_edited_by type object is empty. There is no additional property configuration.
+*/
 type LastEditedByProperty struct {
 	propertyCommon
-	Type alwaysLastEditedBy `json:"type"`
+	Type         alwaysLastEditedBy `json:"type"`
+	LastEditedBy struct{}           `json:"last_edited_by"`
 }
 
 func (_ *LastEditedByProperty) isProperty() {}
 
+/*
+Last edited time
+A last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values.
+
+The last_edited_time type object is empty. There is no additional property configuration.
+*/
 type LastEditedTimeProperty struct {
 	propertyCommon
-	Type alwaysLastEditedTime `json:"type"`
+	Type           alwaysLastEditedTime `json:"type"`
+	LastEditedTime struct{}             `json:"last_edited_time"`
 }
 
 func (_ *LastEditedTimeProperty) isProperty() {}
 
+/*
+Multi-select
+A multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options.
+
+The multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields:
+*/
 type MultiSelectProperty struct {
 	propertyCommon
-	Type alwaysMultiSelect `json:"type"`
+	Type        alwaysMultiSelect       `json:"type"`
+	MultiSelect MultiSelectPropertyData `json:"multi_select"`
 }
 
 func (_ *MultiSelectProperty) isProperty() {}
 
+/*
+Number
+A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:
+*/
 type NumberProperty struct {
 	propertyCommon
-	Type alwaysNumber `json:"type"`
+	Type   alwaysNumber       `json:"type"`
+	Number NumberPropertyData `json:"number"`
 }
 
 func (_ *NumberProperty) isProperty() {}
@@ -252,6 +298,30 @@ type UrlProperty struct {
 }
 
 func (_ *UrlProperty) isProperty() {}
+
+/*
+
+A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.
+
+The formula type object defines the expression in the following fields:
+*/
+type FormulaPropertyData struct {
+	Expression string `json:"expression"` // The formula that is used to compute the values for this property.   Refer to the Notion help center for information about formula syntax.
+}
+
+type MultiSelectPropertyData struct {
+	Options []MultiSelectPropertyOption `json:"options"`
+}
+
+type MultiSelectPropertyOption struct {
+	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Id    uuid.UUID `json:"id"`    // An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.
+	Name  string    `json:"name"`  // The name of the option as it appears in Notion.  Note: Commas (",") are not valid for multi-select properties.
+}
+
+type NumberPropertyData struct {
+	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include:   - argentine_peso - baht - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound  - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
+}
 
 type StatusPropertyData struct {
 	Options []StatusPropertyDataOption `json:"options"`
