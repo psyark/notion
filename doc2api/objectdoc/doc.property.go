@@ -367,87 +367,109 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PeopleProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PeopleProperty").addFields(
+						&field{name: "people", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Project owner\": {\n  \"id\": \"FlgQ\",\n  \"name\": \"Project owner\",\n  \"type\": \"people\",\n  \"people\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Phone number",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PhoneNumberProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA phone number database property is rendered in the Notion UI as a column that contains phone number values. \n\nThe phone_number type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PhoneNumberProperty").addFields(
+						&field{name: "phone_number", typeCode: jen.Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Contact phone number\": {\n  \"id\": \"ULHa\",\n  \"name\": \"Contact phone number\",\n  \"type\": \"phone_number\",\n  \"phone_number\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Relation",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RelationProperty").comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values. \n\nThe relation type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RelationProperty").addFields(
+						&interfaceField{name: "relation", typeName: "Relation"},
+					).comment += e.Text
+					b.addAbstractObject("Relation", "type", e.Text).addVariant(
+						b.addSpecificObject("SinglePropertyRelation", "undocumented").addFields(
+							&fixedStringField{name: "type", value: "single_property"},
+							&field{name: "single_property", typeCode: jen.Id("SinglePropertyRelationData")},
+						),
+					).addVariant(
+						b.addSpecificObject("DualPropertyRelation", "undocumented").addFields(
+							&fixedStringField{name: "type", value: "dual_property"},
+							&field{name: "dual_property", typeCode: jen.Id("DualPropertyRelationData")},
+						),
+					)
+					b.addSpecificObject("SinglePropertyRelationData", "undocumented")
+					b.addSpecificObject("DualPropertyRelationData", "undocumented")
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The database that the relation property refers to. \n\nThe corresponding linked page values must belong to the database in order to be valid.",
-				ExampleValue: "\"668d797c-76fa-4934-9b05-ad288df2d136\"",
 				Field:        "database_id",
 				Type:         "string (UUID)",
+				Description:  "The database that the relation property refers to. \n\nThe corresponding linked page values must belong to the database in order to be valid.",
+				ExampleValue: `"668d797c-76fa-4934-9b05-ad288df2d136"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Relation").addFields(e.asField(UUID))
+					return nil
 				},
 			}, {
-				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
-				ExampleValue: "\"fy:{\"",
 				Field:        "synced_property_id",
 				Type:         "string",
+				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
+				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("DualPropertyRelationData").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
-				ExampleValue: "\"Ingredients\"",
 				Field:        "synced_property_name",
 				Type:         "string",
+				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
+				ExampleValue: `"Ingredients"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("DualPropertyRelationData").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Projects\": {\n  \"id\": \"~pex\",\n  \"name\": \"Projects\",\n  \"type\": \"relation\",\n  \"relation\": {\n    \"database_id\": \"6c4240a9-a3ce-413e-9fd0-8a51a4d0a49b\",\n    \"synced_property_name\": \"Tasks\",\n    \"synced_property_id\": \"JU]K\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocCalloutElement{
 				Body:  "",

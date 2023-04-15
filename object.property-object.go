@@ -229,26 +229,57 @@ type NumberProperty struct {
 
 func (_ *NumberProperty) isProperty() {}
 
+/*
+People
+A people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration.
+*/
 type PeopleProperty struct {
 	propertyCommon
-	Type alwaysPeople `json:"type"`
+	Type   alwaysPeople `json:"type"`
+	People struct{}     `json:"people"`
 }
 
 func (_ *PeopleProperty) isProperty() {}
 
+/*
+Phone number
+A phone number database property is rendered in the Notion UI as a column that contains phone number values.
+
+The phone_number type object is empty. There is no additional property configuration.
+*/
 type PhoneNumberProperty struct {
 	propertyCommon
-	Type alwaysPhoneNumber `json:"type"`
+	Type        alwaysPhoneNumber `json:"type"`
+	PhoneNumber struct{}          `json:"phone_number"`
 }
 
 func (_ *PhoneNumberProperty) isProperty() {}
 
+/*
+Relation
+A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
+
+The relation type object contains the following fields:
+*/
 type RelationProperty struct {
 	propertyCommon
-	Type alwaysRelation `json:"type"`
+	Type     alwaysRelation `json:"type"`
+	Relation Relation       `json:"relation"`
 }
 
 func (_ *RelationProperty) isProperty() {}
+func (o *RelationProperty) UnmarshalJSON(data []byte) error {
+	type Alias RelationProperty
+	t := &struct {
+		*Alias
+		Relation relationUnmarshaler `json:"relation"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RelationProperty: %w", err)
+	}
+	o.Relation = t.Relation.value
+	return nil
+}
 
 type RichTextProperty struct {
 	propertyCommon
@@ -321,6 +352,74 @@ type MultiSelectPropertyOption struct {
 
 type NumberPropertyData struct {
 	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include:   - argentine_peso - baht - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound  - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
+}
+
+/*
+
+A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
+
+The relation type object contains the following fields:
+*/
+type Relation interface {
+	isRelation()
+}
+type relationCommon struct {
+	DatabaseId uuid.UUID `json:"database_id"` // The database that the relation property refers to.   The corresponding linked page values must belong to the database in order to be valid.
+}
+
+type relationUnmarshaler struct {
+	value Relation
+}
+
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
+func (u *relationUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
+	switch string(getRawProperty(data, "type")) {
+	case "\"single_property\"":
+		u.value = &SinglePropertyRelation{}
+	case "\"dual_property\"":
+		u.value = &DualPropertyRelation{}
+	default:
+		return fmt.Errorf("unmarshaling Relation: data has unknown type field: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
+}
+
+func (u *relationUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
+}
+
+// undocumented
+type SinglePropertyRelation struct {
+	relationCommon
+	Type           alwaysSingleProperty       `json:"type"`
+	SingleProperty SinglePropertyRelationData `json:"single_property"`
+}
+
+func (_ *SinglePropertyRelation) isRelation() {}
+
+// undocumented
+type DualPropertyRelation struct {
+	relationCommon
+	Type         alwaysDualProperty       `json:"type"`
+	DualProperty DualPropertyRelationData `json:"dual_property"`
+}
+
+func (_ *DualPropertyRelation) isRelation() {}
+
+// undocumented
+type SinglePropertyRelationData struct{}
+
+// undocumented
+type DualPropertyRelationData struct {
+	SyncedPropertyId   string `json:"synced_property_id"`   // The id of the corresponding property that is updated in the related database when this property is changed.
+	SyncedPropertyName string `json:"synced_property_name"` // The name of the corresponding property that is updated in the related database when this property is changed.
 }
 
 type StatusPropertyData struct {
