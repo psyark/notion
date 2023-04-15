@@ -135,7 +135,7 @@ func init() {
 				ExampleValue: `{ "id": "A%40Hk" }`,
 				output: func(e *objectDocParameter, b *builder) error {
 					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PropertyValueMap")))
-					return nil // TODO
+					return nil
 				},
 			}, {
 				Property:     "parent",

@@ -151,57 +151,41 @@ func init() {
 				},
 			}},
 			&objectDocHeadingElement{
-				Text: "Parameters for paginated requests",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Parameters for paginated requests",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCalloutElement{
-				Body:  "`GET` requests accept parameters in the query string. \n\n`POST` requests receive parameters in the request body.",
-				Title: "Parameter location varies by endpoint",
-				Type:  "warning",
-				output: func(e *objectDocCalloutElement, b *builder) error {
-					return nil // TODO
-				},
+				Body:   "`GET` requests accept parameters in the query string. \n\n`POST` requests receive parameters in the request body.",
+				Title:  "Parameter location varies by endpoint",
+				Type:   "warning",
+				output: func(e *objectDocCalloutElement, b *builder) error { return nil },
 			},
 			&objectDocParametersElement{{
 				Description: "The number of items from the full list to include in the response.\n\nDefault: 100\nMaximum: 100\n\nThe response may contain fewer than the default number of results.",
 				Type:        "number",
-				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Description: "A next_cursor value returned in a previous response. Treat this as an opaque value.\n\nDefaults to undefined, which returns results from the beginning of the list.",
 				Type:        "string",
-				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}},
 			&objectDocHeadingElement{
-				Text: "How to send a paginated request ",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "How to send a paginated request ",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\n1. Send an initial request to the supported endpoint.\n2. Retrieve the next_cursor value from the response (only available when has_more is true). \n3. Send a follow up request to the endpoint that includes the next_cursor param in either the query string (for GET requests) or in the body params (POST requests).\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "\n1. Send an initial request to the supported endpoint.\n2. Retrieve the next_cursor value from the response (only available when has_more is true). \n3. Send a follow up request to the endpoint that includes the next_cursor param in either the query string (for GET requests) or in the body params (POST requests).\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Example: request the next set of query results from a database ",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
-				},
+				Text:   "Example: request the next set of query results from a database ",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "curl --location --request POST 'https://api.notion.com/v1/databases/<database_id>/query' \\\n--header 'Authorization: Bearer <secret_bot>' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"start_cursor\": \"33e19cb9-751f-4993-b74d-234d67d0d534\"\n}'",
 				Language: "curl",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 		},
 	})
