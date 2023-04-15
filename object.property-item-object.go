@@ -106,7 +106,7 @@ func (a *PropertyItems) UnmarshalJSON(data []byte) error {
 type PaginatedPropertyInfo struct {
 	Id      string   `json:"id"`
 	Type    string   `json:"type"`
-	Title   struct{} `json:"title"`
+	Title   struct{} `json:"title,omitempty"`
 	NextUrl *string  `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 

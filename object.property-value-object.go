@@ -333,10 +333,23 @@ Rollups returned in page objects are subject to a 25 page reference limitation. 
 */
 type RollupPropertyValue struct {
 	propertyValueCommon
-	Type alwaysRollup `json:"type"`
+	Type   alwaysRollup `json:"type"`
+	Rollup Rollup       `json:"rollup"`
 }
 
 func (_ *RollupPropertyValue) isPropertyValue() {}
+func (o *RollupPropertyValue) UnmarshalJSON(data []byte) error {
+	type Alias RollupPropertyValue
+	t := &struct {
+		*Alias
+		Rollup rollupUnmarshaler `json:"rollup"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RollupPropertyValue: %w", err)
+	}
+	o.Rollup = t.Rollup.value
+	return nil
+}
 
 type Rollup interface {
 	isRollup()
@@ -400,8 +413,9 @@ func (_ *DateRollup) isRollup() {}
 
 // Array rollup property values
 type ArrayRollup struct {
-	Type  alwaysArray `json:"type"`
-	Array []Rollup    `json:"array"` //  Array rollup property values contain an array of number, date, or string objects within the results property.
+	Type     alwaysArray `json:"type"`
+	Array    []Rollup    `json:"array"`    //  Array rollup property values contain an array of number, date, or string objects within the results property.
+	Function string      `json:"function"` // undocumented
 }
 
 func (_ *ArrayRollup) isRollup() {}

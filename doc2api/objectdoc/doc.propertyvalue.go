@@ -630,6 +630,7 @@ func init() {
 					b.getAbstractObject("PropertyValue").addVariant(
 						b.addSpecificObject("RollupPropertyValue", e.Text).addFields(
 							&fixedStringField{name: "type", value: "rollup"},
+							&interfaceField{name: "rollup", typeName: "Rollup"},
 						),
 					)
 					b.addAbstractObject("Rollup", "type", "")
@@ -742,6 +743,10 @@ func init() {
 						name:     "array",
 						typeCode: jen.Index().Id("Rollup"),
 						comment:  e.Text,
+					}, &field{
+						name:     "function",
+						typeCode: jen.String(),
+						comment:  "undocumented",
 					})
 					return nil
 				},

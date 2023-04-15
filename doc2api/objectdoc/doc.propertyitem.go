@@ -94,7 +94,7 @@ func init() {
 					b.addSpecificObject("PaginatedPropertyInfo", e.Description).addFields(
 						&field{name: "id", typeCode: jen.String()},
 						&field{name: "type", typeCode: jen.String()},
-						&field{name: "title", typeCode: jen.Struct()}, // TODO omitempty
+						&field{name: "title", typeCode: jen.Struct(), omitEmpty: true},
 					)
 					return nil
 				},
