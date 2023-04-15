@@ -9,17 +9,24 @@ import (
 
 // 一般的なフィールド
 type field struct {
-	name     string
-	typeCode jen.Code
-	comment  string
+	name      string
+	typeCode  jen.Code
+	comment   string
+	omitEmpty bool
 }
 
 func (f *field) code() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).Add(f.typeCode)
-	if f.name != "" {
-		code.Tag(map[string]string{"json": f.name})
+
+	tag := f.name
+	if f.omitEmpty {
+		tag += ",omitempty"
 	}
+	if tag != "" {
+		code.Tag(map[string]string{"json": tag})
+	}
+
 	if f.comment != "" {
 		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
 	}

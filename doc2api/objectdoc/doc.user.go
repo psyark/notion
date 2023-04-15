@@ -186,7 +186,9 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotData").addFields(e.asField(jen.Id("BotDataOwner")))
+					field := e.asField(jen.Op("*").Id("BotDataOwner"))
+					field.omitEmpty = true
+					b.getSpecificObject("BotData").addFields(field)
 					b.addSpecificObject("BotDataOwner", e.Description)
 					return nil
 				},
@@ -209,7 +211,9 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotData").addFields(e.asField(jen.String()))
+					field := e.asField(jen.String())
+					field.omitEmpty = true
+					b.getSpecificObject("BotData").addFields(field)
 					return nil
 				},
 			}},

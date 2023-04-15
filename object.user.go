@@ -149,8 +149,8 @@ func (_ *BotUser) isUser()         {}
 
 // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
 type BotData struct {
-	Owner         BotDataOwner `json:"owner"`          // Information about who owns this bot.
-	WorkspaceName string       `json:"workspace_name"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
+	Owner         *BotDataOwner `json:"owner,omitempty"`          // Information about who owns this bot.
+	WorkspaceName string        `json:"workspace_name,omitempty"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
 }
 
 // Information about who owns this bot.
