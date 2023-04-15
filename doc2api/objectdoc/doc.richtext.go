@@ -142,11 +142,8 @@ func init() {
 				},
 			}},
 			&objectDocHeadingElement{
-				Text: "Rich text type objects",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addComment(e.Text)
-					return nil
-				},
+				Text:   "Rich text type objects",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "Equation",

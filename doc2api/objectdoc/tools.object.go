@@ -94,8 +94,11 @@ func (c *objectCommon) code() jen.Code {
 // 生成されるGoコードではstructポインタで表現されます
 type specificObject struct {
 	objectCommon
-	typeObject objectCommon // typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
+
+	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
+	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
 	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
+	typeObject objectCommon
 }
 
 func (c *specificObject) addFields(fields ...coder) *specificObject {

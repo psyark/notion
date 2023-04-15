@@ -18,7 +18,6 @@ var _ = []coder{
 	&field{},
 	&fixedStringField{},
 	&interfaceField{},
-	independentComment(""),
 	alwaysString(""),
 }
 
@@ -26,11 +25,9 @@ type builder struct {
 	fileName string
 	url      string
 	coders   []coder
-	global   *builder
-}
 
-func (b *builder) addComment(comment string) {
-	b.coders = append(b.coders, independentComment(comment))
+	// Deprecated:
+	global *builder // TODO ローカル/グローバルビルダーを作るのではなく、唯一のビルダーを作る
 }
 
 func (b *builder) addSpecificObject(name string, comment string) *specificObject {
@@ -96,12 +93,6 @@ func (b *builder) getSpecificObject(name string) *specificObject {
 		return b.global.getSpecificObject(name)
 	}
 	return nil
-}
-
-type independentComment string
-
-func (c independentComment) code() jen.Code {
-	return jen.Comment(string(c))
 }
 
 type alwaysString string

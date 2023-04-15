@@ -35,7 +35,10 @@ func (c converter) fetchAndBuild(global *builder) (*builder, error) {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	defer func() {
+		_, _ = io.ReadAll(res.Body)
+		_ = res.Body.Close()
+	}()
 
 	// goqueryでのパース
 	doc, err := goquery.NewDocumentFromReader(res.Body)
@@ -58,6 +61,7 @@ func (c converter) fetchAndBuild(global *builder) (*builder, error) {
 
 	requiredCopy := jen.Statement{}
 	fileName := "object." + strings.TrimPrefix(c.url, "https://developers.notion.com/reference/") + ".go"
+
 	b := &builder{global: global, fileName: "../../" + fileName, url: c.url}
 
 	for i := 0; ; i++ {

@@ -80,10 +80,6 @@ func (u *blockUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-// Block type objects
-
-// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
-
 /*
 Bookmark block objects contain the following information within the bookmark property:
 {

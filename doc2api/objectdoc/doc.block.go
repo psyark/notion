@@ -171,18 +171,12 @@ func init() {
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "Block type objects",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addComment(e.Text)
-					return nil
-				},
+				Text:   "Block type objects",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addComment(strings.TrimSpace(e.Text))
-					return nil
-				},
+				Text:   "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "Bookmark",
