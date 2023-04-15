@@ -1042,7 +1042,6 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					// TODO 状況によってUserとPartialUserが変わる？要検証
 					b.getSpecificObject("LastEditedByPropertyValue").addFields(&interfaceField{
 						name:     "last_edited_by",
 						typeName: "User",
