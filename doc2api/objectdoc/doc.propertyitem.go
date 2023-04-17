@@ -2,6 +2,7 @@ package objectdoc
 
 import (
 	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
 )
 
 func init() {
@@ -63,8 +64,23 @@ func init() {
 				},
 			},
 			&objectDocParagraphElement{
-				Text:   "\nThe title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information. ",
-				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
+				Text: "\nThe title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information. ",
+				output: func(e *objectDocParagraphElement, b *builder) error {
+					// TODO 良い名前
+					ppi := b.addAbstractObject("PaginatedPropertyInfo", "type", e.Text).addFields(
+						&field{name: "id", typeCode: jen.String()},
+						&field{name: "type", typeCode: jen.String()},
+					)
+					for _, variant := range []string{"title", "rich_text", "relation", "people"} {
+						ppi.addVariant(
+							b.addSpecificObject(strcase.UpperCamelCase(variant)+"PaginatedPropertyInfo", "").addFields(
+								&fixedStringField{name: "type", value: variant},
+								&field{name: variant, typeCode: jen.Struct()},
+							),
+						)
+					}
+					return nil
+				},
 			},
 			&objectDocParametersElement{{
 				Property:     "object",
@@ -89,22 +105,14 @@ func init() {
 				Type:         "object",
 				Description:  "A property_item object that describes the property.",
 				ExampleValue: `{"id": "title", "next_url": null, "type": "title", "title": {}}`,
-				output: func(e *objectDocParameter, b *builder) error {
-					// TODO 良い名前
-					b.addSpecificObject("PaginatedPropertyInfo", e.Description).addFields(
-						&field{name: "id", typeCode: jen.String()},
-						&field{name: "type", typeCode: jen.String()},
-						&field{name: "title", typeCode: jen.Struct(), omitEmpty: true},
-					)
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "next_url",
 				Type:         "string or null",
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
+					b.getAbstractObject("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
 					return nil
 				},
 			}},
@@ -314,8 +322,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("DatePropertyItem").addFields(&field{name: "date", typeCode: jen.Id("DatePropertyItemData"), comment: e.Text})
-					b.addSpecificObject("DatePropertyItemData", e.Text)
+					b.getSpecificObject("DatePropertyItem").typeObject.comment = e.Text
 					return nil
 				},
 			},
@@ -325,7 +332,7 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("DatePropertyItem").typeObject.addFields(e.asField(jen.Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -334,7 +341,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.Id("ISO8601String")))
+					b.getSpecificObject("DatePropertyItem").typeObject.addFields(e.asField(jen.Op("*").Id("ISO8601String")))
 					return nil
 				},
 			}, {
@@ -343,7 +350,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatePropertyItemData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("DatePropertyItem").typeObject.addFields(e.asField(NullString))
 					return nil
 				},
 			}},
@@ -435,7 +442,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("RelationPropertyItem").addFields(&field{
 						name:     "relation",
-						typeCode: jen.Index().Id("PageReference"),
+						typeCode: jen.Id("PageReference"), // 1つ
 						comment:  e.Text,
 					})
 					return nil
@@ -577,7 +584,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FilesPropertyItem").addFields(
+						&field{name: "files", typeCode: jen.Id("Files")},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -602,7 +612,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCheckbox property value objects contain a boolean within the checkbox property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("CheckboxPropertyItem").addFields(
+						&field{name: "checkbox", typeCode: jen.Bool()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

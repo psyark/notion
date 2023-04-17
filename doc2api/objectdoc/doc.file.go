@@ -11,7 +11,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.addAbstractObject("File", "type", e.Body)
+					b.addAbstractObject("File", "type", e.Body).listName = "Files"
 					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type")
 					return nil
 				},
@@ -60,6 +60,7 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					cs := b.addSpecificObject("NotionHostedFile", e.Text).addFields(
 						&fixedStringField{name: "type", value: "file"},
+						&field{name: "name", typeCode: jen.String(), comment: "undocumented"},
 					)
 					b.getAbstractObject("File").addVariant(cs)
 					b.getAbstractObject("FileOrEmoji").addVariant(cs)

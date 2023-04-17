@@ -37,7 +37,7 @@ func TestRetrievePage(t *testing.T) {
 	}
 }
 
-func TestRetrievePagePropertyItem_a(t *testing.T) {
+func TestRetrievePagePropertyItem(t *testing.T) {
 	ctx := context.Background()
 	if db, err := cli.RetrieveDatabase(ctx, DATABASE); err != nil {
 		t.Fatal(err)

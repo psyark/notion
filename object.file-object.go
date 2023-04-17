@@ -51,9 +51,24 @@ func (u *fileUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
+type Files []File
+
+func (a *Files) UnmarshalJSON(data []byte) error {
+	t := []fileUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return fmt.Errorf("unmarshaling Files: %w", err)
+	}
+	*a = make([]File, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
+}
+
 // Notion-hosted files
 type NotionHostedFile struct {
 	Type alwaysFile           `json:"type"`
+	Name string               `json:"name"` // undocumented
 	File NotionHostedFileData `json:"file"`
 }
 

@@ -144,7 +144,7 @@ func init() {
 						&field{name: "results", typeCode: jen.Index().Id("Page")},
 					)
 					b.getSpecificObject("PropertyItemPagination").addFields(
-						&field{name: "property_item", typeCode: jen.Id("PaginatedPropertyInfo"), comment: e.Description},
+						&interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description},
 						&field{name: "results", typeCode: jen.Id("PropertyItems")},
 					)
 					return nil
