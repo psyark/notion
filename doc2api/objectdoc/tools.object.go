@@ -326,3 +326,17 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 
 	return code
 }
+
+type alwaysString string
+
+func (c alwaysString) symbolCode() jen.Code {
+	code := jen.Type().Id(c.name()).String().Line()
+	code.Func().Params(jen.Id("s").Id(c.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),
+	)
+	return code
+}
+
+func (c alwaysString) name() string {
+	return "always" + strcase.UpperCamelCase(string(c))
+}
