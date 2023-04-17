@@ -809,7 +809,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("FilesPropertyValue").addFields(&field{
 						name:     "files",
-						typeCode: jen.Index().Id("File"),
+						typeCode: jen.Id("Files"),
 						comment:  e.Text,
 					})
 					return nil

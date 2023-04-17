@@ -76,6 +76,14 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	}
 
 	if err := json.Unmarshal(resBody, options.result); err != nil {
+		if options.validateResult != "" {
+			_ = os.Remove(fmt.Sprintf("testout/%v.ok.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
+			want := normalizeJSON(resBody)
+			if err := os.WriteFile(fmt.Sprintf("testout/%v.want.json", options.validateResult), want, 0666); err != nil {
+				return err
+			}
+		}
 		return err
 	}
 
@@ -89,11 +97,11 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		want := normalizeJSON(resBody)
 
 		if bytes.Equal(want, got) {
-			os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
-			os.Remove(fmt.Sprintf("testout/%v.got.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/%v.got.json", options.validateResult))
 			return os.WriteFile(fmt.Sprintf("testout/%v.ok.json", options.validateResult), want, 0666)
 		} else {
-			os.Remove(fmt.Sprintf("testout/%v.ok.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/%v.ok.json", options.validateResult))
 			if err := os.WriteFile(fmt.Sprintf("testout/%v.want.json", options.validateResult), want, 0666); err != nil {
 				return err
 			}

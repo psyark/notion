@@ -447,7 +447,7 @@ Although we do not support uploading files, if you pass a `file` object containi
 type FilesPropertyValue struct {
 	propertyValueCommon
 	Type  alwaysFiles `json:"type"`
-	Files []File      `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
+	Files Files       `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
 func (_ *FilesPropertyValue) isPropertyValue() {}
