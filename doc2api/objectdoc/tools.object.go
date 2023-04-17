@@ -232,12 +232,10 @@ func (c *abstractObject) symbolCode() jen.Code {
 
 	// 共通フィールド
 	if len(c.fieldCodes()) != 0 {
-		// TODO 一時変数を使わないで値をコピーする
-		name, comment := c.name_, c.comment
-		c.name_ = strcase.LowerCamelCase(c.name_) + "Common"
-		c.comment = c.fieldsComment
-		code.Add(c.objectCommon.symbolCode())
-		c.name_, c.comment = name, comment
+		copyOfC := *c
+		copyOfC.name_ = strcase.LowerCamelCase(c.name_) + "Common"
+		copyOfC.comment = c.fieldsComment
+		code.Add(copyOfC.objectCommon.symbolCode())
 	}
 
 	// variant Unmarshaler
