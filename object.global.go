@@ -147,6 +147,12 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) MarshalJSON() ([]byte,
 	return json.Marshal(u.value)
 }
 
+type alwaysArray string
+
+func (s alwaysArray) MarshalJSON() ([]byte, error) {
+	return []byte("\"array\""), nil
+}
+
 type alwaysBlock string
 
 func (s alwaysBlock) MarshalJSON() ([]byte, error) {

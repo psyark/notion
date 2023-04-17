@@ -209,8 +209,9 @@ func init() {
 						),
 					)
 					b.getAbstractObject("PropertyItem").addVariant(
-						b.addSpecificObject("StatusPropertyItem", e.Text).addFields(
-							&fixedStringField{name: "type", value: "status", comment: "undocumented"},
+						b.addSpecificObject("StatusPropertyItem", "undocumented").addFields(
+							&fixedStringField{name: "type", value: "status"},
+							&field{name: "status", typeCode: jen.Id("SelectPropertyItemData")}, // TODO 共通化はここでいいか確認
 						),
 					)
 					return nil
@@ -549,13 +550,21 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Array rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Rollup").addVariant(
+						b.addSpecificObject("ArrayRollup", e.Text).addFields(
+							&fixedStringField{name: "type", value: "array"},
+						),
+					)
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nArray rollup property values contain an array of property_item objects within the results property. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("ArrayRollup").addFields(
+						&field{name: "array", typeCode: jen.Index().Struct()},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocHeadingElement{

@@ -301,10 +301,11 @@ type SelectPropertyItemData struct {
 	Color string    `json:"color"` // Color of the option. Possible values are: "default", "gray", "brown", "red", "orange", "yellow", "green", "blue", "purple", "pink". Defaults to "default".  Not currently editable.
 }
 
-// Select property values
+// undocumented
 type StatusPropertyItem struct {
 	propertyItemCommon
-	Type alwaysStatus `json:"type"` // undocumented
+	Type   alwaysStatus           `json:"type"`
+	Status SelectPropertyItemData `json:"status"`
 }
 
 func (_ *StatusPropertyItem) isPropertyItem()                         {}
@@ -434,6 +435,8 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &NumberRollup{}
 	case "\"date\"":
 		u.value = &DateRollup{}
+	case "\"array\"":
+		u.value = &ArrayRollup{}
 	default:
 		return fmt.Errorf("unmarshaling Rollup: data has unknown type field: %s", string(data))
 	}
@@ -467,6 +470,18 @@ type DateRollup struct {
 }
 
 func (_ *DateRollup) isRollup() {}
+
+/*
+Array rollup property values
+Array rollup property values contain an array of property_item objects within the results property.
+*/
+type ArrayRollup struct {
+	rollupCommon
+	Type  alwaysArray `json:"type"`
+	Array []struct{}  `json:"array"`
+}
+
+func (_ *ArrayRollup) isRollup() {}
 
 /*
 People property values
