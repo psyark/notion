@@ -314,7 +314,7 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 				jen.Id("u").Dot("value").Op("=").Nil(),
 				jen.Return().Nil(),
 			),
-			jen.Switch().String().Call(jen.Id("getRawProperty").Call(jen.Id("data"), jen.Lit(c.specifiedBy))).Block(cases...),
+			jen.Switch().String().Call(jen.Id("get"+strcase.UpperCamelCase(c.specifiedBy)).Call(jen.Id("data"))).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
 		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(

@@ -61,7 +61,7 @@ func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "":
 		u.value = &PartialUser{}
 	case "\"person\"":

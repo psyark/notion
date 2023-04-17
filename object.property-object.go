@@ -33,7 +33,7 @@ func (u *propertyUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"checkbox\"":
 		u.value = &CheckboxProperty{}
 	case "\"created_by\"":
@@ -403,7 +403,7 @@ func (u *relationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"single_property\"":
 		u.value = &SinglePropertyRelation{}
 	case "\"dual_property\"":

@@ -37,7 +37,7 @@ func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"title\"":
 		u.value = &TitlePropertyValue{}
 	case "\"rich_text\"":
@@ -255,7 +255,7 @@ func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"string\"":
 		u.value = &StringFormula{}
 	case "\"number\"":
@@ -368,7 +368,7 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"string\"":
 		u.value = &StringRollup{}
 	case "\"number\"":

@@ -67,7 +67,7 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"bookmark\"":
 		u.value = &BookmarkBlock{}
 	default:

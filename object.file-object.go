@@ -36,7 +36,7 @@ func (u *fileUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"file\"":
 		u.value = &NotionHostedFile{}
 	case "\"external\"":

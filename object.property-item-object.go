@@ -39,7 +39,7 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"title\"":
 		u.value = &TitlePropertyItem{}
 	case "\"rich_text\"":

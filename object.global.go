@@ -24,7 +24,7 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"emoji\"":
 		u.value = &Emoji{}
 	case "\"external\"":
@@ -72,7 +72,7 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"block\"":
 		u.value = &BlockPagination{}
 	case "\"comment\"":
@@ -114,7 +114,7 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "object")) {
+	switch string(getObject(data)) {
 	case "\"list\"":
 		u.value = &PropertyItemPagination{}
 	case "\"property_item\"":

@@ -54,7 +54,7 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"equation\"":
 		u.value = &EquationRichText{}
 	case "\"mention\"":
@@ -152,7 +152,7 @@ func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"database\"":
 		u.value = &DatabaseMention{}
 	case "\"date\"":
@@ -349,7 +349,7 @@ func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"template_mention_date\"":
 		u.value = &TemplateMentionDate{}
 	case "\"template_mention_user\"":

@@ -34,7 +34,7 @@ func (u *parentUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getRawProperty(data, "type")) {
+	switch string(getType(data)) {
 	case "\"database_id\"":
 		u.value = &DatabaseParent{}
 	case "\"page_id\"":
