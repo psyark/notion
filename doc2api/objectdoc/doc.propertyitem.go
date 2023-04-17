@@ -559,16 +559,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PeoplePropertyItem").addFields(
+						&interfaceField{name: "people", typeName: "User"},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Owners\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"people\",\n    \"people\": [\n      {\n        \"object\": \"user\",\n        \"id\": \"285e5768-3fdc-4742-ab9e-125f9050f3b8\",\n        \"name\": \"Example Avo\",\n        \"avatar_url\": null,\n        \"type\": \"person\",\n        \"person\": {\n          \"email\": \"avo@example.com\"\n        }\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Files property values",
@@ -594,9 +595,7 @@ func init() {
 				Code:     "{\n  \"Files\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"files\",\n    \"files\": [\n      {\n        \"type\": \"external\",\n        \"name\": \"Space Wallpaper\",\n        \"external\": \"https://website.domain/images/space.png\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Checkbox property values",
@@ -622,9 +621,7 @@ func init() {
 				Code:     "{\n  \"Done?\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"checkbox\",\n    \"checkbox\": true\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "URL property values",
@@ -640,16 +637,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nURL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("UrlPropertyItem").addFields(
+						&field{name: "url", typeCode: NullString}, // null
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Website\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"url\",\n    \"url\": \"https://notion.so/notiondevs\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Email property values",
@@ -665,16 +663,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEmail property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("EmailPropertyItem").addFields(
+						&field{name: "email", typeCode: NullString}, // null
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Shipper's Contact\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"email\",\n    \"email\": \"hello@test.com\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Phone number property values",
@@ -690,16 +689,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPhone number property value objects contain a string within the phone_number property. No structure is enforced.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("PhoneNumberPropertyItem").addFields(
+						&field{name: "phone_number", typeCode: NullString}, // null
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Shipper's No.\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"phone_number\",\n    \"phone_number\": \"415-000-1111\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Created time property values",
@@ -715,16 +715,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("CreatedTimePropertyItem").addFields(
+						&field{name: "created_time", typeCode: jen.Id("ISO8601String")},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Created Time\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"create_time\",\n  \t\"created_time\": \"2020-03-17T19:10:04.968Z\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Created by property values",
@@ -740,16 +741,17 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated by property value objects contain a user object within the created_by property. The user object describes the user who created this page.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("CreatedByPropertyItem").addFields(
+						&interfaceField{name: "created_by", typeName: "User"},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Created By\": {\n    \"created_by\": {\n      \"object\": \"user\",\n      \"id\": \"23345d4f-cf71-4a70-89a5-226c95a6eaae\",\n      \"name\": \"Test User\",\n      \"type\": \"person\",\n      \"person\": {\n        \"email\": \"avo@example.org\"\n      }\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}, {
 				Code:     "{\n  \"dsEa\": {\n    \"created_by\": {\n\t\t\t\"object\": \"user\",\n\t\t\t\"id\": \"71e95936-2737-4e11-b03d-f174f6f13087\"\n  \t}\n  }\n}",
 				Language: "json",
@@ -772,23 +774,22 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedTimePropertyItem").addFields(
+						&field{name: "last_edited_time", typeCode: jen.Id("ISO8601String")},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Last Edited Time\": {\n  \t\"last_edited_time\": \"2020-03-17T19:10:04.968Z\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}, {
 				Code:     "{\n  \"as0w\": {\n  \t\"last_edited_time\": \"2020-03-17T19:10:04.968Z\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Last edited by property values",
@@ -804,23 +805,22 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("LastEditedByPropertyItem").addFields(
+						&interfaceField{name: "last_edited_by", typeName: "User"},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Last Edited By\": {\n    \"last_edited_by\": {\n      \"object\": \"user\",\n      \"id\": \"23345d4f-cf71-4a70-89a5-226c95a6eaae\",\n      \"name\": \"Test User\",\n      \"type\": \"person\",\n      \"person\": {\n        \"email\": \"avo@example.org\"\n      }\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}, {
 				Code:     "{\n  \"as12\": {\n    \"last_edited_by\": {\n\t\t\t\"object\": \"user\",\n\t\t\t\"id\": \"71e95936-2737-4e11-b03d-f174f6f13087\"\n  \t}\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 		},
 	})

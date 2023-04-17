@@ -346,14 +346,30 @@ type RollupPropertyItem struct {
 func (_ *RollupPropertyItem) isPropertyItem()                         {}
 func (_ *RollupPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// People property values
+/*
+People property values
+People property value objects contain an array of user objects within the people property.
+*/
 type PeoplePropertyItem struct {
 	propertyItemCommon
-	Type alwaysPeople `json:"type"`
+	Type   alwaysPeople `json:"type"`
+	People User         `json:"people"`
 }
 
 func (_ *PeoplePropertyItem) isPropertyItem()                         {}
 func (_ *PeoplePropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *PeoplePropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias PeoplePropertyItem
+	t := &struct {
+		*Alias
+		People userUnmarshaler `json:"people"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling PeoplePropertyItem: %w", err)
+	}
+	o.People = t.People.value
+	return nil
+}
 
 /*
 Files property values
@@ -381,65 +397,117 @@ type CheckboxPropertyItem struct {
 func (_ *CheckboxPropertyItem) isPropertyItem()                         {}
 func (_ *CheckboxPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// URL property values
+/*
+URL property values
+URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
+*/
 type UrlPropertyItem struct {
 	propertyItemCommon
-	Type alwaysUrl `json:"type"`
+	Type alwaysUrl     `json:"type"`
+	Url  nullv4.String `json:"url"`
 }
 
 func (_ *UrlPropertyItem) isPropertyItem()                         {}
 func (_ *UrlPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Email property values
+/*
+Email property values
+Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
+*/
 type EmailPropertyItem struct {
 	propertyItemCommon
-	Type alwaysEmail `json:"type"`
+	Type  alwaysEmail   `json:"type"`
+	Email nullv4.String `json:"email"`
 }
 
 func (_ *EmailPropertyItem) isPropertyItem()                         {}
 func (_ *EmailPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Phone number property values
+/*
+Phone number property values
+Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+*/
 type PhoneNumberPropertyItem struct {
 	propertyItemCommon
-	Type alwaysPhoneNumber `json:"type"`
+	Type        alwaysPhoneNumber `json:"type"`
+	PhoneNumber nullv4.String     `json:"phone_number"`
 }
 
 func (_ *PhoneNumberPropertyItem) isPropertyItem()                         {}
 func (_ *PhoneNumberPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Created time property values
+/*
+Created time property values
+Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
+*/
 type CreatedTimePropertyItem struct {
 	propertyItemCommon
-	Type alwaysCreatedTime `json:"type"`
+	Type        alwaysCreatedTime `json:"type"`
+	CreatedTime ISO8601String     `json:"created_time"`
 }
 
 func (_ *CreatedTimePropertyItem) isPropertyItem()                         {}
 func (_ *CreatedTimePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Created by property values
+/*
+Created by property values
+Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.
+*/
 type CreatedByPropertyItem struct {
 	propertyItemCommon
-	Type alwaysCreatedBy `json:"type"`
+	Type      alwaysCreatedBy `json:"type"`
+	CreatedBy User            `json:"created_by"`
 }
 
 func (_ *CreatedByPropertyItem) isPropertyItem()                         {}
 func (_ *CreatedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *CreatedByPropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias CreatedByPropertyItem
+	t := &struct {
+		*Alias
+		CreatedBy userUnmarshaler `json:"created_by"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling CreatedByPropertyItem: %w", err)
+	}
+	o.CreatedBy = t.CreatedBy.value
+	return nil
+}
 
-// Last edited time property values
+/*
+Last edited time property values
+Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
+*/
 type LastEditedTimePropertyItem struct {
 	propertyItemCommon
-	Type alwaysLastEditedTime `json:"type"`
+	Type           alwaysLastEditedTime `json:"type"`
+	LastEditedTime ISO8601String        `json:"last_edited_time"`
 }
 
 func (_ *LastEditedTimePropertyItem) isPropertyItem()                         {}
 func (_ *LastEditedTimePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Last edited by property values
+/*
+Last edited by property values
+Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.
+*/
 type LastEditedByPropertyItem struct {
 	propertyItemCommon
-	Type alwaysLastEditedBy `json:"type"`
+	Type         alwaysLastEditedBy `json:"type"`
+	LastEditedBy User               `json:"last_edited_by"`
 }
 
 func (_ *LastEditedByPropertyItem) isPropertyItem()                         {}
 func (_ *LastEditedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *LastEditedByPropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias LastEditedByPropertyItem
+	t := &struct {
+		*Alias
+		LastEditedBy userUnmarshaler `json:"last_edited_by"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling LastEditedByPropertyItem: %w", err)
+	}
+	o.LastEditedBy = t.LastEditedBy.value
+	return nil
+}
