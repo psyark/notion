@@ -19,9 +19,14 @@ Each page property value object contains the following keys. In addition, it con
 */
 type PropertyValue interface {
 	isPropertyValue()
+	GetId() string
 }
 type propertyValueCommon struct {
 	Id string `json:"id"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+}
+
+func (c *propertyValueCommon) GetId() string {
+	return c.Id
 }
 
 type propertyValueUnmarshaler struct {

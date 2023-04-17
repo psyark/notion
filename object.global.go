@@ -47,6 +47,9 @@ Endpoints that return lists of objects support cursor-based pagination requests.
 */
 type Pagination interface {
 	isPagination()
+	GetHasMore() bool
+	GetNextCursor() *string
+	GetObject() alwaysList
 }
 
 /*
@@ -57,6 +60,16 @@ type paginationCommon struct {
 	HasMore    bool       `json:"has_more"`    // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
 	NextCursor *string    `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  Only available when has_more is true.
 	Object     alwaysList `json:"object"`      // The constant string "list".
+}
+
+func (c *paginationCommon) GetHasMore() bool {
+	return c.HasMore
+}
+func (c *paginationCommon) GetNextCursor() *string {
+	return c.NextCursor
+}
+func (c *paginationCommon) GetObject() alwaysList {
+	return c.Object
 }
 
 type paginationUnmarshaler struct {

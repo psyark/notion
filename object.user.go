@@ -13,10 +13,19 @@ import (
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
 type DetailedUser interface {
 	isDetailedUser()
+	GetName() string
+	GetAvatarUrl() nullv4.String
 }
 type detailedUserCommon struct {
 	Name      string        `json:"name"`       // User's name, as displayed in Notion.
 	AvatarUrl nullv4.String `json:"avatar_url"` // Chosen avatar image.
+}
+
+func (c *detailedUserCommon) GetName() string {
+	return c.Name
+}
+func (c *detailedUserCommon) GetAvatarUrl() nullv4.String {
+	return c.AvatarUrl
 }
 
 /*
@@ -36,6 +45,8 @@ User objects will always contain object and id keys, as described below. The rem
 */
 type User interface {
 	isUser()
+	GetObject() alwaysUser
+	GetId() uuid.UUID
 }
 
 /*
@@ -46,6 +57,13 @@ These fields are shared by all users, including people and bots. Fields marked w
 type userCommon struct {
 	Object alwaysUser `json:"object"` // Always "user"
 	Id     uuid.UUID  `json:"id"`     // Unique identifier for this user.
+}
+
+func (c *userCommon) GetObject() alwaysUser {
+	return c.Object
+}
+func (c *userCommon) GetId() uuid.UUID {
+	return c.Id
 }
 
 type userUnmarshaler struct {

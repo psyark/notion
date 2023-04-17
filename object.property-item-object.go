@@ -15,6 +15,8 @@ A property_item object describes the identifier, type, and value of a page prope
 type PropertyItem interface {
 	isPropertyItem()
 	isPropertyItemOrPropertyItemPagination()
+	GetObject() alwaysPropertyItem
+	GetId() string
 }
 
 /*
@@ -24,6 +26,13 @@ Each page property item object contains the following keys. In addition, it will
 type propertyItemCommon struct {
 	Object alwaysPropertyItem `json:"object"` // Always "property_item".
 	Id     string             `json:"id"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+}
+
+func (c *propertyItemCommon) GetObject() alwaysPropertyItem {
+	return c.Object
+}
+func (c *propertyItemCommon) GetId() string {
+	return c.Id
 }
 
 type propertyItemUnmarshaler struct {

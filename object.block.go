@@ -41,6 +41,15 @@ Only the block type objects listed in the reference below are supported. Any uns
 */
 type Block interface {
 	isBlock()
+	GetObject() alwaysBlock
+	GetId() uuid.UUID
+	GetParent() Parent
+	GetCreatedTime() ISO8601String
+	GetCreatedBy() PartialUser
+	GetLastEditedTime() ISO8601String
+	GetLastEditedBy() PartialUser
+	GetArchived() bool
+	GetHasChildren() bool
 }
 type blockCommon struct {
 	Object         alwaysBlock   `json:"object"`           // Always "block".
@@ -52,6 +61,34 @@ type blockCommon struct {
 	LastEditedBy   PartialUser   `json:"last_edited_by"`   // User who last edited the block.
 	Archived       bool          `json:"archived"`         // The archived status of the block.
 	HasChildren    bool          `json:"has_children"`     // Whether or not the block has children blocks nested within it.
+}
+
+func (c *blockCommon) GetObject() alwaysBlock {
+	return c.Object
+}
+func (c *blockCommon) GetId() uuid.UUID {
+	return c.Id
+}
+func (c *blockCommon) GetParent() Parent {
+	return c.Parent
+}
+func (c *blockCommon) GetCreatedTime() ISO8601String {
+	return c.CreatedTime
+}
+func (c *blockCommon) GetCreatedBy() PartialUser {
+	return c.CreatedBy
+}
+func (c *blockCommon) GetLastEditedTime() ISO8601String {
+	return c.LastEditedTime
+}
+func (c *blockCommon) GetLastEditedBy() PartialUser {
+	return c.LastEditedBy
+}
+func (c *blockCommon) GetArchived() bool {
+	return c.Archived
+}
+func (c *blockCommon) GetHasChildren() bool {
+	return c.HasChildren
 }
 
 type blockUnmarshaler struct {

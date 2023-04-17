@@ -227,6 +227,10 @@ func (c *abstractObject) symbolCode() jen.Code {
 		for _, p := range c.parents {
 			methods = append(methods, jen.Id("is"+p.name()).Params())
 		}
+		// 共通フィールドのgetter宣言
+		for _, f := range c.fields {
+			methods = append(methods, jen.Id("Get"+f.goName()).Params().Add(f.getTypeCode()))
+		}
 		code.Type().Id(c.name()).Interface(methods...).Line()
 	}
 
@@ -236,6 +240,12 @@ func (c *abstractObject) symbolCode() jen.Code {
 		copyOfC.name_ = strcase.LowerCamelCase(c.name_) + "Common"
 		copyOfC.comment = c.fieldsComment
 		code.Add(copyOfC.objectCommon.symbolCode())
+		// 共通フィールドのgetter定義
+		for _, f := range c.fields {
+			code.Line().Func().Params(jen.Id("c").Op("*").Id(copyOfC.name_)).Id("Get" + f.goName()).Params().Add(f.getTypeCode()).Block(
+				jen.Return().Id("c").Dot(f.goName()),
+			)
+		}
 	}
 
 	// variant Unmarshaler

@@ -34,11 +34,24 @@ Refer to the request limits documentation page for information about [limits on 
 */
 type RichText interface {
 	isRichText()
+	GetAnnotations() Annotations
+	GetPlainText() string
+	GetHref() *string
 }
 type richTextCommon struct {
 	Annotations Annotations `json:"annotations"` // The information used to style the rich text object. Refer to the annotation object section below for details.
 	PlainText   string      `json:"plain_text"`  // The plain text without annotations.
 	Href        *string     `json:"href"`        // The URL of any link or Notion mention in this text, if any.
+}
+
+func (c *richTextCommon) GetAnnotations() Annotations {
+	return c.Annotations
+}
+func (c *richTextCommon) GetPlainText() string {
+	return c.PlainText
+}
+func (c *richTextCommon) GetHref() *string {
+	return c.Href
 }
 
 type richTextUnmarshaler struct {

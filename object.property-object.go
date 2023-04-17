@@ -12,12 +12,21 @@ import (
 // All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.
 type Property interface {
 	isProperty()
+	GetId() string
+	GetName() string
 }
 
 // Every database property object contains the following keys:
 type propertyCommon struct {
 	Id   string `json:"id"`   // An identifier for the property, usually a short string of random letters and symbols.  Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
 	Name string `json:"name"` // The name of the property as it appears in Notion.
+}
+
+func (c *propertyCommon) GetId() string {
+	return c.Id
+}
+func (c *propertyCommon) GetName() string {
+	return c.Name
 }
 
 type propertyUnmarshaler struct {
@@ -385,9 +394,14 @@ The relation type object contains the following fields:
 */
 type Relation interface {
 	isRelation()
+	GetDatabaseId() uuid.UUID
 }
 type relationCommon struct {
 	DatabaseId uuid.UUID `json:"database_id"` // The database that the relation property refers to.   The corresponding linked page values must belong to the database in order to be valid.
+}
+
+func (c *relationCommon) GetDatabaseId() uuid.UUID {
+	return c.DatabaseId
 }
 
 type relationUnmarshaler struct {

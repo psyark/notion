@@ -10,6 +10,8 @@ import (
 // fieldCoderはstructフィールドのコード生成器です
 type fieldCoder interface {
 	fieldCode() jen.Code
+	goName() string // jsonではなくgolang側の名前
+	getTypeCode() jen.Code
 }
 
 var _ = []fieldCoder{
@@ -44,6 +46,13 @@ func (f *field) fieldCode() jen.Code {
 	return code
 }
 
+func (f *field) goName() string {
+	return strcase.UpperCamelCase(f.name)
+}
+func (f *field) getTypeCode() jen.Code {
+	return f.typeCode
+}
+
 // インターフェイスが入るフィールド
 // TODO 自動判別するようにしたい
 type interfaceField struct {
@@ -64,6 +73,13 @@ func (f *interfaceField) fieldCode() jen.Code {
 	return code
 }
 
+func (f *interfaceField) goName() string {
+	return strcase.UpperCamelCase(f.name)
+}
+func (f *interfaceField) getTypeCode() jen.Code {
+	return jen.Id(f.typeName)
+}
+
 // 固定文字列が入るフィールド
 type fixedStringField struct {
 	name    string
@@ -78,4 +94,11 @@ func (f *fixedStringField) fieldCode() jen.Code {
 		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
 	}
 	return code
+}
+
+func (f *fixedStringField) goName() string {
+	return strcase.UpperCamelCase(f.name)
+}
+func (f *fixedStringField) getTypeCode() jen.Code {
+	return jen.Id("always" + strcase.UpperCamelCase(f.value))
 }
