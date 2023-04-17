@@ -605,9 +605,7 @@ func init() {
 				Code:     "\"Food group\": {\n  \"id\": \"%40Q%5BM\",\n  \"name\": \"Food group\",\n  \"type\": \"select\",\n  \"select\": {\n    \"options\": [\n      {\n        \"id\": \"e28f74fc-83a7-4469-8435-27eb18f9f9de\",\n        \"name\": \"🥦Vegetable\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"6132d771-b283-4cd9-ba44-b1ed30477c7f\",\n        \"name\": \"🍎Fruit\",\n        \"color\": \"red\"\n      },\n      {\n        \"id\": \"fc9ea861-820b-4f2b-bc32-44ed9eca873c\",\n        \"name\": \"💪Protein\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Status",
