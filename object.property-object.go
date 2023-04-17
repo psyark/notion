@@ -317,10 +317,25 @@ func (_ *RichTextProperty) isProperty() {}
 // Rollup
 type RollupProperty struct {
 	propertyCommon
-	Type alwaysRollup `json:"type"`
+	Type   alwaysRollup       `json:"type"`
+	Rollup RollupPropertyData `json:"rollup"`
 }
 
 func (_ *RollupProperty) isProperty() {}
+
+/*
+
+A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.
+
+The rollup type object contains the following fields:
+*/
+type RollupPropertyData struct {
+	Function             string `json:"function"`               // The function that computes the rollup value from the related pages.  Possible values include:   - average - checked - count_per_group - count - count_values  - date_range - earliest_date  - empty - latest_date - max - median - min - not_empty - percent_checked - percent_empty - percent_not_empty - percent_per_group - percent_unchecked - range - unchecked - unique - show_original - show_unique - sum
+	RelationPropertyId   string `json:"relation_property_id"`   // The id of the related database property that is rolled up.
+	RelationPropertyName string `json:"relation_property_name"` // The name of the related database property that is rolled up.
+	RollupPropertyId     string `json:"rollup_property_id"`     // The id of the rollup property.
+	RollupPropertyName   string `json:"rollup_property_name"`   // The name of the rollup property.
+}
 
 /*
 

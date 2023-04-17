@@ -627,13 +627,17 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
+					// PropertyValueとPropertyItemで共通の Rollup を使う
+					// PropertyValue のArray Rollupにはfunction が無いなど不正確であり、
+					// 比較的ドキュメントが充実しているPropertyItemに任せるため、こちらでは作成は行わない
+					// https://developers.notion.com/reference/property-value-object#rollup-property-values
+					// https://developers.notion.com/reference/property-item-object#rollup-property-values
 					b.getAbstractObject("PropertyValue").addVariant(
 						b.addSpecificObject("RollupPropertyValue", e.Text).addFields(
 							&fixedStringField{name: "type", value: "rollup"},
 							&interfaceField{name: "rollup", typeName: "Rollup"},
 						),
 					)
-					b.addAbstractObject("Rollup", "type", "")
 					return nil
 				},
 			},
@@ -660,96 +664,36 @@ func init() {
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "String rollup property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Rollup").addVariant(
-						b.addSpecificObject("StringRollup", e.Text).addFields(
-							&fixedStringField{name: "type", value: "string"},
-						),
-					)
-					return nil
-				},
+				Text:   "String rollup property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nString rollup property values contain an optional string within the string property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("StringRollup").addFields(&field{
-						name:     "string",
-						typeCode: jen.String(),
-						comment:  e.Text,
-					})
-					return nil
-				},
+				Text:   "\nString rollup property values contain an optional string within the string property.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Number rollup property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Rollup").addVariant(
-						b.addSpecificObject("NumberRollup", e.Text).addFields(
-							&fixedStringField{name: "type", value: "number"},
-						),
-					)
-					return nil
-				},
+				Text:   "Number rollup property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nNumber rollup property values contain a number within the number property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("NumberRollup").addFields(&field{
-						name:     "number",
-						typeCode: jen.Float64(),
-						comment:  e.Text,
-					})
-					return nil
-				},
+				Text:   "\nNumber rollup property values contain a number within the number property.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Date rollup property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Rollup").addVariant(
-						b.addSpecificObject("DateRollup", e.Text).addFields(
-							&fixedStringField{name: "type", value: "date"},
-						),
-					)
-					return nil
-				},
+				Text:   "Date rollup property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nDate rollup property values contain a date property value within the date property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("DateRollup").addFields(&field{
-						name:     "date",
-						typeCode: jen.Id("DatePropertyValue"),
-						comment:  e.Text,
-					})
-					return nil
-				},
+				Text:   "\nDate rollup property values contain a date property value within the date property.\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
-				Text: "Array rollup property values",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Rollup").addVariant(
-						b.addSpecificObject("ArrayRollup", e.Text).addFields(
-							&fixedStringField{name: "type", value: "array"},
-						),
-					)
-					return nil
-				},
+				Text:   "Array rollup property values",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocParagraphElement{
-				Text: "\nArray rollup property values contain an array of number, date, or string objects within the results property. \n\n",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("ArrayRollup").addFields(&field{
-						name:     "array",
-						typeCode: jen.Index().Id("Rollup"),
-						comment:  e.Text,
-					}, &field{
-						name:     "function",
-						typeCode: jen.String(),
-						comment:  "undocumented",
-					})
-					return nil
-				},
+				Text:   "\nArray rollup property values contain an array of number, date, or string objects within the results property. \n\n",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil },
 			},
 			&objectDocHeadingElement{
 				Text: "People property values",

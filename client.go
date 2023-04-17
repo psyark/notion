@@ -77,10 +77,10 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 
 	if err := json.Unmarshal(resBody, options.result); err != nil {
 		if options.validateResult != "" {
-			_ = os.Remove(fmt.Sprintf("testout/%v.ok.json", options.validateResult))
-			_ = os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/pass/%v.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult))
 			want := normalizeJSON(resBody)
-			if err := os.WriteFile(fmt.Sprintf("testout/%v.want.json", options.validateResult), want, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult), want, 0666); err != nil {
 				return err
 			}
 		}
@@ -97,15 +97,15 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		want := normalizeJSON(resBody)
 
 		if bytes.Equal(want, got) {
-			_ = os.Remove(fmt.Sprintf("testout/%v.want.json", options.validateResult))
-			_ = os.Remove(fmt.Sprintf("testout/%v.got.json", options.validateResult))
-			return os.WriteFile(fmt.Sprintf("testout/%v.ok.json", options.validateResult), want, 0666)
+			_ = os.Remove(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult))
+			_ = os.Remove(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult))
+			return os.WriteFile(fmt.Sprintf("testout/pass/%v.json", options.validateResult), want, 0666)
 		} else {
-			_ = os.Remove(fmt.Sprintf("testout/%v.ok.json", options.validateResult))
-			if err := os.WriteFile(fmt.Sprintf("testout/%v.want.json", options.validateResult), want, 0666); err != nil {
+			_ = os.Remove(fmt.Sprintf("testout/pass/%v.json", options.validateResult))
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult), want, 0666); err != nil {
 				return err
 			}
-			if err := os.WriteFile(fmt.Sprintf("testout/%v.got.json", options.validateResult), got, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult), got, 0666); err != nil {
 				return err
 			}
 			return fmt.Errorf("validation failed: %v", options.validateResult)

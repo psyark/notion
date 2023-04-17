@@ -58,6 +58,8 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &NumberPropertyItem{}
 	case "\"select\"":
 		u.value = &SelectPropertyItem{}
+	case "\"status\"":
+		u.value = &StatusPropertyItem{}
 	case "\"multi_select\"":
 		u.value = &MultiSelectPropertyItem{}
 	case "\"date\"":
@@ -160,6 +162,8 @@ func (u *paginatedPropertyInfoUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &RelationPaginatedPropertyInfo{}
 	case "\"people\"":
 		u.value = &PeoplePaginatedPropertyInfo{}
+	case "\"rollup\"":
+		u.value = &RollupPaginatedPropertyInfo{}
 	default:
 		return fmt.Errorf("unmarshaling PaginatedPropertyInfo: data has unknown type field: %s", string(data))
 	}
@@ -201,6 +205,27 @@ type PeoplePaginatedPropertyInfo struct {
 }
 
 func (_ *PeoplePaginatedPropertyInfo) isPaginatedPropertyInfo() {}
+
+// undocumented
+type RollupPaginatedPropertyInfo struct {
+	paginatedPropertyInfoCommon
+	Type   alwaysRollup `json:"type"`
+	Rollup Rollup       `json:"rollup"`
+}
+
+func (_ *RollupPaginatedPropertyInfo) isPaginatedPropertyInfo() {}
+func (o *RollupPaginatedPropertyInfo) UnmarshalJSON(data []byte) error {
+	type Alias RollupPaginatedPropertyInfo
+	t := &struct {
+		*Alias
+		Rollup rollupUnmarshaler `json:"rollup"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RollupPaginatedPropertyInfo: %w", err)
+	}
+	o.Rollup = t.Rollup.value
+	return nil
+}
 
 // Title property values
 type TitlePropertyItem struct {
@@ -260,7 +285,7 @@ func (_ *NumberPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 type SelectPropertyItem struct {
 	propertyItemCommon
 	Type   alwaysSelect           `json:"type"`
-	Select SelectPropertyItemData `json:"select"` //  Select property value objects contain the following data within the select property:
+	Select SelectPropertyItemData `json:"select"`
 }
 
 func (_ *SelectPropertyItem) isPropertyItem()                         {}
@@ -275,6 +300,15 @@ type SelectPropertyItemData struct {
 	Name  string    `json:"name"`  // Name of the option as it appears in Notion.  If the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.  Note: Commas (",") are not valid for select values.
 	Color string    `json:"color"` // Color of the option. Possible values are: "default", "gray", "brown", "red", "orange", "yellow", "green", "blue", "purple", "pink". Defaults to "default".  Not currently editable.
 }
+
+// Select property values
+type StatusPropertyItem struct {
+	propertyItemCommon
+	Type alwaysStatus `json:"type"` // undocumented
+}
+
+func (_ *StatusPropertyItem) isPropertyItem()                         {}
+func (_ *StatusPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
 // Multi-select property values
 type MultiSelectPropertyItem struct {
@@ -325,6 +359,18 @@ type FormulaPropertyItem struct {
 
 func (_ *FormulaPropertyItem) isPropertyItem()                         {}
 func (_ *FormulaPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *FormulaPropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias FormulaPropertyItem
+	t := &struct {
+		*Alias
+		Formula formulaUnmarshaler `json:"formula"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling FormulaPropertyItem: %w", err)
+	}
+	o.Formula = t.Formula.value
+	return nil
+}
 
 // Relation property values
 type RelationPropertyItem struct {
@@ -345,6 +391,82 @@ type RollupPropertyItem struct {
 
 func (_ *RollupPropertyItem) isPropertyItem()                         {}
 func (_ *RollupPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (o *RollupPropertyItem) UnmarshalJSON(data []byte) error {
+	type Alias RollupPropertyItem
+	t := &struct {
+		*Alias
+		Rollup rollupUnmarshaler `json:"rollup"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RollupPropertyItem: %w", err)
+	}
+	o.Rollup = t.Rollup.value
+	return nil
+}
+
+type Rollup interface {
+	isRollup()
+	GetFunction() string
+}
+type rollupCommon struct {
+	Function string `json:"function"` // Describes the aggregation used.  Possible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original
+}
+
+func (c *rollupCommon) GetFunction() string {
+	return c.Function
+}
+
+type rollupUnmarshaler struct {
+	value Rollup
+}
+
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "type" field of the message.
+*/
+func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
+	switch string(getType(data)) {
+	case "\"number\"":
+		u.value = &NumberRollup{}
+	case "\"date\"":
+		u.value = &DateRollup{}
+	default:
+		return fmt.Errorf("unmarshaling Rollup: data has unknown type field: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
+}
+
+func (u *rollupUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
+}
+
+/*
+Number rollup property values
+Number rollup property values contain a number within the number property.
+*/
+type NumberRollup struct {
+	rollupCommon
+	Type   alwaysNumber `json:"type"`
+	Number nullv4.Float `json:"number"`
+}
+
+func (_ *NumberRollup) isRollup() {}
+
+/*
+Date rollup property values
+Date rollup property values contain a date property value within the date property.
+*/
+type DateRollup struct {
+	rollupCommon
+	Type alwaysDate       `json:"type"`
+	Date DatePropertyItem `json:"date"`
+}
+
+func (_ *DateRollup) isRollup() {}
 
 /*
 People property values

@@ -498,57 +498,61 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database. \n\nThe rollup type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.comment = e.Text
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The function that computes the rollup value from the related pages.\n\nPossible values include: \n\n- average\n- checked\n- count_per_group\n- count\n- count_values \n- date_range\n- earliest_date \n- empty\n- latest_date\n- max\n- median\n- min\n- not_empty\n- percent_checked\n- percent_empty\n- percent_not_empty\n- percent_per_group\n- percent_unchecked\n- range\n- unchecked\n- unique\n- show_original\n- show_unique\n- sum",
-				ExampleValue: "\"sum\"",
 				Field:        "function",
 				Type:         "string (enum)",
+				Description:  "The function that computes the rollup value from the related pages.\n\nPossible values include: \n\n- average\n- checked\n- count_per_group\n- count\n- count_values \n- date_range\n- earliest_date \n- empty\n- latest_date\n- max\n- median\n- min\n- not_empty\n- percent_checked\n- percent_empty\n- percent_not_empty\n- percent_per_group\n- percent_unchecked\n- range\n- unchecked\n- unique\n- show_original\n- show_unique\n- sum",
+				ExampleValue: `"sum"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "The id of the related database property that is rolled up.",
-				ExampleValue: "\"fy:{\"",
 				Field:        "relation_property_id",
 				Type:         "string",
+				Description:  "The id of the related database property that is rolled up.",
+				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "The name of the related database property that is rolled up.",
-				ExampleValue: "Tasks\"",
 				Field:        "relation_property_name",
 				Type:         "string",
+				Description:  "The name of the related database property that is rolled up.",
+				ExampleValue: `Tasks"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "The id of the rollup property.",
-				ExampleValue: "\"fy:{\"",
 				Field:        "rollup_property_id",
 				Type:         "string",
+				Description:  "The id of the rollup property.",
+				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					return nil
 				},
 			}, {
-				Description:  "The name of the rollup property.",
-				ExampleValue: "\"Days to complete\"",
 				Field:        "rollup_property_name",
 				Type:         "string",
+				Description:  "The name of the rollup property.",
+				ExampleValue: `"Days to complete"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Estimated total project time\": {\n  \"id\": \"%5E%7Cy%3C\",\n  \"name\": \"Estimated total project time\",\n  \"type\": \"rollup\",\n  \"rollup\": {\n    \"rollup_property_name\": \"Days to complete\",\n    \"relation_property_name\": \"Tasks\",\n    \"rollup_property_id\": \"\\\\nyY\",\n    \"relation_property_id\": \"Y]<y\",\n    \"function\": \"sum\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Select",

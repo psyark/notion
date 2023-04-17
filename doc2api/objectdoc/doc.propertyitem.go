@@ -79,6 +79,12 @@ func init() {
 							),
 						)
 					}
+					ppi.addVariant(
+						b.addSpecificObject("RollupPaginatedPropertyInfo", "undocumented").addFields(
+							&fixedStringField{name: "type", value: "rollup"},
+							&interfaceField{name: "rollup", typeName: "Rollup"},
+						),
+					)
 					return nil
 				},
 			},
@@ -202,14 +208,18 @@ func init() {
 							&fixedStringField{name: "type", value: "select"},
 						),
 					)
+					b.getAbstractObject("PropertyItem").addVariant(
+						b.addSpecificObject("StatusPropertyItem", e.Text).addFields(
+							&fixedStringField{name: "type", value: "status", comment: "undocumented"},
+						),
+					)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nSelect property value objects contain the following data within the select property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("SelectPropertyItem").addFields(&field{name: "select", typeCode: jen.Id("SelectPropertyItemData"), comment: e.Text})
-					b.addSpecificObject("SelectPropertyItemData", e.Text)
+					b.getSpecificObject("SelectPropertyItem").typeObject.comment = e.Text
 					return nil
 				},
 			},
@@ -219,7 +229,7 @@ func init() {
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(UUID))
+					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(UUID))
 					return nil
 				},
 			}, {
@@ -228,7 +238,7 @@ func init() {
 				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -237,7 +247,7 @@ func init() {
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItemData").addFields(e.asField(jen.String()))
+					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -374,9 +384,9 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFormula property value objects represent the result of evaluating a formula described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("FormulaPropertyItem").addFields(&field{
+					b.getSpecificObject("FormulaPropertyItem").addFields(&interfaceField{
 						name:     "formula",
-						typeCode: jen.Id("Formula"),
+						typeName: "Formula",
 						comment:  e.Text,
 					})
 					return nil
@@ -457,20 +467,26 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
+					// PropertyValueとPropertyItemで共通の Rollup を使う
+					// PropertyValue のArray Rollupにはfunction が無いなど不正確であるため、
+					// 比較的ドキュメントが充実しているこちらで作成を行う
+					// https://developers.notion.com/reference/property-value-object#rollup-property-values
+					// https://developers.notion.com/reference/property-item-object#rollup-property-values
 					b.getAbstractObject("PropertyItem").addVariant(
 						b.addSpecificObject("RollupPropertyItem", e.Text).addFields(
 							&fixedStringField{name: "type", value: "rollup"},
 						),
 					)
+					b.addAbstractObject("Rollup", "type", "")
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nRollup property value objects represent the result of evaluating a rollup described in the \ndatabase's properties. The property is returned as a list object of type property_item with a list of relation items used to computed the rollup under results. \n\nA rollup property item is also returned under the property_type key that describes the rollup aggregation and computed result. \n\nIn order to avoid timeouts, if the rollup has a with a large number of aggregations or properties the endpoint returns a next_cursor value that is used to determinate the aggregation value so far for the subset of relations that have been paginated through. \n\nOnce has_more is false, then the final rollup value is returned.  See the Pagination documentation for more information on pagination in the Notion API. \n\nComputing the values of following aggregations are not supported. Instead the endpoint returns a list of property_item objects for the rollup:\n* show_unique (Show unique values)\n* unique (Count unique values)\n* median(Median)",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("RollupPropertyItem").addFields(&field{
+					b.getSpecificObject("RollupPropertyItem").addFields(&interfaceField{
 						name:     "rollup",
-						typeCode: jen.Id("Rollup"),
+						typeName: "Rollup",
 						comment:  e.Text,
 					})
 					return nil
@@ -486,31 +502,48 @@ func init() {
 				Property:    "function",
 				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Rollup").addFields(e.asField(jen.String()))
+					return nil
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "Number rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Rollup").addVariant(
+						b.addSpecificObject("NumberRollup", e.Text).addFields(
+							&fixedStringField{name: "type", value: "number"},
+						),
+					)
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nNumber rollup property values contain a number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("NumberRollup").addFields(
+						&field{name: "number", typeCode: NullFloat},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "Date rollup property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Rollup").addVariant(
+						b.addSpecificObject("DateRollup", e.Text).addFields(
+							&fixedStringField{name: "type", value: "date"},
+						),
+					)
+					return nil
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate rollup property values contain a date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("DateRollup").addFields(
+						&field{name: "date", typeCode: jen.Id("DatePropertyItem")},
+					).comment += e.Text
+					return nil
 				},
 			},
 			&objectDocHeadingElement{
@@ -541,9 +574,7 @@ func init() {
 				Code:     "{\n  \"Rollup\": {\n    \"object\": \"list\",\n    \"results\": [\n      {\n        \"object\": \"property_item\",\n        \"id\": \"vYdV\",\n        \"type\": \"relation\",\n        \"relation\": {\n          \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"\n        }\n      }...\n    ],\t\n    \"next_cursor\": \"1QaTunT5\",\n    \"has_more\": true,\n    \"type\": \"property_item\",\n    \"property_item\": {\n      \"id\": \"y}~p\",\n      \"next_url\": \"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/y%7D~p?start_cursor=1QaTunT5&page_size=25\",\n      \"type\": \"rollup\",\n      \"rollup\": {\n        \"function\": \"sum\",\n        \"type\": \"incomplete\",\n        \"incomplete\": {}\n      }\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "People property values",
