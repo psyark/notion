@@ -100,12 +100,12 @@ func (u *propertyItemUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type PropertyItems []PropertyItem
+type PropertyItemArray []PropertyItem
 
-func (a *PropertyItems) UnmarshalJSON(data []byte) error {
+func (a *PropertyItemArray) UnmarshalJSON(data []byte) error {
 	t := []propertyItemUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling PropertyItems: %w", err)
+		return fmt.Errorf("unmarshaling PropertyItemArray: %w", err)
 	}
 	*a = make([]PropertyItem, len(t))
 	for i, u := range t {
@@ -477,8 +477,8 @@ Array rollup property values contain an array of property_item objects within th
 */
 type ArrayRollup struct {
 	rollupCommon
-	Type  alwaysArray `json:"type"`
-	Array []struct{}  `json:"array"`
+	Type  alwaysArray        `json:"type"`
+	Array PropertyValueArray `json:"array"`
 }
 
 func (_ *ArrayRollup) isRollup() {}

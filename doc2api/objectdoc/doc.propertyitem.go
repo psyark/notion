@@ -12,7 +12,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("PropertyItem", "type", e.Text).listName = "PropertyItems"
+					b.addAbstractObject("PropertyItem", "type", e.Text).listName = "PropertyItemArray"
 					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
 					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(b.getAbstractObject("PropertyItem"))
 					return nil
@@ -561,8 +561,11 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nArray rollup property values contain an array of property_item objects within the results property. \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
+					// ドキュメントには array of property_item とあるが、
+					// type="rich_text"の場合に入る値などから
+					// array of property_value が正しいと判断している
 					b.getSpecificObject("ArrayRollup").addFields(
-						&field{name: "array", typeCode: jen.Index().Struct()},
+						&field{name: "array", typeCode: jen.Id("PropertyValueArray")},
 					).comment += e.Text
 					return nil
 				},

@@ -22,7 +22,7 @@ type PropertyValue interface {
 	GetId() string
 }
 type propertyValueCommon struct {
-	Id string `json:"id"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+	Id string `json:"id,omitempty"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
 func (c *propertyValueCommon) GetId() string {
@@ -91,6 +91,20 @@ func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 
 func (u *propertyValueUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
+}
+
+type PropertyValueArray []PropertyValue
+
+func (a *PropertyValueArray) UnmarshalJSON(data []byte) error {
+	t := []propertyValueUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return fmt.Errorf("unmarshaling PropertyValueArray: %w", err)
+	}
+	*a = make([]PropertyValue, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
 }
 
 type PropertyValueMap map[string]PropertyValue

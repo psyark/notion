@@ -11,7 +11,9 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("PropertyValue", "type", e.Text).strMapName = "PropertyValueMap"
+					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
+					pv.strMapName = "PropertyValueMap"
+					pv.listName = "PropertyValueArray"
 					return nil
 				},
 			},
@@ -41,7 +43,9 @@ func init() {
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
 				ExampleValue: `"f%5C%5C%3Ap"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("PropertyValue").addFields(e.asField(jen.String()))
+					field := e.asField(jen.String())
+					field.omitEmpty = true // Rollup内でIDが無い場合がある
+					b.getAbstractObject("PropertyValue").addFields(field)
 					return nil
 				},
 			}, {

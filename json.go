@@ -11,7 +11,7 @@ func getType(msg json.RawMessage) json.RawMessage {
 		Type json.RawMessage `json:"type"`
 	}{}
 	if err := json.Unmarshal(msg, &t); err != nil {
-		panic(fmt.Errorf("%w: %v", err, msg))
+		panic(fmt.Errorf("%w: %v", err, string(msg)))
 	}
 	return t.Type
 }
@@ -22,7 +22,7 @@ func getObject(msg json.RawMessage) json.RawMessage {
 		Object json.RawMessage `json:"object"`
 	}{}
 	if err := json.Unmarshal(msg, &t); err != nil {
-		panic(fmt.Errorf("%w: %v", err, msg))
+		panic(fmt.Errorf("%w: %v", err, string(msg)))
 	}
 	return t.Object
 }
