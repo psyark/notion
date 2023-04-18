@@ -45,11 +45,14 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 	} else {
 		for name, prop := range db.Properties {
 			name, prop := name, prop
-			t.Run(name, func(t *testing.T) {
-				if _, err := cli.RetrievePagePropertyItem(ctx, DATABASE_PAGE_FOR_READ1, prop.GetId(), requestId("RetrievePagePropertyItem_"+name), useCache(), validateResult()); err != nil {
-					t.Fatal(err)
-				}
-			})
+			for i, pageId := range []uuid.UUID{DATABASE_PAGE_FOR_READ1, DATABASE_PAGE_FOR_READ2} {
+				testName := fmt.Sprintf("%s_%d", name, i+1)
+				t.Run(testName, func(t *testing.T) {
+					if _, err := cli.RetrievePagePropertyItem(ctx, pageId, prop.GetId(), requestId("RetrievePagePropertyItem_"+testName), useCache(), validateResult()); err != nil {
+						t.Fatal(err)
+					}
+				})
+			}
 		}
 	}
 }
