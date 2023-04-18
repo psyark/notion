@@ -69,7 +69,6 @@ func init() {
 					// TODO 良い名前
 					ppi := b.addAbstractObject("PaginatedPropertyInfo", "type", e.Text).addFields(
 						&field{name: "id", typeCode: jen.String()},
-						&field{name: "type", typeCode: jen.String()},
 					)
 					for _, variant := range []string{"title", "rich_text", "relation", "people"} {
 						ppi.addVariant(

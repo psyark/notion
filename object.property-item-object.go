@@ -120,20 +120,15 @@ The title, rich_text, relation and people property items of are returned as a pa
 type PaginatedPropertyInfo interface {
 	isPaginatedPropertyInfo()
 	GetId() string
-	GetType() string
 	GetNextUrl() *string
 }
 type paginatedPropertyInfoCommon struct {
 	Id      string  `json:"id"`
-	Type    string  `json:"type"`
 	NextUrl *string `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 
 func (c *paginatedPropertyInfoCommon) GetId() string {
 	return c.Id
-}
-func (c *paginatedPropertyInfoCommon) GetType() string {
-	return c.Type
 }
 func (c *paginatedPropertyInfoCommon) GetNextUrl() *string {
 	return c.NextUrl
