@@ -142,6 +142,14 @@ func (c *specificObject) symbolCode() jen.Code {
 	for _, a := range c.getAncestors() {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + a.name()).Params().Block().Line()
 	}
+	// typeSpecificFieldをGetterに
+	// for _, f := range c.fields {
+	// 	if f, ok := f.(*fixedStringField); ok {
+	// 		code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("Get" + strcase.UpperCamelCase(f.name)).Params().String().Block(
+	// 			jen.Return().Lit(f.value),
+	// 		).Line()
+	// 	}
+	// }
 
 	// type object
 	if len(c.typeObject.fields) != 0 {
@@ -226,12 +234,12 @@ func (c *abstractObject) symbolCode() jen.Code {
 
 	// インターフェイス本体とisメソッド
 	{
-		methods := []jen.Code{
-			jen.Id("is" + c.name()).Params(),
-		}
+		methods := []jen.Code{}
 		for _, p := range c.parents {
-			methods = append(methods, jen.Id("is"+p.name()).Params())
+			methods = append(methods, jen.Id(p.name())) // 親インターフェイスの継承
 		}
+		methods = append(methods, jen.Id("is"+c.name()).Params()) // このインターフェイスのisメソッド
+		// methods = append(methods, jen.Id("Get"+strcase.UpperCamelCase(c.specifiedBy)).Params().String())
 		// 共通フィールドのgetter宣言
 		for _, f := range c.fields {
 			methods = append(methods, jen.Id("Get"+f.goName()).Params().Add(f.getTypeCode()))

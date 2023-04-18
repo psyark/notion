@@ -13,8 +13,8 @@ import (
 A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item
 */
 type PropertyItem interface {
+	PropertyItemOrPropertyItemPagination
 	isPropertyItem()
-	isPropertyItemOrPropertyItemPagination()
 	GetObject() alwaysPropertyItem
 	GetId() string
 }
