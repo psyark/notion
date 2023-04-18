@@ -77,7 +77,7 @@ func (c *converter) convert() error {
 		return err
 	}
 
-	return file.Save(fmt.Sprintf("../../client.%s.go", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " "))))
+	return file.Save(fmt.Sprintf("../../method.%s.go", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " "))))
 }
 
 func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
