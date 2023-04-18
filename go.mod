@@ -9,6 +9,7 @@ require github.com/PuerkitoBio/goquery v1.8.1
 require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/dave/jennifer v1.6.0
+	github.com/flytam/filenamify v1.1.2
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stoewer/go-strcase v1.3.0

@@ -1,13 +1,17 @@
 package notion
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"os"
+
+	"github.com/flytam/filenamify"
 )
 
 const APIVersion = "2022-06-28"
@@ -23,20 +27,41 @@ type Client struct {
 type callOptions struct {
 	path           string
 	method         string
-	validateResult string
+	requestId      string
+	useCache       bool
+	validateResult bool
 	params         any
 	result         any
 }
 
 type callOption func(*callOptions)
 
-func validateResult(testName string) callOption {
+func requestId(requestId string) callOption {
 	return func(co *callOptions) {
-		co.validateResult = testName
+		co.requestId = requestId
+	}
+}
+
+func useCache() callOption {
+	return func(co *callOptions) {
+		co.useCache = true
+	}
+}
+
+func validateResult() callOption {
+	return func(co *callOptions) {
+		co.validateResult = true
 	}
 }
 
 func (c *Client) call(ctx context.Context, options *callOptions) error {
+	if options.useCache && options.requestId == "" {
+		return fmt.Errorf("useCache requires requestId")
+	}
+	if options.validateResult && options.requestId == "" {
+		return fmt.Errorf("validateResult requires requestId")
+	}
+
 	payload, err := json.Marshal(options.params)
 	if err != nil {
 		return err
@@ -55,12 +80,52 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		req.Header.Add("Content-Type", "application/json")
 	}
 
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return err
+	var res *http.Response
+
+	var fileName string
+	if options.requestId != "" {
+		fileName, err = filenamify.FilenamifyV2(options.requestId)
+		if err != nil {
+			return err
+		}
 	}
 
-	defer res.Body.Close()
+	if options.useCache {
+		if cache, err := os.Open(fmt.Sprintf("testout/cache/%s", fileName)); err == nil {
+			defer func() {
+				_ = cache.Close()
+			}()
+
+			res, err = http.ReadResponse(bufio.NewReader(cache), req)
+			if err != nil {
+				return err
+			}
+
+			defer func() {
+				_ = res.Body.Close()
+			}()
+		}
+	}
+
+	if res == nil {
+		res, err = http.DefaultClient.Do(req)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			_ = res.Body.Close()
+		}()
+
+		if options.useCache {
+			if dump, err := httputil.DumpResponse(res, true); err != nil {
+				return err
+			} else if err := os.WriteFile(fmt.Sprintf("testout/cache/%s", fileName), dump, 0666); err != nil {
+				return err
+			}
+		}
+	}
+
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		return err
@@ -76,18 +141,18 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	}
 
 	if err := json.Unmarshal(resBody, options.result); err != nil {
-		if options.validateResult != "" {
-			_ = os.Remove(fmt.Sprintf("testout/pass/%v.json", options.validateResult))
-			_ = os.Remove(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult))
+		if options.validateResult {
+			_ = os.Remove(fmt.Sprintf("testout/pass/%s.json", fileName))
+			_ = os.Remove(fmt.Sprintf("testout/fail/%s.got.json", fileName))
 			want := normalizeJSON(resBody)
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult), want, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.want.json", fileName), want, 0666); err != nil {
 				return err
 			}
 		}
 		return err
 	}
 
-	if options.validateResult != "" {
+	if options.validateResult {
 		got, err := json.Marshal(options.result)
 		if err != nil {
 			return err
@@ -97,18 +162,18 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		want := normalizeJSON(resBody)
 
 		if bytes.Equal(want, got) {
-			_ = os.Remove(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult))
-			_ = os.Remove(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult))
-			return os.WriteFile(fmt.Sprintf("testout/pass/%v.json", options.validateResult), want, 0666)
+			_ = os.Remove(fmt.Sprintf("testout/fail/%s.want.json", fileName))
+			_ = os.Remove(fmt.Sprintf("testout/fail/%s.got.json", fileName))
+			return os.WriteFile(fmt.Sprintf("testout/pass/%s.json", fileName), want, 0666)
 		} else {
-			_ = os.Remove(fmt.Sprintf("testout/pass/%v.json", options.validateResult))
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.want.json", options.validateResult), want, 0666); err != nil {
+			_ = os.Remove(fmt.Sprintf("testout/pass/%s.json", fileName))
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.want.json", fileName), want, 0666); err != nil {
 				return err
 			}
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%v.got.json", options.validateResult), got, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.got.json", fileName), got, 0666); err != nil {
 				return err
 			}
-			return fmt.Errorf("validation failed: %v", options.validateResult)
+			return fmt.Errorf("validation failed: %s", options.requestId)
 		}
 	}
 

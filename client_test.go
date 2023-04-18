@@ -32,7 +32,7 @@ func init() {
 
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, validateResult("RetrievePage")); err != nil {
+	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, requestId("RetrievePage"), useCache(), validateResult()); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -45,7 +45,7 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 		for name, prop := range db.Properties {
 			name, prop := name, prop
 			t.Run(name, func(t *testing.T) {
-				if _, err := cli.RetrievePagePropertyItem(ctx, DATABASE_PAGE_READONLY, prop.GetId(), validateResult("RetrievePagePropertyItem_"+name)); err != nil {
+				if _, err := cli.RetrievePagePropertyItem(ctx, DATABASE_PAGE_READONLY, prop.GetId(), requestId("RetrievePagePropertyItem_"+name), useCache(), validateResult()); err != nil {
 					t.Fatal(err)
 				}
 			})
@@ -77,7 +77,7 @@ func TestUpdatePage(t *testing.T) {
 	for i, params := range cases {
 		params := params
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
-			if _, err := cli.UpdatePage(ctx, DATABASE_PAGE_WRITABLE, params, validateResult("UpdatePage")); err != nil {
+			if _, err := cli.UpdatePage(ctx, DATABASE_PAGE_WRITABLE, params, requestId("UpdatePage"), useCache(), validateResult()); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
 				t.Fatal(err)
@@ -88,14 +88,14 @@ func TestUpdatePage(t *testing.T) {
 
 func TestQueryDatabase(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.QueryDatabase(ctx, DATABASE, &QueryDatabaseParams{}, validateResult("QueryDatabase")); err != nil {
+	if _, err := cli.QueryDatabase(ctx, DATABASE, &QueryDatabaseParams{}, requestId("QueryDatabase"), useCache(), validateResult()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestRetrieveDatabase(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrieveDatabase(ctx, DATABASE, validateResult("RetrieveDatabase")); err != nil {
+	if _, err := cli.RetrieveDatabase(ctx, DATABASE, requestId("RetrieveDatabase"), useCache(), validateResult()); err != nil {
 		t.Fatal(err)
 	}
 }
