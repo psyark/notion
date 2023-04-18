@@ -3,7 +3,6 @@ package notion
 import (
 	"encoding/json"
 	"fmt"
-	uuid "github.com/google/uuid"
 	nullv4 "gopkg.in/guregu/null.v4"
 )
 
@@ -159,56 +158,29 @@ func (_ *NumberPropertyValue) isPropertyValue() {}
 // Select property values
 type SelectPropertyValue struct {
 	propertyValueCommon
-	Type   alwaysSelect             `json:"type"`
-	Select *SelectPropertyValueData `json:"select"` //  Select property value objects contain the following data within the select property:
+	Type   alwaysSelect `json:"type"`
+	Select *Option      `json:"select"` //  Select property value objects contain the following data within the select property:
 }
 
 func (_ *SelectPropertyValue) isPropertyValue() {}
 
-/*
-
-Select property value objects contain the following data within the select property:
-*/
-type SelectPropertyValueData struct {
-	Id    uuid.UUID `json:"id"`    // ID of the option.  When updating a select property, you can use either name or id.
-	Name  string    `json:"name"`  // Name of the option as it appears in Notion.  If the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.  Note: Commas (",") are not valid for select values.
-	Color string    `json:"color"` // Color of the option. Possible values are: "default", "gray", "brown", "red", "orange", "yellow", "green", "blue", "purple", "pink". Defaults to "default".  Not currently editable.
-}
-
 // Status property values
 type StatusPropertyValue struct {
 	propertyValueCommon
-	Type   alwaysStatus            `json:"type"`
-	Status StatusPropertyValueData `json:"status"` //  Status property value objects contain the following data within the status property:
+	Type   alwaysStatus `json:"type"`
+	Status Option       `json:"status"` //  Status property value objects contain the following data within the status property:
 }
 
 func (_ *StatusPropertyValue) isPropertyValue() {}
 
-/*
-
-Status property value objects contain the following data within the status property:
-*/
-type StatusPropertyValueData struct {
-	Id    uuid.UUID `json:"id"`    // ID of the option.
-	Name  string    `json:"name"`  // Name of the option as it appears in Notion.
-	Color string    `json:"color"` // Color of the option. Possible values are: "default", "gray", "brown", "red", "orange", "yellow", "green", "blue", "purple", "pink". Defaults to "default".  Not currently editable.
-}
-
 // Multi-select property values
 type MultiSelectPropertyValue struct {
 	propertyValueCommon
-	Type        alwaysMultiSelect   `json:"type"`
-	MultiSelect []MultiSelectOption `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
+	Type        alwaysMultiSelect `json:"type"`
+	MultiSelect []Option          `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
 
 func (_ *MultiSelectPropertyValue) isPropertyValue() {}
-
-// Multi-select option values
-type MultiSelectOption struct {
-	Id    uuid.UUID `json:"id"`    // ID of the option.  When updating a multi-select property, you can use either name or id.
-	Name  string    `json:"name"`  // Name of the option as it appears in Notion.  If the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.  Note: Commas (",") are not valid for select values.
-	Color string    `json:"color"` // Color of the option. Possible values are: "default", "gray", "brown", "red", "orange", "yellow", "green", "blue", "purple", "pink". Defaults to "default".  Not currently editable.
-}
 
 // Date property values
 type DatePropertyValue struct {

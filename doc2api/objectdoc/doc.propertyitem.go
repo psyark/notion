@@ -206,51 +206,40 @@ func init() {
 					b.getAbstractObject("PropertyItem").addVariant(
 						b.addSpecificObject("SelectPropertyItem", e.Text).addFields(
 							&fixedStringField{name: "type", value: "select"},
+							&field{name: "select", typeCode: jen.Id("Option")},
 						),
 					)
 					b.getAbstractObject("PropertyItem").addVariant(
 						b.addSpecificObject("StatusPropertyItem", "undocumented").addFields(
 							&fixedStringField{name: "type", value: "status"},
-							&field{name: "status", typeCode: jen.Id("SelectPropertyItemData")}, // TODO 共通化はここでいいか確認
+							&field{name: "status", typeCode: jen.Id("Option")},
 						),
 					)
 					return nil
 				},
 			},
 			&objectDocParagraphElement{
-				Text: "\nSelect property value objects contain the following data within the select property:",
-				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("SelectPropertyItem").typeObject.comment = e.Text
-					return nil
-				},
+				Text:   "\nSelect property value objects contain the following data within the select property:",
+				output: func(e *objectDocParagraphElement, b *builder) error { return nil }, // Optionで共通化
 			},
 			&objectDocParametersElement{{
 				Property:     "id",
 				Type:         "string (UUIDv4)",
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(UUID))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Property:     "name",
 				Type:         "string",
 				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Property:     "color",
 				Type:         "string (enum)",
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyItem").typeObject.addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Option\": {\n    \"object\": \"property_item\",\n    \"id\": \"%7CtzR\",\n    \"type\": \"select\",\n    \"select\": {\n      \"id\": \"64190ec9-e963-47cb-bc37-6a71d6b71206\",\n      \"name\": \"Option 1\",\n      \"color\": \"orange\"\n    }\n  }\n}",
@@ -274,10 +263,9 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("MultiSelectPropertyItem").addFields(&field{
 						name:     "multi_select",
-						typeCode: jen.Index().Id("MultiSelectPropertyItemData"),
+						typeCode: jen.Index().Id("Option"),
 						comment:  e.Text,
 					})
-					b.addSpecificObject("MultiSelectPropertyItemData", e.Text)
 					return nil
 				},
 			},
@@ -290,28 +278,19 @@ func init() {
 				Type:         "string (UUIDv4)",
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
 				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(UUID))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Property:     "name",
 				Type:         "string",
 				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Property:     "color",
 				Type:         "string (enum)",
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
 				ExampleValue: `"red"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyItemData").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"Tags\": {\n    \"object\": \"property_item\",\n    \"id\": \"z%7D%5C%3C\",\n    \"type\": \"multi_select\",\n    \"multi_select\": [\n      {\n        \"id\": \"91e6959e-7690-4f55-b8dd-d3da9debac45\",\n        \"name\": \"A\",\n        \"color\": \"orange\"\n      },\n      {\n        \"id\": \"2f998e2d-7b1c-485b-ba6b-5e6a815ec8f5\",\n        \"name\": \"B\",\n        \"color\": \"purple\"\n      }\n    ]\n  }\n}",

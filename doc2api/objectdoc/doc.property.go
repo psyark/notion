@@ -284,11 +284,9 @@ func init() {
 				Text: "\nA multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options. \n\nThe multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("MultiSelectProperty").comment += e.Text
-					// TODO 似たようなオブジェクトの共通化
 					b.getSpecificObject("MultiSelectProperty").typeObject.addFields(
-						&field{name: "options", typeCode: jen.Index().Id("MultiSelectPropertyOption")},
+						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
-					b.addSpecificObject("MultiSelectPropertyOption", "")
 					return nil
 				},
 			},
@@ -297,28 +295,19 @@ func init() {
 				Type:         "string (enum)",
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `"blue"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Field:        "id",
 				Type:         "string",
 				Description:  "An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(UUID))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Field:        "name",
 				Type:         "string",
 				Description:  "The name of the option as it appears in Notion.\n\nNote: Commas (\",\") are not valid for multi-select properties.",
 				ExampleValue: `"Fruit"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("MultiSelectPropertyOption").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "\"Store availability\": {\n  \"id\": \"flsb\",\n  \"name\": \"Store availability\",\n  \"type\": \"multi_select\",\n  \"multi_select\": {\n    \"options\": [\n      {\n        \"id\": \"5de29601-9c24-4b04-8629-0bca891c5120\",\n        \"name\": \"Duc Loi Market\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"385890b8-fe15-421b-b214-b02959b0f8d9\",\n        \"name\": \"Rainbow Grocery\",\n        \"color\": \"gray\"\n      },\n      {\n        \"id\": \"72ac0a6c-9e00-4e8c-80c5-720e4373e0b9\",\n        \"name\": \"Nijiya Market\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"9556a8f7-f4b0-4e11-b277-f0af1f8c9490\",\n        \"name\": \"Gus's Community Market\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}",
@@ -566,10 +555,11 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("SelectProperty").comment = e.Text
 					b.getSpecificObject("SelectProperty").typeObject.addFields(
-						// TODO 共通化
-						&field{name: "options", typeCode: jen.Index().Id("SelectPropertyOption")},
+						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
-					b.addSpecificObject("SelectPropertyOption", e.Text)
+					// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
+					// 以下の共通の構造体を使います
+					b.addSpecificObject("Option", e.Text)
 					return nil
 				},
 			},
@@ -579,7 +569,7 @@ func init() {
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `- "red"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(jen.String()))
+					b.getSpecificObject("Option").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -588,7 +578,7 @@ func init() {
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(UUID))
+					b.getSpecificObject("Option").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -597,7 +587,7 @@ func init() {
 				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("SelectPropertyOption").addFields(e.asField(jen.String()))
+					b.getSpecificObject("Option").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
@@ -618,10 +608,9 @@ func init() {
 				Text: "\nA status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects. \n\nThe options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.getSpecificObject("StatusProperty").typeObject.addFields(
-						&field{name: "options", typeCode: jen.Index().Id("StatusPropertyDataOption")},
-						&field{name: "groups", typeCode: jen.Index().Id("StatusPropertyDataGroup")},
+						&field{name: "options", typeCode: jen.Index().Id("Option")},
+						&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 					)
-					b.addSpecificObject("StatusPropertyDataOption", e.Text)
 					return nil
 				},
 			},
@@ -630,33 +619,24 @@ func init() {
 				Type:         "string (enum)",
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `"green"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataOption").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Field:        "id",
 				Type:         "string",
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataOption").addFields(e.asField(UUID))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}, {
 				Field:        "name",
 				Type:         "string",
 				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for status values.",
 				ExampleValue: `"In progress"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataOption").addFields(e.asField(jen.String()))
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil }, // Optionで共通化
 			}},
 			&objectDocParagraphElement{
 				Text: "A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addSpecificObject("StatusPropertyDataGroup", e.Text)
+					b.addSpecificObject("StatusGroup", e.Text)
 					return nil
 				},
 			},
@@ -666,7 +646,7 @@ func init() {
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `"purple"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataGroup").addFields(e.asField(jen.String()))
+					b.getSpecificObject("StatusGroup").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -675,7 +655,7 @@ func init() {
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataGroup").addFields(e.asField(UUID))
+					b.getSpecificObject("StatusGroup").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -684,7 +664,7 @@ func init() {
 				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for status values.",
 				ExampleValue: `"To do"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataGroup").addFields(e.asField(jen.String()))
+					b.getSpecificObject("StatusGroup").addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -693,7 +673,7 @@ func init() {
 				Field:        "option_ids",
 				Type:         "an array of strings (UUID)",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("StatusPropertyDataGroup").addFields(e.asField(jen.Index().Add(UUID)))
+					b.getSpecificObject("StatusGroup").addFields(e.asField(jen.Index().String()))
 					return nil
 				},
 			}},

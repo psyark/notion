@@ -231,7 +231,7 @@ type MultiSelectProperty struct {
 func (_ *MultiSelectProperty) isProperty() {}
 
 type MultiSelectPropertyData struct {
-	Options []MultiSelectPropertyOption `json:"options"`
+	Options []Option `json:"options"`
 }
 
 /*
@@ -352,7 +352,7 @@ type SelectProperty struct {
 func (_ *SelectProperty) isProperty() {}
 
 type SelectPropertyData struct {
-	Options []SelectPropertyOption `json:"options"`
+	Options []Option `json:"options"`
 }
 
 // Status
@@ -365,8 +365,8 @@ type StatusProperty struct {
 func (_ *StatusProperty) isProperty() {}
 
 type StatusPropertyData struct {
-	Options []StatusPropertyDataOption `json:"options"`
-	Groups  []StatusPropertyDataGroup  `json:"groups"`
+	Options []Option      `json:"options"`
+	Groups  []StatusGroup `json:"groups"`
 }
 
 /*
@@ -394,12 +394,6 @@ type UrlProperty struct {
 }
 
 func (_ *UrlProperty) isProperty() {}
-
-type MultiSelectPropertyOption struct {
-	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
-	Id    uuid.UUID `json:"id"`    // An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.
-	Name  string    `json:"name"`  // The name of the option as it appears in Notion.  Note: Commas (",") are not valid for multi-select properties.
-}
 
 /*
 
@@ -476,28 +470,16 @@ A select database property is rendered in the Notion UI as a column that contain
 
 The select type object contains an array of objects representing the available options. Each option object includes the following fields:
 */
-type SelectPropertyOption struct {
-	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
-	Id    uuid.UUID `json:"id"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
-	Name  string    `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for select values.
-}
-
-/*
-
-A status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects.
-
-The options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields:
-*/
-type StatusPropertyDataOption struct {
-	Color string    `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
-	Id    uuid.UUID `json:"id"`    // An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.
-	Name  string    `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for status values.
+type Option struct {
+	Color string `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Id    string `json:"id"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
+	Name  string `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for select values.
 }
 
 // A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields:
-type StatusPropertyDataGroup struct {
-	Color     string      `json:"color"`      // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
-	Id        uuid.UUID   `json:"id"`         // An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.
-	Name      string      `json:"name"`       // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for status values.
-	OptionIds []uuid.UUID `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.
+type StatusGroup struct {
+	Color     string   `json:"color"`      // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Id        string   `json:"id"`         // An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.
+	Name      string   `json:"name"`       // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for status values.
+	OptionIds []string `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.
 }
