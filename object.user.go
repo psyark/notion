@@ -79,12 +79,12 @@ func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
+	switch getType(data) {
 	case "":
 		u.value = &PartialUser{}
-	case "\"person\"":
+	case "person":
 		u.value = &PersonUser{}
-	case "\"bot\"":
+	case "bot":
 		u.value = &BotUser{}
 	default:
 		return fmt.Errorf("unmarshaling User: data has unknown type field: %s", string(data))

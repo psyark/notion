@@ -42,46 +42,46 @@ func (u *propertyValueUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"title\"":
+	switch getType(data) {
+	case "title":
 		u.value = &TitlePropertyValue{}
-	case "\"rich_text\"":
+	case "rich_text":
 		u.value = &RichTextPropertyValue{}
-	case "\"number\"":
+	case "number":
 		u.value = &NumberPropertyValue{}
-	case "\"select\"":
+	case "select":
 		u.value = &SelectPropertyValue{}
-	case "\"status\"":
+	case "status":
 		u.value = &StatusPropertyValue{}
-	case "\"multi_select\"":
+	case "multi_select":
 		u.value = &MultiSelectPropertyValue{}
-	case "\"date\"":
+	case "date":
 		u.value = &DatePropertyValue{}
-	case "\"formula\"":
+	case "formula":
 		u.value = &FormulaPropertyValue{}
-	case "\"relation\"":
+	case "relation":
 		u.value = &RelationPropertyValue{}
-	case "\"rollup\"":
+	case "rollup":
 		u.value = &RollupPropertyValue{}
-	case "\"people\"":
+	case "people":
 		u.value = &PeoplePropertyValue{}
-	case "\"files\"":
+	case "files":
 		u.value = &FilesPropertyValue{}
-	case "\"checkbox\"":
+	case "checkbox":
 		u.value = &CheckboxPropertyValue{}
-	case "\"url\"":
+	case "url":
 		u.value = &UrlPropertyValue{}
-	case "\"email\"":
+	case "email":
 		u.value = &EmailPropertyValue{}
-	case "\"phone_number\"":
+	case "phone_number":
 		u.value = &PhoneNumberPropertyValue{}
-	case "\"created_time\"":
+	case "created_time":
 		u.value = &CreatedTimePropertyValue{}
-	case "\"created_by\"":
+	case "created_by":
 		u.value = &CreatedByPropertyValue{}
-	case "\"last_edited_time\"":
+	case "last_edited_time":
 		u.value = &LastEditedTimePropertyValue{}
-	case "\"last_edited_by\"":
+	case "last_edited_by":
 		u.value = &LastEditedByPropertyValue{}
 	default:
 		return fmt.Errorf("unmarshaling PropertyValue: data has unknown type field: %s", string(data))
@@ -274,14 +274,14 @@ func (u *formulaUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"string\"":
+	switch getType(data) {
+	case "string":
 		u.value = &StringFormula{}
-	case "\"number\"":
+	case "number":
 		u.value = &NumberFormula{}
-	case "\"boolean\"":
+	case "boolean":
 		u.value = &BooleanFormula{}
-	case "\"date\"":
+	case "date":
 		u.value = &DateFormula{}
 	default:
 		return fmt.Errorf("unmarshaling Formula: data has unknown type field: %s", string(data))

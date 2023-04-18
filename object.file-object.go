@@ -36,10 +36,10 @@ func (u *fileUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"file\"":
+	switch getType(data) {
+	case "file":
 		u.value = &NotionHostedFile{}
-	case "\"external\"":
+	case "external":
 		u.value = &ExternalFile{}
 	default:
 		return fmt.Errorf("unmarshaling File: data has unknown type field: %s", string(data))

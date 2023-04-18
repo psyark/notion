@@ -34,14 +34,14 @@ func (u *parentUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"database_id\"":
+	switch getType(data) {
+	case "database_id":
 		u.value = &DatabaseParent{}
-	case "\"page_id\"":
+	case "page_id":
 		u.value = &PageParent{}
-	case "\"workspace\"":
+	case "workspace":
 		u.value = &WorkspaceParent{}
-	case "\"block_id\"":
+	case "block_id":
 		u.value = &BlockParent{}
 	default:
 		return fmt.Errorf("unmarshaling Parent: data has unknown type field: %s", string(data))

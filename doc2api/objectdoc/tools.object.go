@@ -293,7 +293,7 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 	for _, variant := range c.variants {
 		caseCode := jen.Case(jen.Lit(""))
 		if sf := variant.getSpecifyingField(c.specifiedBy); sf != nil {
-			caseCode = jen.Case(jen.Lit(`"` + sf.value + `"`))
+			caseCode = jen.Case(jen.Lit(sf.value))
 		}
 
 		switch variant := variant.(type) {
@@ -324,7 +324,7 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 				jen.Id("u").Dot("value").Op("=").Nil(),
 				jen.Return().Nil(),
 			),
-			jen.Switch().String().Call(jen.Id("get"+strcase.UpperCamelCase(c.specifiedBy)).Call(jen.Id("data"))).Block(cases...),
+			jen.Switch().Id("get"+strcase.UpperCamelCase(c.specifiedBy)).Call(jen.Id("data")).Block(cases...),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
 		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(

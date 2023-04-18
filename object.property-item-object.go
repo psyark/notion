@@ -49,46 +49,46 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"title\"":
+	switch getType(data) {
+	case "title":
 		u.value = &TitlePropertyItem{}
-	case "\"rich_text\"":
+	case "rich_text":
 		u.value = &RichTextPropertyItem{}
-	case "\"number\"":
+	case "number":
 		u.value = &NumberPropertyItem{}
-	case "\"select\"":
+	case "select":
 		u.value = &SelectPropertyItem{}
-	case "\"status\"":
+	case "status":
 		u.value = &StatusPropertyItem{}
-	case "\"multi_select\"":
+	case "multi_select":
 		u.value = &MultiSelectPropertyItem{}
-	case "\"date\"":
+	case "date":
 		u.value = &DatePropertyItem{}
-	case "\"formula\"":
+	case "formula":
 		u.value = &FormulaPropertyItem{}
-	case "\"relation\"":
+	case "relation":
 		u.value = &RelationPropertyItem{}
-	case "\"rollup\"":
+	case "rollup":
 		u.value = &RollupPropertyItem{}
-	case "\"people\"":
+	case "people":
 		u.value = &PeoplePropertyItem{}
-	case "\"files\"":
+	case "files":
 		u.value = &FilesPropertyItem{}
-	case "\"checkbox\"":
+	case "checkbox":
 		u.value = &CheckboxPropertyItem{}
-	case "\"url\"":
+	case "url":
 		u.value = &UrlPropertyItem{}
-	case "\"email\"":
+	case "email":
 		u.value = &EmailPropertyItem{}
-	case "\"phone_number\"":
+	case "phone_number":
 		u.value = &PhoneNumberPropertyItem{}
-	case "\"created_time\"":
+	case "created_time":
 		u.value = &CreatedTimePropertyItem{}
-	case "\"created_by\"":
+	case "created_by":
 		u.value = &CreatedByPropertyItem{}
-	case "\"last_edited_time\"":
+	case "last_edited_time":
 		u.value = &LastEditedTimePropertyItem{}
-	case "\"last_edited_by\"":
+	case "last_edited_by":
 		u.value = &LastEditedByPropertyItem{}
 	default:
 		return fmt.Errorf("unmarshaling PropertyItem: data has unknown type field: %s", string(data))
@@ -153,16 +153,16 @@ func (u *paginatedPropertyInfoUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"title\"":
+	switch getType(data) {
+	case "title":
 		u.value = &TitlePaginatedPropertyInfo{}
-	case "\"rich_text\"":
+	case "rich_text":
 		u.value = &RichTextPaginatedPropertyInfo{}
-	case "\"relation\"":
+	case "relation":
 		u.value = &RelationPaginatedPropertyInfo{}
-	case "\"people\"":
+	case "people":
 		u.value = &PeoplePaginatedPropertyInfo{}
-	case "\"rollup\"":
+	case "rollup":
 		u.value = &RollupPaginatedPropertyInfo{}
 	default:
 		return fmt.Errorf("unmarshaling PaginatedPropertyInfo: data has unknown type field: %s", string(data))
@@ -430,12 +430,12 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"number\"":
+	switch getType(data) {
+	case "number":
 		u.value = &NumberRollup{}
-	case "\"date\"":
+	case "date":
 		u.value = &DateRollup{}
-	case "\"array\"":
+	case "array":
 		u.value = &ArrayRollup{}
 	default:
 		return fmt.Errorf("unmarshaling Rollup: data has unknown type field: %s", string(data))

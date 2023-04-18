@@ -42,46 +42,46 @@ func (u *propertyUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"checkbox\"":
+	switch getType(data) {
+	case "checkbox":
 		u.value = &CheckboxProperty{}
-	case "\"created_by\"":
+	case "created_by":
 		u.value = &CreatedByProperty{}
-	case "\"created_time\"":
+	case "created_time":
 		u.value = &CreatedTimeProperty{}
-	case "\"date\"":
+	case "date":
 		u.value = &DateProperty{}
-	case "\"email\"":
+	case "email":
 		u.value = &EmailProperty{}
-	case "\"files\"":
+	case "files":
 		u.value = &FilesProperty{}
-	case "\"formula\"":
+	case "formula":
 		u.value = &FormulaProperty{}
-	case "\"last_edited_by\"":
+	case "last_edited_by":
 		u.value = &LastEditedByProperty{}
-	case "\"last_edited_time\"":
+	case "last_edited_time":
 		u.value = &LastEditedTimeProperty{}
-	case "\"multi_select\"":
+	case "multi_select":
 		u.value = &MultiSelectProperty{}
-	case "\"number\"":
+	case "number":
 		u.value = &NumberProperty{}
-	case "\"people\"":
+	case "people":
 		u.value = &PeopleProperty{}
-	case "\"phone_number\"":
+	case "phone_number":
 		u.value = &PhoneNumberProperty{}
-	case "\"relation\"":
+	case "relation":
 		u.value = &RelationProperty{}
-	case "\"rich_text\"":
+	case "rich_text":
 		u.value = &RichTextProperty{}
-	case "\"rollup\"":
+	case "rollup":
 		u.value = &RollupProperty{}
-	case "\"select\"":
+	case "select":
 		u.value = &SelectProperty{}
-	case "\"status\"":
+	case "status":
 		u.value = &StatusProperty{}
-	case "\"title\"":
+	case "title":
 		u.value = &TitleProperty{}
-	case "\"url\"":
+	case "url":
 		u.value = &UrlProperty{}
 	default:
 		return fmt.Errorf("unmarshaling Property: data has unknown type field: %s", string(data))
@@ -432,10 +432,10 @@ func (u *relationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"single_property\"":
+	switch getType(data) {
+	case "single_property":
 		u.value = &SinglePropertyRelation{}
-	case "\"dual_property\"":
+	case "dual_property":
 		u.value = &DualPropertyRelation{}
 	default:
 		return fmt.Errorf("unmarshaling Relation: data has unknown type field: %s", string(data))

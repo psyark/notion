@@ -67,12 +67,12 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"equation\"":
+	switch getType(data) {
+	case "equation":
 		u.value = &EquationRichText{}
-	case "\"mention\"":
+	case "mention":
 		u.value = &MentionRichText{}
-	case "\"text\"":
+	case "text":
 		u.value = &TextRichText{}
 	default:
 		return fmt.Errorf("unmarshaling RichText: data has unknown type field: %s", string(data))
@@ -165,18 +165,18 @@ func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"database\"":
+	switch getType(data) {
+	case "database":
 		u.value = &DatabaseMention{}
-	case "\"date\"":
+	case "date":
 		u.value = &DateMention{}
-	case "\"link_preview\"":
+	case "link_preview":
 		u.value = &LinkPreviewMention{}
-	case "\"page\"":
+	case "page":
 		u.value = &PageMention{}
-	case "\"template_mention\"":
+	case "template_mention":
 		u.value = &TemplateMention{}
-	case "\"user\"":
+	case "user":
 		u.value = &UserMention{}
 	default:
 		return fmt.Errorf("unmarshaling Mention: data has unknown type field: %s", string(data))
@@ -362,10 +362,10 @@ func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"template_mention_date\"":
+	switch getType(data) {
+	case "template_mention_date":
 		u.value = &TemplateMentionDate{}
-	case "\"template_mention_user\"":
+	case "template_mention_user":
 		u.value = &TemplateMentionUser{}
 	default:
 		return fmt.Errorf("unmarshaling TemplateMentionData: data has unknown type field: %s", string(data))

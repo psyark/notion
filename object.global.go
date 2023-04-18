@@ -24,12 +24,12 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"emoji\"":
+	switch getType(data) {
+	case "emoji":
 		u.value = &Emoji{}
-	case "\"external\"":
+	case "external":
 		u.value = &ExternalFile{}
-	case "\"file\"":
+	case "file":
 		u.value = &NotionHostedFile{}
 	default:
 		return fmt.Errorf("unmarshaling FileOrEmoji: data has unknown type field: %s", string(data))
@@ -85,20 +85,20 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch string(getType(data)) {
-	case "\"block\"":
+	switch getType(data) {
+	case "block":
 		u.value = &BlockPagination{}
-	case "\"comment\"":
+	case "comment":
 		u.value = &CommentPagination{}
-	case "\"database\"":
+	case "database":
 		u.value = &DatabasePagination{}
-	case "\"page\"":
+	case "page":
 		u.value = &PagePagination{}
-	case "\"page_or_database\"":
+	case "page_or_database":
 		u.value = &PageOrDatabasePagination{}
-	case "\"property_item\"":
+	case "property_item":
 		u.value = &PropertyItemPagination{}
-	case "\"user\"":
+	case "user":
 		u.value = &UserPagination{}
 	default:
 		return fmt.Errorf("unmarshaling Pagination: data has unknown type field: %s", string(data))
@@ -127,10 +127,10 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 		u.value = nil
 		return nil
 	}
-	switch string(getObject(data)) {
-	case "\"list\"":
+	switch getObject(data) {
+	case "list":
 		u.value = &PropertyItemPagination{}
-	case "\"property_item\"":
+	case "property_item":
 		t := &propertyItemUnmarshaler{}
 		if err := t.UnmarshalJSON(data); err != nil {
 			return err

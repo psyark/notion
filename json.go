@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
-// getType はobject型のJSONメッセージからtypeキーを取り出し、RawMessageとして返却します
-func getType(msg json.RawMessage) json.RawMessage {
+// getType はobject型のJSONメッセージからtypeキーの文字列を取り出して返却します
+func getType(msg json.RawMessage) string {
 	t := struct {
-		Type json.RawMessage `json:"type"`
+		Type string `json:"type"`
 	}{}
 	if err := json.Unmarshal(msg, &t); err != nil {
 		panic(fmt.Errorf("%w: %v", err, string(msg)))
@@ -16,10 +16,10 @@ func getType(msg json.RawMessage) json.RawMessage {
 	return t.Type
 }
 
-// getObject はobject型のJSONメッセージからobjectキーを取り出し、RawMessageとして返却します
-func getObject(msg json.RawMessage) json.RawMessage {
+// getObject はobject型のJSONメッセージからobjectキーの文字列を取り出して返却します
+func getObject(msg json.RawMessage) string {
 	t := struct {
-		Object json.RawMessage `json:"object"`
+		Object string `json:"object"`
 	}{}
 	if err := json.Unmarshal(msg, &t); err != nil {
 		panic(fmt.Errorf("%w: %v", err, string(msg)))
