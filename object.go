@@ -27,3 +27,11 @@ type Error struct {
 func (e Error) Error() string {
 	return fmt.Sprintf("(%v) %v", e.Code, e.Message)
 }
+
+func (rta RichTextArray) String() string {
+	str := ""
+	for _, rt := range rta {
+		str += rt.GetPlainText()
+	}
+	return str
+}
