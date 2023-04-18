@@ -105,7 +105,8 @@ type specificObject struct {
 	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
 	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
-	typeObject objectCommon
+	typeObject        objectCommon
+	typeObjectMayNull bool
 }
 
 func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
@@ -125,7 +126,11 @@ func (c *specificObject) symbolCode() jen.Code {
 				}
 			}
 			if valueOfTypeField == nil {
-				c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name() + "Data")})
+				if c.typeObjectMayNull {
+					c.addFields(&field{name: typeField.value, typeCode: jen.Op("*").Id(c.name() + "Data")})
+				} else {
+					c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name() + "Data")})
+				}
 			}
 		}
 	}

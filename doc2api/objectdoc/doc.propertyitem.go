@@ -190,7 +190,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNumber property value objects contain a number within the number property.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("NumberPropertyItem").addFields(&field{name: "number", typeCode: jen.Float64(), comment: e.Text})
+					b.getSpecificObject("NumberPropertyItem").addFields(&field{name: "number", typeCode: NullFloat, comment: e.Text})
 					return nil
 				},
 			},
@@ -333,6 +333,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
+					b.getSpecificObject("DatePropertyItem").typeObjectMayNull = true
 					b.getSpecificObject("DatePropertyItem").typeObject.comment = e.Text
 					return nil
 				},

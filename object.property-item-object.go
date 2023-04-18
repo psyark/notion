@@ -275,7 +275,7 @@ func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
 type NumberPropertyItem struct {
 	propertyItemCommon
 	Type   alwaysNumber `json:"type"`
-	Number float64      `json:"number"` //  Number property value objects contain a number within the number property.
+	Number nullv4.Float `json:"number"` //  Number property value objects contain a number within the number property.
 }
 
 func (_ *NumberPropertyItem) isPropertyItem()                         {}
@@ -334,8 +334,8 @@ type MultiSelectPropertyItemData struct {
 // Date property values
 type DatePropertyItem struct {
 	propertyItemCommon
-	Type alwaysDate           `json:"type"`
-	Date DatePropertyItemData `json:"date"`
+	Type alwaysDate            `json:"type"`
+	Date *DatePropertyItemData `json:"date"`
 }
 
 func (_ *DatePropertyItem) isPropertyItem()                         {}
