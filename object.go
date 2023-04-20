@@ -35,3 +35,12 @@ func (rta RichTextArray) String() string {
 	}
 	return str
 }
+
+func (pvm PropertyValueMap) Get(id string) PropertyValue {
+	for _, v := range pvm {
+		if v.GetId() == id {
+			return v
+		}
+	}
+	return nil
+}

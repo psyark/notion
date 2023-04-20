@@ -220,6 +220,37 @@ func convertAll() error {
 		return err
 	}
 
+	{
+		file := jen.NewFile("notion")
+
+		cases := []jen.Code{}
+		for _, v := range global.getAbstractObject("PropertyValue").variants {
+			cases = append(cases, jen.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value"))))
+			var field fieldCoder
+			for _, f := range v.(*specificObject).fields {
+				if f.goName() != "Type" && f.goName() != "HasMore" {
+					field = f
+					break
+				}
+			}
+
+			typeCodeStr := (jen.Var().Id("_").Add(field.getTypeCode())).GoString()
+			typeCodeStr = strings.TrimPrefix(typeCodeStr, "var _ ")
+			cases = append(cases, jen.Return().Lit(typeCodeStr))
+			file.Func().Params(jen.Id("v").Id(v.name())).Id("value").Params().Qual("reflect", "Value").Block(
+				jen.Return().Qual("reflect", "ValueOf").Call(jen.Id("v").Dot(field.goName())),
+			)
+		}
+
+		file.Func().Id("getTypeForBinding").Params(jen.Id("p").Id("Property")).String().Block(
+			jen.Switch(jen.Id("p").Op(".").Parens(jen.Type())).Block(cases...),
+			jen.Panic(jen.Id("p")),
+		)
+		if err := file.Save("../../binding.helper.go"); err != nil {
+			return err
+		}
+	}
+
 	copyAlways(global)
 
 	// グローバルビルダーをソートし、冪等性を保ちます

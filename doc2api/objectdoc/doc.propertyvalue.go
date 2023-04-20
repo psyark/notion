@@ -14,6 +14,7 @@ func init() {
 					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
 					pv.strMapName = "PropertyValueMap"
 					pv.listName = "PropertyValueArray"
+					pv.specialMethods = append(pv.specialMethods, jen.Id("value").Call().Qual("reflect", "Value"))
 					return nil
 				},
 			},

@@ -42,6 +42,7 @@ func (c *objectCommon) name() string {
 	return c.name_
 }
 
+// TODO: これを廃止してvariantTypeみたいなプロパティ作る
 func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
 	for _, f := range c.fields {
 		if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
@@ -192,11 +193,12 @@ func (c *specificObject) symbolCode() jen.Code {
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
 type abstractObject struct {
 	objectCommon
-	specifiedBy   string // "type", "object" など、バリアントを識別するためのプロパティ
-	fieldsComment string
-	variants      []objectCoder
-	listName      string // このインターフェイスのスライスの名前（UnmarshalJSONが作成されます）
-	strMapName    string // このインターフェイスのmap[string]の名前（UnmarshalJSONが作成されます）
+	specifiedBy    string // "type", "object" など、バリアントを識別するためのプロパティ // TODO variantTypeKeyとかにする？
+	fieldsComment  string
+	variants       []objectCoder
+	listName       string // このインターフェイスのスライスの名前（UnmarshalJSONが作成されます）
+	strMapName     string // このインターフェイスのmap[string]の名前（UnmarshalJSONが作成されます）
+	specialMethods []jen.Code
 }
 
 // addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
@@ -239,6 +241,7 @@ func (c *abstractObject) symbolCode() jen.Code {
 			methods = append(methods, jen.Id(p.name())) // 親インターフェイスの継承
 		}
 		methods = append(methods, jen.Id("is"+c.name()).Params()) // このインターフェイスのisメソッド
+		methods = append(methods, c.specialMethods...)            // 特殊メソッド
 		// methods = append(methods, jen.Id("Get"+strcase.UpperCamelCase(c.specifiedBy)).Params().String())
 		// 共通フィールドのgetter宣言
 		for _, f := range c.fields {
