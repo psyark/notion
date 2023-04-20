@@ -23,7 +23,7 @@ type TheDatabase struct {
 	Phone                  nullv4.String          `notion:"%7Cb%60H"`
 	LastEditedTime         ISO8601String          `notion:"%7B%7Cmj"`
 	Text                   RichTextArray          `notion:"Vl%40o"`
-	Title                  Option                 `notion:"title"`
+	Title                  RichTextArray          `notion:"title"`
 	File                   Files                  `notion:"%7Dlj%7B"`
 	Status                 Option                 `notion:"~_pB"`
 	Checkbox               bool                   `notion:"%3Dh%3AT"`
