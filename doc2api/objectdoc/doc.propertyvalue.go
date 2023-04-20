@@ -5,13 +5,13 @@ import (
 )
 
 // PropertyValueに value()reflect.Value メソッドを追加し、bindingを行えるようにする
-type valueMethodCoder struct{}
+type getMethodCoder struct{}
 
-func (c *valueMethodCoder) declarationCode() jen.Code {
-	return jen.Id("value").Call().Qual("reflect", "Value").Comment("for binding")
+func (c *getMethodCoder) declarationCode() jen.Code {
+	return jen.Id("get").Call().Qual("reflect", "Value").Comment("for binding")
 }
 
-func (c *valueMethodCoder) implementationCode(so *specificObject) jen.Code {
+func (c *getMethodCoder) implementationCode(so *specificObject) jen.Code {
 	var field fieldCoder
 	for _, f := range so.fields {
 		if f.goName() != "Type" && f.goName() != "HasMore" {
@@ -20,8 +20,28 @@ func (c *valueMethodCoder) implementationCode(so *specificObject) jen.Code {
 		}
 	}
 
-	return jen.Comment("for binding").Line().Func().Params(jen.Id("o").Op("*").Id(so.name())).Id("value").Call().Qual("reflect", "Value").Block(
+	return jen.Comment("for binding").Line().Func().Params(jen.Id("o").Op("*").Id(so.name())).Id("get").Call().Qual("reflect", "Value").Block(
 		jen.Return().Qual("reflect", "ValueOf").Call(jen.Id("o").Dot(field.goName())),
+	).Line()
+}
+
+type setMethodCoder struct{}
+
+func (c *setMethodCoder) declarationCode() jen.Code {
+	return jen.Id("set").Call(jen.Qual("reflect", "Value")).Comment("for binding")
+}
+
+func (c *setMethodCoder) implementationCode(so *specificObject) jen.Code {
+	var field fieldCoder
+	for _, f := range so.fields {
+		if f.goName() != "Type" && f.goName() != "HasMore" {
+			field = f
+			break
+		}
+	}
+
+	return jen.Comment("for binding").Line().Func().Params(jen.Id("o").Op("*").Id(so.name())).Id("set").Call(jen.Id("v").Qual("reflect", "Value")).Block(
+		jen.Id("o").Dot(field.goName()).Op("=").Id("v").Dot("Interface").Call().Assert(field.getTypeCode()),
 	).Line()
 }
 
@@ -35,7 +55,7 @@ func init() {
 					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
 					pv.strMapName = "PropertyValueMap"
 					pv.listName = "PropertyValueArray"
-					pv.specialMethods = append(pv.specialMethods, &valueMethodCoder{})
+					pv.specialMethods = append(pv.specialMethods, &getMethodCoder{}, &setMethodCoder{})
 					return nil
 				},
 			},

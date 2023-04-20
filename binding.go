@@ -1,6 +1,7 @@
 package notion
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -24,7 +25,7 @@ func init() {
 
 // UnmarshalPage は渡されたpageのプロパティ・カバー・アイコンをdstに格納します
 // dstは適切にタグ付けされたstructへのポインタである必要があります
-func UnmarshalPage(page Page, dst any) error {
+func UnmarshalPage(page *Page, dst any) error {
 	t := reflect.TypeOf(dst)
 	v := reflect.ValueOf(dst)
 	if t.Kind() != reflect.Pointer {
@@ -43,7 +44,7 @@ func UnmarshalPage(page Page, dst any) error {
 				err = fmt.Errorf("%v", r)
 			}
 		}()
-		fv.Set(prop.value())
+		fv.Set(prop.get())
 		return err
 	}
 
@@ -68,8 +69,46 @@ func UnmarshalPage(page Page, dst any) error {
 // GetUpdatePageParams は渡されたsrcと現在のpageを比較し、
 // プロパティ・カバー・アイコンを更新するためのUpdatePageParams、または更新が不要な場合のnilを返します
 // srcは適切にタグ付けされたstruct（またはそのポインタ）である必要があります
-func GetUpdatePageParams(src any, page Page) *UpdatePageParams {
-	return nil
+func GetUpdatePageParams(src any, page *Page) (*UpdatePageParams, error) {
+	t := reflect.TypeOf(src)
+	v := reflect.ValueOf(src)
+	if t.Kind() != reflect.Pointer {
+		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
+	}
+
+	t = t.Elem()
+	v = v.Elem()
+	if t.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
+	}
+
+	var params *UpdatePageParams
+	for i := 0; i < t.NumField(); i++ {
+		sf := t.Field(i)
+		if sf.Tag.Get("notion") != "" {
+			propId := sf.Tag.Get("notion") // TODO カバーやアイコンの考慮
+			prop := page.Properties.Get(propId)
+			if prop == nil {
+				return nil, fmt.Errorf("タグ %q に相当するプロパティがありません", propId)
+			}
+
+			json1, _ := json.Marshal(prop.get().Interface())
+			json2, _ := json.Marshal(v.Field(i).Interface())
+			if string(json1) != string(json2) {
+				if params == nil {
+					params = &UpdatePageParams{Properties: PropertyValueMap{}}
+				}
+				pvu := propertyValueUnmarshaler{}
+				data, _ := json.Marshal(prop)
+				_ = pvu.UnmarshalJSON(data)
+				pvu.value.set(v.Field(i))
+
+				params.Properties[propId] = pvu.value
+			}
+		}
+	}
+
+	return params, nil
 }
 
 // GetCreatePageParams は渡されたsrcからdbの定義に従って

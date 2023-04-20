@@ -19,7 +19,8 @@ Each page property value object contains the following keys. In addition, it con
 */
 type PropertyValue interface {
 	isPropertyValue()
-	value() reflect.Value // for binding
+	get() reflect.Value // for binding
+	set(reflect.Value)  // for binding
 	GetId() string
 }
 type propertyValueCommon struct {
@@ -136,8 +137,13 @@ type TitlePropertyValue struct {
 func (_ *TitlePropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *TitlePropertyValue) value() reflect.Value {
+func (o *TitlePropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Title)
+}
+
+// for binding
+func (o *TitlePropertyValue) set(v reflect.Value) {
+	o.Title = v.Interface().(RichTextArray)
 }
 
 /*
@@ -154,8 +160,13 @@ type RichTextPropertyValue struct {
 func (_ *RichTextPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *RichTextPropertyValue) value() reflect.Value {
+func (o *RichTextPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.RichText)
+}
+
+// for binding
+func (o *RichTextPropertyValue) set(v reflect.Value) {
+	o.RichText = v.Interface().(RichTextArray)
 }
 
 // Number property values
@@ -168,8 +179,13 @@ type NumberPropertyValue struct {
 func (_ *NumberPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *NumberPropertyValue) value() reflect.Value {
+func (o *NumberPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Number)
+}
+
+// for binding
+func (o *NumberPropertyValue) set(v reflect.Value) {
+	o.Number = v.Interface().(nullv4.Float)
 }
 
 // Select property values
@@ -182,8 +198,13 @@ type SelectPropertyValue struct {
 func (_ *SelectPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *SelectPropertyValue) value() reflect.Value {
+func (o *SelectPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Select)
+}
+
+// for binding
+func (o *SelectPropertyValue) set(v reflect.Value) {
+	o.Select = v.Interface().(*Option)
 }
 
 // Status property values
@@ -196,8 +217,13 @@ type StatusPropertyValue struct {
 func (_ *StatusPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *StatusPropertyValue) value() reflect.Value {
+func (o *StatusPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Status)
+}
+
+// for binding
+func (o *StatusPropertyValue) set(v reflect.Value) {
+	o.Status = v.Interface().(Option)
 }
 
 // Multi-select property values
@@ -210,8 +236,13 @@ type MultiSelectPropertyValue struct {
 func (_ *MultiSelectPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *MultiSelectPropertyValue) value() reflect.Value {
+func (o *MultiSelectPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.MultiSelect)
+}
+
+// for binding
+func (o *MultiSelectPropertyValue) set(v reflect.Value) {
+	o.MultiSelect = v.Interface().([]Option)
 }
 
 // Date property values
@@ -224,8 +255,13 @@ type DatePropertyValue struct {
 func (_ *DatePropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *DatePropertyValue) value() reflect.Value {
+func (o *DatePropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Date)
+}
+
+// for binding
+func (o *DatePropertyValue) set(v reflect.Value) {
+	o.Date = v.Interface().(*DatePropertyValueData)
 }
 
 /*
@@ -255,8 +291,13 @@ type FormulaPropertyValue struct {
 func (_ *FormulaPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *FormulaPropertyValue) value() reflect.Value {
+func (o *FormulaPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Formula)
+}
+
+// for binding
+func (o *FormulaPropertyValue) set(v reflect.Value) {
+	o.Formula = v.Interface().(Formula)
 }
 func (o *FormulaPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias FormulaPropertyValue
@@ -357,8 +398,13 @@ type RelationPropertyValue struct {
 func (_ *RelationPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *RelationPropertyValue) value() reflect.Value {
+func (o *RelationPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Relation)
+}
+
+// for binding
+func (o *RelationPropertyValue) set(v reflect.Value) {
+	o.Relation = v.Interface().([]PageReference)
 }
 
 /*
@@ -378,8 +424,13 @@ type RollupPropertyValue struct {
 func (_ *RollupPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *RollupPropertyValue) value() reflect.Value {
+func (o *RollupPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Rollup)
+}
+
+// for binding
+func (o *RollupPropertyValue) set(v reflect.Value) {
+	o.Rollup = v.Interface().(Rollup)
 }
 func (o *RollupPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias RollupPropertyValue
@@ -408,8 +459,13 @@ type PeoplePropertyValue struct {
 func (_ *PeoplePropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *PeoplePropertyValue) value() reflect.Value {
+func (o *PeoplePropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.People)
+}
+
+// for binding
+func (o *PeoplePropertyValue) set(v reflect.Value) {
+	o.People = v.Interface().(Users)
 }
 
 /*
@@ -427,8 +483,13 @@ type FilesPropertyValue struct {
 func (_ *FilesPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *FilesPropertyValue) value() reflect.Value {
+func (o *FilesPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Files)
+}
+
+// for binding
+func (o *FilesPropertyValue) set(v reflect.Value) {
+	o.Files = v.Interface().(Files)
 }
 
 // Checkbox property values
@@ -441,8 +502,13 @@ type CheckboxPropertyValue struct {
 func (_ *CheckboxPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *CheckboxPropertyValue) value() reflect.Value {
+func (o *CheckboxPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Checkbox)
+}
+
+// for binding
+func (o *CheckboxPropertyValue) set(v reflect.Value) {
+	o.Checkbox = v.Interface().(bool)
 }
 
 // URL property values
@@ -455,8 +521,13 @@ type UrlPropertyValue struct {
 func (_ *UrlPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *UrlPropertyValue) value() reflect.Value {
+func (o *UrlPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Url)
+}
+
+// for binding
+func (o *UrlPropertyValue) set(v reflect.Value) {
+	o.Url = v.Interface().(nullv4.String)
 }
 
 // Email property values
@@ -469,8 +540,13 @@ type EmailPropertyValue struct {
 func (_ *EmailPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *EmailPropertyValue) value() reflect.Value {
+func (o *EmailPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.Email)
+}
+
+// for binding
+func (o *EmailPropertyValue) set(v reflect.Value) {
+	o.Email = v.Interface().(nullv4.String)
 }
 
 // Phone number property values
@@ -483,8 +559,13 @@ type PhoneNumberPropertyValue struct {
 func (_ *PhoneNumberPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *PhoneNumberPropertyValue) value() reflect.Value {
+func (o *PhoneNumberPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.PhoneNumber)
+}
+
+// for binding
+func (o *PhoneNumberPropertyValue) set(v reflect.Value) {
+	o.PhoneNumber = v.Interface().(nullv4.String)
 }
 
 // Created time property values
@@ -497,8 +578,13 @@ type CreatedTimePropertyValue struct {
 func (_ *CreatedTimePropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *CreatedTimePropertyValue) value() reflect.Value {
+func (o *CreatedTimePropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.CreatedTime)
+}
+
+// for binding
+func (o *CreatedTimePropertyValue) set(v reflect.Value) {
+	o.CreatedTime = v.Interface().(ISO8601String)
 }
 
 // Created by property values
@@ -511,8 +597,13 @@ type CreatedByPropertyValue struct {
 func (_ *CreatedByPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *CreatedByPropertyValue) value() reflect.Value {
+func (o *CreatedByPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.CreatedBy)
+}
+
+// for binding
+func (o *CreatedByPropertyValue) set(v reflect.Value) {
+	o.CreatedBy = v.Interface().(PartialUser)
 }
 
 // Last edited time property values
@@ -525,8 +616,13 @@ type LastEditedTimePropertyValue struct {
 func (_ *LastEditedTimePropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *LastEditedTimePropertyValue) value() reflect.Value {
+func (o *LastEditedTimePropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.LastEditedTime)
+}
+
+// for binding
+func (o *LastEditedTimePropertyValue) set(v reflect.Value) {
+	o.LastEditedTime = v.Interface().(ISO8601String)
 }
 
 // Last edited by property values
@@ -539,8 +635,13 @@ type LastEditedByPropertyValue struct {
 func (_ *LastEditedByPropertyValue) isPropertyValue() {}
 
 // for binding
-func (o *LastEditedByPropertyValue) value() reflect.Value {
+func (o *LastEditedByPropertyValue) get() reflect.Value {
 	return reflect.ValueOf(o.LastEditedBy)
+}
+
+// for binding
+func (o *LastEditedByPropertyValue) set(v reflect.Value) {
+	o.LastEditedBy = v.Interface().(User)
 }
 func (o *LastEditedByPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias LastEditedByPropertyValue

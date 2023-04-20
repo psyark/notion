@@ -104,18 +104,20 @@ func init() {
 				omitEmpty: true,
 			},
 			{
-				Desc:     "Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.",
-				In:       "body",
-				Name:     "archived",
-				Type:     "boolean",
-				typeCode: jen.Bool(),
+				Desc:      "Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.",
+				In:        "body",
+				Name:      "archived",
+				Type:      "boolean",
+				typeCode:  jen.Op("*").Bool(),
+				omitEmpty: true,
 			},
 			{
-				Desc:     "A page icon for the page. Supported types are [external file object](https://developers.notion.com/reference/file-object) or [emoji object](https://developers.notion.com/reference/emoji-object).",
-				In:       "body",
-				Name:     "icon",
-				Type:     "json",
-				typeCode: jen.Id("FileOrEmoji"), // TODO ExternalFileOrEmoji
+				Desc:      "A page icon for the page. Supported types are [external file object](https://developers.notion.com/reference/file-object) or [emoji object](https://developers.notion.com/reference/emoji-object).",
+				In:        "body",
+				Name:      "icon",
+				Type:      "json",
+				typeCode:  jen.Id("FileOrEmoji"), // TODO ExternalFileOrEmoji
+				omitEmpty: true,
 			},
 			{
 				Desc:      "A cover image for the page. Only [external file objects](https://developers.notion.com/reference/file-object) are supported.",

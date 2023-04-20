@@ -239,7 +239,7 @@ func convertAll() error {
 
 		file := jen.NewFile("notion")
 		file.Func().Id("getTypeForBinding").Params(jen.Id("p").Id("Property")).String().Block(
-			jen.Switch(jen.Id("p").Op(".").Parens(jen.Type())).Block(cases...),
+			jen.Switch(jen.Id("p").Assert(jen.Type())).Block(cases...),
 			jen.Panic(jen.Id("p")),
 		)
 		if err := file.Save("../../binding.helper.go"); err != nil {

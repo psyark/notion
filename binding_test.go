@@ -2,6 +2,7 @@ package notion
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -50,10 +51,32 @@ func TestBinding(t *testing.T) {
 
 	for _, page := range pagi.Results {
 		hoge := &TheDatabase{}
+		if err := UnmarshalPage(&page, hoge); err != nil {
+			t.Fatal(err)
+		}
+
+		// _, _ = fmt.Println(hoge.Title, hoge.Text, hoge.Number, hoge.Date, hoge.URL)
+	}
+
+	{
+		page, err := cli.RetrievePage(ctx, DATABASE_PAGE_FOR_READ1, requestId(t.Name()+"_Page"), useCache())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		hoge := &TheDatabase{}
 		if err := UnmarshalPage(page, hoge); err != nil {
 			t.Fatal(err)
 		}
 
-		_, _ = fmt.Println(hoge.Title, hoge.Text, hoge.Number, hoge.Date, hoge.URL)
+		// hoge.Title = append(hoge.Title, &TextRichText{Text: Text{Content: "HOGE"}})
+		hoge.Number = nullv4.FloatFrom(hoge.Number.Float64 + 100)
+		hoge.URL = nullv4.StringFrom(hoge.URL.String + "/hoge")
+		if params, err := GetUpdatePageParams(hoge, page); err != nil {
+			t.Fatal(err)
+		} else {
+			data, _ := json.MarshalIndent(params, "", "  ")
+			fmt.Println(string(data))
+		}
 	}
 }
