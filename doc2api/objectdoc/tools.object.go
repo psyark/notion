@@ -143,6 +143,13 @@ func (c *specificObject) symbolCode() jen.Code {
 	for _, a := range c.getAncestors() {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + a.name()).Params().Block().Line()
 	}
+	// 親のスペシャルメソッドを実装
+	for _, p := range c.parents {
+		for _, sm := range p.specialMethods {
+			code.Add(sm.implementationCode(c))
+		}
+	}
+
 	// typeSpecificFieldをGetterに
 	// for _, f := range c.fields {
 	// 	if f, ok := f.(*fixedStringField); ok {
@@ -188,6 +195,12 @@ func (c *specificObject) symbolCode() jen.Code {
 	return code
 }
 
+// specialMethodCoder はabstractObjectに特別なメソッドを追加したい場合に使います
+type specialMethodCoder interface {
+	declarationCode() jen.Code
+	implementationCode(*specificObject) jen.Code
+}
+
 // abstractObject は、共通の性質を持つspecificObject又はabstractObjectの総称です
 // （例：File）
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
@@ -198,7 +211,7 @@ type abstractObject struct {
 	variants       []objectCoder
 	listName       string // このインターフェイスのスライスの名前（UnmarshalJSONが作成されます）
 	strMapName     string // このインターフェイスのmap[string]の名前（UnmarshalJSONが作成されます）
-	specialMethods []jen.Code
+	specialMethods []specialMethodCoder
 }
 
 // addVariant は指定したobjectCoderをこのインターフェイスのバリアントとして登録し、code()に以下のことを行わせます
@@ -241,7 +254,9 @@ func (c *abstractObject) symbolCode() jen.Code {
 			methods = append(methods, jen.Id(p.name())) // 親インターフェイスの継承
 		}
 		methods = append(methods, jen.Id("is"+c.name()).Params()) // このインターフェイスのisメソッド
-		methods = append(methods, c.specialMethods...)            // 特殊メソッド
+		for _, sm := range c.specialMethods {
+			methods = append(methods, sm.declarationCode()) // 特殊メソッド
+		}
 		// methods = append(methods, jen.Id("Get"+strcase.UpperCamelCase(c.specifiedBy)).Params().String())
 		// 共通フィールドのgetter宣言
 		for _, f := range c.fields {

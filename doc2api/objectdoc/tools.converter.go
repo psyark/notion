@@ -221,8 +221,6 @@ func convertAll() error {
 	}
 
 	{
-		file := jen.NewFile("notion")
-
 		cases := []jen.Code{}
 		for _, v := range global.getAbstractObject("PropertyValue").variants {
 			cases = append(cases, jen.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value"))))
@@ -237,11 +235,9 @@ func convertAll() error {
 			typeCodeStr := (jen.Var().Id("_").Add(field.getTypeCode())).GoString()
 			typeCodeStr = strings.TrimPrefix(typeCodeStr, "var _ ")
 			cases = append(cases, jen.Return().Lit(typeCodeStr))
-			file.Func().Params(jen.Id("v").Id(v.name())).Id("value").Params().Qual("reflect", "Value").Block(
-				jen.Return().Qual("reflect", "ValueOf").Call(jen.Id("v").Dot(field.goName())),
-			)
 		}
 
+		file := jen.NewFile("notion")
 		file.Func().Id("getTypeForBinding").Params(jen.Id("p").Id("Property")).String().Block(
 			jen.Switch(jen.Id("p").Op(".").Parens(jen.Type())).Block(cases...),
 			jen.Panic(jen.Id("p")),

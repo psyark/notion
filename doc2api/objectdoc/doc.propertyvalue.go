@@ -4,6 +4,27 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
+// PropertyValueに value()reflect.Value メソッドを追加し、bindingを行えるようにする
+type valueMethodCoder struct{}
+
+func (c *valueMethodCoder) declarationCode() jen.Code {
+	return jen.Id("value").Call().Qual("reflect", "Value").Comment("for binding")
+}
+
+func (c *valueMethodCoder) implementationCode(so *specificObject) jen.Code {
+	var field fieldCoder
+	for _, f := range so.fields {
+		if f.goName() != "Type" && f.goName() != "HasMore" {
+			field = f
+			break
+		}
+	}
+
+	return jen.Comment("for binding").Line().Func().Params(jen.Id("o").Op("*").Id(so.name())).Id("value").Call().Qual("reflect", "Value").Block(
+		jen.Return().Qual("reflect", "ValueOf").Call(jen.Id("o").Dot(field.goName())),
+	).Line()
+}
+
 func init() {
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/property-value-object",
@@ -14,7 +35,7 @@ func init() {
 					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
 					pv.strMapName = "PropertyValueMap"
 					pv.listName = "PropertyValueArray"
-					pv.specialMethods = append(pv.specialMethods, jen.Id("value").Call().Qual("reflect", "Value"))
+					pv.specialMethods = append(pv.specialMethods, &valueMethodCoder{})
 					return nil
 				},
 			},
