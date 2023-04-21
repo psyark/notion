@@ -243,7 +243,7 @@ func convertAll() error {
 							jen.Id("t").Dot("Fatal").Call(jen.Err()),
 						),
 						jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "MarshalIndent").Call(jen.Id("u").Dot("value"), jen.Lit(""), jen.Lit("  ")),
-						jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Id("ok")).Block(
+						jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(
 							jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("mismatch:\nwant: %s\ngot : %s"), jen.Id("want"), jen.Id("got"))),
 						),
 					),

@@ -36,7 +36,10 @@ func init() {
 				Code:     "{\n  \"type\": \"external\",\n  \"external\": {\n    \"url\": \"https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addAbstractUnmarshalTest("File", e.Code)
+					return nil
+				},
 			}}},
 			&objectDocParagraphElement{
 				Text: "Page, embed, image, video, file, pdf, and bookmark block types all contain file objects. Icon and cover page object values also contain file objects.\n\nEach file object includes the following fields:",
@@ -63,7 +66,7 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					cs := b.addSpecificObject("NotionHostedFile", e.Text).addFields(
 						&fixedStringField{name: "type", value: "file"},
-						&field{name: "name", typeCode: jen.String(), comment: "undocumented"},
+						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
 					)
 					b.getAbstractObject("File").addVariant(cs)
 					b.getAbstractObject("FileOrEmoji").addVariant(cs)
@@ -129,7 +132,11 @@ func init() {
 				Code:     "{\n    \"object\": \"list\",\n    \"results\": [\n        {\n            \"object\": \"block\",\n            \"id\": \"47a920e4-346c-4df8-ae78-905ce10adcb8\",\n            \"parent\": {\n                \"type\": \"page_id\",\n                \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n            },\n            \"created_time\": \"2022-12-15T00:18:00.000Z\",\n            \"last_edited_time\": \"2022-12-15T00:18:00.000Z\",\n            \"created_by\": {\n                \"object\": \"user\",\n                \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n            },\n            \"last_edited_by\": {\n                \"object\": \"user\",\n                \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n            },\n            \"has_children\": false,\n            \"archived\": false,\n            \"type\": \"paragraph\",\n            \"paragraph\": {\n                \"rich_text\": [],\n                \"color\": \"default\"\n            }\n        },\n        {\n            \"object\": \"block\",\n            \"id\": \"3c29dedf-00a5-4915-b137-120c61f5e5d8\",\n            \"parent\": {\n                \"type\": \"page_id\",\n                \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n            },\n            \"created_time\": \"2022-12-15T00:18:00.000Z\",\n            \"last_edited_time\": \"2022-12-15T00:18:00.000Z\",\n            \"created_by\": {\n                \"object\": \"user\",\n                \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n            },\n            \"last_edited_by\": {\n                \"object\": \"user\",\n                \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n            },\n            \"has_children\": false,\n            \"archived\": false,\n            \"type\": \"file\",\n            \"file\": {\n                \"caption\": [],\n                \"type\": \"file\",\n                \"file\": {\n                    \"url\": \"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/fa6c03f0-e608-45d0-9327-4cd7a5e56e71/TestFile.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20221215%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20221215T002012Z&X-Amz-Expires=3600&X-Amz-Signature=bf13ca59f618077852298cb92aedc4dd1becdc961c31d73cbc030ef93f2853c4&X-Amz-SignedHeaders=host&x-id=GetObject\",\n                    \"expiry_time\": \"2022-12-15T01:20:12.928Z\"\n                }\n            }\n        },\n    ],\n    \"next_cursor\": null,\n    \"has_more\": false,\n    \"type\": \"block\",\n    \"block\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					// TODO
+					// b.addAbstractUnmarshalTest("BlockPagination", e.Code)
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "External files",

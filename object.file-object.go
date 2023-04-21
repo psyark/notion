@@ -68,7 +68,7 @@ func (a *Files) UnmarshalJSON(data []byte) error {
 // Notion-hosted files
 type NotionHostedFile struct {
 	Type alwaysFile           `json:"type"`
-	Name string               `json:"name"` // undocumented
+	Name string               `json:"name,omitempty"` // undocumented
 	File NotionHostedFileData `json:"file"`
 }
 
