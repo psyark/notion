@@ -280,7 +280,9 @@ func (c *abstractObject) symbolCode() jen.Code {
 	}
 
 	// variant Unmarshaler
-	code.Add(c.variantUnmarshaler())
+	if c.specifiedBy != "" {
+		code.Add(c.variantUnmarshaler())
+	}
 
 	// リスト
 	if c.listName != "" {

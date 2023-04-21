@@ -8,10 +8,11 @@ import (
 // builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
 // 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは冪等に保たれます
 type builder struct {
-	fileName      string
-	url           string
-	globalSymbols *sync.Map
-	localSymbols  []symbolCoder
+	fileName       string
+	url            string
+	globalSymbols  *sync.Map
+	localSymbols   []symbolCoder
+	unmarshalTests map[string][]string
 
 	// Deprecated:
 	global *builder // TODO ローカル/グローバルビルダーを作るのではなく、唯一のビルダーを作る
@@ -68,4 +69,14 @@ func (b *builder) getSpecificObject(name string) *specificObject {
 		}
 	}
 	return nil
+}
+
+func (b *builder) addAbstractUnmarshalTest(name string, jsonCode string) {
+	if b.unmarshalTests == nil {
+		b.unmarshalTests = map[string][]string{}
+	}
+	if _, ok := b.unmarshalTests[name]; !ok {
+		b.unmarshalTests[name] = []string{}
+	}
+	b.unmarshalTests[name] = append(b.unmarshalTests[name], jsonCode)
 }

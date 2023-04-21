@@ -31,6 +31,8 @@ func (t *objectDocTokenizer) next() (objectDocElement, error) {
 			block = &objectDocParametersElement{}
 		case "[block:api-header]":
 			block = &objectDocAPIHeaderElement{}
+		case "[block:image]":
+			block = &objectDocImageElement{}
 		default:
 			return nil, fmt.Errorf("unknown block: %v", t.lines[t.index])
 		}
