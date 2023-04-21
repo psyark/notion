@@ -136,6 +136,8 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 					c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name() + "Data")})
 				}
 			}
+		} else {
+			panic(fmt.Sprintf("タイプが不明です: %v", c.name()))
 		}
 	}
 

@@ -92,7 +92,19 @@ func TestUpdatePage(t *testing.T) {
 
 func TestQueryDatabase(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.QueryDatabase(ctx, DATABASE, &QueryDatabaseParams{}, requestId("QueryDatabase"), useCache(), validateResult()); err != nil {
+	params := &QueryDatabaseParams{
+		Filter: RichTextFilter{
+			filterCommon: filterCommon{
+				Property: "URL",
+			},
+			RichText: RichTextFilterData{
+				Equals: "http://example.com",
+			},
+		},
+	}
+	if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId("QueryDatabase_f"), useCache(), validateResult()); err != nil {
 		t.Fatal(err)
+	} else {
+		fmt.Println(len(pagi.Results))
 	}
 }

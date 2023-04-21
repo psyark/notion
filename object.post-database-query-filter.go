@@ -76,6 +76,13 @@ func (_ *FileFilter) isFilter() {}
 // Rich text
 type RichTextFilter struct {
 	filterCommon
+	RichText RichTextFilterData `json:"rich_text"`
+}
+
+func (_ *RichTextFilter) isFilter() {}
+
+// Rich text
+type RichTextFilterData struct {
 	Contains       string `json:"contains,omitempty"`         // The string to compare the text property value against.  Returns database entries with a text property value that includes the provided string.
 	DoesNotContain string `json:"does_not_contain,omitempty"` // The string to compare the text property value against.  Returns database entries with a text property value that does not include the provided string.
 	DoesNotEqual   string `json:"does_not_equal,omitempty"`   // The string to compare the text property value against.  Returns database entries with a text property value that does not match the provided string.
@@ -85,5 +92,3 @@ type RichTextFilter struct {
 	IsNotEmpty     bool   `json:"is_not_empty,omitempty"`     // Whether the text property value contains any data.   Returns database entries with a text property value that contains data.
 	StartsWith     string `json:"starts_with,omitempty"`      // The string to compare the text property value against.  Returns database entries with a text property value that starts with the provided string.
 }
-
-func (_ *RichTextFilter) isFilter() {}
