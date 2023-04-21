@@ -158,10 +158,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 			return err
 		}
 
-		got = normalizeJSON(got)
-		want := normalizeJSON(resBody)
-
-		if bytes.Equal(want, got) {
+		if want, got, ok := compareJSON(resBody, got); ok {
 			_ = os.Remove(fmt.Sprintf("testout/fail/%s.want.json", fileName))
 			_ = os.Remove(fmt.Sprintf("testout/fail/%s.got.json", fileName))
 			return os.WriteFile(fmt.Sprintf("testout/pass/%s.json", fileName), want, 0666)
@@ -178,11 +175,4 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	}
 
 	return nil
-}
-
-func normalizeJSON(src []byte) []byte {
-	tmp := map[string]interface{}{}
-	json.Unmarshal(src, &tmp)
-	out, _ := json.MarshalIndent(tmp, "", "  ")
-	return out
 }
