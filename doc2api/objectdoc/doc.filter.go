@@ -136,7 +136,7 @@ func init() {
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is after the provided date.",
 				ExampleValue: "\"2021-05-10\"\n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Id("ISO8601String"), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 					return nil
 				},
 			}, {
@@ -145,7 +145,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is before the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Id("ISO8601String"), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 					return nil
 				},
 			}, {
@@ -154,7 +154,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Id("ISO8601String"), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 					return nil
 				},
 			}, {
@@ -163,7 +163,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value contains no data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Bool(), omitEmpty))
 					return nil
 				},
 			}, {
@@ -172,7 +172,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Bool(), omitEmpty))
 					return nil
 				},
 			}, {
@@ -208,7 +208,7 @@ func init() {
 				Field:        "on_or_after",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Id("ISO8601String"), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 					return nil
 				},
 			}, {
@@ -217,7 +217,7 @@ func init() {
 				Field:        "on_or_before",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Op("*").Id("ISO8601String"), omitEmpty))
+					b.getSpecificObject("DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 					return nil
 				},
 			}, {
@@ -266,7 +266,10 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Filter").addVariant(
+						b.addSpecificObject("FileFilter", e.Text),
+					)
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
@@ -275,7 +278,8 @@ func init() {
 				Field:        "is_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FileFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					return nil
 				},
 			}, {
 				Description:  "Whether the files property value contains data. \n\nReturns all entries with a populated files property value.",
@@ -283,16 +287,15 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("FileFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Blueprint\",\n    \"files\": {\n      \"is_not_empty\": true\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Formula",
@@ -576,81 +579,90 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					return nil // TODO
+					b.getAbstractObject("Filter").addVariant(
+						b.addSpecificObject("RichTextFilter", e.Text),
+					)
+					return nil
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Field:        "contains",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Field:        "does_not_contain",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Field:        "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
-				ExampleValue: "\"Q2\"",
 				Field:        "ends_with",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
+				ExampleValue: `"Q2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Field:        "equals",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					return nil
 				},
 			}, {
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
-				ExampleValue: "\"Moved\"",
 				Field:        "starts_with",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
+				ExampleValue: `"Moved"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // TODO
+					b.getSpecificObject("RichTextFilter").addFields(e.asField(jen.String(), omitEmpty))
+					return nil
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Description\",\n    \"rich_text\": {\n      \"contains\": \"cross-team\"\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) error {
-					return nil // TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
 			}}},
 			&objectDocHeadingElement{
 				Text: "Rollup",
