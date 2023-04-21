@@ -18,17 +18,17 @@ type Filter interface {
 
 Each filter object contains the following fields:
 */
-type filterCommon struct {
+type FilterCommon struct {
 	Property string `json:"property"` // The name of the property as it appears in the database, or the property ID.
 }
 
-func (c *filterCommon) GetProperty() string {
+func (c *FilterCommon) GetProperty() string {
 	return c.Property
 }
 
 // Checkbox
 type CheckboxFilter struct {
-	filterCommon
+	FilterCommon
 	Equals       *bool `json:"equals,omitempty"`         // Whether a checkbox property value matches the provided value exactly.  Returns or excludes all database entries with an exact value match.
 	DoesNotEqual *bool `json:"does_not_equal,omitempty"` // Whether a checkbox property value differs from the provided value.   Returns or excludes all database entries with a difference in values.
 }
@@ -45,7 +45,7 @@ A date filter condition can be used to limit date property value types and the t
 The condition contains the below fields:
 */
 type DateFilter struct {
-	filterCommon
+	FilterCommon
 	After      ISO8601String `json:"after,omitempty"`        // The value to compare the date property value against.   Returns database entries where the date property value is after the provided date.
 	Before     ISO8601String `json:"before,omitempty"`       // The value to compare the date property value against.  Returns database entries where the date property value is before the provided date.
 	Equals     ISO8601String `json:"equals,omitempty"`       // The value to compare the date property value against.  Returns database entries where the date property value is the provided date.
@@ -66,7 +66,7 @@ func (_ *DateFilter) isFilter() {}
 
 // Files
 type FileFilter struct {
-	filterCommon
+	FilterCommon
 	IsEmpty    bool `json:"is_empty,omitempty"`     // Whether the files property value does not contain any data.  Returns all database entries with an empty files property value.
 	IsNotEmpty bool `json:"is_not_empty,omitempty"` // Whether the files property value contains data.   Returns all entries with a populated files property value.
 }
@@ -75,7 +75,7 @@ func (_ *FileFilter) isFilter() {}
 
 // Rich text
 type RichTextFilter struct {
-	filterCommon
+	FilterCommon
 	RichText RichTextFilterData `json:"rich_text"`
 }
 

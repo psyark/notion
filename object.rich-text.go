@@ -38,19 +38,19 @@ type RichText interface {
 	GetPlainText() string
 	GetHref() *string
 }
-type richTextCommon struct {
+type RichTextCommon struct {
 	Annotations Annotations `json:"annotations"` // The information used to style the rich text object. Refer to the annotation object section below for details.
 	PlainText   string      `json:"plain_text"`  // The plain text without annotations.
 	Href        *string     `json:"href"`        // The URL of any link or Notion mention in this text, if any.
 }
 
-func (c *richTextCommon) GetAnnotations() Annotations {
+func (c *RichTextCommon) GetAnnotations() Annotations {
 	return c.Annotations
 }
-func (c *richTextCommon) GetPlainText() string {
+func (c *RichTextCommon) GetPlainText() string {
 	return c.PlainText
 }
-func (c *richTextCommon) GetHref() *string {
+func (c *RichTextCommon) GetHref() *string {
 	return c.Href
 }
 
@@ -135,7 +135,7 @@ Example rich text equation object
 }
 */
 type EquationRichText struct {
-	richTextCommon
+	RichTextCommon
 	Type       alwaysEquation `json:"type"`
 	Expression string         `json:"expression"` // The LaTeX string representing the inline equation.
 }
@@ -190,7 +190,7 @@ func (u *mentionUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // Mention
 type MentionRichText struct {
-	richTextCommon
+	RichTextCommon
 	Type    alwaysMention `json:"type"`
 	Mention Mention       `json:"mention"`
 }
@@ -473,7 +473,7 @@ func (_ *UserMention) isMention() {}
 
 // Text
 type TextRichText struct {
-	richTextCommon
+	RichTextCommon
 	Type alwaysText `json:"type"`
 	Text Text       `json:"text"`
 }

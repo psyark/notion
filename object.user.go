@@ -16,15 +16,15 @@ type DetailedUser interface {
 	GetName() string
 	GetAvatarUrl() nullv4.String
 }
-type detailedUserCommon struct {
+type DetailedUserCommon struct {
 	Name      string        `json:"name"`       // User's name, as displayed in Notion.
 	AvatarUrl nullv4.String `json:"avatar_url"` // Chosen avatar image.
 }
 
-func (c *detailedUserCommon) GetName() string {
+func (c *DetailedUserCommon) GetName() string {
 	return c.Name
 }
-func (c *detailedUserCommon) GetAvatarUrl() nullv4.String {
+func (c *DetailedUserCommon) GetAvatarUrl() nullv4.String {
 	return c.AvatarUrl
 }
 
@@ -54,15 +54,15 @@ type User interface {
 All users
 These fields are shared by all users, including people and bots. Fields marked with * are always present.
 */
-type userCommon struct {
+type UserCommon struct {
 	Object alwaysUser `json:"object"` // Always "user"
 	Id     uuid.UUID  `json:"id"`     // Unique identifier for this user.
 }
 
-func (c *userCommon) GetObject() alwaysUser {
+func (c *UserCommon) GetObject() alwaysUser {
 	return c.Object
 }
-func (c *userCommon) GetId() uuid.UUID {
+func (c *UserCommon) GetId() uuid.UUID {
 	return c.Id
 }
 
@@ -112,7 +112,7 @@ func (a *Users) UnmarshalJSON(data []byte) error {
 
 // The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
 type PartialUser struct {
-	userCommon
+	UserCommon
 }
 
 func (_ *PartialUser) isUser() {}
@@ -122,8 +122,8 @@ People
 User objects that represent people have the type property set to "person". These objects also have the following properties:
 */
 type PersonUser struct {
-	detailedUserCommon
-	userCommon
+	DetailedUserCommon
+	UserCommon
 	Type   alwaysPerson `json:"type"`
 	Person PersonData   `json:"person"` // Properties only present for non-bot users.
 }
@@ -156,8 +156,8 @@ A user object's type property is"bot" when the user object represents a bot. A b
 }
 */
 type BotUser struct {
-	detailedUserCommon
-	userCommon
+	DetailedUserCommon
+	UserCommon
 	Type alwaysBot `json:"type"`
 	Bot  BotData   `json:"bot"` // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
 }

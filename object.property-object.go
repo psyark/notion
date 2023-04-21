@@ -17,15 +17,15 @@ type Property interface {
 }
 
 // Every database property object contains the following keys:
-type propertyCommon struct {
+type PropertyCommon struct {
 	Id   string `json:"id"`   // An identifier for the property, usually a short string of random letters and symbols.  Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
 	Name string `json:"name"` // The name of the property as it appears in Notion.
 }
 
-func (c *propertyCommon) GetId() string {
+func (c *PropertyCommon) GetId() string {
 	return c.Id
 }
-func (c *propertyCommon) GetName() string {
+func (c *PropertyCommon) GetName() string {
 	return c.Name
 }
 
@@ -109,7 +109,7 @@ func (m *PropertyMap) UnmarshalJSON(data []byte) error {
 
 // Checkbox
 type CheckboxProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type     alwaysCheckbox `json:"type"`
 	Checkbox struct{}       `json:"checkbox"` //  A checkbox database property is rendered in the Notion UI as a column that contains checkboxes. The checkbox type object is empty; there is no additional property configuration.
 }
@@ -118,7 +118,7 @@ func (_ *CheckboxProperty) isProperty() {}
 
 // Created by
 type CreatedByProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type      alwaysCreatedBy `json:"type"`
 	CreatedBy struct{}        `json:"created_by"` //  A created by database property is rendered in the Notion UI as a column that contains people mentions of each row's author as values.   The created_by type object is empty. There is no additional property configuration.
 }
@@ -127,7 +127,7 @@ func (_ *CreatedByProperty) isProperty() {}
 
 // Created time
 type CreatedTimeProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type        alwaysCreatedTime `json:"type"`
 	CreatedTime struct{}          `json:"created_time"` //  A created time database property is rendered in the Notion UI as a column that contains timestamps of when each row was created as values.   The created_time type object is empty. There is no additional property configuration.
 }
@@ -136,7 +136,7 @@ func (_ *CreatedTimeProperty) isProperty() {}
 
 // Date
 type DateProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type alwaysDate `json:"type"`
 	Date struct{}   `json:"date"` //  A date database property is rendered in the Notion UI as a column that contains date values.   The date type object is empty; there is no additional configuration.
 }
@@ -150,7 +150,7 @@ An email database property is represented in the Notion UI as a column that cont
 The email type object is empty. There is no additional property configuration.
 */
 type EmailProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type  alwaysEmail `json:"type"`
 	Email struct{}    `json:"email"`
 }
@@ -163,7 +163,7 @@ The Notion API does not yet support uploading files to Notion.
 A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.
 */
 type FilesProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type  alwaysFiles `json:"type"`
 	Files struct{}    `json:"files"`
 }
@@ -177,7 +177,7 @@ A formula database property is rendered in the Notion UI as a column that contai
 The formula type object defines the expression in the following fields:
 */
 type FormulaProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type    alwaysFormula       `json:"type"`
 	Formula FormulaPropertyData `json:"formula"`
 }
@@ -195,7 +195,7 @@ A last edited by database property is rendered in the Notion UI as a column that
 The last_edited_by type object is empty. There is no additional property configuration.
 */
 type LastEditedByProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type         alwaysLastEditedBy `json:"type"`
 	LastEditedBy struct{}           `json:"last_edited_by"`
 }
@@ -209,7 +209,7 @@ A last edited time database property is rendered in the Notion UI as a column th
 The last_edited_time type object is empty. There is no additional property configuration.
 */
 type LastEditedTimeProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type           alwaysLastEditedTime `json:"type"`
 	LastEditedTime struct{}             `json:"last_edited_time"`
 }
@@ -223,7 +223,7 @@ A multi-select database property is rendered in the Notion UI as a column that c
 The multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields:
 */
 type MultiSelectProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type        alwaysMultiSelect       `json:"type"`
 	MultiSelect MultiSelectPropertyData `json:"multi_select"`
 }
@@ -239,7 +239,7 @@ Number
 A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:
 */
 type NumberProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type   alwaysNumber       `json:"type"`
 	Number NumberPropertyData `json:"number"`
 }
@@ -255,7 +255,7 @@ People
 A people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration.
 */
 type PeopleProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type   alwaysPeople `json:"type"`
 	People struct{}     `json:"people"`
 }
@@ -269,7 +269,7 @@ A phone number database property is rendered in the Notion UI as a column that c
 The phone_number type object is empty. There is no additional property configuration.
 */
 type PhoneNumberProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type        alwaysPhoneNumber `json:"type"`
 	PhoneNumber struct{}          `json:"phone_number"`
 }
@@ -283,7 +283,7 @@ A relation database property is rendered in the Notion UI as column that contain
 The relation type object contains the following fields:
 */
 type RelationProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type     alwaysRelation `json:"type"`
 	Relation Relation       `json:"relation"`
 }
@@ -307,7 +307,7 @@ Rich text
 A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.
 */
 type RichTextProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type     alwaysRichText `json:"type"`
 	RichText struct{}       `json:"rich_text"`
 }
@@ -316,7 +316,7 @@ func (_ *RichTextProperty) isProperty() {}
 
 // Rollup
 type RollupProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type   alwaysRollup       `json:"type"`
 	Rollup RollupPropertyData `json:"rollup"`
 }
@@ -344,7 +344,7 @@ A select database property is rendered in the Notion UI as a column that contain
 The select type object contains an array of objects representing the available options. Each option object includes the following fields:
 */
 type SelectProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type   alwaysSelect       `json:"type"`
 	Select SelectPropertyData `json:"select"`
 }
@@ -357,7 +357,7 @@ type SelectPropertyData struct {
 
 // Status
 type StatusProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type   alwaysStatus       `json:"type"`
 	Status StatusPropertyData `json:"status"`
 }
@@ -374,7 +374,7 @@ Title
 A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.
 */
 type TitleProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type  alwaysTitle `json:"type"`
 	Title struct{}    `json:"title"`
 }
@@ -388,7 +388,7 @@ A URL database property is represented in the Notion UI as a column that contain
 The url type object is empty. There is no additional property configuration.
 */
 type UrlProperty struct {
-	propertyCommon
+	PropertyCommon
 	Type alwaysUrl `json:"type"`
 	Url  struct{}  `json:"url"`
 }
@@ -405,11 +405,11 @@ type Relation interface {
 	isRelation()
 	GetDatabaseId() uuid.UUID
 }
-type relationCommon struct {
+type RelationCommon struct {
 	DatabaseId uuid.UUID `json:"database_id"` // The database that the relation property refers to.   The corresponding linked page values must belong to the database in order to be valid.
 }
 
-func (c *relationCommon) GetDatabaseId() uuid.UUID {
+func (c *RelationCommon) GetDatabaseId() uuid.UUID {
 	return c.DatabaseId
 }
 
@@ -443,7 +443,7 @@ func (u *relationUnmarshaler) MarshalJSON() ([]byte, error) {
 
 // undocumented
 type SinglePropertyRelation struct {
-	relationCommon
+	RelationCommon
 	Type           alwaysSingleProperty `json:"type"`
 	SingleProperty struct{}             `json:"single_property"`
 }
@@ -452,7 +452,7 @@ func (_ *SinglePropertyRelation) isRelation() {}
 
 // undocumented
 type DualPropertyRelation struct {
-	relationCommon
+	RelationCommon
 	Type         alwaysDualProperty       `json:"type"`
 	DualProperty DualPropertyRelationData `json:"dual_property"`
 }

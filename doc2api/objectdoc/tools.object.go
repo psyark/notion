@@ -77,7 +77,7 @@ func (c *objectCommon) fieldCodes() []jen.Code {
 	fields := []jen.Code{}
 	for _, p := range c.parents {
 		if p.hasCommonField() {
-			fields = append(fields, jen.Id(strcase.LowerCamelCase(p.name())+"Common"))
+			fields = append(fields, jen.Id(p.commonObjectName()))
 		}
 	}
 	for _, f := range c.fields {
@@ -271,7 +271,7 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	// 共通フィールド
 	if len(c.fieldCodes()) != 0 {
 		copyOfC := *c
-		copyOfC.name_ = strcase.LowerCamelCase(c.name_) + "Common"
+		copyOfC.name_ = c.commonObjectName()
 		copyOfC.comment = c.fieldsComment
 		code.Add(copyOfC.objectCommon.symbolCode(b))
 		// 共通フィールドのgetter定義
@@ -337,6 +337,10 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 	}
 
 	return code
+}
+
+func (c *abstractObject) commonObjectName() string {
+	return c.name() + "Common"
 }
 
 type abstractList struct {

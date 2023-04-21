@@ -56,19 +56,19 @@ type Pagination interface {
 
 If an endpoint supports pagination, then the response object contains the below fields.
 */
-type paginationCommon struct {
+type PaginationCommon struct {
 	HasMore    bool       `json:"has_more"`    // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
 	NextCursor *string    `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  Only available when has_more is true.
 	Object     alwaysList `json:"object"`      // The constant string "list".
 }
 
-func (c *paginationCommon) GetHasMore() bool {
+func (c *PaginationCommon) GetHasMore() bool {
 	return c.HasMore
 }
-func (c *paginationCommon) GetNextCursor() *string {
+func (c *PaginationCommon) GetNextCursor() *string {
 	return c.NextCursor
 }
-func (c *paginationCommon) GetObject() alwaysList {
+func (c *PaginationCommon) GetObject() alwaysList {
 	return c.Object
 }
 

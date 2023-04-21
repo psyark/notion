@@ -9,28 +9,28 @@ import (
 // https://developers.notion.com/reference/intro
 
 type BlockPagination struct {
-	paginationCommon
+	PaginationCommon
 	Type alwaysBlock `json:"type"`
 }
 
 func (_ *BlockPagination) isPagination() {}
 
 type CommentPagination struct {
-	paginationCommon
+	PaginationCommon
 	Type alwaysComment `json:"type"`
 }
 
 func (_ *CommentPagination) isPagination() {}
 
 type DatabasePagination struct {
-	paginationCommon
+	PaginationCommon
 	Type alwaysDatabase `json:"type"`
 }
 
 func (_ *DatabasePagination) isPagination() {}
 
 type PagePagination struct {
-	paginationCommon
+	PaginationCommon
 	Type    alwaysPage `json:"type"`
 	Page    struct{}   `json:"page"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
 	Results []Page     `json:"results"`
@@ -39,14 +39,14 @@ type PagePagination struct {
 func (_ *PagePagination) isPagination() {}
 
 type PageOrDatabasePagination struct {
-	paginationCommon
+	PaginationCommon
 	Type alwaysPageOrDatabase `json:"type"`
 }
 
 func (_ *PageOrDatabasePagination) isPagination() {}
 
 type PropertyItemPagination struct {
-	paginationCommon
+	PaginationCommon
 	Type         alwaysPropertyItem    `json:"type"`
 	PropertyItem PaginatedPropertyInfo `json:"property_item"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
 	Results      PropertyItemArray     `json:"results"`
@@ -68,7 +68,7 @@ func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {
 }
 
 type UserPagination struct {
-	paginationCommon
+	PaginationCommon
 	Type alwaysUser `json:"type"`
 }
 

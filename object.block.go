@@ -51,7 +51,7 @@ type Block interface {
 	GetArchived() bool
 	GetHasChildren() bool
 }
-type blockCommon struct {
+type BlockCommon struct {
 	Object         alwaysBlock   `json:"object"`           // Always "block".
 	Id             uuid.UUID     `json:"id"`               // Identifier for the block.
 	Parent         Parent        `json:"parent"`           // Information about the block's parent. See Parent object.
@@ -63,31 +63,31 @@ type blockCommon struct {
 	HasChildren    bool          `json:"has_children"`     // Whether or not the block has children blocks nested within it.
 }
 
-func (c *blockCommon) GetObject() alwaysBlock {
+func (c *BlockCommon) GetObject() alwaysBlock {
 	return c.Object
 }
-func (c *blockCommon) GetId() uuid.UUID {
+func (c *BlockCommon) GetId() uuid.UUID {
 	return c.Id
 }
-func (c *blockCommon) GetParent() Parent {
+func (c *BlockCommon) GetParent() Parent {
 	return c.Parent
 }
-func (c *blockCommon) GetCreatedTime() ISO8601String {
+func (c *BlockCommon) GetCreatedTime() ISO8601String {
 	return c.CreatedTime
 }
-func (c *blockCommon) GetCreatedBy() PartialUser {
+func (c *BlockCommon) GetCreatedBy() PartialUser {
 	return c.CreatedBy
 }
-func (c *blockCommon) GetLastEditedTime() ISO8601String {
+func (c *BlockCommon) GetLastEditedTime() ISO8601String {
 	return c.LastEditedTime
 }
-func (c *blockCommon) GetLastEditedBy() PartialUser {
+func (c *BlockCommon) GetLastEditedBy() PartialUser {
 	return c.LastEditedBy
 }
-func (c *blockCommon) GetArchived() bool {
+func (c *BlockCommon) GetArchived() bool {
 	return c.Archived
 }
-func (c *blockCommon) GetHasChildren() bool {
+func (c *BlockCommon) GetHasChildren() bool {
 	return c.HasChildren
 }
 
@@ -130,7 +130,7 @@ Bookmark block objects contain the following information within the bookmark pro
 }
 */
 type BookmarkBlock struct {
-	blockCommon
+	BlockCommon
 	Type    alwaysBookmark `json:"type"`
 	Caption RichTextArray  `json:"caption"` // The caption for the bookmark.
 	Url     string         `json:"url"`     // The link for the bookmark.

@@ -23,11 +23,11 @@ type PropertyValue interface {
 	set(reflect.Value)  // for binding
 	GetId() string
 }
-type propertyValueCommon struct {
+type PropertyValueCommon struct {
 	Id string `json:"id,omitempty"` // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 }
 
-func (c *propertyValueCommon) GetId() string {
+func (c *PropertyValueCommon) GetId() string {
 	return c.Id
 }
 
@@ -129,7 +129,7 @@ Title property values
 The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-a-page) returns a maximum of 25 inline page or person references for a `title` property. If a `title` property includes more than 25 references, then you can use the [Retrieve a page property](https://developers.notion.com/reference/retrieve-a-page-property) endpoint for the specific `title` property to get its complete list of references.
 */
 type TitlePropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type  alwaysTitle   `json:"type"`
 	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
@@ -152,7 +152,7 @@ Rich Text property values
 The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-a-page) returns a maximum of 25 populated inline page or person references for a `rich_text` property. If a `rich_text` property includes more than 25 references, then you can use the [Retrieve a page property endpoint](https://developers.notion.com/reference/retrieve-a-page-property) for the specific `rich_text` property to get its complete list of references.
 */
 type RichTextPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type     alwaysRichText `json:"type"`
 	RichText RichTextArray  `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
@@ -171,7 +171,7 @@ func (o *RichTextPropertyValue) set(v reflect.Value) {
 
 // Number property values
 type NumberPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type   alwaysNumber `json:"type"`
 	Number nullv4.Float `json:"number"` //  Number property value objects contain a number within the number property.
 }
@@ -190,7 +190,7 @@ func (o *NumberPropertyValue) set(v reflect.Value) {
 
 // Select property values
 type SelectPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type   alwaysSelect `json:"type"`
 	Select *Option      `json:"select"` //  Select property value objects contain the following data within the select property:
 }
@@ -209,7 +209,7 @@ func (o *SelectPropertyValue) set(v reflect.Value) {
 
 // Status property values
 type StatusPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type   alwaysStatus `json:"type"`
 	Status Option       `json:"status"` //  Status property value objects contain the following data within the status property:
 }
@@ -228,7 +228,7 @@ func (o *StatusPropertyValue) set(v reflect.Value) {
 
 // Multi-select property values
 type MultiSelectPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type        alwaysMultiSelect `json:"type"`
 	MultiSelect []Option          `json:"multi_select"` //  Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 }
@@ -247,7 +247,7 @@ func (o *MultiSelectPropertyValue) set(v reflect.Value) {
 
 // Date property values
 type DatePropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type alwaysDate             `json:"type"`
 	Date *DatePropertyValueData `json:"date"` //  Date property value objects contain the following data within the date property:
 }
@@ -283,7 +283,7 @@ Formula values may not match the Notion UI.
 Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
 */
 type FormulaPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type    alwaysFormula `json:"type"`
 	Formula Formula       `json:"formula"`
 }
@@ -389,7 +389,7 @@ A relation includes a has_more property in the Retrieve a page endpoint response
 Note that updating a relation property value with an empty array will clear the list.
 */
 type RelationPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type     alwaysRelation  `json:"type"`
 	Relation []PageReference `json:"relation"`
 	HasMore  bool            `json:"has_more"`
@@ -416,7 +416,7 @@ Rollup values may not match the Notion UI.
 Rollups returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.
 */
 type RollupPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type   alwaysRollup `json:"type"`
 	Rollup Rollup       `json:"rollup"`
 }
@@ -451,7 +451,7 @@ People property values
 The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) endpoint can’t be guaranteed to return more than 25 people per `people` page property. If a `people` page property includes more than 25 people, then you can use the [Retrieve a page property endpoint](https://developers.notion.com/reference/retrieve-a-page-property) for the specific `people` property to get a complete list of people.
 */
 type PeoplePropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type   alwaysPeople `json:"type"`
 	People Users        `json:"people"` //  People property value objects contain an array of user objects within the people property.
 }
@@ -475,7 +475,7 @@ When updating a file property, the value will be overwritten by the array of fil
 Although we do not support uploading files, if you pass a `file` object containing a file hosted by Notion, it will remain one of the files. To remove any file, just do not pass it in the update response.
 */
 type FilesPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type  alwaysFiles `json:"type"`
 	Files Files       `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
@@ -494,7 +494,7 @@ func (o *FilesPropertyValue) set(v reflect.Value) {
 
 // Checkbox property values
 type CheckboxPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type     alwaysCheckbox `json:"type"`
 	Checkbox bool           `json:"checkbox"` //  Checkbox property value objects contain a boolean within the checkbox property.
 }
@@ -513,7 +513,7 @@ func (o *CheckboxPropertyValue) set(v reflect.Value) {
 
 // URL property values
 type UrlPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type alwaysUrl     `json:"type"`
 	Url  nullv4.String `json:"url"` //  URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
 }
@@ -532,7 +532,7 @@ func (o *UrlPropertyValue) set(v reflect.Value) {
 
 // Email property values
 type EmailPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type  alwaysEmail   `json:"type"`
 	Email nullv4.String `json:"email"` //  Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
 }
@@ -551,7 +551,7 @@ func (o *EmailPropertyValue) set(v reflect.Value) {
 
 // Phone number property values
 type PhoneNumberPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type        alwaysPhoneNumber `json:"type"`
 	PhoneNumber nullv4.String     `json:"phone_number"` //  Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 }
@@ -570,7 +570,7 @@ func (o *PhoneNumberPropertyValue) set(v reflect.Value) {
 
 // Created time property values
 type CreatedTimePropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type        alwaysCreatedTime `json:"type"`
 	CreatedTime ISO8601String     `json:"created_time"` //  Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
@@ -589,7 +589,7 @@ func (o *CreatedTimePropertyValue) set(v reflect.Value) {
 
 // Created by property values
 type CreatedByPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type      alwaysCreatedBy `json:"type"`
 	CreatedBy PartialUser     `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
@@ -608,7 +608,7 @@ func (o *CreatedByPropertyValue) set(v reflect.Value) {
 
 // Last edited time property values
 type LastEditedTimePropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type           alwaysLastEditedTime `json:"type"`
 	LastEditedTime ISO8601String        `json:"last_edited_time"` //  Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
 }
@@ -627,7 +627,7 @@ func (o *LastEditedTimePropertyValue) set(v reflect.Value) {
 
 // Last edited by property values
 type LastEditedByPropertyValue struct {
-	propertyValueCommon
+	PropertyValueCommon
 	Type         alwaysLastEditedBy `json:"type"`
 	LastEditedBy User               `json:"last_edited_by"` //  Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
