@@ -93,22 +93,13 @@ func TestUpdatePage(t *testing.T) {
 func TestQueryDatabase(t *testing.T) {
 	filters := []Filter{
 		&RichTextFilter{
-			filterCommon: filterCommon{Property: "URL"},
+			FilterCommon: FilterCommon{Property: "URL"},
 			RichText:     RichTextFilterData{Equals: "http://example.com"},
 		},
 	}
 
 	ctx := context.Background()
-	params := &QueryDatabaseParams{
-		Filter: RichTextFilter{
-			filterCommon: filterCommon{
-				Property: "URL",
-			},
-			RichText: RichTextFilterData{
-				Equals: "http://example.com",
-			},
-		},
-	}
+	params := &QueryDatabaseParams{}
 	for _, filter := range filters {
 		filter := filter
 		t.Run(fmt.Sprintf("%T", filter), func(t *testing.T) {
