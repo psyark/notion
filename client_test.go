@@ -91,6 +91,13 @@ func TestUpdatePage(t *testing.T) {
 }
 
 func TestQueryDatabase(t *testing.T) {
+	filters := []Filter{
+		&RichTextFilter{
+			filterCommon: filterCommon{Property: "URL"},
+			RichText:     RichTextFilterData{Equals: "http://example.com"},
+		},
+	}
+
 	ctx := context.Background()
 	params := &QueryDatabaseParams{
 		Filter: RichTextFilter{
@@ -102,9 +109,15 @@ func TestQueryDatabase(t *testing.T) {
 			},
 		},
 	}
-	if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId("QueryDatabase_f"), useCache(), validateResult()); err != nil {
-		t.Fatal(err)
-	} else {
-		fmt.Println(len(pagi.Results))
+	for _, filter := range filters {
+		filter := filter
+		t.Run(fmt.Sprintf("%T", filter), func(t *testing.T) {
+			params.Filter = filter
+			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
+				t.Fatal(err)
+			} else {
+				fmt.Println(len(pagi.Results))
+			}
+		})
 	}
 }
