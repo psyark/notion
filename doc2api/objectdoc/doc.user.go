@@ -14,9 +14,11 @@ func init() {
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					b.addAbstractObject("DetailedUser", "type", e.Text)
-					b.addAbstractObject("User", "type", e.Text).addVariant(
+					b.addAbstractObject("User", "type", e.Text)
+					b.addAbstractList("User", "Users")
+					b.getAbstractObject("User").addVariant(
 						b.addSpecificObject("PartialUser", e.Text),
-					).listName = "Users"
+					)
 					return nil
 				},
 			},

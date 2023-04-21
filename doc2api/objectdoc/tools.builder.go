@@ -8,11 +8,11 @@ import (
 // builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
 // 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは冪等に保たれます
 type builder struct {
-	fileName       string
-	url            string
-	globalSymbols  *sync.Map
-	localSymbols   []symbolCoder
-	unmarshalTests map[string][]string
+	fileName      string
+	url           string
+	globalSymbols *sync.Map
+	localSymbols  []symbolCoder
+	testSymbols   []symbolCoder
 
 	// Deprecated:
 	global *builder // TODO ローカル/グローバルビルダーを作るのではなく、唯一のビルダーを作る
@@ -44,6 +44,24 @@ func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy 
 	return b.global.addAbstractObject(name, specifiedBy, "")
 }
 
+func (b *builder) addAbstractList(targetName string, name string) *abstractList {
+	o := &abstractList{}
+	o.name_ = strings.TrimSpace(name)
+	o.targetName = strings.TrimSpace(targetName)
+	b.localSymbols = append(b.localSymbols, o)
+	b.globalSymbols.Store(name, o)
+	return o
+}
+
+func (b *builder) addAbstractMap(targetName string, name string) *abstractMap {
+	o := &abstractMap{}
+	o.name_ = strings.TrimSpace(name)
+	o.targetName = strings.TrimSpace(targetName)
+	b.localSymbols = append(b.localSymbols, o)
+	b.globalSymbols.Store(name, o)
+	return o
+}
+
 func (b *builder) addAlwaysStringIfNotExists(value string) {
 	as := alwaysString(value)
 	if _, ok := b.globalSymbols.Load(as.name()); ok {
@@ -53,9 +71,18 @@ func (b *builder) addAlwaysStringIfNotExists(value string) {
 	b.localSymbols = append(b.localSymbols, as)
 }
 
+func (b *builder) getSymbol(name string) symbolCoder {
+	if item, ok := b.globalSymbols.Load(name); ok {
+		if item, ok := item.(symbolCoder); ok {
+			return item
+		}
+	}
+	return nil
+}
+
 func (b *builder) getAbstractObject(name string) *abstractObject {
 	if item, ok := b.globalSymbols.Load(name); ok {
-		if item, ok := item.(*abstractObject); ok && item.name() == name {
+		if item, ok := item.(*abstractObject); ok {
 			return item
 		}
 	}
@@ -64,19 +91,23 @@ func (b *builder) getAbstractObject(name string) *abstractObject {
 
 func (b *builder) getSpecificObject(name string) *specificObject {
 	if item, ok := b.globalSymbols.Load(name); ok {
-		if item, ok := item.(*specificObject); ok && item.name() == name {
+		if item, ok := item.(*specificObject); ok {
 			return item
 		}
 	}
 	return nil
 }
 
-func (b *builder) addAbstractUnmarshalTest(name string, jsonCode string) {
-	if b.unmarshalTests == nil {
-		b.unmarshalTests = map[string][]string{}
+func (b *builder) addUnmarshalTest(targetName string, jsonCode string) {
+	ut := &unmarshalTest{targetName: targetName}
+	if item, ok := b.globalSymbols.Load(ut.name()); ok {
+		if item, ok := item.(*unmarshalTest); ok {
+			item.jsonCodes = append(item.jsonCodes, jsonCode)
+			return
+		}
 	}
-	if _, ok := b.unmarshalTests[name]; !ok {
-		b.unmarshalTests[name] = []string{}
-	}
-	b.unmarshalTests[name] = append(b.unmarshalTests[name], jsonCode)
+
+	ut.jsonCodes = append(ut.jsonCodes, jsonCode)
+	b.globalSymbols.Store(ut.name(), ut)
+	b.testSymbols = append(b.testSymbols, ut)
 }

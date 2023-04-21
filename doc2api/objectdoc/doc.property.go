@@ -1,7 +1,9 @@
 package objectdoc
 
 import (
+	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -14,7 +16,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("Property", "type", e.Text).strMapName = "PropertyMap"
+					b.addAbstractObject("Property", "type", e.Text)
+					b.addAbstractMap("Property", "PropertyMap")
 					return nil
 				},
 			},
@@ -88,7 +91,10 @@ func init() {
 				Code:     "\"Task complete\": {\n  \"id\": \"BBla\",\n  \"name\": \"Task complete\",\n  \"type\": \"checkbox\",\n  \"checkbox\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Created by ",
@@ -110,7 +116,10 @@ func init() {
 				Code:     "\"Created by\": {\n  \"id\": \"%5BJCR\",\n  \"name\": \"Created by\",\n  \"type\": \"created_by\",\n  \"created_by\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Created time",
@@ -132,7 +141,10 @@ func init() {
 				Code:     "\"Created time\": {\n  \"id\": \"XcAf\",\n  \"name\": \"Created time\",\n  \"type\": \"created_time\",\n  \"created_time\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Date ",
@@ -154,7 +166,11 @@ func init() {
 				Code:     "\"Task due date\" {\n  \"id\": \"AJP%7D\",\n  \"name\": \"Task due date\",\n  \"type\": \"date\",\n  \"date\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					e.Code = strings.Replace(e.Code, `"Task due date"`, `"Task due date":`, 1) // ドキュメントの不具合
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Email",
@@ -174,7 +190,10 @@ func init() {
 				Code:     "\"Contact email\": {\n  \"id\": \"oZbC\",\n  \"name\": \"Contact email\",\n  \"type\": \"email\",\n  \"email\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Files",
@@ -203,7 +222,10 @@ func init() {
 				Code:     "\"Product image\": {\n  \"id\": \"pb%3E%5B\",\n  \"name\": \"Product image\",\n  \"type\": \"files\",\n  \"files\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Formula",
@@ -233,7 +255,10 @@ func init() {
 				Code:     "\"Updated price\": {\n  \"id\": \"YU%7C%40\",\n  \"name\": \"Updated price\",\n  \"type\": \"formula\",\n  \"formula\": {\n    \"expression\": \"prop(\\\"Price\\\") * 2\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Last edited by ",
@@ -271,7 +296,10 @@ func init() {
 				Code:     "\"Last edited time\": {\n  \"id\": \"jGdo\",\n  \"name\": \"Last edited time\",\n  \"type\": \"last_edited_time\",\n  \"last_edited_time\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Multi-select ",
@@ -313,7 +341,10 @@ func init() {
 				Code:     "\"Store availability\": {\n  \"id\": \"flsb\",\n  \"name\": \"Store availability\",\n  \"type\": \"multi_select\",\n  \"multi_select\": {\n    \"options\": [\n      {\n        \"id\": \"5de29601-9c24-4b04-8629-0bca891c5120\",\n        \"name\": \"Duc Loi Market\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"385890b8-fe15-421b-b214-b02959b0f8d9\",\n        \"name\": \"Rainbow Grocery\",\n        \"color\": \"gray\"\n      },\n      {\n        \"id\": \"72ac0a6c-9e00-4e8c-80c5-720e4373e0b9\",\n        \"name\": \"Nijiya Market\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"9556a8f7-f4b0-4e11-b277-f0af1f8c9490\",\n        \"name\": \"Gus's Community Market\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Number",
@@ -343,7 +374,11 @@ func init() {
 				Code:     "\"Price\"{\n  \"id\": \"%7B%5D_P\",\n  \"name\": \"Price\",\n  \"type\": \"number\",\n  \"number\": {\n    \"format\": \"dollar\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					e.Code = strings.Replace(e.Code, `"Price"`, `"Price":`, 1) // ドキュメントの不具合
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "People ",
@@ -365,7 +400,10 @@ func init() {
 				Code:     "\"Project owner\": {\n  \"id\": \"FlgQ\",\n  \"name\": \"Project owner\",\n  \"type\": \"people\",\n  \"people\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Phone number",
@@ -387,7 +425,10 @@ func init() {
 				Code:     "\"Contact phone number\": {\n  \"id\": \"ULHa\",\n  \"name\": \"Contact phone number\",\n  \"type\": \"phone_number\",\n  \"phone_number\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Relation",
@@ -447,7 +488,12 @@ func init() {
 				Code:     "\"Projects\": {\n  \"id\": \"~pex\",\n  \"name\": \"Projects\",\n  \"type\": \"relation\",\n  \"relation\": {\n    \"database_id\": \"6c4240a9-a3ce-413e-9fd0-8a51a4d0a49b\",\n    \"synced_property_name\": \"Tasks\",\n    \"synced_property_id\": \"JU]K\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					// これを含めるとProjectのアンマーシャルができないのでスキップ
+					// TODO 対応する
+					// b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocCalloutElement{
 				Body:   "",
@@ -475,7 +521,10 @@ func init() {
 				Code:     "\"Project description\": {\n  \"id\": \"NZZ%3B\",\n  \"name\": \"Project description\",\n  \"type\": \"rich_text\",\n  \"rich_text\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Rollup ",
@@ -541,7 +590,10 @@ func init() {
 				Code:     "\"Estimated total project time\": {\n  \"id\": \"%5E%7Cy%3C\",\n  \"name\": \"Estimated total project time\",\n  \"type\": \"rollup\",\n  \"rollup\": {\n    \"rollup_property_name\": \"Days to complete\",\n    \"relation_property_name\": \"Tasks\",\n    \"rollup_property_id\": \"\\\\nyY\",\n    \"relation_property_id\": \"Y]<y\",\n    \"function\": \"sum\"\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Select",
@@ -595,7 +647,10 @@ func init() {
 				Code:     "\"Food group\": {\n  \"id\": \"%40Q%5BM\",\n  \"name\": \"Food group\",\n  \"type\": \"select\",\n  \"select\": {\n    \"options\": [\n      {\n        \"id\": \"e28f74fc-83a7-4469-8435-27eb18f9f9de\",\n        \"name\": \"🥦Vegetable\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"6132d771-b283-4cd9-ba44-b1ed30477c7f\",\n        \"name\": \"🍎Fruit\",\n        \"color\": \"red\"\n      },\n      {\n        \"id\": \"fc9ea861-820b-4f2b-bc32-44ed9eca873c\",\n        \"name\": \"💪Protein\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Status",
@@ -681,7 +736,10 @@ func init() {
 				Code:     "\"Status\": {\n  \"id\": \"biOx\",\n  \"name\": \"Status\",\n  \"type\": \"status\",\n  \"status\": {\n    \"options\": [\n      {\n        \"id\": \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\",\n        \"name\": \"Not started\",\n        \"color\": \"default\"\n      },\n      {\n        \"id\": \"330aeafb-598c-4e1c-bc13-1148aa5963d3\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\",\n        \"name\": \"Done\",\n        \"color\": \"green\"\n      }\n    ],\n    \"groups\": [\n      {\n        \"id\": \"b9d42483-e576-4858-a26f-ed940a5f678f\",\n        \"name\": \"To-do\",\n        \"color\": \"gray\",\n        \"option_ids\": [\n          \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\"\n        ]\n      },\n      {\n        \"id\": \"cf4952eb-1265-46ec-86ab-4bded4fa2e3b\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\",\n        \"option_ids\": [\n          \"330aeafb-598c-4e1c-bc13-1148aa5963d3\"\n        ]\n      },\n      {\n        \"id\": \"4fa7348e-ae74-46d9-9585-e773caca6f40\",\n        \"name\": \"Complete\",\n        \"color\": \"green\",\n        \"option_ids\": [\n          \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\"\n        ]\n      }\n    ]\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocCalloutElement{
 				Body:   "Update these values from the Notion UI, instead.",
@@ -710,7 +768,10 @@ func init() {
 				Code:     "\"Project name\": {\n  \"id\": \"title\",\n  \"name\": \"Project name\",\n  \"type\": \"title\",\n  \"title\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 			&objectDocCalloutElement{
 				Body:   "The API throws errors if you send a request to [Create a database](https://developers.notion.com/reference/create-a-database) without a `title` property, or if you attempt to [Update a database](https://developers.notion.com/reference/update-a-database) to add or remove a `title` property.",
@@ -744,7 +805,10 @@ func init() {
 				Code:     "\"Project URL\": {\n  \"id\": \"BZKU\",\n  \"name\": \"Project URL\",\n  \"type\": \"url\",\n  \"url\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) error { return nil },
+				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Code))
+					return nil
+				},
 			}}},
 		},
 	})

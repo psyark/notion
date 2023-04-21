@@ -11,7 +11,8 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) error {
-					b.addAbstractObject("File", "type", e.Body).listName = "Files"
+					b.addAbstractObject("File", "type", e.Body)
+					b.addAbstractList("File", "Files")
 					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type")
 					return nil
 				},
@@ -28,7 +29,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.addAbstractUnmarshalTest("File", e.Code)
+					b.addUnmarshalTest("File", e.Code)
 					return nil
 				},
 			}}},
@@ -37,7 +38,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.addAbstractUnmarshalTest("File", e.Code)
+					b.addUnmarshalTest("File", e.Code)
 					return nil
 				},
 			}}},

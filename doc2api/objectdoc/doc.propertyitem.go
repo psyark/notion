@@ -12,7 +12,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item \n",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObject("PropertyItem", "type", e.Text).listName = "PropertyItemArray"
+					b.addAbstractObject("PropertyItem", "type", e.Text)
+					b.addAbstractList("PropertyItem", "PropertyItemArray")
 					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
 					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addVariant(b.getAbstractObject("PropertyItem"))
 					return nil

@@ -53,8 +53,8 @@ func init() {
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 				output: func(e *objectDocParagraphElement, b *builder) error {
 					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
-					pv.strMapName = "PropertyValueMap"
-					pv.listName = "PropertyValueArray"
+					b.addAbstractList("PropertyValue", "PropertyValueArray")
+					b.addAbstractMap("PropertyValue", "PropertyValueMap")
 					pv.specialMethods = append(pv.specialMethods, &getMethodCoder{}, &setMethodCoder{})
 					return nil
 				},

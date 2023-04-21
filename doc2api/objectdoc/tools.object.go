@@ -9,13 +9,16 @@ import (
 
 // symbolCoder はソースコードのトップレベルに置かれる、名前を持つシンボルの生成器です。
 type symbolCoder interface {
-	symbolCode() jen.Code
+	symbolCode(*builder) jen.Code
 	name() string
 }
 
 var _ = []symbolCoder{
 	&specificObject{},
 	&abstractObject{},
+	&abstractList{},
+	&abstractMap{},
+	&unmarshalTest{},
 	alwaysString(""),
 }
 
@@ -88,7 +91,7 @@ func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {
 	return c
 }
 
-func (c *objectCommon) symbolCode() jen.Code {
+func (c *objectCommon) symbolCode(b *builder) jen.Code {
 	code := &jen.Statement{}
 	if c.comment != "" {
 		code.Comment(c.comment).Line()
@@ -115,7 +118,7 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 	return c
 }
 
-func (c *specificObject) symbolCode() jen.Code {
+func (c *specificObject) symbolCode(b *builder) jen.Code {
 	if len(c.typeObject.fields) != 0 {
 		typeField := c.getSpecifyingField("type")
 		if typeField != nil {
@@ -137,7 +140,7 @@ func (c *specificObject) symbolCode() jen.Code {
 	}
 
 	// struct本体
-	code := &jen.Statement{c.objectCommon.symbolCode()}
+	code := &jen.Statement{c.objectCommon.symbolCode(b)}
 
 	// インターフェイスを実装
 	for _, a := range c.getAncestors() {
@@ -162,7 +165,7 @@ func (c *specificObject) symbolCode() jen.Code {
 	// type object
 	if len(c.typeObject.fields) != 0 {
 		c.typeObject.name_ = c.name() + "Data"
-		code.Add(c.typeObject.symbolCode())
+		code.Add(c.typeObject.symbolCode(b))
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
@@ -209,8 +212,6 @@ type abstractObject struct {
 	specifiedBy    string // "type", "object" など、バリアントを識別するためのプロパティ // TODO variantTypeKeyとかにする？
 	fieldsComment  string
 	variants       []objectCoder
-	listName       string // このインターフェイスのスライスの名前（UnmarshalJSONが作成されます）
-	strMapName     string // このインターフェイスのmap[string]の名前（UnmarshalJSONが作成されます）
 	specialMethods []specialMethodCoder
 }
 
@@ -240,7 +241,7 @@ func (c *abstractObject) hasCommonField() bool {
 	return false
 }
 
-func (c *abstractObject) symbolCode() jen.Code {
+func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	code := jen.Line()
 
 	if c.comment != "" {
@@ -270,7 +271,7 @@ func (c *abstractObject) symbolCode() jen.Code {
 		copyOfC := *c
 		copyOfC.name_ = strcase.LowerCamelCase(c.name_) + "Common"
 		copyOfC.comment = c.fieldsComment
-		code.Add(copyOfC.objectCommon.symbolCode())
+		code.Add(copyOfC.objectCommon.symbolCode(b))
 		// 共通フィールドのgetter定義
 		for _, f := range c.fields {
 			code.Line().Func().Params(jen.Id("c").Op("*").Id(copyOfC.name_)).Id("Get" + f.goName()).Params().Add(f.getTypeCode()).Block(
@@ -282,38 +283,6 @@ func (c *abstractObject) symbolCode() jen.Code {
 	// variant Unmarshaler
 	if c.specifiedBy != "" {
 		code.Add(c.variantUnmarshaler())
-	}
-
-	// リスト
-	if c.listName != "" {
-		code.Line().Type().Id(c.listName).Index().Id(c.name())
-		code.Line().Func().Params(jen.Id("a").Op("*").Id(c.listName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.name())+"Unmarshaler").Values(),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.listName)), jen.Err()),
-			),
-			jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.name()), jen.Len(jen.Id("t"))),
-			jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
-				jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
-			),
-			jen.Return().Nil(),
-		)
-	}
-
-	// マップ
-	if c.strMapName != "" {
-		code.Line().Type().Id(c.strMapName).Map(jen.String()).Id(c.name())
-		code.Line().Func().Params(jen.Id("m").Op("*").Id(c.strMapName)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.name())+"Unmarshaler").Values(),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
-				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.strMapName)), jen.Err()),
-			),
-			jen.Op("*").Id("m").Op("=").Id(c.strMapName).Values(),
-			jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
-				jen.Parens(jen.Op("*").Id("m")).Index(jen.Id("k")).Op("=").Id("u").Dot("value"),
-			),
-			jen.Return().Nil(),
-		)
 	}
 
 	return code
@@ -368,9 +337,91 @@ func (c *abstractObject) variantUnmarshaler() jen.Code {
 	return code
 }
 
+type abstractList struct {
+	name_      string // Deprecated: TODO 消す
+	targetName string
+}
+
+func (c *abstractList) name() string { return c.name_ }
+func (c *abstractList) symbolCode(b *builder) jen.Code {
+	return jen.Line().Type().Id(c.name()).Index().Id(c.targetName).Line().Func().Params(jen.Id("a").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+		jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.targetName)+"Unmarshaler").Values(),
+		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+			jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
+		),
+		jen.Op("*").Id("a").Op("=").Make(jen.Index().Id(c.targetName), jen.Len(jen.Id("t"))),
+		jen.For(jen.List(jen.Id("i"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+			jen.Parens(jen.Op("*").Id("a")).Index(jen.Id("i")).Op("=").Id("u").Dot("value"),
+		),
+		jen.Return().Nil(),
+	)
+}
+
+type abstractMap struct {
+	name_      string // Deprecated: TODO 消す
+	targetName string
+}
+
+func (c *abstractMap) name() string { return c.name_ }
+func (c *abstractMap) symbolCode(b *builder) jen.Code {
+	return jen.Line().Type().Id(c.name()).Map(jen.String()).Id(c.targetName).Line().Func().Params(jen.Id("m").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+		jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.targetName)+"Unmarshaler").Values(),
+		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
+			jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
+		),
+		jen.Op("*").Id("m").Op("=").Id(c.name()).Values(),
+		jen.For(jen.List(jen.Id("k"), jen.Id("u")).Op(":=").Range().Id("t")).Block(
+			jen.Parens(jen.Op("*").Id("m")).Index(jen.Id("k")).Op("=").Id("u").Dot("value"),
+		),
+		jen.Return().Nil(),
+	)
+}
+
+type unmarshalTest struct {
+	targetName string
+	jsonCodes  []string
+}
+
+func (c *unmarshalTest) name() string {
+	return fmt.Sprintf("Test%s_unmarshal", c.targetName)
+}
+func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
+	var initCode, referCode jen.Code
+	switch symbol := b.getSymbol(c.targetName).(type) {
+	case *abstractObject:
+		initCode = jen.Id("target").Op(":=").Op("&").Id(strcase.LowerCamelCase(c.targetName) + "Unmarshaler").Values()
+		referCode = jen.Id("target").Dot("value")
+	case *abstractMap:
+		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
+		referCode = jen.Id("target")
+	default:
+		panic(symbol)
+	}
+
+	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
+		initCode,
+		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
+			for _, t := range c.jsonCodes {
+				g.Line().Lit(t)
+			}
+			g.Line()
+		}),
+		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
+			jen.Id("want").Op(":=").Index().Byte().Call(jen.Id("wantStr")),
+			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
+				jen.Id("t").Dot("Fatal").Call(jen.Err()),
+			),
+			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "MarshalIndent").Call(referCode, jen.Lit(""), jen.Lit("  ")),
+			jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(
+				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("mismatch:\nwant: %s\ngot : %s"), jen.Id("want"), jen.Id("got"))),
+			),
+		),
+	)
+}
+
 type alwaysString string
 
-func (c alwaysString) symbolCode() jen.Code {
+func (c alwaysString) symbolCode(b *builder) jen.Code {
 	code := jen.Type().Id(c.name()).String().Line()
 	code.Func().Params(jen.Id("s").Id(c.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),
