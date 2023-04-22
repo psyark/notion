@@ -101,7 +101,7 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 	return code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
 }
 
-func (c *objectCommon) fieldUnmarshalerCode() jen.Code {
+func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 	code := &jen.Statement{}
 
 	interfaceFields := []*interfaceField{}
@@ -118,7 +118,7 @@ func (c *objectCommon) fieldUnmarshalerCode() jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range interfaceFields {
-					g.Id(strcase.UpperCamelCase(f.name)).Id(strcase.LowerCamelCase(f.typeName) + "Unmarshaler").Tag(map[string]string{"json": f.name})
+					g.Id(strcase.UpperCamelCase(f.name)).Id(b.getAbstractObject(f.typeName).variantUnmarshalerName()).Tag(map[string]string{"json": f.name})
 				}
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
@@ -157,6 +157,10 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 }
 
 func (c *specificObject) symbolCode(b *builder) jen.Code {
+	if len(c.parents) == 0 {
+		fmt.Printf("%s has no parents\n", c.name())
+	}
+
 	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
 		typeField := c.getSpecifyingField("type")
@@ -196,7 +200,7 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
-	code.Add(c.fieldUnmarshalerCode())
+	code.Add(c.fieldUnmarshalerCode(b))
 
 	// type object
 	if len(c.typeObject.fields) != 0 {
@@ -258,22 +262,20 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	}
 
 	// インターフェイス本体とisメソッド
-	{
-		methods := []jen.Code{}
+	code.Type().Id(c.name()).InterfaceFunc(func(g *jen.Group) {
 		for _, p := range c.parents {
-			methods = append(methods, jen.Id(p.name())) // 親インターフェイスの継承
+			g.Id(p.name()) // 親インターフェイスの継承
 		}
-		methods = append(methods, jen.Id("is"+c.name()).Params()) // このインターフェイスのisメソッド
+		g.Id("is" + c.name()).Params() // このインターフェイスのisメソッド
 		for _, sm := range c.specialMethods {
-			methods = append(methods, sm.declarationCode()) // 特殊メソッド
+			g.Add(sm.declarationCode()) // 特殊メソッド
 		}
-		// methods = append(methods, jen.Id("Get"+strcase.UpperCamelCase(c.specifiedBy)).Params().String())
+		// g.Id("Get"+strcase.UpperCamelCase(c.specifiedBy)).Params().String()
 		// 共通フィールドのgetter宣言
 		for _, f := range c.fields {
-			methods = append(methods, jen.Id("Get"+f.goName()).Params().Add(f.getTypeCode()))
+			g.Id("Get" + f.goName()).Params().Add(f.getTypeCode())
 		}
-		code.Type().Id(c.name()).Interface(methods...).Line()
-	}
+	}).Line()
 
 	// 共通フィールド
 	if len(c.fieldCodes()) != 0 {
@@ -297,52 +299,52 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	return code
 }
 
+func (c *abstractObject) variantUnmarshalerName() string {
+	return strcase.LowerCamelCase(c.name()) + "Unmarshaler"
+}
+
 func (c *abstractObject) variantUnmarshaler() jen.Code {
 	code := &jen.Statement{}
-	cases := []jen.Code{}
-
-	for _, variant := range c.variants {
-		caseCode := jen.Case(jen.Lit(""))
-		if sf := variant.getSpecifyingField(c.specifiedBy); sf != nil {
-			caseCode = jen.Case(jen.Lit(sf.value))
-		}
-
-		switch variant := variant.(type) {
-		case *specificObject:
-			cases = append(cases, caseCode.Id("u").Dot("value").Op("=").Op("&").Id(variant.name()).Values())
-		case *abstractObject:
-			cases = append(cases,
-				caseCode.Id("t").Op(":=").Op("&").Id(strcase.LowerCamelCase(variant.name())+"Unmarshaler").Values(),
-				jen.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err()),
-				jen.Id("u").Dot("value").Op("=").Id("t").Dot("value"),
-				jen.Return().Nil(),
-			)
-		default:
-			panic(fmt.Sprintf("%#v", variant))
-		}
-	}
-
-	cases = append(cases, jen.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.specifiedBy)), jen.String().Call(jen.Id("data")))))
-
 	if len(c.variants) != 0 {
-		name := strcase.LowerCamelCase(c.name()) + "Unmarshaler"
-		code.Line().Type().Id(name).Struct(
+		code.Line().Type().Id(c.variantUnmarshalerName()).Struct(
 			jen.Id("value").Id(c.name()),
 		)
 		code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.specifiedBy))
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
+		code.Line().Func().Params(jen.Id("u").Op("*").Id(c.variantUnmarshalerName())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 			jen.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
 				jen.Id("u").Dot("value").Op("=").Nil(),
 				jen.Return().Nil(),
 			),
-			jen.Switch().Id("get"+strcase.UpperCamelCase(c.specifiedBy)).Call(jen.Id("data")).Block(cases...),
+			jen.Switch().Id("get"+strcase.UpperCamelCase(c.specifiedBy)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
+
+				for _, variant := range c.variants {
+					if sf := variant.getSpecifyingField(c.specifiedBy); sf != nil {
+						g.Case(jen.Lit(sf.value))
+					} else {
+						g.Case(jen.Lit(""))
+					}
+
+					switch variant := variant.(type) {
+					case *specificObject:
+						g.Id("u").Dot("value").Op("=").Op("&").Id(variant.name()).Values()
+					case *abstractObject:
+						g.Id("t").Op(":=").Op("&").Id(variant.variantUnmarshalerName()).Values()
+						g.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err())
+						g.Id("u").Dot("value").Op("=").Id("t").Dot("value")
+						g.Return().Nil()
+					default:
+						panic(fmt.Sprintf("%#v", variant))
+					}
+				}
+
+				g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.specifiedBy)), jen.String().Call(jen.Id("data"))))
+			}),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 		).Line()
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(name)).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+		code.Line().Func().Params(jen.Id("u").Op("*").Id(c.variantUnmarshalerName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 			jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
 		).Line()
 	}
-
 	return code
 }
 
@@ -357,8 +359,9 @@ type abstractList struct {
 
 func (c *abstractList) name() string { return c.name_ }
 func (c *abstractList) symbolCode(b *builder) jen.Code {
+	target := b.getAbstractObject(c.targetName)
 	return jen.Line().Type().Id(c.name()).Index().Id(c.targetName).Line().Func().Params(jen.Id("a").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-		jen.Id("t").Op(":=").Index().Id(strcase.LowerCamelCase(c.targetName)+"Unmarshaler").Values(),
+		jen.Id("t").Op(":=").Index().Id(target.variantUnmarshalerName()).Values(),
 		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
 			jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
 		),
@@ -377,8 +380,9 @@ type abstractMap struct {
 
 func (c *abstractMap) name() string { return c.name_ }
 func (c *abstractMap) symbolCode(b *builder) jen.Code {
+	target := b.getAbstractObject(c.targetName)
 	return jen.Line().Type().Id(c.name()).Map(jen.String()).Id(c.targetName).Line().Func().Params(jen.Id("m").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-		jen.Id("t").Op(":=").Map(jen.String()).Id(strcase.LowerCamelCase(c.targetName)+"Unmarshaler").Values(),
+		jen.Id("t").Op(":=").Map(jen.String()).Id(target.variantUnmarshalerName()).Values(),
 		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
 			jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
 		),
@@ -402,7 +406,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	var initCode, referCode jen.Code
 	switch symbol := b.getSymbol(c.targetName).(type) {
 	case *abstractObject:
-		initCode = jen.Id("target").Op(":=").Op("&").Id(strcase.LowerCamelCase(c.targetName) + "Unmarshaler").Values()
+		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.variantUnmarshalerName()).Values()
 		referCode = jen.Id("target").Dot("value")
 	case *specificObject, *abstractMap:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
