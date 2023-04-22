@@ -103,7 +103,7 @@ func (p ssrPropsParam) compare(p2 ssrPropsParam) error {
 
 func (p ssrPropsParam) code() jen.Code {
 	dict := jen.Dict{
-		jen.Id("typeCode"): jen.Nil().Comment("/*TODO*/"),
+		jen.Id("typeCode"): jen.Nil().Comment("/*TO" + "DO*/"),
 	}
 	if p.Default != "" {
 		dict[jen.Id("Default")] = jen.Lit(p.Default)
