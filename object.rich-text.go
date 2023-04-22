@@ -349,8 +349,8 @@ func (_ *UserMention) isMention() {}
 // Text
 type TextRichText struct {
 	RichTextCommon
-	Type alwaysText `json:"type"`
-	Text Text       `json:"text"`
+	Type alwaysText       `json:"type"`
+	Text TextRichTextData `json:"text"`
 }
 
 func (_ *TextRichText) isRichText() {}
@@ -358,12 +358,8 @@ func (_ *TextRichText) isRichText() {}
 /*
 
 If a rich text object’s type value is "text", then the corresponding text field contains an object including the following:
-
-Example rich text text object without link
-
-Example rich text text object with link
 */
-type Text struct {
+type TextRichTextData struct {
 	Content string        `json:"content"` // The actual text content of the text.
 	Link    *URLReference `json:"link"`    // An object with information about any inline link in this text, if included.   If the text contains an inline link, then the object key is url and the value is the URL’s string web address.   If the text doesn’t have any inline links, then the value is null.
 }

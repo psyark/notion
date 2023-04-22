@@ -477,7 +477,6 @@ func init() {
 					b.getAbstractObject("RichText").addDerived(
 						b.addSpecificObject("TextRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "text"},
-							&field{name: "text", typeCode: jen.Id("Text")},
 						),
 					)
 					return nil
@@ -486,7 +485,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addSpecificObject("Text", e.Text)
+					b.getSpecificObject("TextRichText").typeObject.comment = e.Text
 					return nil
 				},
 			},
@@ -496,7 +495,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addFields(e.asField(jen.String()))
+					b.getSpecificObject("TextRichText").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}, {
@@ -505,16 +504,13 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Text").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					b.getSpecificObject("TextRichText").typeObject.addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
-				Text: "Example rich text text object without link ",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getSpecificObject("Text").comment += "\n\n" + e.Text
-					return nil
-				},
+				Text:   "Example rich text text object without link ",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"This is an \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is an \",\n  \"href\": null\n}",
@@ -526,11 +522,8 @@ func init() {
 				},
 			}}},
 			&objectDocHeadingElement{
-				Text: "Example rich text text object with link ",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getSpecificObject("Text").comment += "\n\n" + e.Text
-					return nil
-				},
+				Text:   "Example rich text text object with link ",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"inline link\",\n    \"link\": {\n      \"url\": \"https://developers.notion.com/\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"inline link\",\n  \"href\": \"https://developers.notion.com/\"\n}",
