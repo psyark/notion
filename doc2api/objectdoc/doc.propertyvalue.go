@@ -407,6 +407,7 @@ func init() {
 						typeCode: jen.Op("*").Id("DatePropertyValueData"), // null
 						comment:  e.Text,
 					})
+					// 本来typeObjectを使いたいが、PropertyValueDataのバインディング利用の特殊性からこうしている
 					b.addSpecificObject("DatePropertyValueData", e.Text)
 					return nil
 				},

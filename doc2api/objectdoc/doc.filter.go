@@ -584,6 +584,8 @@ func init() {
 							&field{name: "rich_text", typeCode: jen.Id("RichTextFilterData")},
 						),
 					)
+					// 本来typeObjectを使いたいが、FilterはderivedIdentifierKeyを持たないためtypeObjectが使えない
+					// TODO 使えるようにする
 					b.addSpecificObject("RichTextFilterData", e.Text)
 					return nil
 				},
