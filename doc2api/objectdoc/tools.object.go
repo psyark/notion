@@ -109,6 +109,7 @@ type specificObject struct {
 	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
 	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
+	// TODO fixedStringFieldを持たないオブジェクトがtypeObjectを使いたい場合（例：Filter）
 	typeObject        objectCommon
 	typeObjectMayNull bool
 }
@@ -397,7 +398,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	case *abstractObject:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(strcase.LowerCamelCase(c.targetName) + "Unmarshaler").Values()
 		referCode = jen.Id("target").Dot("value")
-	case *abstractMap:
+	case *specificObject, *abstractMap:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
 		referCode = jen.Id("target")
 	default:
@@ -417,7 +418,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
 				jen.Id("t").Dot("Fatal").Call(jen.Err()),
 			),
-			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "MarshalIndent").Call(referCode, jen.Lit(""), jen.Lit("  ")),
+			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "Marshal").Call(referCode),
 			jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(
 				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("mismatch:\nwant: %s\ngot : %s"), jen.Id("want"), jen.Id("got"))),
 			),

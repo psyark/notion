@@ -177,9 +177,9 @@ func init() {
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotUser").comment += "\n\n" + e.ExampleValue
 					b.getSpecificObject("BotUser").addFields(e.asField(jen.Id("BotData")))
 					b.addSpecificObject("BotData", e.Description)
+					b.addUnmarshalTest("User", e.ExampleValue)
 					return nil
 				},
 			}, {
@@ -192,6 +192,7 @@ func init() {
 					field.omitEmpty = true
 					b.getSpecificObject("BotData").addFields(field)
 					b.addSpecificObject("BotDataOwner", e.Description)
+					b.addUnmarshalTest("BotDataOwner", e.ExampleValue)
 					return nil
 				},
 			}, {
@@ -200,11 +201,11 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotDataOwner").addFields(&field{
-						name:     "type",
-						typeCode: jen.String(),
-						comment:  e.Description,
-					})
+					b.getSpecificObject("BotDataOwner").addFields(
+						&field{name: "type", typeCode: jen.String(), comment: e.Description},
+						&field{name: "workspace", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
+						&field{name: "user", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
+					)
 					return nil
 				},
 			}, {

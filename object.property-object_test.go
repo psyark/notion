@@ -36,7 +36,7 @@ func TestPropertyMap_unmarshal(t *testing.T) {
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(err)
 		}
-		got, _ := json.MarshalIndent(target, "", "  ")
+		got, _ := json.Marshal(target)
 		if want, got, ok := compareJSON(want, got); !ok {
 			t.Fatal(fmt.Errorf("mismatch:\nwant: %s\ngot : %s", want, got))
 		}

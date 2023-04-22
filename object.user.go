@@ -139,21 +139,6 @@ type PersonData struct {
 /*
 Bots
 A user object's type property is"bot" when the user object represents a bot. A bot user object has the following properties:
-
-{
-    "object": "user",
-    "id": "9188c6a5-7381-452f-b3dc-d4865aa89bdf",
-    "name": "Test Integration",
-    "avatar_url": null,
-    "type": "bot",
-    "bot": {
-        "owner": {
-        "type": "workspace",
-        "workspace": true
-        },
- "workspace_name": "Ada Lovelace’s Notion"
-    }
-}
 */
 type BotUser struct {
 	DetailedUserCommon
@@ -173,5 +158,7 @@ type BotData struct {
 
 // Information about who owns this bot.
 type BotDataOwner struct {
-	Type string `json:"type"` // The type of owner, either "workspace" or "user".
+	Type      string `json:"type"`                // The type of owner, either "workspace" or "user".
+	Workspace bool   `json:"workspace,omitempty"` // undocumented
+	User      bool   `json:"user,omitempty"`      // undocumented
 }
