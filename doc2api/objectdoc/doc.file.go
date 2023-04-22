@@ -69,8 +69,8 @@ func init() {
 						&fixedStringField{name: "type", value: "file"},
 						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
 					)
-					b.getAbstractObject("File").addVariant(cs)
-					b.getAbstractObject("FileOrEmoji").addVariant(cs)
+					b.getAbstractObject("File").addDerived(cs)
+					b.getAbstractObject("FileOrEmoji").addDerived(cs)
 					return nil
 				},
 			},
@@ -145,8 +145,8 @@ func init() {
 					cs := b.addSpecificObject("ExternalFile", e.Text).addFields(
 						&fixedStringField{name: "type", value: "external"},
 					)
-					b.getAbstractObject("File").addVariant(cs)
-					b.getAbstractObject("FileOrEmoji").addVariant(cs)
+					b.getAbstractObject("File").addDerived(cs)
+					b.getAbstractObject("FileOrEmoji").addDerived(cs)
 					return nil
 				},
 			},

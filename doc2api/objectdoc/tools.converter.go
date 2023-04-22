@@ -163,7 +163,7 @@ func convertAll() error {
 
 	{
 		cases := []jen.Code{}
-		for _, v := range global.getAbstractObject("PropertyValue").variants {
+		for _, v := range global.getAbstractObject("PropertyValue").derivedObjects {
 			cases = append(cases, jen.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value"))))
 			var field fieldCoder
 			for _, f := range v.(*specificObject).fields {
@@ -196,8 +196,8 @@ func convertAll() error {
 	})
 	for _, c := range global.localSymbols {
 		if c, ok := c.(*abstractObject); ok {
-			sort.Slice(c.variants, func(i, j int) bool {
-				return c.variants[i].getSpecifyingField(c.specifiedBy).value < c.variants[j].getSpecifyingField(c.specifiedBy).value
+			sort.Slice(c.derivedObjects, func(i, j int) bool {
+				return c.derivedObjects[i].getIdentifierValue(c.derivedIdentifierKey) < c.derivedObjects[j].getIdentifierValue(c.derivedIdentifierKey)
 			})
 		}
 	}

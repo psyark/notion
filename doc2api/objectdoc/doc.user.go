@@ -16,7 +16,7 @@ func init() {
 					b.addAbstractObject("DetailedUser", "type", e.Text)
 					b.addAbstractObject("User", "type", e.Text)
 					b.addAbstractList("User", "Users")
-					b.getAbstractObject("User").addVariant(
+					b.getAbstractObject("User").addDerived(
 						b.addSpecificObject("PartialUser", e.Text),
 					)
 					return nil
@@ -119,7 +119,7 @@ func init() {
 						&fixedStringField{name: "type", value: "person"},
 					)
 					so.addParent(b.getAbstractObject("DetailedUser"))
-					b.getAbstractObject("User").addVariant(so)
+					b.getAbstractObject("User").addDerived(so)
 					return nil
 				},
 			},
@@ -160,7 +160,7 @@ func init() {
 						&fixedStringField{name: "type", value: "bot"},
 					)
 					so.addParent(b.getAbstractObject("DetailedUser"))
-					b.getAbstractObject("User").addVariant(so)
+					b.getAbstractObject("User").addDerived(so)
 					return nil
 				},
 			},

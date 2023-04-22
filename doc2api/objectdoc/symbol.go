@@ -23,14 +23,14 @@ var _ = []symbolCoder{
 	alwaysString(""),
 }
 
-// objectCoder はオブジェクトを作成するためのCoderです
-type objectCoder interface {
+// derivedCoder はabstractObjectの派生として存在できるオブジェクトを作成するためのCoderです
+type derivedCoder interface {
 	symbolCoder
-	getSpecifyingField(specifiedBy string) *fixedStringField
+	getIdentifierValue(identifierKey string) string
 	addParent(*abstractObject)
 }
 
-var _ = []objectCoder{
+var _ = []derivedCoder{
 	&specificObject{},
 	&abstractObject{},
 }
@@ -46,19 +46,19 @@ func (c *objectCommon) name() string {
 	return c.name_
 }
 
-// TODO: これを廃止してvariantTypeみたいなプロパティ作る
-func (c *objectCommon) getSpecifyingField(specifiedBy string) *fixedStringField {
+// TODO: derivedIdentifierValueみたいなプロパティにする？
+func (c *objectCommon) getIdentifierValue(specifiedBy string) string {
 	for _, f := range c.fields {
 		if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
-			return f
+			return f.value
 		}
 	}
 	for _, p := range c.parents {
-		if f := p.getSpecifyingField(specifiedBy); f != nil {
-			return f
+		if v := p.getIdentifierValue(specifiedBy); v != "" {
+			return v
 		}
 	}
-	return nil
+	return ""
 }
 
 func (c *objectCommon) addParent(parent *abstractObject) {
@@ -118,7 +118,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range interfaceFields {
-					g.Id(strcase.UpperCamelCase(f.name)).Id(b.getAbstractObject(f.typeName).variantUnmarshalerName()).Tag(map[string]string{"json": f.name})
+					g.Id(strcase.UpperCamelCase(f.name)).Id(b.getAbstractObject(f.typeName).derivedUnmarshalerName()).Tag(map[string]string{"json": f.name})
 				}
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
@@ -149,7 +149,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	var initCode, referCode jen.Code
 	switch symbol := b.getSymbol(c.targetName).(type) {
 	case *abstractObject:
-		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.variantUnmarshalerName()).Values()
+		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.derivedUnmarshalerName()).Values()
 		referCode = jen.Id("target").Dot("value")
 	case *specificObject, *abstractMap:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()

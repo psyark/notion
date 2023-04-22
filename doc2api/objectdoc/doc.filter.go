@@ -70,7 +70,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addVariant(
+					b.getAbstractObject("Filter").addDerived(
 						b.addSpecificObject("CheckboxFilter", e.Text),
 					)
 					return nil
@@ -108,7 +108,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addVariant(
+					b.getAbstractObject("Filter").addDerived(
 						b.addSpecificObject("DateFilter", e.Text),
 					)
 					return nil
@@ -266,7 +266,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addVariant(
+					b.getAbstractObject("Filter").addDerived(
 						b.addSpecificObject("FileFilter", e.Text),
 					)
 					return nil
@@ -579,7 +579,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addVariant(
+					b.getAbstractObject("Filter").addDerived(
 						b.addSpecificObject("RichTextFilter", e.Text).addFields(
 							&field{name: "rich_text", typeCode: jen.Id("RichTextFilterData")},
 						),

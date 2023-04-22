@@ -122,13 +122,13 @@ func init() {
 					// 各種バリアントを作成
 					for _, name := range strings.Split(e.Type, "\n\n") {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
-						b.getAbstractObject("Pagination").addVariant(
+						b.getAbstractObject("Pagination").addDerived(
 							b.addSpecificObject(strcase.UpperCamelCase(name)+"Pagination", "").addFields(
 								&fixedStringField{name: "type", value: name},
 							),
 						)
 					}
-					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addVariant(
+					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addDerived(
 						b.getSpecificObject("PropertyItemPagination"),
 					)
 					return nil

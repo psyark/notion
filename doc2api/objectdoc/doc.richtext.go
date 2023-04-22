@@ -149,7 +149,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("RichText").addVariant(
+					b.getAbstractObject("RichText").addDerived(
 						b.addSpecificObject("EquationRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "equation"},
 						),
@@ -194,7 +194,7 @@ func init() {
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					b.addAbstractObject("Mention", "type", e.Text)
-					b.getAbstractObject("RichText").addVariant(
+					b.getAbstractObject("RichText").addDerived(
 						b.addSpecificObject("MentionRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "mention"},
 							&field{name: "mention", typeCode: jen.Id("Mention")},
@@ -226,7 +226,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("DatabaseMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "database"},
 							&field{name: "database", typeCode: jen.Id("PageReference")},
@@ -254,7 +254,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("DateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "date"},
 							&field{name: "date", typeCode: jen.Id("DatePropertyValue")},
@@ -282,7 +282,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Link Preview mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("LinkPreviewMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "link_preview"},
 							&field{name: "link_preview", typeCode: jen.Id("URLReference")},
@@ -310,7 +310,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("PageMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "page"},
 							&field{name: "page", typeCode: jen.Id("PageReference")},
@@ -338,7 +338,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("TemplateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "template_mention"},
 							&field{name: "template_mention", typeCode: jen.Id("TemplateMentionData")},
@@ -361,7 +361,7 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("TemplateMentionData").addVariant(
+					b.getAbstractObject("TemplateMentionData").addDerived(
 						b.addSpecificObject("TemplateMentionDate", "").addFields(
 							&fixedStringField{name: "type", value: e.Field},
 							&field{name: e.Field, typeCode: jen.String(), comment: e.Description},
@@ -398,7 +398,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("TemplateMentionData").addVariant(
+					b.getAbstractObject("TemplateMentionData").addDerived(
 						b.addSpecificObject("TemplateMentionUser", "").addFields(
 							&fixedStringField{name: "type", value: e.Field},
 							e.asFixedStringField(),
@@ -426,7 +426,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "User mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Mention").addVariant(
+					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("UserMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "user"},
 							&field{name: "user", typeCode: jen.Id("PartialUser")},
@@ -470,7 +470,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("RichText").addVariant(
+					b.getAbstractObject("RichText").addDerived(
 						b.addSpecificObject("TextRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "text"},
 							&field{name: "text", typeCode: jen.Id("Text")},

@@ -30,7 +30,7 @@ func (b *builder) addSpecificObject(name string, comment string) *specificObject
 func (b *builder) addAbstractObject(name string, specifiedBy string, comment string) *abstractObject {
 	o := &abstractObject{}
 	o.name_ = strings.TrimSpace(name)
-	o.specifiedBy = specifiedBy
+	o.derivedIdentifierKey = specifiedBy
 	o.comment = comment
 	b.localSymbols = append(b.localSymbols, o)
 	b.globalSymbols.Store(name, o)

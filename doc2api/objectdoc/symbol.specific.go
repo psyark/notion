@@ -11,7 +11,7 @@ import (
 //
 // ですが、現在はspecificObjectの入れ子として存在するデータ構造にも使われています
 // （例：Annotations, PersonData）
-// TODO 上記を解消し、variantObjectみたいな名前にする？
+// TODO 上記を解消し、derivedObjectみたいな名前にする？
 //
 // 生成されるGoコードではstructポインタで表現されます
 type specificObject struct {
@@ -37,20 +37,20 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 
 	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
-		typeField := c.getSpecifyingField("type")
-		if typeField != nil {
+		typeValue := c.getIdentifierValue("type")
+		if typeValue != "" {
 			var valueOfTypeField *field
 			for _, f := range c.fields {
-				if f, ok := f.(*field); ok && f.name == typeField.value {
+				if f, ok := f.(*field); ok && f.name == typeValue {
 					valueOfTypeField = f
 					break
 				}
 			}
 			if valueOfTypeField == nil {
 				if c.typeObjectMayNull {
-					c.addFields(&field{name: typeField.value, typeCode: jen.Op("*").Id(c.name() + "Data")})
+					c.addFields(&field{name: typeValue, typeCode: jen.Op("*").Id(c.name() + "Data")})
 				} else {
-					c.addFields(&field{name: typeField.value, typeCode: jen.Id(c.name() + "Data")})
+					c.addFields(&field{name: typeValue, typeCode: jen.Id(c.name() + "Data")})
 				}
 			}
 		} else {
