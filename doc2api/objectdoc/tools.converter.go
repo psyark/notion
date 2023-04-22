@@ -161,26 +161,31 @@ func convertAll() error {
 		return err
 	}
 
+	// getTypeForBinding
 	{
-		cases := []jen.Code{}
-		for _, v := range global.getAbstractObject("PropertyValue").derivedObjects {
-			cases = append(cases, jen.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value"))))
-			var field fieldCoder
-			for _, f := range v.(*specificObject).fields {
-				if f.goName() != "Type" && f.goName() != "HasMore" {
-					field = f
-					break
-				}
-			}
-
-			typeCodeStr := (jen.Var().Id("_").Add(field.getTypeCode())).GoString()
-			typeCodeStr = strings.TrimPrefix(typeCodeStr, "var _ ")
-			cases = append(cases, jen.Return().Lit(typeCodeStr))
-		}
-
 		file := jen.NewFile("notion")
 		file.Func().Id("getTypeForBinding").Params(jen.Id("p").Id("Property")).String().Block(
-			jen.Switch(jen.Id("p").Assert(jen.Type())).Block(cases...),
+			jen.Switch(jen.Id("p").Assert(jen.Type())).BlockFunc(func(g *jen.Group) {
+				// PropertyValueの各派生に対し
+				for _, v := range global.getAbstractObject("PropertyValue").derivedObjects {
+					g.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value")))
+
+					// TypeでもHasMoreでもないフィールドを見つけ
+					var field fieldCoder
+					for _, f := range v.(*specificObject).fields {
+						if f.goName() != "Type" && f.goName() != "HasMore" {
+							field = f
+							break
+						}
+					}
+
+					// そのフィールドの型を文字列で返すようにする
+					typeCodeStr := (jen.Var().Id("_").Add(field.getTypeCode())).GoString()
+					typeCodeStr = strings.TrimPrefix(typeCodeStr, "var _ ")
+					g.Return().Lit(typeCodeStr)
+				}
+
+			}),
 			jen.Panic(jen.Id("p")),
 		)
 		if err := file.Save("../../binding.helper.go"); err != nil {
