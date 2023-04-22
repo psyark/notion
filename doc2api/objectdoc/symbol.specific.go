@@ -6,11 +6,13 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
-// specificObject は本来"type"や"object"キーで区別される各オブジェクトですが、
+// specificObject は本来"type"や"object"キーで区別される各オブジェクトです
 // （例：type="external" である ExternalFile）
-// 現在はspecificObjectの入れ子として存在するデータ構造にも使われています
+//
+// ですが、現在はspecificObjectの入れ子として存在するデータ構造にも使われています
 // （例：Annotations, PersonData）
-// TODO 上記を解消
+// TODO 上記を解消し、variantObjectみたいな名前にする？
+//
 // 生成されるGoコードではstructポインタで表現されます
 type specificObject struct {
 	objectCommon
