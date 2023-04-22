@@ -53,31 +53,17 @@ func (u *parentUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-/*
-Database parent
-
-{
-  "type": "database_id",
-  "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce"
-}
-*/
+// Database parent
 type DatabaseParent struct {
-	Type       alwaysDatabaseId `json:"type"`        // Always "database_id".
+	Type       alwaysDatabaseId `json:"type"`
 	DatabaseId uuid.UUID        `json:"database_id"` // The ID of the database that this page belongs to.
 }
 
 func (_ *DatabaseParent) isParent() {}
 
-/*
-Page parent
-
-{
-  "type": "page_id",
-	"page_id": "59833787-2cf9-4fdf-8782-e53db20768a5"
-}
-*/
+// Page parent
 type PageParent struct {
-	Type   alwaysPageId `json:"type"`    // Always "page_id".
+	Type   alwaysPageId `json:"type"`
 	PageId uuid.UUID    `json:"page_id"` // The ID of the page that this page belongs to.
 }
 
@@ -86,14 +72,9 @@ func (_ *PageParent) isParent() {}
 /*
 Workspace parent
 A page with a workspace parent is a top-level page within a Notion workspace. The parent property is an object containing the following keys:
-
-{
-	"type": "workspace",
-	"workspace": true
-}
 */
 type WorkspaceParent struct {
-	Type      alwaysWorkspace `json:"type"`      // Always "workspace".
+	Type      alwaysWorkspace `json:"type"`
 	Workspace bool            `json:"workspace"` // Always true.
 }
 
@@ -102,14 +83,9 @@ func (_ *WorkspaceParent) isParent() {}
 /*
 Block parent
 A page may have a block parent if it is created inline in a chunk of text, or is located beneath another block like a toggle or bullet block. The parent property is an object containing the following keys:
-
-{
-	"type": "block_id",
-	"block_id": "7d50a184-5bbe-4d90-8f29-6bec57ed817b"
-}
 */
 type BlockParent struct {
-	Type    alwaysBlockId `json:"type"`     // Always "block_id".
+	Type    alwaysBlockId `json:"type"`
 	BlockId uuid.UUID     `json:"block_id"` // The ID of the page that this page belongs to.
 }
 

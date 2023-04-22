@@ -36,10 +36,7 @@ func init() {
 				Type:         `"emoji"`,
 				Description:  `The constant string "emoji" that represents the object type.`,
 				ExampleValue: `"emoji"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("Emoji").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:       func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "emoji",
 				Type:         "string",

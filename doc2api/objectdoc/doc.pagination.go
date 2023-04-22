@@ -121,9 +121,7 @@ func init() {
 					// 各派生クラスを作成
 					for _, name := range strings.Split(e.Type, "\n\n") {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
-						b.addDerived(name, "Pagination", "").addFields(
-							&fixedStringField{name: "type", value: name},
-						)
+						b.addDerived(name, "Pagination", "")
 					}
 					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addDerived(
 						b.getSpecificObject("PropertyItemPagination"),

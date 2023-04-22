@@ -39,20 +39,25 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 	return o
 }
 
-// addDerived はderivedIdentifierKeyとparentNameから決まる名前で派生クラスを作成します
+// addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
 // TODO abstract版を作る
-func (b *builder) addDerived(derivedIdentifierKey string, parentName string, comment string) *specificObject {
-	return b.addDerivedWithName(derivedIdentifierKey, parentName, strcase.UpperCamelCase(derivedIdentifierKey)+parentName, comment)
+func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string) *specificObject {
+	return b.addDerivedWithName(derivedIdentifierValue, parentName, strcase.UpperCamelCase(derivedIdentifierValue)+parentName, comment)
 }
 
 // addDerivedWithName は任意の名前で派生クラスを作成します
-func (b *builder) addDerivedWithName(derivedIdentifierKey string, parentName string, derivedName string, comment string) *specificObject {
+func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName string, derivedName string, comment string) *specificObject {
+	parent := b.getAbstractObject(parentName)
 	derived := &specificObject{}
 	derived.name_ = derivedName
-	derived.derivedIdentifierValue = derivedIdentifierKey
+	derived.derivedIdentifierValue = derivedIdentifierValue
 	derived.comment = comment
 
-	parent := b.getAbstractObject(parentName)
+	if parent.derivedIdentifierKey != "" {
+		derived.fields = append(derived.fields, &fixedStringField{name: parent.derivedIdentifierKey, value: derivedIdentifierValue})
+	}
+
+	// 親子関係を設定
 	derived.addParent(parent)
 	parent.derivedObjects = append(parent.derivedObjects, derived)
 

@@ -57,9 +57,7 @@ func init() {
 				ExampleValue: `"rich_text"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					for _, m := range regexp.MustCompile(`- "(\w+)"`).FindAllStringSubmatch(e.Description, -1) {
-						b.addDerived(m[1], "Property", "").addFields(
-							&fixedStringField{name: "type", value: m[1]},
-						)
+						b.addDerived(m[1], "Property", "")
 					}
 					return nil
 				},
@@ -442,12 +440,9 @@ func init() {
 					).comment += e.Text
 					b.addAbstractObject("Relation", "type", e.Text)
 					b.addDerived("single_property", "Relation", "undocumented").addFields(
-						&fixedStringField{name: "type", value: "single_property"},
 						&field{name: "single_property", typeCode: jen.Struct()},
 					)
-					b.addDerived("dual_property", "Relation", "undocumented").addFields(
-						&fixedStringField{name: "type", value: "dual_property"},
-					)
+					b.addDerived("dual_property", "Relation", "undocumented")
 					return nil
 				},
 			},

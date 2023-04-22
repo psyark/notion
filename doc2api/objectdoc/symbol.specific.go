@@ -26,13 +26,12 @@ type specificObject struct {
 	typeObjectMayNull bool
 }
 
-// TODO derivedIdentifierValueを明示的に追加しないようにする
 func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 	if c.derivedIdentifierValue != "" {
 		for _, f := range fields {
 			if f, ok := f.(*fixedStringField); ok {
 				if f.value == c.derivedIdentifierValue {
-					fmt.Printf("%s に自明の fixedStringField %s がaddFieldされました\n", c.name(), f.value)
+					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", c.name(), f.value))
 				}
 			}
 		}

@@ -18,7 +18,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addDerived("database", "Parent", e.Text)
+					b.addDerivedWithName("database_id", "Parent", "DatabaseParent", e.Text)
 					return nil
 				},
 			},
@@ -27,10 +27,7 @@ func init() {
 				Type:          "string",
 				Description:   `Always "database_id".`,
 				ExampleValues: `"database_id"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("DatabaseParent").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:        func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:      "database_id",
 				Type:          "string (UUIDv4)",
@@ -46,14 +43,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("DatabaseParent").comment += "\n\n" + e.Code
+					b.addUnmarshalTest("Parent", e.Code)
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Page parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addDerived("page", "Parent", e.Text)
+					b.addDerivedWithName("page_id", "Parent", "PageParent", e.Text)
 					return nil
 				},
 			},
@@ -62,10 +59,7 @@ func init() {
 				Type:          "string",
 				Description:   `Always "page_id".`,
 				ExampleValues: `"page_id"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PageParent").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:        func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:      "page_id",
 				Type:          "string (UUIDv4)",
@@ -81,7 +75,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("PageParent").comment += "\n\n" + e.Code
+					b.addUnmarshalTest("Parent", e.Code)
 					return nil
 				},
 			}}},
@@ -104,10 +98,7 @@ func init() {
 				Type:          "type",
 				Description:   `Always "workspace".`,
 				ExampleValues: `"workspace"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("WorkspaceParent").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:        func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:      "workspace",
 				Type:          "boolean",
@@ -123,14 +114,14 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("WorkspaceParent").comment += "\n\n" + e.Code
+					b.addUnmarshalTest("Parent", e.Code)
 					return nil
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Block parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.addDerived("block", "Parent", e.Text)
+					b.addDerivedWithName("block_id", "Parent", "BlockParent", e.Text)
 					return nil
 				},
 			},
@@ -146,10 +137,7 @@ func init() {
 				Type:          "type",
 				Description:   `Always "block_id".`,
 				ExampleValues: `"block_id"`,
-				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BlockParent").addFields(e.asFixedStringField())
-					return nil
-				},
+				output:        func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:      "block_id",
 				Type:          "string (UUIDv4)",
@@ -165,7 +153,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("BlockParent").comment += "\n\n" + e.Code
+					b.addUnmarshalTest("Parent", e.Code)
 					return nil
 				},
 			}}},

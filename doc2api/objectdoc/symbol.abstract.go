@@ -18,7 +18,7 @@ type abstractObject struct {
 	objectCommon
 	derivedIdentifierKey string // "type", "object" など、派生を識別するためのプロパティ名
 	fieldsComment        string
-	derivedObjects       []derivedCoder
+	derivedObjects       []derivedCoder // TODO derivedObjects とは何なのか明確化
 	specialMethods       []specialMethodCoder
 }
 

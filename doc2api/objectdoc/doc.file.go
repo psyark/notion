@@ -67,7 +67,6 @@ func init() {
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					b.getAbstractObject("FileOrEmoji").addDerived(
 						b.addDerivedWithName("file", "File", "NotionHostedFile", e.Text).addFields(
-							&fixedStringField{name: "type", value: "file"},
 							&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
 						),
 					)
@@ -143,9 +142,7 @@ func init() {
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
 					b.getAbstractObject("FileOrEmoji").addDerived(
-						b.addDerived("external", "File", e.Text).addFields(
-							&fixedStringField{name: "type", value: "external"},
-						),
+						b.addDerived("external", "File", e.Text),
 					)
 					return nil
 				},

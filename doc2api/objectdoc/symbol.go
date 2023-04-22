@@ -44,6 +44,7 @@ type objectCommon struct {
 	// TODO 下記のようにし、parentsを一本化する
 	// parent -> *abstractObject
 	// unions -> []*unionObject
+	// TODO parentsとは何なのか明確化
 	parents []*abstractObject
 }
 
