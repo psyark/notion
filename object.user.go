@@ -124,15 +124,14 @@ User objects that represent people have the type property set to "person". These
 type PersonUser struct {
 	DetailedUserCommon
 	UserCommon
-	Type   alwaysPerson `json:"type"`
-	Person PersonData   `json:"person"` // Properties only present for non-bot users.
+	Type   alwaysPerson   `json:"type"`
+	Person PersonUserData `json:"person"`
 }
 
 func (_ *PersonUser) isDetailedUser() {}
 func (_ *PersonUser) isUser()         {}
 
-// Properties only present for non-bot users.
-type PersonData struct {
+type PersonUserData struct {
 	Email string `json:"email"` // Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.
 }
 
@@ -143,21 +142,20 @@ A user object's type property is"bot" when the user object represents a bot. A b
 type BotUser struct {
 	DetailedUserCommon
 	UserCommon
-	Type alwaysBot `json:"type"`
-	Bot  BotData   `json:"bot"` // If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
+	Type alwaysBot   `json:"type"`
+	Bot  BotUserData `json:"bot"`
 }
 
 func (_ *BotUser) isDetailedUser() {}
 func (_ *BotUser) isUser()         {}
 
-// If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.
-type BotData struct {
-	Owner         *BotDataOwner `json:"owner,omitempty"`          // Information about who owns this bot.
-	WorkspaceName string        `json:"workspace_name,omitempty"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
+type BotUserData struct {
+	Owner         *BotUserDataOwner `json:"owner,omitempty"`          // Information about who owns this bot.
+	WorkspaceName string            `json:"workspace_name,omitempty"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
 }
 
 // Information about who owns this bot.
-type BotDataOwner struct {
+type BotUserDataOwner struct {
 	Type      string `json:"type"`                // The type of owner, either "workspace" or "user".
 	Workspace bool   `json:"workspace,omitempty"` // undocumented
 	User      bool   `json:"user,omitempty"`      // undocumented

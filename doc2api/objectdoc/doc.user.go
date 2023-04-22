@@ -134,18 +134,14 @@ func init() {
 				Property:    "person",
 				Type:        "object",
 				Description: "Properties only present for non-bot users.",
-				output: func(e *objectDocParameter, b *builder) error {
-					b.addSpecificObject("PersonData", e.Description)
-					b.getSpecificObject("PersonUser").addFields(e.asField(jen.Id("PersonData")))
-					return nil
-				},
+				output:      func(e *objectDocParameter, b *builder) error { return nil },
 			}, {
 				Property:     "person.email",
 				Type:         "string",
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("PersonData").addFields(&field{
+					b.getSpecificObject("PersonUser").typeObject.addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -177,8 +173,6 @@ func init() {
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotUser").addFields(e.asField(jen.Id("BotData")))
-					b.addSpecificObject("BotData", e.Description)
 					b.addUnmarshalTest("User", e.ExampleValue)
 					return nil
 				},
@@ -188,11 +182,11 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) error {
-					field := e.asField(jen.Op("*").Id("BotDataOwner"))
+					field := e.asField(jen.Op("*").Id("BotUserDataOwner"))
 					field.omitEmpty = true
-					b.getSpecificObject("BotData").addFields(field)
-					b.addSpecificObject("BotDataOwner", e.Description)
-					b.addUnmarshalTest("BotDataOwner", e.ExampleValue)
+					b.getSpecificObject("BotUser").typeObject.addFields(field)
+					b.addSpecificObject("BotUserDataOwner", e.Description)
+					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 					return nil
 				},
 			}, {
@@ -201,7 +195,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("BotDataOwner").addFields(
+					b.getSpecificObject("BotUserDataOwner").addFields(
 						&field{name: "type", typeCode: jen.String(), comment: e.Description},
 						&field{name: "workspace", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
 						&field{name: "user", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
@@ -214,9 +208,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					field := e.asField(jen.String())
-					field.omitEmpty = true
-					b.getSpecificObject("BotData").addFields(field)
+					b.getSpecificObject("BotUser").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 					return nil
 				},
 			}},

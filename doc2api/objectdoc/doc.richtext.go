@@ -1,6 +1,8 @@
 package objectdoc
 
 import (
+	"encoding/json"
+
 	"github.com/dave/jennifer/jen"
 )
 
@@ -21,7 +23,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getAbstractObject("RichText").comment += "\n\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -69,7 +71,7 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getAbstractObject("RichText").addFields(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
+					b.getAbstractObject("RichText").addFields(e.asField(NullString)) // RetrivePageでnullを確認
 					return nil
 				},
 			}},
@@ -170,23 +172,20 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) error {
-					b.getSpecificObject("EquationRichText").addFields(e.asField(jen.String()))
+					b.getSpecificObject("EquationRichText").typeObject.addFields(e.asField(jen.String()))
 					return nil
 				},
 			}},
 			&objectDocHeadingElement{
-				Text: "Example rich text equation object",
-				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getSpecificObject("EquationRichText").comment += "\n\n" + e.Text
-					return nil
-				},
+				Text:   "Example rich text equation object",
+				output: func(e *objectDocHeadingElement, b *builder) error { return nil },
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"type\": \"equation\",\n  \"equation\": {\n    \"expression\": \"E = mc^2\"\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"E = mc^2\",\n  \"href\": null\n}",
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("EquationRichText").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -197,7 +196,7 @@ func init() {
 					b.getAbstractObject("RichText").addDerived(
 						b.addSpecificObject("MentionRichText", e.Text).addFields(
 							&fixedStringField{name: "type", value: "mention"},
-							&field{name: "mention", typeCode: jen.Id("Mention")},
+							&interfaceField{name: "mention", typeName: "Mention"},
 						),
 					)
 					return nil
@@ -257,7 +256,7 @@ func init() {
 					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("DateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "date"},
-							&field{name: "date", typeCode: jen.Id("DatePropertyValue")},
+							&field{name: "date", typeCode: jen.Id("DatePropertyValueData")},
 						),
 					)
 					return nil
@@ -275,7 +274,12 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("DateMention").comment += "\n" + e.Code
+					// おそらくドキュメントの不具合。time_zoneはomitemptyではなさそう
+					var tmp map[string]any
+					json.Unmarshal([]byte(e.Code), &tmp)
+					tmp["mention"].(map[string]any)["date"].(map[string]any)["time_zone"] = nil
+					data, _ := json.Marshal(tmp)
+					b.addUnmarshalTest("RichText", string(data))
 					return nil
 				},
 			}}},
@@ -294,7 +298,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.\n\nExample rich text mention object for a link_preview mention ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.getSpecificObject("LinkPreviewMention").comment += e.Text
+					b.getSpecificObject("MentionRichText").comment += e.Text
 					return nil
 				},
 			},
@@ -303,7 +307,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("LinkPreviewMention").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -331,7 +335,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("PageMention").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -341,7 +345,7 @@ func init() {
 					b.getAbstractObject("Mention").addDerived(
 						b.addSpecificObject("TemplateMention", e.Text).addFields(
 							&fixedStringField{name: "type", value: "template_mention"},
-							&field{name: "template_mention", typeCode: jen.Id("TemplateMentionData")},
+							&interfaceField{name: "template_mention", typeName: "TemplateMentionData"},
 						),
 					)
 					b.addAbstractObject("TemplateMentionData", "type", "")
@@ -382,7 +386,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("TemplateMentionDate").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -419,7 +423,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("TemplateMentionUser").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -463,7 +467,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("UserMention").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -517,7 +521,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("Text").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},
@@ -533,7 +537,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
-					b.getSpecificObject("Text").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 					return nil
 				},
 			}}},

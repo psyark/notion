@@ -26,8 +26,8 @@ func TestUser_unmarshal(t *testing.T) {
 	}
 }
 
-func TestBotDataOwner_unmarshal(t *testing.T) {
-	target := &BotDataOwner{}
+func TestBotUserDataOwner_unmarshal(t *testing.T) {
+	target := &BotUserDataOwner{}
 	tests := []string{
 		"{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 	}
