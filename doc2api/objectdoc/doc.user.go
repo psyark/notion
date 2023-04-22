@@ -155,6 +155,7 @@ func init() {
 					so := b.addSpecificObject("BotUser", e.Text).addFields(
 						&fixedStringField{name: "type", value: "bot"},
 					)
+					// TODO DetailedUserの扱いは特殊なので整理する
 					so.addParent(b.getAbstractObject("DetailedUser"))
 					b.getAbstractObject("User").addDerived(so)
 					return nil

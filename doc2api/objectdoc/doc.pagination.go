@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/stoewer/go-strcase"
 )
 
 func init() {
@@ -112,20 +111,18 @@ func init() {
 				Field:       "results",
 				Type:        "array of objects",
 				output: func(e *objectDocParameter, b *builder) error {
-					return nil // 各バリアントで定義
+					return nil // 各派生クラスで定義
 				},
 			}, {
 				Description: "A constant string that represents the type of the objects in results.",
 				Field:       "type",
 				Type:        "\"block\"\n\n\"comment\"\n\n\"database\"\n\n\"page\"\n\n\"page_or_database\"\n\n\"property_item\"\n\n\"user\"",
 				output: func(e *objectDocParameter, b *builder) error {
-					// 各種バリアントを作成
+					// 各派生クラスを作成
 					for _, name := range strings.Split(e.Type, "\n\n") {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
-						b.getAbstractObject("Pagination").addDerived(
-							b.addSpecificObject(strcase.UpperCamelCase(name)+"Pagination", "").addFields(
-								&fixedStringField{name: "type", value: name},
-							),
+						b.addDerived(name, "Pagination", "").addFields(
+							&fixedStringField{name: "type", value: name},
 						)
 					}
 					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addDerived(
@@ -138,7 +135,7 @@ func init() {
 				Field:       "{type}",
 				Type:        "paginated list object",
 				output: func(e *objectDocParameter, b *builder) error {
-					// TODO 各バリアントを定義
+					// TODO 各派生クラスを定義
 					b.getSpecificObject("PagePagination").addFields(
 						&field{name: "page", typeCode: jen.Struct(), comment: e.Description},
 						&field{name: "results", typeCode: jen.Index().Id("Page")},

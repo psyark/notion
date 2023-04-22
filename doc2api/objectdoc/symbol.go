@@ -39,7 +39,12 @@ type objectCommon struct {
 	name_   string
 	comment string
 	fields  []fieldCoder
-	parents []*abstractObject // parents はこのオブジェクトが実装すべきインターフェイスです。これが複数必要な例として、NotionHostedFile (File/FileOrEmoji) が挙げられます
+
+	// parents はこのオブジェクトが実装すべきインターフェイスです。これが複数必要な例として、NotionHostedFile (File/FileOrEmoji) が挙げられます
+	// TODO 下記のようにし、parentsを一本化する
+	// parent -> *abstractObject
+	// unions -> []*unionObject
+	parents []*abstractObject
 }
 
 func (c *objectCommon) name() string {

@@ -113,6 +113,20 @@ func (a *PropertyItemArray) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type PropertyItemMap map[string]PropertyItem
+
+func (m *PropertyItemMap) UnmarshalJSON(data []byte) error {
+	t := map[string]propertyItemUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return fmt.Errorf("unmarshaling PropertyItemMap: %w", err)
+	}
+	*m = PropertyItemMap{}
+	for k, u := range t {
+		(*m)[k] = u.value
+	}
+	return nil
+}
+
 /*
 
 The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.

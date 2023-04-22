@@ -3,6 +3,8 @@ package objectdoc
 import (
 	"strings"
 	"sync"
+
+	"github.com/stoewer/go-strcase"
 )
 
 // builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
@@ -35,6 +37,28 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 	b.localSymbols = append(b.localSymbols, o)
 	b.globalSymbols.Store(name, o)
 	return o
+}
+
+// addDerived はderivedIdentifierKeyとparentNameから決まる名前で派生クラスを作成します
+// TODO abstract版を作る
+func (b *builder) addDerived(derivedIdentifierKey string, parentName string, comment string) *specificObject {
+	return b.addDerivedWithName(derivedIdentifierKey, parentName, strcase.UpperCamelCase(derivedIdentifierKey)+parentName, comment)
+}
+
+// addDerivedWithName は任意の名前で派生クラスを作成します
+func (b *builder) addDerivedWithName(derivedIdentifierKey string, parentName string, derivedName string, comment string) *specificObject {
+	derived := &specificObject{}
+	derived.name_ = derivedName
+	derived.derivedIdentifierValue = derivedIdentifierKey
+	derived.comment = comment
+
+	parent := b.getAbstractObject(parentName)
+	derived.addParent(parent)
+	parent.derivedObjects = append(parent.derivedObjects, derived)
+
+	b.localSymbols = append(b.localSymbols, derived)
+	b.globalSymbols.Store(derived.name(), derived)
+	return derived
 }
 
 func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy string) *abstractObject {

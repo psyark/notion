@@ -16,6 +16,7 @@ import (
 // 生成されるGoコードではstructポインタで表現されます
 type specificObject struct {
 	objectCommon
+	derivedIdentifierValue string
 
 	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
@@ -25,7 +26,17 @@ type specificObject struct {
 	typeObjectMayNull bool
 }
 
+// TODO derivedIdentifierValueを明示的に追加しないようにする
 func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
+	if c.derivedIdentifierValue != "" {
+		for _, f := range fields {
+			if f, ok := f.(*fixedStringField); ok {
+				if f.value == c.derivedIdentifierValue {
+					fmt.Printf("%s に自明の fixedStringField %s がaddFieldされました\n", c.name(), f.value)
+				}
+			}
+		}
+	}
 	c.fields = append(c.fields, fields...)
 	return c
 }

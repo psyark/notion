@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/stoewer/go-strcase"
 )
 
 func init() {
@@ -58,10 +57,8 @@ func init() {
 				ExampleValue: `"rich_text"`,
 				output: func(e *objectDocParameter, b *builder) error {
 					for _, m := range regexp.MustCompile(`- "(\w+)"`).FindAllStringSubmatch(e.Description, -1) {
-						b.getAbstractObject("Property").addDerived(
-							b.addSpecificObject(strcase.UpperCamelCase(m[1])+"Property", "").addFields(
-								&fixedStringField{name: "type", value: m[1]},
-							),
+						b.addDerived(m[1], "Property", "").addFields(
+							&fixedStringField{name: "type", value: m[1]},
 						)
 					}
 					return nil
@@ -443,15 +440,13 @@ func init() {
 					b.getSpecificObject("RelationProperty").addFields(
 						&interfaceField{name: "relation", typeName: "Relation"},
 					).comment += e.Text
-					b.addAbstractObject("Relation", "type", e.Text).addDerived(
-						b.addSpecificObject("SinglePropertyRelation", "undocumented").addFields(
-							&fixedStringField{name: "type", value: "single_property"},
-							&field{name: "single_property", typeCode: jen.Struct()},
-						),
-					).addDerived(
-						b.addSpecificObject("DualPropertyRelation", "undocumented").addFields(
-							&fixedStringField{name: "type", value: "dual_property"},
-						),
+					b.addAbstractObject("Relation", "type", e.Text)
+					b.addDerived("single_property", "Relation", "undocumented").addFields(
+						&fixedStringField{name: "type", value: "single_property"},
+						&field{name: "single_property", typeCode: jen.Struct()},
+					)
+					b.addDerived("dual_property", "Relation", "undocumented").addFields(
+						&fixedStringField{name: "type", value: "dual_property"},
 					)
 					return nil
 				},

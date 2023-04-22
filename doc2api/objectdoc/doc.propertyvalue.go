@@ -100,10 +100,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("TitlePropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "title"},
-						),
+					b.addDerived("title", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "title"},
 					)
 					return nil
 				},
@@ -148,10 +146,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich Text property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("RichTextPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "rich_text"},
-						),
+					b.addDerived("rich_text", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "rich_text"},
 					)
 					return nil
 				},
@@ -194,10 +190,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("NumberPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "number"},
-						),
+					b.addDerived("number", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "number"},
 					)
 					return nil
 				},
@@ -231,10 +225,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("SelectPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "select"},
-						),
+					b.addDerived("select", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "select"},
 					)
 					return nil
 				},
@@ -283,10 +275,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("StatusPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "status"},
-						),
+					b.addDerived("status", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "status"},
 					)
 					return nil
 				},
@@ -335,10 +325,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("MultiSelectPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "multi_select"},
-						),
+					b.addDerived("multi_select", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "multi_select"},
 					)
 					return nil
 				},
@@ -391,10 +379,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("DatePropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "date"},
-						),
+					b.addDerived("date", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "date"},
 					)
 					return nil
 				},
@@ -476,11 +462,9 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("FormulaPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "formula"},
-							&interfaceField{name: "formula", typeName: "Formula"},
-						),
+					b.addDerived("formula", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "formula"},
+						&interfaceField{name: "formula", typeName: "Formula"},
 					)
 					b.addAbstractObject("Formula", "type", "")
 					return nil
@@ -517,10 +501,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "String formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Formula").addDerived(
-						b.addSpecificObject("StringFormula", e.Text).addFields(
-							&fixedStringField{name: "type", value: "string"},
-						),
+					b.addDerived("string", "Formula", e.Text).addFields(
+						&fixedStringField{name: "type", value: "string"},
 					)
 					return nil
 				},
@@ -539,10 +521,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Formula").addDerived(
-						b.addSpecificObject("NumberFormula", e.Text).addFields(
-							&fixedStringField{name: "type", value: "number"},
-						),
+					b.addDerived("number", "Formula", e.Text).addFields(
+						&fixedStringField{name: "type", value: "number"},
 					)
 					return nil
 				},
@@ -561,10 +541,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Boolean formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Formula").addDerived(
-						b.addSpecificObject("BooleanFormula", e.Text).addFields(
-							&fixedStringField{name: "type", value: "boolean"},
-						),
+					b.addDerived("boolean", "Formula", e.Text).addFields(
+						&fixedStringField{name: "type", value: "boolean"},
 					)
 					return nil
 				},
@@ -583,10 +561,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date formula property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Formula").addDerived(
-						b.addSpecificObject("DateFormula", e.Text).addFields(
-							&fixedStringField{name: "type", value: "date"},
-						),
+					b.addDerived("date", "Formula", e.Text).addFields(
+						&fixedStringField{name: "type", value: "date"},
 					)
 					return nil
 				},
@@ -605,10 +581,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("RelationPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "relation"},
-						),
+					b.addDerived("relation", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "relation"},
 					)
 					return nil
 				},
@@ -647,11 +621,9 @@ func init() {
 					// 比較的ドキュメントが充実しているPropertyItemに任せるため、こちらでは作成は行わない
 					// https://developers.notion.com/reference/property-value-object#rollup-property-values
 					// https://developers.notion.com/reference/property-item-object#rollup-property-values
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("RollupPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "rollup"},
-							&interfaceField{name: "rollup", typeName: "Rollup"},
-						),
+					b.addDerived("rollup", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "rollup"},
+						&interfaceField{name: "rollup", typeName: "Rollup"},
 					)
 					return nil
 				},
@@ -713,10 +685,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("PeoplePropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "people"},
-						),
+					b.addDerived("people", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "people"},
 					)
 					return nil
 				},
@@ -755,10 +725,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("FilesPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "files"},
-						),
+					b.addDerived("files", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "files"},
 					)
 					return nil
 				},
@@ -792,10 +760,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("CheckboxPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "checkbox"},
-						),
+					b.addDerived("checkbox", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "checkbox"},
 					)
 					return nil
 				},
@@ -825,10 +791,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "URL property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("UrlPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "url"},
-						),
+					b.addDerived("url", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "url"},
 					)
 					return nil
 				},
@@ -858,10 +822,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("EmailPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "email"},
-						),
+					b.addDerived("email", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "email"},
 					)
 					return nil
 				},
@@ -891,10 +853,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Phone number property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("PhoneNumberPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "phone_number"},
-						),
+					b.addDerived("phone_number", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "phone_number"},
 					)
 					return nil
 				},
@@ -924,10 +884,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("CreatedTimePropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "created_time"},
-						),
+					b.addDerived("created_time", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "created_time"},
 					)
 					return nil
 				},
@@ -946,10 +904,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("CreatedByPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "created_by"},
-						),
+					b.addDerived("created_by", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "created_by"},
 					)
 					return nil
 				},
@@ -968,10 +924,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited time property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("LastEditedTimePropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "last_edited_time"},
-						),
+					b.addDerived("last_edited_time", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "last_edited_time"},
 					)
 					return nil
 				},
@@ -990,10 +944,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited by property values",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("PropertyValue").addDerived(
-						b.addSpecificObject("LastEditedByPropertyValue", e.Text).addFields(
-							&fixedStringField{name: "type", value: "last_edited_by"},
-						),
+					b.addDerived("last_edited_by", "PropertyValue", e.Text).addFields(
+						&fixedStringField{name: "type", value: "last_edited_by"},
 					)
 					return nil
 				},

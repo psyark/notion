@@ -70,9 +70,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addDerived(
-						b.addSpecificObject("CheckboxFilter", e.Text),
-					)
+					b.addDerived("checkbox", "Filter", e.Text)
 					return nil
 				},
 			},
@@ -108,9 +106,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addDerived(
-						b.addSpecificObject("DateFilter", e.Text),
-					)
+					b.addDerived("date", "Filter", e.Text)
 					return nil
 				},
 			},
@@ -266,9 +262,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addDerived(
-						b.addSpecificObject("FileFilter", e.Text),
-					)
+					b.addDerived("file", "Filter", e.Text)
 					return nil
 				},
 			},
@@ -579,10 +573,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich text ",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Filter").addDerived(
-						b.addSpecificObject("RichTextFilter", e.Text).addFields(
-							&field{name: "rich_text", typeCode: jen.Id("RichTextFilterData")},
-						),
+					b.addDerived("RichText", "Filter", e.Text).addFields(
+						&field{name: "rich_text", typeCode: jen.Id("RichTextFilterData")},
 					)
 					// 本来typeObjectを使いたいが、FilterはderivedIdentifierKeyを持たないためtypeObjectが使えない
 					// TODO 使えるようにする

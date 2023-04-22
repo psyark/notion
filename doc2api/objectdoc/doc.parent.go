@@ -18,9 +18,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Parent").addDerived(
-						b.addSpecificObject("DatabaseParent", e.Text),
-					)
+					b.addDerived("database", "Parent", e.Text)
 					return nil
 				},
 			},
@@ -55,9 +53,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Parent").addDerived(
-						b.addSpecificObject("PageParent", e.Text),
-					)
+					b.addDerived("page", "Parent", e.Text)
 					return nil
 				},
 			},
@@ -92,9 +88,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Workspace parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Parent").addDerived(
-						b.addSpecificObject("WorkspaceParent", e.Text),
-					)
+					b.addDerived("workspace", "Parent", e.Text)
 					return nil
 				},
 			},
@@ -136,9 +130,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block parent",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Parent").addDerived(
-						b.addSpecificObject("BlockParent", e.Text),
-					)
+					b.addDerived("block", "Parent", e.Text)
 					return nil
 				},
 			},

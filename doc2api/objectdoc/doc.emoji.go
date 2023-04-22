@@ -11,9 +11,8 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI. ",
 				output: func(e *objectDocParagraphElement, b *builder) error {
-					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type").addDerived(
-						b.addSpecificObject("Emoji", e.Text),
-					)
+					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type")
+					b.addDerivedWithName("emoji", "FileOrEmoji", "Emoji", e.Text)
 					return nil
 				},
 			},
@@ -22,6 +21,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) error {
+					b.addUnmarshalTest("Emoji", e.Code)
 					return nil
 				},
 			}}},

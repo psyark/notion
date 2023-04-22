@@ -8,7 +8,11 @@ import (
 )
 
 // abstractObject は、共通の性質を持つspecificObject又はabstractObjectの総称です
-// （例：File）
+// （例：File, FileOrEmoji）
+// Fileなどは共通フィールドを持ち、本来の意味でのderivedObjectsを持ちますが
+// FileOrEmojiのようなオブジェクトは共通フィールドを持たず、所属するオブジェクトはderivedとは言いにくく、またglobalに置かれる特性から
+// 本来であればunionObjectなど別の仕組みで表現することも考えられますが、
+// 現在はどちらもabstractObjectで表現しています。
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
 type abstractObject struct {
 	objectCommon
@@ -19,9 +23,11 @@ type abstractObject struct {
 }
 
 // addDerived は指定したobjectCoderをこのインターフェイスの派生として登録し、symbolCode()に以下のことを行わせます
-// TODO 呼び出され方をよく見てbuilderのメソッドに移動
 // - 派生に対してインターフェイスメソッドを実装
 // - JSONメッセージからこのインターフェイスの適切な派生を作成するUnmarshalerを作成
+// TODO 呼び出され方をよく見てbuilderのメソッドに移動
+// TODO NotionHostedFileがFileとFileOrEmojiである以上、builder.addDerived一本化はできない
+// Deprecated: use builder.addDerived
 func (c *abstractObject) addDerived(derived derivedCoder) *abstractObject {
 	derived.addParent(c)
 	c.derivedObjects = append(c.derivedObjects, derived)

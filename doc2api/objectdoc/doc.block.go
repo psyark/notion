@@ -181,9 +181,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) error {
-					b.getAbstractObject("Block").addDerived(
-						b.addSpecificObject("BookmarkBlock", "").addFields(&fixedStringField{name: "type", value: "bookmark"}),
-					)
+					b.addDerived("bookmark", "Block", "").addFields(&fixedStringField{name: "type", value: "bookmark"})
 					return nil
 				},
 			},
