@@ -299,6 +299,8 @@ func (o *FormulaPropertyValue) get() reflect.Value {
 func (o *FormulaPropertyValue) set(v reflect.Value) {
 	o.Formula = v.Interface().(Formula)
 }
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *FormulaPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias FormulaPropertyValue
 	t := &struct {
@@ -432,6 +434,8 @@ func (o *RollupPropertyValue) get() reflect.Value {
 func (o *RollupPropertyValue) set(v reflect.Value) {
 	o.Rollup = v.Interface().(Rollup)
 }
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *RollupPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias RollupPropertyValue
 	t := &struct {
@@ -643,6 +647,8 @@ func (o *LastEditedByPropertyValue) get() reflect.Value {
 func (o *LastEditedByPropertyValue) set(v reflect.Value) {
 	o.LastEditedBy = v.Interface().(User)
 }
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *LastEditedByPropertyValue) UnmarshalJSON(data []byte) error {
 	type Alias LastEditedByPropertyValue
 	t := &struct {

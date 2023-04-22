@@ -30,6 +30,7 @@ type Page struct {
 	Url            string           `json:"url"`              // The URL of the Notion page.
 }
 
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *Page) UnmarshalJSON(data []byte) error {
 	type Alias Page
 	t := &struct {

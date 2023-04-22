@@ -14,6 +14,7 @@ type symbolCoder interface {
 }
 
 var _ = []symbolCoder{
+	&objectCommon{},
 	&specificObject{},
 	&abstractObject{},
 	&abstractList{},
@@ -100,6 +101,42 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 	return code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
 }
 
+func (c *objectCommon) fieldUnmarshalerCode() jen.Code {
+	code := &jen.Statement{}
+
+	interfaceFields := []*interfaceField{}
+	for _, f := range c.fields {
+		if f, ok := f.(*interfaceField); ok {
+			interfaceFields = append(interfaceFields, f)
+		}
+	}
+
+	if len(interfaceFields) != 0 {
+		code.Comment("UnmarshalJSON assigns the appropriate implementation to interface field(s)").Line()
+		code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().BlockFunc(func(g *jen.Group) {
+			g.Type().Id("Alias").Id(c.name())
+			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
+				g.Op("*").Id("Alias")
+				for _, f := range interfaceFields {
+					g.Id(strcase.UpperCamelCase(f.name)).Id(strcase.LowerCamelCase(f.typeName) + "Unmarshaler").Tag(map[string]string{"json": f.name})
+				}
+			}).Values(jen.Dict{
+				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
+			})
+			g.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
+				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
+			)
+			for _, f := range interfaceFields {
+				fieldName := strcase.UpperCamelCase(f.name)
+				g.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value")
+			}
+			g.Return().Nil()
+		}).Line()
+	}
+
+	return code
+}
+
 // specificObject は"type"や"object"キーで区別される各オブジェクトです
 // （例：type="external" である ExternalFile）
 // 生成されるGoコードではstructポインタで表現されます
@@ -120,6 +157,7 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 }
 
 func (c *specificObject) symbolCode(b *builder) jen.Code {
+	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
 		typeField := c.getSpecifyingField("type")
 		if typeField != nil {
@@ -143,7 +181,8 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 	}
 
 	// struct本体
-	code := &jen.Statement{c.objectCommon.symbolCode(b)}
+	code := &jen.Statement{}
+	code.Add(c.objectCommon.symbolCode(b))
 
 	// インターフェイスを実装
 	for _, a := range c.getAncestors() {
@@ -156,14 +195,8 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 		}
 	}
 
-	// typeSpecificFieldをGetterに
-	// for _, f := range c.fields {
-	// 	if f, ok := f.(*fixedStringField); ok {
-	// 		code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("Get" + strcase.UpperCamelCase(f.name)).Params().String().Block(
-	// 			jen.Return().Lit(f.value),
-	// 		).Line()
-	// 	}
-	// }
+	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
+	code.Add(c.fieldUnmarshalerCode())
 
 	// type object
 	if len(c.typeObject.fields) != 0 {
@@ -171,33 +204,6 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 		code.Add(c.typeObject.symbolCode(b))
 	}
 
-	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
-	{
-		tmpFields := []jen.Code{jen.Op("*").Id("Alias")}
-		retrieveCodes := []jen.Code{}
-		for _, f := range c.fields {
-			if f, ok := f.(*interfaceField); ok {
-				fieldName := strcase.UpperCamelCase(f.name)
-				tmpFields = append(tmpFields, jen.Id(fieldName).Id(strcase.LowerCamelCase(f.typeName)+"Unmarshaler").Tag(map[string]string{"json": f.name}))
-				retrieveCodes = append(retrieveCodes, jen.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value").Line())
-			}
-		}
-
-		if len(retrieveCodes) != 0 {
-			code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-				jen.Type().Id("Alias").Id(c.name()),
-				jen.Id("t").Op(":=").Op("&").Struct(
-					tmpFields...,
-				).Values(jen.Dict{
-					jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
-				}),
-				jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
-					jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
-				),
-				(&jen.Statement{}).Add(retrieveCodes...).Return().Nil(),
-			).Line()
-		}
-	}
 	return code
 }
 

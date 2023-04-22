@@ -289,6 +289,8 @@ type RelationProperty struct {
 }
 
 func (_ *RelationProperty) isProperty() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *RelationProperty) UnmarshalJSON(data []byte) error {
 	type Alias RelationProperty
 	t := &struct {

@@ -208,6 +208,8 @@ type RollupPaginatedPropertyInfo struct {
 }
 
 func (_ *RollupPaginatedPropertyInfo) isPaginatedPropertyInfo() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *RollupPaginatedPropertyInfo) UnmarshalJSON(data []byte) error {
 	type Alias RollupPaginatedPropertyInfo
 	t := &struct {
@@ -230,6 +232,8 @@ type TitlePropertyItem struct {
 
 func (_ *TitlePropertyItem) isPropertyItem()                         {}
 func (_ *TitlePropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *TitlePropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias TitlePropertyItem
 	t := &struct {
@@ -252,6 +256,8 @@ type RichTextPropertyItem struct {
 
 func (_ *RichTextPropertyItem) isPropertyItem()                         {}
 func (_ *RichTextPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias RichTextPropertyItem
 	t := &struct {
@@ -334,6 +340,8 @@ type FormulaPropertyItem struct {
 
 func (_ *FormulaPropertyItem) isPropertyItem()                         {}
 func (_ *FormulaPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *FormulaPropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias FormulaPropertyItem
 	t := &struct {
@@ -366,6 +374,8 @@ type RollupPropertyItem struct {
 
 func (_ *RollupPropertyItem) isPropertyItem()                         {}
 func (_ *RollupPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *RollupPropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias RollupPropertyItem
 	t := &struct {
@@ -469,6 +479,8 @@ type PeoplePropertyItem struct {
 
 func (_ *PeoplePropertyItem) isPropertyItem()                         {}
 func (_ *PeoplePropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *PeoplePropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias PeoplePropertyItem
 	t := &struct {
@@ -572,6 +584,8 @@ type CreatedByPropertyItem struct {
 
 func (_ *CreatedByPropertyItem) isPropertyItem()                         {}
 func (_ *CreatedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *CreatedByPropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias CreatedByPropertyItem
 	t := &struct {
@@ -610,6 +624,8 @@ type LastEditedByPropertyItem struct {
 
 func (_ *LastEditedByPropertyItem) isPropertyItem()                         {}
 func (_ *LastEditedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *LastEditedByPropertyItem) UnmarshalJSON(data []byte) error {
 	type Alias LastEditedByPropertyItem
 	t := &struct {

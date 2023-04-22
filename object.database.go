@@ -30,6 +30,7 @@ type Database struct {
 	IsInline       bool           `json:"is_inline"`        // Has the value true if the database appears in the page as an inline block. Otherwise has the value false if the database appears as a child page.
 }
 
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *Database) UnmarshalJSON(data []byte) error {
 	type Alias Database
 	t := &struct {
