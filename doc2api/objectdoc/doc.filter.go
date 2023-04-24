@@ -75,9 +75,7 @@ func init() {
 				Field:        "equals",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					f := e.asField(jen.Op("*").Bool())
-					f.omitEmpty = true
-					b.getSpecificObject("CheckboxFilter").addFields(f)
+					b.getSpecificObject("CheckboxFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether a checkbox property value differs from the provided value. \n\nReturns or excludes all database entries with a difference in values.",
@@ -85,16 +83,16 @@ func init() {
 				Field:        "does_not_equal",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					f := e.asField(jen.Op("*").Bool())
-					f.omitEmpty = true
-					b.getSpecificObject("CheckboxFilter").addFields(f)
+					b.getSpecificObject("CheckboxFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"does_not_equal\": true\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					// TODO テスト追加
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Date",
@@ -546,12 +544,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich text ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("RichText", "Filter", e.Text).addFields(
-						&field{name: "rich_text", typeCode: jen.Id("RichTextFilterData")},
-					)
-					// 本来typeObjectを使いたいが、FilterはderivedIdentifierKeyを持たないためtypeObjectが使えない
-					// TODO 使えるようにする
-					b.addSpecificObject("RichTextFilterData", e.Text)
+					b.addDerived("rich_text", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -560,7 +553,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_contain",
@@ -568,7 +561,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_equal",
@@ -576,7 +569,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "ends_with",
@@ -584,7 +577,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
 				ExampleValue: `"Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "equals",
@@ -592,7 +585,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -600,7 +593,7 @@ func init() {
 				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.Bool(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -608,7 +601,7 @@ func init() {
 				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.Bool(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "starts_with",
@@ -616,14 +609,16 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
 				ExampleValue: `"Moved"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("RichTextFilterData").addFields(e.asField(jen.String(), omitEmpty))
+					b.getSpecificObject("RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Description\",\n    \"rich_text\": {\n      \"contains\": \"cross-team\"\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					// TODO テスト
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Rollup",

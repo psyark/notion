@@ -48,24 +48,25 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 func (c *specificObject) symbolCode(b *builder) jen.Code {
 	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
-		typeValue := c.getIdentifierValue("type")
-		if typeValue != "" {
-			var valueOfTypeField *field
-			for _, f := range c.fields {
-				if f, ok := f.(*field); ok && f.name == typeValue {
-					valueOfTypeField = f
-					break
-				}
+		if c.derivedIdentifierValue == "" {
+			panic(fmt.Sprintf("タイプが不明です: %v", c.name()))
+		}
+
+		var valueOfTypeField *field
+		for _, f := range c.fields {
+			if f, ok := f.(*field); ok && f.name == c.derivedIdentifierValue {
+				valueOfTypeField = f
+				break
 			}
-			if valueOfTypeField == nil {
-				if c.typeObjectMayNull {
-					c.addFields(&field{name: typeValue, typeCode: jen.Op("*").Id(c.name() + "Data")})
-				} else {
-					c.addFields(&field{name: typeValue, typeCode: jen.Id(c.name() + "Data")})
-				}
+		}
+		if valueOfTypeField == nil {
+			if c.typeObjectMayNull {
+				c.addFields(&field{name: c.derivedIdentifierValue, typeCode: jen.Op("*").Id(c.name() + "Data")})
+			} else {
+				c.addFields(&field{name: c.derivedIdentifierValue, typeCode: jen.Id(c.name() + "Data")})
 			}
 		} else {
-			panic(fmt.Sprintf("タイプが不明です: %v", c.name()))
+			fmt.Printf("👻 %s には %s が存在しますが、自動生成されるため消すことが望ましいです\n", c.name(), valueOfTypeField.name)
 		}
 	}
 
