@@ -37,7 +37,7 @@ var _ = []objectDocElement{
 // objectDocHeadingElement は見出しを表すobjectDocElementです
 type objectDocHeadingElement struct {
 	Text   string
-	output func(*objectDocHeadingElement, *builder) error
+	output func(*objectDocHeadingElement, *builder)
 }
 
 func (e *objectDocHeadingElement) localCopy(typeName string, outputCode jen.Code) jen.Code {
@@ -52,9 +52,8 @@ func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement, b *bui
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Text != remote.Text {
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
-	} else if e.output != nil {
-		return e.output(e, b)
 	} else {
+		e.output(e, b)
 		return nil
 	}
 }
@@ -62,7 +61,7 @@ func (e *objectDocHeadingElement) checkAndOutput(remote objectDocElement, b *bui
 // objectDocParagraphElement は段落を表すobjectDocElementです
 type objectDocParagraphElement struct {
 	Text   string
-	output func(*objectDocParagraphElement, *builder) error
+	output func(*objectDocParagraphElement, *builder)
 }
 
 func (e *objectDocParagraphElement) localCopy(typeName string, outputCode jen.Code) jen.Code {
@@ -77,9 +76,8 @@ func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement, b *b
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Text != remote.Text {
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
-	} else if e.output != nil {
-		return e.output(e, b)
 	} else {
+		e.output(e, b)
 		return nil
 	}
 }
@@ -87,7 +85,7 @@ func (e *objectDocParagraphElement) checkAndOutput(remote objectDocElement, b *b
 // objectDocAPIHeaderElement はAPI Headerを表すobjectDocElementです
 type objectDocAPIHeaderElement struct {
 	Title  string `json:"title"`
-	output func(*objectDocAPIHeaderElement, *builder) error
+	output func(*objectDocAPIHeaderElement, *builder)
 }
 
 func (e *objectDocAPIHeaderElement) localCopy(typeName string, outputCode jen.Code) jen.Code {
@@ -99,9 +97,8 @@ func (e *objectDocAPIHeaderElement) checkAndOutput(remote objectDocElement, b *b
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Title != remote.Title {
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
-	} else if e.output != nil {
-		return e.output(e, b)
 	} else {
+		e.output(e, b)
 		return nil
 	}
 }
@@ -137,11 +134,8 @@ func (e *objectDocCodeElement) checkAndOutput(remote objectDocElement, b *builde
 			rc := remote.Codes[i]
 			if code.Name != rc.Name || code.Language != rc.Language || code.Code != rc.Code {
 				return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, code, rc)
-			} else if code.output != nil {
-				if err := code.output(code, b); err != nil {
-					return err
-				}
 			}
+			code.output(code, b)
 		}
 		return nil
 	}
@@ -151,7 +145,7 @@ type objectDocCodeElementCode struct {
 	Name     string `json:"string"`
 	Language string `json:"language"`
 	Code     string `json:"code"`
-	output   func(*objectDocCodeElementCode, *builder) error
+	output   func(*objectDocCodeElementCode, *builder)
 }
 
 // objectDocCodeElement はコールアウトを表すobjectDocElementです
@@ -159,7 +153,7 @@ type objectDocCalloutElement struct {
 	Type   string `json:"type"`
 	Title  string `json:"title"`
 	Body   string `json:"body"`
-	output func(*objectDocCalloutElement, *builder) error
+	output func(*objectDocCalloutElement, *builder)
 }
 
 func (e *objectDocCalloutElement) localCopy(typeName string, outputCode jen.Code) jen.Code {
@@ -176,9 +170,8 @@ func (e *objectDocCalloutElement) checkAndOutput(remote objectDocElement, b *bui
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
 	} else if e.Type != remote.Type || e.Title != remote.Title || e.Body != remote.Body {
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
-	} else if e.output != nil {
-		return e.output(e, b)
 	} else {
+		e.output(e, b)
 		return nil
 	}
 }
@@ -267,17 +260,14 @@ type objectDocParameter struct {
 	Description   string `json:",omitempty"`
 	ExampleValue  string `json:"Example value,omitempty"`
 	ExampleValues string `json:"Example values,omitempty"`
-	output        func(*objectDocParameter, *builder) error
+	output        func(*objectDocParameter, *builder)
 }
 
 func (e *objectDocParameter) checkAndOutput(remote *objectDocParameter, b *builder) error {
 	if e.Property != remote.Property || e.Field != remote.Field || e.Type != remote.Type || e.Description != remote.Description || e.ExampleValue != remote.ExampleValue || e.ExampleValues != remote.ExampleValues {
 		return fmt.Errorf("%w\nlocal : %#v\nremote: %#v", errUnmatch, e, remote)
-	} else if e.output != nil {
-		if err := e.output(e, b); err != nil {
-			return err
-		}
 	}
+	e.output(e, b)
 	return nil
 }
 
@@ -337,7 +327,7 @@ type objectDocImageElementImage struct {
 	Height  int
 	Color   string
 	Caption string `json:"caption"`
-	output  func(*objectDocImageElementImage, *builder) error
+	output  func(*objectDocImageElementImage, *builder)
 }
 
 func (e *objectDocImageElementImage) UnmarshalJSON(data []byte) error {
