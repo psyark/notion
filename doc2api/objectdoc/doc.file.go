@@ -11,9 +11,9 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.addAbstractObject("File", "type", e.Body)
+					b.addUnionToGlobalIfNotExists("FileOrEmoji", "type")
+					b.addAbstractObject("File", "type", e.Body).addToUnion(getSymbol[unionObject](b, "FileOrEmoji"))
 					b.addAbstractList("File", "Files")
-					b.addAbstractObjectToGlobalIfNotExists("FileOrEmoji", "type")
 				},
 			},
 			&objectDocParagraphElement{
@@ -60,10 +60,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.getAbstractObject("FileOrEmoji").addDerived(
-						b.addDerivedWithName("file", "File", "NotionHostedFile", e.Text).addFields(
-							&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
-						),
+					b.addDerivedWithName("file", "File", "NotionHostedFile", e.Text).addFields(
+						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
 					)
 				},
 			},
@@ -130,9 +128,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.getAbstractObject("FileOrEmoji").addDerived(
-						b.addDerived("external", "File", e.Text),
-					)
+					b.addDerived("external", "File", e.Text)
 				},
 			},
 			&objectDocParagraphElement{

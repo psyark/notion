@@ -117,9 +117,8 @@ func init() {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
 						b.addDerived(name, "Pagination", "")
 					}
-					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object").addDerived(
-						b.getSpecificObject("PropertyItemPagination"),
-					)
+					b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
+					b.getSpecificObject("PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
 				},
 			}, {
 				Description: "An object containing type-specific pagination information. For\u00a0property_items, the value corresponds to the\u00a0paginated page property type. For all other types, the value is an empty object.",

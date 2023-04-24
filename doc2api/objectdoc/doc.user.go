@@ -13,12 +13,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAbstractObject("DetailedUser", "type", e.Text)
 					b.addAbstractObject("User", "type", e.Text)
 					b.addAbstractList("User", "Users")
-					b.getAbstractObject("User").addDerived(
-						b.addSpecificObject("PartialUser", e.Text),
-					)
+					b.addDerivedWithName("", "User", "PartialUser", "")
+					b.addSpecificObject("DetailedUserCommon", "")
 				},
 			},
 			&objectDocCalloutElement{
@@ -92,7 +90,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getAbstractObject("DetailedUser").addFields(e.asField(jen.String()))
+					b.getSpecificObject("DetailedUserCommon").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Property:     "avatar_url",
@@ -100,17 +98,16 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getAbstractObject("DetailedUser").addFields(e.asField(NullString))
+					b.getSpecificObject("DetailedUserCommon").addFields(e.asField(NullString))
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					so := b.addSpecificObject("PersonUser", e.Text).addFields(
-						&fixedStringField{name: "type", value: "person"},
-					)
-					so.addParent(b.getAbstractObject("DetailedUser"))
-					b.getAbstractObject("User").addDerived(so)
+					b.addDerived("person", "User", e.Text).addFields(&field{
+						name:     "",
+						typeCode: jen.Id("DetailedUserCommon"),
+					})
 				},
 			},
 			&objectDocParagraphElement{
@@ -140,12 +137,10 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					so := b.addSpecificObject("BotUser", e.Text).addFields(
-						&fixedStringField{name: "type", value: "bot"},
-					)
-					// TODO DetailedUserの扱いは特殊なので整理する
-					so.addParent(b.getAbstractObject("DetailedUser"))
-					b.getAbstractObject("User").addDerived(so)
+					b.addDerived("bot", "User", e.Text).addFields(&field{
+						name:     "",
+						typeCode: jen.Id("DetailedUserCommon"),
+					})
 				},
 			},
 			&objectDocParagraphElement{

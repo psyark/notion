@@ -22,16 +22,9 @@ type abstractObject struct {
 	specialMethods       []specialMethodCoder
 }
 
-// addDerived は指定したobjectCoderをこのインターフェイスの派生として登録し、symbolCode()に以下のことを行わせます
-// - 派生に対してインターフェイスメソッドを実装
-// - JSONメッセージからこのインターフェイスの適切な派生を作成するUnmarshalerを作成
-// TODO 呼び出され方をよく見てbuilderのメソッドに移動
-// TODO NotionHostedFileがFileとFileOrEmojiである以上、builder.addDerived一本化はできない
-// Deprecated: use builder.addDerived
-func (c *abstractObject) addDerived(derived derivedCoder) *abstractObject {
-	derived.addParent(c)
-	c.derivedObjects = append(c.derivedObjects, derived)
-	return c
+func (c *abstractObject) addToUnion(union *unionObject) {
+	c.unions = append(c.unions, union)
+	union.members = append(union.members, c)
 }
 
 func (c *abstractObject) addFields(fields ...fieldCoder) *abstractObject {
@@ -43,10 +36,8 @@ func (c *abstractObject) hasCommonField() bool {
 	if len(c.fields) != 0 {
 		return true
 	}
-	for _, p := range c.parents {
-		if p.hasCommonField() {
-			return true
-		}
+	if c.parent != nil {
+		return c.parent.hasCommonField()
 	}
 	return false
 }
@@ -60,8 +51,8 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 
 	// インターフェイス本体とisメソッド
 	code.Type().Id(c.name()).InterfaceFunc(func(g *jen.Group) {
-		for _, p := range c.parents {
-			g.Id(p.name()) // 親インターフェイスの継承
+		for _, ancestor := range c.getAncestors() {
+			g.Id(ancestor.name()) // 親インターフェイスの継承
 		}
 		g.Id("is" + c.name()).Params() // このインターフェイスのisメソッド
 		for _, sm := range c.specialMethods {
@@ -118,6 +109,7 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 					case *specificObject:
 						g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 					case *abstractObject:
+						fmt.Printf("🪆 %sのアンマーシャラー で %s のアンマーシャラーがネストされました\n", c.name(), derived.name())
 						g.Id("t").Op(":=").Op("&").Id(derived.derivedUnmarshalerName()).Values()
 						g.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err())
 						g.Id("u").Dot("value").Op("=").Id("t").Dot("value")

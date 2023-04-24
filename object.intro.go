@@ -52,8 +52,8 @@ type PropertyItemPagination struct {
 	Results      PropertyItemArray     `json:"results"`
 }
 
-func (_ *PropertyItemPagination) isPagination()                           {}
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
+func (_ *PropertyItemPagination) isPagination()                           {}
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
 func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {

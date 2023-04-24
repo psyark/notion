@@ -21,22 +21,22 @@ type builder struct {
 }
 
 func (b *builder) addSpecificObject(name string, comment string) *specificObject {
-	o := &specificObject{}
-	o.name_ = strings.TrimSpace(name)
-	o.comment = comment
-	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(name, o)
-	return o
+	obj := &specificObject{}
+	obj.name_ = strings.TrimSpace(name)
+	obj.comment = comment
+	b.localSymbols = append(b.localSymbols, obj)
+	b.globalSymbols.Store(name, obj)
+	return obj
 }
 
 func (b *builder) addAbstractObject(name string, specifiedBy string, comment string) *abstractObject {
-	o := &abstractObject{}
-	o.name_ = strings.TrimSpace(name)
-	o.derivedIdentifierKey = specifiedBy
-	o.comment = comment
-	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(name, o)
-	return o
+	obj := &abstractObject{}
+	obj.name_ = strings.TrimSpace(name)
+	obj.derivedIdentifierKey = specifiedBy
+	obj.comment = comment
+	b.localSymbols = append(b.localSymbols, obj)
+	b.globalSymbols.Store(name, obj)
+	return obj
 }
 
 // addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
@@ -53,12 +53,12 @@ func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName s
 	derived.derivedIdentifierValue = derivedIdentifierValue
 	derived.comment = comment
 
-	if parent.derivedIdentifierKey != "" {
+	if parent.derivedIdentifierKey != "" && derivedIdentifierValue != "" {
 		derived.fields = append(derived.fields, &fixedStringField{name: parent.derivedIdentifierKey, value: derivedIdentifierValue})
 	}
 
 	// 親子関係を設定
-	derived.addParent(parent)
+	derived.setParent(parent)
 	parent.derivedObjects = append(parent.derivedObjects, derived)
 
 	b.localSymbols = append(b.localSymbols, derived)
@@ -66,11 +66,26 @@ func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName s
 	return derived
 }
 
+// Deprecated: use addUnionToGlobalIfNotExists
 func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy string) *abstractObject {
 	if o := b.getAbstractObject(name); o != nil {
 		return o
 	}
 	return b.global.addAbstractObject(name, specifiedBy, "")
+}
+
+func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string) *unionObject {
+	if u := getSymbol[unionObject](b, name); u != nil {
+		return u
+	}
+
+	u := &unionObject{}
+	u.name_ = strings.TrimSpace(name)
+	u.identifierKey = identifierKey
+	b.global.localSymbols = append(b.global.localSymbols, u)
+	b.globalSymbols.Store(name, u)
+
+	return u
 }
 
 func (b *builder) addAbstractList(targetName string, name string) *abstractList {
@@ -121,6 +136,15 @@ func (b *builder) getAbstractObject(name string) *abstractObject {
 func (b *builder) getSpecificObject(name string) *specificObject {
 	if item, ok := b.globalSymbols.Load(name); ok {
 		if item, ok := item.(*specificObject); ok {
+			return item
+		}
+	}
+	return nil
+}
+
+func getSymbol[T abstractObject | specificObject | unionObject](b *builder, name string) *T {
+	if item, ok := b.globalSymbols.Load(name); ok {
+		if item, ok := item.(*T); ok {
 			return item
 		}
 	}

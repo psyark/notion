@@ -96,7 +96,7 @@ func init() {
 				Field:       "icon",
 				Type:        "File Object or Emoji object",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Database").addFields(e.asField(jen.Id("FileOrEmoji")))
+					b.getSpecificObject("Database").addFields(e.asInterfaceField("FileOrEmoji"))
 				},
 			}, {
 				Description: "Page cover image.",

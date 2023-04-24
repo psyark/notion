@@ -26,6 +26,11 @@ type specificObject struct {
 	typeObjectMayNull bool
 }
 
+func (c *specificObject) addToUnion(union *unionObject) {
+	c.unions = append(c.unions, union)
+	union.members = append(union.members, c)
+}
+
 func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 	if c.derivedIdentifierValue != "" {
 		for _, f := range fields {
@@ -41,10 +46,6 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 }
 
 func (c *specificObject) symbolCode(b *builder) jen.Code {
-	if len(c.parents) == 0 {
-		fmt.Printf("%s has no parents\n", c.name())
-	}
-
 	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
 		typeValue := c.getIdentifierValue("type")
@@ -76,9 +77,9 @@ func (c *specificObject) symbolCode(b *builder) jen.Code {
 	for _, a := range c.getAncestors() {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + a.name()).Params().Block().Line()
 	}
-	// 親のスペシャルメソッドを実装
-	for _, p := range c.parents {
-		for _, sm := range p.specialMethods {
+	// 親のスペシャルメソッドを実装 TODO リカーシブ
+	if c.parent != nil {
+		for _, sm := range c.parent.specialMethods {
 			code.Add(sm.implementationCode(c))
 		}
 	}

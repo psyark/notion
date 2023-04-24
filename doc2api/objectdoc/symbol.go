@@ -19,15 +19,17 @@ var _ = []symbolCoder{
 	&abstractObject{},
 	&abstractList{},
 	&abstractMap{},
+	&unionObject{},
 	&unmarshalTest{},
 	alwaysString(""),
 }
 
 // derivedCoder はabstractObjectの派生として存在できるオブジェクトを作成するためのCoderです
+// TODO これを unionのメンバー用に作り直す
 type derivedCoder interface {
 	symbolCoder
 	getIdentifierValue(identifierKey string) string
-	addParent(*abstractObject)
+	setParent(*abstractObject)
 }
 
 var _ = []derivedCoder{
@@ -40,12 +42,13 @@ type objectCommon struct {
 	comment string
 	fields  []fieldCoder
 
-	// parents はこのオブジェクトが実装すべきインターフェイスです。これが複数必要な例として、NotionHostedFile (File/FileOrEmoji) が挙げられます
-	// TODO 下記のようにし、parentsを一本化する
-	// parent -> *abstractObject
-	// unions -> []*unionObject
-	// TODO parentsとは何なのか明確化
-	parents []*abstractObject
+	// parent はこのオブジェクトの派生元です。派生元とは共通のフィールドを提供しているオブジェクトであり、
+	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
+	parent *abstractObject
+
+	// unions は自分が所属するunionObjectです。
+	// objectCommonを継承する各クラスは、symbolCode メソッド中でこのunionのisメソッドを実装する必要があります
+	unions []*unionObject
 }
 
 func (c *objectCommon) name() string {
@@ -59,33 +62,38 @@ func (c *objectCommon) getIdentifierValue(specifiedBy string) string {
 			return f.value
 		}
 	}
-	for _, p := range c.parents {
-		if v := p.getIdentifierValue(specifiedBy); v != "" {
+	if c.parent != nil {
+		if v := c.parent.getIdentifierValue(specifiedBy); v != "" {
 			return v
 		}
 	}
 	return ""
 }
 
-func (c *objectCommon) addParent(parent *abstractObject) {
-	c.parents = append(c.parents, parent)
+func (c *objectCommon) setParent(parent *abstractObject) {
+	if c.parent != nil {
+		panic(fmt.Errorf("👪 %s has two parents: %s vs %s", c.name(), c.parent.name(), parent.name()))
+	}
+	c.parent = parent
 }
 
-func (c *objectCommon) getAncestors() []*abstractObject {
-	ancestors := []*abstractObject{}
-	for _, a := range c.parents {
-		ancestors = append(ancestors, a)
-		ancestors = append(ancestors, a.getAncestors()...)
+// TODO 良い名前に
+func (c *objectCommon) getAncestors() []symbolCoder {
+	ancestors := []symbolCoder{}
+	for _, u := range c.unions {
+		ancestors = append(ancestors, u)
+	}
+	if c.parent != nil {
+		ancestors = append(ancestors, c.parent)
+		ancestors = append(ancestors, c.parent.getAncestors()...)
 	}
 	return ancestors
 }
 
 func (c *objectCommon) fieldCodes() []jen.Code {
 	fields := []jen.Code{}
-	for _, p := range c.parents {
-		if p.hasCommonField() {
-			fields = append(fields, jen.Id(p.commonObjectName()))
-		}
+	if c.parent != nil && c.parent.hasCommonField() {
+		fields = append(fields, jen.Id(c.parent.commonObjectName()))
 	}
 	for _, f := range c.fields {
 		fields = append(fields, f.fieldCode())
@@ -124,7 +132,13 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range interfaceFields {
-					g.Id(strcase.UpperCamelCase(f.name)).Id(b.getAbstractObject(f.typeName).derivedUnmarshalerName()).Tag(map[string]string{"json": f.name})
+					if a := getSymbol[abstractObject](b, f.typeName); a != nil {
+						g.Id(strcase.UpperCamelCase(f.name)).Id(a.derivedUnmarshalerName()).Tag(map[string]string{"json": f.name})
+					} else if u := getSymbol[unionObject](b, f.typeName); u != nil {
+						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
+					} else {
+						panic(fmt.Errorf("unknown symbol: %s", f.typeName))
+					}
 				}
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),

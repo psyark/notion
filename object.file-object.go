@@ -20,6 +20,7 @@ Each file object includes the following fields:
 To modify page or database property values that are made from file objects, like `icon`, `cover`, or `files` page property values, use the [update page](https://developers.notion.com/reference/patch-page) or [update database](https://developers.notion.com/reference/update-a-database) endpoints.
 */
 type File interface {
+	FileOrEmoji
 	isFile()
 }
 

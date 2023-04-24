@@ -11,11 +11,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAbstractObject("PropertyItem", "type", e.Text)
+					union := b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
+					b.addAbstractObject("PropertyItem", "type", e.Text).addToUnion(union)
 					b.addAbstractList("PropertyItem", "PropertyItemArray")
 					b.addAbstractMap("PropertyItem", "PropertyItemMap")
-					b.addAbstractObjectToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-					b.getAbstractObject("PropertyItemOrPropertyItemPagination").addDerived(b.getAbstractObject("PropertyItem"))
 				},
 			},
 			&objectDocHeadingElement{
