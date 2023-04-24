@@ -78,8 +78,8 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	code.Add(c.objectCommon.symbolCode(b))
 
 	// インターフェイスを実装
-	for _, a := range c.getAncestors() {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + a.name()).Params().Block().Line()
+	for _, iface := range c.allInterfaces() {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + iface.name()).Params().Block().Line()
 	}
 	// 親のスペシャルメソッドを実装 TODO リカーシブ
 	if c.parent != nil {

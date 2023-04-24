@@ -64,17 +64,17 @@ func (c *objectCommon) setParent(parent *abstractObject) {
 	c.parent = parent
 }
 
-// TODO 良い名前に
-func (c *objectCommon) getAncestors() []symbolCoder {
-	ancestors := []symbolCoder{}
+// このオブジェクトが所属するインターフェイスを返す
+func (c *objectCommon) allInterfaces() []symbolCoder {
+	ifs := []symbolCoder{}
 	for _, u := range c.unions {
-		ancestors = append(ancestors, u)
+		ifs = append(ifs, u)
 	}
 	if c.parent != nil {
-		ancestors = append(ancestors, c.parent)
-		ancestors = append(ancestors, c.parent.getAncestors()...)
+		ifs = append(ifs, c.parent)
+		ifs = append(ifs, c.parent.allInterfaces()...)
 	}
-	return ancestors
+	return ifs
 }
 
 func (c *objectCommon) fieldCodes() []jen.Code {
