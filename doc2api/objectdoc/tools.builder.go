@@ -40,7 +40,6 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 }
 
 // addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
-// TODO abstract版を作る
 func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string) *concreteObject {
 	return b.addDerivedWithName(derivedIdentifierValue, parentName, strcase.UpperCamelCase(derivedIdentifierValue)+parentName, comment)
 }
