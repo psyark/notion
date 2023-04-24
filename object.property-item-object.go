@@ -48,49 +48,74 @@ func (u *propertyItemUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "title":
+	t := struct {
+		Title          json.RawMessage `json:"title"`
+		RichText       json.RawMessage `json:"rich_text"`
+		Number         json.RawMessage `json:"number"`
+		Select         json.RawMessage `json:"select"`
+		Status         json.RawMessage `json:"status"`
+		MultiSelect    json.RawMessage `json:"multi_select"`
+		Date           json.RawMessage `json:"date"`
+		Formula        json.RawMessage `json:"formula"`
+		Relation       json.RawMessage `json:"relation"`
+		Rollup         json.RawMessage `json:"rollup"`
+		People         json.RawMessage `json:"people"`
+		Files          json.RawMessage `json:"files"`
+		Checkbox       json.RawMessage `json:"checkbox"`
+		Url            json.RawMessage `json:"url"`
+		Email          json.RawMessage `json:"email"`
+		PhoneNumber    json.RawMessage `json:"phone_number"`
+		CreatedTime    json.RawMessage `json:"created_time"`
+		CreatedBy      json.RawMessage `json:"created_by"`
+		LastEditedTime json.RawMessage `json:"last_edited_time"`
+		LastEditedBy   json.RawMessage `json:"last_edited_by"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Title != nil:
 		u.value = &TitlePropertyItem{}
-	case "rich_text":
+	case t.RichText != nil:
 		u.value = &RichTextPropertyItem{}
-	case "number":
+	case t.Number != nil:
 		u.value = &NumberPropertyItem{}
-	case "select":
+	case t.Select != nil:
 		u.value = &SelectPropertyItem{}
-	case "status":
+	case t.Status != nil:
 		u.value = &StatusPropertyItem{}
-	case "multi_select":
+	case t.MultiSelect != nil:
 		u.value = &MultiSelectPropertyItem{}
-	case "date":
+	case t.Date != nil:
 		u.value = &DatePropertyItem{}
-	case "formula":
+	case t.Formula != nil:
 		u.value = &FormulaPropertyItem{}
-	case "relation":
+	case t.Relation != nil:
 		u.value = &RelationPropertyItem{}
-	case "rollup":
+	case t.Rollup != nil:
 		u.value = &RollupPropertyItem{}
-	case "people":
+	case t.People != nil:
 		u.value = &PeoplePropertyItem{}
-	case "files":
+	case t.Files != nil:
 		u.value = &FilesPropertyItem{}
-	case "checkbox":
+	case t.Checkbox != nil:
 		u.value = &CheckboxPropertyItem{}
-	case "url":
+	case t.Url != nil:
 		u.value = &UrlPropertyItem{}
-	case "email":
+	case t.Email != nil:
 		u.value = &EmailPropertyItem{}
-	case "phone_number":
+	case t.PhoneNumber != nil:
 		u.value = &PhoneNumberPropertyItem{}
-	case "created_time":
+	case t.CreatedTime != nil:
 		u.value = &CreatedTimePropertyItem{}
-	case "created_by":
+	case t.CreatedBy != nil:
 		u.value = &CreatedByPropertyItem{}
-	case "last_edited_time":
+	case t.LastEditedTime != nil:
 		u.value = &LastEditedTimePropertyItem{}
-	case "last_edited_by":
+	case t.LastEditedBy != nil:
 		u.value = &LastEditedByPropertyItem{}
 	default:
-		return fmt.Errorf("unmarshaling PropertyItem: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal PropertyItem: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -161,19 +186,29 @@ func (u *paginatedPropertyInfoUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "title":
+	t := struct {
+		Title    json.RawMessage `json:"title"`
+		RichText json.RawMessage `json:"rich_text"`
+		Relation json.RawMessage `json:"relation"`
+		People   json.RawMessage `json:"people"`
+		Rollup   json.RawMessage `json:"rollup"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Title != nil:
 		u.value = &TitlePaginatedPropertyInfo{}
-	case "rich_text":
+	case t.RichText != nil:
 		u.value = &RichTextPaginatedPropertyInfo{}
-	case "relation":
+	case t.Relation != nil:
 		u.value = &RelationPaginatedPropertyInfo{}
-	case "people":
+	case t.People != nil:
 		u.value = &PeoplePaginatedPropertyInfo{}
-	case "rollup":
+	case t.Rollup != nil:
 		u.value = &RollupPaginatedPropertyInfo{}
 	default:
-		return fmt.Errorf("unmarshaling PaginatedPropertyInfo: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal PaginatedPropertyInfo: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -428,15 +463,23 @@ func (u *rollupUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "number":
+	t := struct {
+		Number json.RawMessage `json:"number"`
+		Date   json.RawMessage `json:"date"`
+		Array  json.RawMessage `json:"array"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Number != nil:
 		u.value = &NumberRollup{}
-	case "date":
+	case t.Date != nil:
 		u.value = &DateRollup{}
-	case "array":
+	case t.Array != nil:
 		u.value = &ArrayRollup{}
 	default:
-		return fmt.Errorf("unmarshaling Rollup: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Rollup: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

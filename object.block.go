@@ -104,11 +104,17 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "bookmark":
+	t := struct {
+		Bookmark json.RawMessage `json:"bookmark"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Bookmark != nil:
 		u.value = &BookmarkBlock{}
 	default:
-		return fmt.Errorf("unmarshaling Block: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Block: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

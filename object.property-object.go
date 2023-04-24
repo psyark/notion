@@ -42,49 +42,74 @@ func (u *propertyUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "checkbox":
+	t := struct {
+		Checkbox       json.RawMessage `json:"checkbox"`
+		CreatedBy      json.RawMessage `json:"created_by"`
+		CreatedTime    json.RawMessage `json:"created_time"`
+		Date           json.RawMessage `json:"date"`
+		Email          json.RawMessage `json:"email"`
+		Files          json.RawMessage `json:"files"`
+		Formula        json.RawMessage `json:"formula"`
+		LastEditedBy   json.RawMessage `json:"last_edited_by"`
+		LastEditedTime json.RawMessage `json:"last_edited_time"`
+		MultiSelect    json.RawMessage `json:"multi_select"`
+		Number         json.RawMessage `json:"number"`
+		People         json.RawMessage `json:"people"`
+		PhoneNumber    json.RawMessage `json:"phone_number"`
+		Relation       json.RawMessage `json:"relation"`
+		RichText       json.RawMessage `json:"rich_text"`
+		Rollup         json.RawMessage `json:"rollup"`
+		Select         json.RawMessage `json:"select"`
+		Status         json.RawMessage `json:"status"`
+		Title          json.RawMessage `json:"title"`
+		Url            json.RawMessage `json:"url"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Checkbox != nil:
 		u.value = &CheckboxProperty{}
-	case "created_by":
+	case t.CreatedBy != nil:
 		u.value = &CreatedByProperty{}
-	case "created_time":
+	case t.CreatedTime != nil:
 		u.value = &CreatedTimeProperty{}
-	case "date":
+	case t.Date != nil:
 		u.value = &DateProperty{}
-	case "email":
+	case t.Email != nil:
 		u.value = &EmailProperty{}
-	case "files":
+	case t.Files != nil:
 		u.value = &FilesProperty{}
-	case "formula":
+	case t.Formula != nil:
 		u.value = &FormulaProperty{}
-	case "last_edited_by":
+	case t.LastEditedBy != nil:
 		u.value = &LastEditedByProperty{}
-	case "last_edited_time":
+	case t.LastEditedTime != nil:
 		u.value = &LastEditedTimeProperty{}
-	case "multi_select":
+	case t.MultiSelect != nil:
 		u.value = &MultiSelectProperty{}
-	case "number":
+	case t.Number != nil:
 		u.value = &NumberProperty{}
-	case "people":
+	case t.People != nil:
 		u.value = &PeopleProperty{}
-	case "phone_number":
+	case t.PhoneNumber != nil:
 		u.value = &PhoneNumberProperty{}
-	case "relation":
+	case t.Relation != nil:
 		u.value = &RelationProperty{}
-	case "rich_text":
+	case t.RichText != nil:
 		u.value = &RichTextProperty{}
-	case "rollup":
+	case t.Rollup != nil:
 		u.value = &RollupProperty{}
-	case "select":
+	case t.Select != nil:
 		u.value = &SelectProperty{}
-	case "status":
+	case t.Status != nil:
 		u.value = &StatusProperty{}
-	case "title":
+	case t.Title != nil:
 		u.value = &TitleProperty{}
-	case "url":
+	case t.Url != nil:
 		u.value = &UrlProperty{}
 	default:
-		return fmt.Errorf("unmarshaling Property: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Property: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -428,13 +453,20 @@ func (u *relationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "single_property":
+	t := struct {
+		SingleProperty json.RawMessage `json:"single_property"`
+		DualProperty   json.RawMessage `json:"dual_property"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.SingleProperty != nil:
 		u.value = &SinglePropertyRelation{}
-	case "dual_property":
+	case t.DualProperty != nil:
 		u.value = &DualPropertyRelation{}
 	default:
-		return fmt.Errorf("unmarshaling Relation: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Relation: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

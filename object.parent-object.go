@@ -34,17 +34,26 @@ func (u *parentUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "database_id":
+	t := struct {
+		DatabaseId json.RawMessage `json:"database_id"`
+		PageId     json.RawMessage `json:"page_id"`
+		Workspace  json.RawMessage `json:"workspace"`
+		BlockId    json.RawMessage `json:"block_id"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.DatabaseId != nil:
 		u.value = &DatabaseParent{}
-	case "page_id":
+	case t.PageId != nil:
 		u.value = &PageParent{}
-	case "workspace":
+	case t.Workspace != nil:
 		u.value = &WorkspaceParent{}
-	case "block_id":
+	case t.BlockId != nil:
 		u.value = &BlockParent{}
 	default:
-		return fmt.Errorf("unmarshaling Parent: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Parent: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

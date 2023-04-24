@@ -52,23 +52,35 @@ func (u *paginationUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "block":
+	t := struct {
+		Block          json.RawMessage `json:"block"`
+		Comment        json.RawMessage `json:"comment"`
+		Database       json.RawMessage `json:"database"`
+		Page           json.RawMessage `json:"page"`
+		PageOrDatabase json.RawMessage `json:"page_or_database"`
+		PropertyItem   json.RawMessage `json:"property_item"`
+		User           json.RawMessage `json:"user"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Block != nil:
 		u.value = &BlockPagination{}
-	case "comment":
+	case t.Comment != nil:
 		u.value = &CommentPagination{}
-	case "database":
+	case t.Database != nil:
 		u.value = &DatabasePagination{}
-	case "page":
+	case t.Page != nil:
 		u.value = &PagePagination{}
-	case "page_or_database":
+	case t.PageOrDatabase != nil:
 		u.value = &PageOrDatabasePagination{}
-	case "property_item":
+	case t.PropertyItem != nil:
 		u.value = &PropertyItemPagination{}
-	case "user":
+	case t.User != nil:
 		u.value = &UserPagination{}
 	default:
-		return fmt.Errorf("unmarshaling Pagination: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Pagination: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }

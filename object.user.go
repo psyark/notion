@@ -61,15 +61,20 @@ func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "":
-		u.value = &PartialUser{}
-	case "person":
+	t := struct {
+		Person json.RawMessage `json:"person"`
+		Bot    json.RawMessage `json:"bot"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Person != nil:
 		u.value = &PersonUser{}
-	case "bot":
+	case t.Bot != nil:
 		u.value = &BotUser{}
 	default:
-		return fmt.Errorf("unmarshaling User: data has unknown type field: %s", string(data))
+		u.value = &PartialUser{}
 	}
 	return json.Unmarshal(data, u.value)
 }

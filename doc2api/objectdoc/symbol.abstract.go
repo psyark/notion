@@ -102,8 +102,10 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 			jen.Return().Nil(),
 		)
 
-		if c.derivedIdentifierKey != "" {
-			// TODO こっちの分岐を残す必要があるか検討
+		if c.derivedIdentifierKey != "" && false {
+			// TODO 従来こちらのコードを使ってきたが、Filterのようなオブジェクトではelse以下を使い分ける必要があった
+			// 試しに else 以下に統一したところ、特段問題が無いようだったので、いずれ後者に統一するかを検討する
+			// その場合、getType やderivedIdentifierKeyも削れるか検討する
 			g.Switch().Id("get" + strcase.UpperCamelCase(c.derivedIdentifierKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
 				for _, derived := range c.derivedObjects {
 					g.Case(jen.Lit(derived.getIdentifierValue(c.derivedIdentifierKey)))
@@ -114,18 +116,25 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 		} else {
 			g.Id("t").Op(":=").StructFunc(func(g *jen.Group) {
 				for _, derived := range c.derivedObjects {
-					g.Id(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": derived.derivedIdentifierValue})
+					if derived.derivedIdentifierValue != "" {
+						g.Id(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": derived.derivedIdentifierValue})
+					}
 				}
 			}).Values()
 			g.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Id("err").Op("!=").Nil()).Block(
 				jen.Return().Err(),
 			)
 			g.Switch().BlockFunc(func(g *jen.Group) {
+				defaultCode := jen.Default().Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshal %s: %%s", c.name())), jen.String().Call(jen.Id("data")))
 				for _, derived := range c.derivedObjects {
-					g.Case(jen.Id("t").Dot(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Op("!=").Nil())
-					g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
+					if derived.derivedIdentifierValue != "" {
+						g.Case(jen.Id("t").Dot(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Op("!=").Nil())
+						g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
+					} else {
+						defaultCode = jen.Default().Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
+					}
 				}
-				g.Default().Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshal %s: %%s", c.name())), jen.String().Call(jen.Id("data")))
+				g.Add(defaultCode)
 			})
 		}
 

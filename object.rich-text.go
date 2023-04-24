@@ -50,15 +50,23 @@ func (u *richTextUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "equation":
+	t := struct {
+		Equation json.RawMessage `json:"equation"`
+		Mention  json.RawMessage `json:"mention"`
+		Text     json.RawMessage `json:"text"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Equation != nil:
 		u.value = &EquationRichText{}
-	case "mention":
+	case t.Mention != nil:
 		u.value = &MentionRichText{}
-	case "text":
+	case t.Text != nil:
 		u.value = &TextRichText{}
 	default:
-		return fmt.Errorf("unmarshaling RichText: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal RichText: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -134,21 +142,32 @@ func (u *mentionUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "database":
+	t := struct {
+		Database        json.RawMessage `json:"database"`
+		Date            json.RawMessage `json:"date"`
+		LinkPreview     json.RawMessage `json:"link_preview"`
+		Page            json.RawMessage `json:"page"`
+		TemplateMention json.RawMessage `json:"template_mention"`
+		User            json.RawMessage `json:"user"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Database != nil:
 		u.value = &DatabaseMention{}
-	case "date":
+	case t.Date != nil:
 		u.value = &DateMention{}
-	case "link_preview":
+	case t.LinkPreview != nil:
 		u.value = &LinkPreviewMention{}
-	case "page":
+	case t.Page != nil:
 		u.value = &PageMention{}
-	case "template_mention":
+	case t.TemplateMention != nil:
 		u.value = &TemplateMention{}
-	case "user":
+	case t.User != nil:
 		u.value = &UserMention{}
 	default:
-		return fmt.Errorf("unmarshaling Mention: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal Mention: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
@@ -301,13 +320,20 @@ func (u *templateMentionDataUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
-	case "template_mention_date":
+	t := struct {
+		TemplateMentionDate json.RawMessage `json:"template_mention_date"`
+		TemplateMentionUser json.RawMessage `json:"template_mention_user"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.TemplateMentionDate != nil:
 		u.value = &TemplateMentionDate{}
-	case "template_mention_user":
+	case t.TemplateMentionUser != nil:
 		u.value = &TemplateMentionUser{}
 	default:
-		return fmt.Errorf("unmarshaling TemplateMentionData: data has unknown type field: %s", string(data))
+		return fmt.Errorf("unmarshal TemplateMentionData: %s", string(data))
 	}
 	return json.Unmarshal(data, u.value)
 }
