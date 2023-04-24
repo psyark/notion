@@ -47,7 +47,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Pagination ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAbstractObjectToGlobalIfNotExists("Pagination", "type")
+					b.addAbstractObject("Pagination", "type", e.Text)
 				},
 			},
 			&objectDocParagraphElement{

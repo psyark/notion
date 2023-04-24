@@ -65,14 +65,6 @@ func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName s
 	return derived
 }
 
-// Deprecated: use addUnionToGlobalIfNotExists
-func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy string) *abstractObject {
-	if o := getSymbol[abstractObject](b, name); o != nil {
-		return o
-	}
-	return b.global.addAbstractObject(name, specifiedBy, "")
-}
-
 func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string) *unionObject {
 	if u := getSymbol[unionObject](b, name); u != nil {
 		return u
