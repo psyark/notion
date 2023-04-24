@@ -12,7 +12,6 @@ import (
 type memberCoder interface {
 	symbolCoder
 	getIdentifierValue(identifierKey string) string
-	setParent(*abstractObject)
 }
 
 var _ = []memberCoder{
