@@ -20,7 +20,7 @@ type abstractObject struct {
 	objectCommon
 	derivedIdentifierKey string // "type", "object" など、派生を識別するためのプロパティ名
 	fieldsComment        string
-	derivedObjects       []derivedCoder // TODO derivedObjects とは何なのか明確化
+	derivedObjects       []*concreteObject // derivedObjects は、この abstractObjectから派生した concreteObject です
 	specialMethods       []specialMethodCoder
 }
 
@@ -103,24 +103,10 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 				jen.Return().Nil(),
 			),
 			jen.Switch().Id("get"+strcase.UpperCamelCase(c.derivedIdentifierKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
-
 				for _, derived := range c.derivedObjects {
 					g.Case(jen.Lit(derived.getIdentifierValue(c.derivedIdentifierKey)))
-
-					switch derived := derived.(type) {
-					case *concreteObject:
-						g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
-					case *abstractObject:
-						fmt.Printf("🪆 %sのアンマーシャラー で %s のアンマーシャラーがネストされました\n", c.name(), derived.name())
-						g.Id("t").Op(":=").Op("&").Id(derived.derivedUnmarshalerName()).Values()
-						g.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err())
-						g.Id("u").Dot("value").Op("=").Id("t").Dot("value")
-						g.Return().Nil()
-					default:
-						panic(fmt.Sprintf("%#v", derived))
-					}
+					g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 				}
-
 				g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.derivedIdentifierKey)), jen.String().Call(jen.Id("data"))))
 			}),
 			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),

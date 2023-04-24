@@ -172,7 +172,7 @@ func convertAll() error {
 
 					// TypeでもHasMoreでもないフィールドを見つけ
 					var field fieldCoder
-					for _, f := range v.(*concreteObject).fields {
+					for _, f := range v.fields {
 						if f.goName() != "Type" && f.goName() != "HasMore" {
 							field = f
 							break

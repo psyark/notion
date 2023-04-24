@@ -24,19 +24,6 @@ var _ = []symbolCoder{
 	alwaysString(""),
 }
 
-// derivedCoder はabstractObjectの派生として存在できるオブジェクトを作成するためのCoderです
-// TODO これを unionのメンバー用に作り直す
-type derivedCoder interface {
-	symbolCoder
-	getIdentifierValue(identifierKey string) string
-	setParent(*abstractObject)
-}
-
-var _ = []derivedCoder{
-	&concreteObject{},
-	&abstractObject{},
-}
-
 type objectCommon struct {
 	name_   string
 	comment string

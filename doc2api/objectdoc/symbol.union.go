@@ -8,6 +8,18 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
+// memberCoder はunionObjectのメンバーとして存在できるオブジェクトを作成するためのCoderです
+type memberCoder interface {
+	symbolCoder
+	getIdentifierValue(identifierKey string) string
+	setParent(*abstractObject)
+}
+
+var _ = []memberCoder{
+	&concreteObject{},
+	&abstractObject{},
+}
+
 // unionObject は、共通の変数に格納される可能性のあるオブジェクトの集合です
 //
 // interfaceが使われる点やUnmarshalerが生成される点で abstractObjectと似ていますが、
@@ -19,8 +31,8 @@ import (
 // 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がunionObjectです
 type unionObject struct {
 	objectCommon
-	identifierKey string         // "type" や "object" など
-	members       []derivedCoder // このUnionのメンバー
+	identifierKey string        // "type" や "object" など
+	members       []memberCoder // このUnionのメンバー
 }
 
 func (u *unionObject) symbolCode(b *builder) jen.Code {
@@ -39,7 +51,11 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 		),
 		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.identifierKey))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
 			// 識別可能なもの
-			canIdentify := u.findCanIdentify(u.members)
+			canIdentify := []memberCoder{}
+			for _, member := range u.members {
+				canIdentify = append(canIdentify, u.findCanIdentify(member)...)
+			}
+
 			sort.Slice(canIdentify, func(i, j int) bool {
 				return canIdentify[i].getIdentifierValue(u.identifierKey) < canIdentify[j].getIdentifierValue(u.identifierKey)
 			})
@@ -65,21 +81,21 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 	return code
 }
 
-func (u *unionObject) findCanIdentify(members []derivedCoder) []derivedCoder {
-	result := []derivedCoder{}
-	for _, member := range members {
-		switch member := member.(type) {
-		case *concreteObject:
-			result = append(result, member)
-		case *abstractObject:
-			if member.derivedIdentifierKey == u.identifierKey {
-				result = append(result, u.findCanIdentify(member.derivedObjects)...)
-			} else {
-				result = append(result, member)
+func (u *unionObject) findCanIdentify(member memberCoder) []memberCoder {
+	result := []memberCoder{}
+	switch member := member.(type) {
+	case *concreteObject:
+		result = append(result, member)
+	case *abstractObject:
+		if member.derivedIdentifierKey == u.identifierKey {
+			for _, member2 := range member.derivedObjects {
+				result = append(result, member2)
 			}
-		default:
-			panic(member)
+		} else {
+			result = append(result, member)
 		}
+	default:
+		panic(member)
 	}
 	return result
 }
