@@ -1,10 +1,23 @@
 package objectdoc
 
 import (
+	"encoding/json"
+
 	"github.com/dave/jennifer/jen"
 )
 
+func extractFilter(code string) string {
+	t := struct {
+		Filter json.RawMessage `json:"filter"`
+	}{}
+	if err := json.Unmarshal([]byte(code), &t); err != nil {
+		panic(err)
+	}
+	return string(t.Filter)
+}
+
 func init() {
+
 	registerConverter(converter{
 		url: "https://developers.notion.com/reference/post-database-query-filter",
 		localCopy: []objectDocElement{
@@ -51,7 +64,9 @@ func init() {
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"equals\": true\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
+				},
 			}}},
 			&objectDocCalloutElement{
 				Body:   "The filter object mimics the database [filter option in the Notion UI](https://www.notion.so/help/views-filters-and-sorts).",
@@ -75,7 +90,7 @@ func init() {
 				Field:        "equals",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CheckboxFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "CheckboxFilter").typeObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether a checkbox property value differs from the provided value. \n\nReturns or excludes all database entries with a difference in values.",
@@ -83,7 +98,7 @@ func init() {
 				Field:        "does_not_equal",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CheckboxFilter").addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "CheckboxFilter").typeObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -91,7 +106,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO テスト追加
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -120,7 +135,7 @@ func init() {
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is after the provided date.",
 				ExampleValue: "\"2021-05-10\"\n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "before",
@@ -128,7 +143,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is before the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "equals",
@@ -136,7 +151,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -144,7 +159,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value contains no data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is not empty.",
@@ -152,7 +167,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next month.",
@@ -160,7 +175,7 @@ func init() {
 				Field:        "next_month",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next week.",
@@ -168,7 +183,7 @@ func init() {
 				Field:        "next_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next year.",
@@ -176,7 +191,7 @@ func init() {
 				Field:        "next_year",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is on or after the provided date.",
@@ -184,7 +199,7 @@ func init() {
 				Field:        "on_or_after",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is on or before the provided date.",
@@ -192,7 +207,7 @@ func init() {
 				Field:        "on_or_before",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past month.",
@@ -200,7 +215,7 @@ func init() {
 				Field:        "past_month",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past week.",
@@ -208,7 +223,7 @@ func init() {
 				Field:        "past_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past year.",
@@ -216,7 +231,7 @@ func init() {
 				Field:        "past_year",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is this week.",
@@ -224,19 +239,21 @@ func init() {
 				Field:        "this_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Due date\",\n    \"date\": {\n      \"on_or_after\": \"2023-02-08\"\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("file", "Filter", e.Text)
+					b.addDerived("files", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -245,7 +262,7 @@ func init() {
 				Field:        "is_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "FileFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "FilesFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether the files property value contains data. \n\nReturns all entries with a populated files property value.",
@@ -253,14 +270,16 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "FileFilter").addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "FilesFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"property\": \"Blueprint\",\n    \"files\": {\n      \"is_not_empty\": true\n    }\n  }\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
+				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Formula",

@@ -92,29 +92,48 @@ func (c *abstractObject) derivedUnmarshalerName() string {
 
 func (c *abstractObject) derivedUnmarshaler() jen.Code {
 	code := &jen.Statement{}
-	if c.derivedIdentifierKey != "" && len(c.derivedObjects) != 0 {
-		code.Line().Type().Id(c.derivedUnmarshalerName()).Struct(
-			jen.Id("value").Id(c.name()),
+	code.Line().Type().Id(c.derivedUnmarshalerName()).Struct(
+		jen.Id("value").Id(c.name()),
+	)
+	code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.derivedIdentifierKey))
+	code.Line().Func().Params(jen.Id("u").Op("*").Id(c.derivedUnmarshalerName())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().BlockFunc(func(g *jen.Group) {
+		g.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
+			jen.Id("u").Dot("value").Op("=").Nil(),
+			jen.Return().Nil(),
 		)
-		code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.derivedIdentifierKey))
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(c.derivedUnmarshalerName())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
-			jen.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
-				jen.Id("u").Dot("value").Op("=").Nil(),
-				jen.Return().Nil(),
-			),
-			jen.Switch().Id("get"+strcase.UpperCamelCase(c.derivedIdentifierKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
+
+		if c.derivedIdentifierKey != "" {
+			// TODO こっちの分岐を残す必要があるか検討
+			g.Switch().Id("get" + strcase.UpperCamelCase(c.derivedIdentifierKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
 				for _, derived := range c.derivedObjects {
 					g.Case(jen.Lit(derived.getIdentifierValue(c.derivedIdentifierKey)))
 					g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 				}
 				g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.derivedIdentifierKey)), jen.String().Call(jen.Id("data"))))
-			}),
-			jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
-		).Line()
-		code.Line().Func().Params(jen.Id("u").Op("*").Id(c.derivedUnmarshalerName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-			jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
-		).Line()
-	}
+			})
+		} else {
+			g.Id("t").Op(":=").StructFunc(func(g *jen.Group) {
+				for _, derived := range c.derivedObjects {
+					g.Id(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": derived.derivedIdentifierValue})
+				}
+			}).Values()
+			g.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Id("err").Op("!=").Nil()).Block(
+				jen.Return().Err(),
+			)
+			g.Switch().BlockFunc(func(g *jen.Group) {
+				for _, derived := range c.derivedObjects {
+					g.Case(jen.Id("t").Dot(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Op("!=").Nil())
+					g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
+				}
+				g.Default().Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshal %s: %%s", c.name())), jen.String().Call(jen.Id("data")))
+			})
+		}
+
+		g.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value"))
+	}).Line()
+	code.Line().Func().Params(jen.Id("u").Op("*").Id(c.derivedUnmarshalerName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+		jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
+	).Line()
 	return code
 }
 
