@@ -15,7 +15,7 @@ type symbolCoder interface {
 
 var _ = []symbolCoder{
 	&objectCommon{},
-	&specificObject{},
+	&concreteObject{},
 	&abstractObject{},
 	&abstractList{},
 	&abstractMap{},
@@ -33,7 +33,7 @@ type derivedCoder interface {
 }
 
 var _ = []derivedCoder{
-	&specificObject{},
+	&concreteObject{},
 	&abstractObject{},
 }
 
@@ -171,7 +171,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	case *abstractObject:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.derivedUnmarshalerName()).Values()
 		referCode = jen.Id("target").Dot("value")
-	case *specificObject, *abstractMap:
+	case *concreteObject, *abstractMap:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
 		referCode = jen.Id("target")
 	default:

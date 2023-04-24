@@ -7,12 +7,14 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-// abstractObject は、共通の性質を持つspecificObject又はabstractObjectの総称です
-// （例：File, FileOrEmoji）
-// Fileなどは共通フィールドを持ち、本来の意味でのderivedObjectsを持ちますが
-// FileOrEmojiのようなオブジェクトは共通フィールドを持たず、所属するオブジェクトはderivedとは言いにくく、またglobalに置かれる特性から
-// 本来であればunionObjectなど別の仕組みで表現することも考えられますが、
-// 現在はどちらもabstractObjectで表現しています。
+// abstractObject は、共通の性質を持つ concreteObject 又は abstractObject の総称です
+//
+// interfaceが使われる点やUnmarshalerが生成される点で unionObjectと似ていますが、
+// 以下のような違いがあり、目的に応じて使い分けがされます
+// - abstractObject は共通のフィールドを必要とする場合がある
+// - とあるオブジェクトが直接所属する abstractObject は最大1つ
+//
+// 例えば File や Property が abstractObject です
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
 type abstractObject struct {
 	objectCommon
@@ -106,7 +108,7 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 					g.Case(jen.Lit(derived.getIdentifierValue(c.derivedIdentifierKey)))
 
 					switch derived := derived.(type) {
-					case *specificObject:
+					case *concreteObject:
 						g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 					case *abstractObject:
 						fmt.Printf("🪆 %sのアンマーシャラー で %s のアンマーシャラーがネストされました\n", c.name(), derived.name())
@@ -137,7 +139,7 @@ func (c *abstractObject) commonObjectName() string {
 // specialMethodCoder はabstractObject（とその実装オブジェクト）に特別なメソッドを追加したい場合に使います
 type specialMethodCoder interface {
 	declarationCode() jen.Code
-	implementationCode(*specificObject) jen.Code
+	implementationCode(*concreteObject) jen.Code
 }
 
 type abstractList struct {

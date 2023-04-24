@@ -173,7 +173,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nBookmark block objects contain the following information within the bookmark property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "BookmarkBlock").comment = strings.TrimSpace(e.Text)
+					getSymbol[concreteObject](b, "BookmarkBlock").comment = strings.TrimSpace(e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -181,21 +181,21 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "BookmarkBlock").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.Id("RichTextArray")))
 				},
 			}, {
 				Field:       "url",
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "BookmarkBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					getSymbol[specificObject](b, "BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
+					getSymbol[concreteObject](b, "BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
 				},
 			}}},
 			&objectDocHeadingElement{

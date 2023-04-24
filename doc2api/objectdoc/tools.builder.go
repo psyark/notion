@@ -20,8 +20,8 @@ type builder struct {
 	global *builder // TODO ローカル/グローバルビルダーを作るのではなく、唯一のビルダーを作る
 }
 
-func (b *builder) addSpecificObject(name string, comment string) *specificObject {
-	obj := &specificObject{}
+func (b *builder) addConcreteObject(name string, comment string) *concreteObject {
+	obj := &concreteObject{}
 	obj.name_ = strings.TrimSpace(name)
 	obj.comment = comment
 	b.localSymbols = append(b.localSymbols, obj)
@@ -41,14 +41,14 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 
 // addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
 // TODO abstract版を作る
-func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string) *specificObject {
+func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string) *concreteObject {
 	return b.addDerivedWithName(derivedIdentifierValue, parentName, strcase.UpperCamelCase(derivedIdentifierValue)+parentName, comment)
 }
 
 // addDerivedWithName は任意の名前で派生クラスを作成します
-func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName string, derivedName string, comment string) *specificObject {
+func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName string, derivedName string, comment string) *concreteObject {
 	parent := getSymbol[abstractObject](b, parentName)
-	derived := &specificObject{}
+	derived := &concreteObject{}
 	derived.name_ = derivedName
 	derived.derivedIdentifierValue = derivedIdentifierValue
 	derived.comment = comment
@@ -124,7 +124,7 @@ func (b *builder) getSymbol(name string) symbolCoder {
 	return nil
 }
 
-func getSymbol[T abstractObject | specificObject | unionObject](b *builder, name string) *T {
+func getSymbol[T abstractObject | concreteObject | unionObject](b *builder, name string) *T {
 	if item, ok := b.globalSymbols.Load(name); ok {
 		if item, ok := item.(*T); ok {
 			return item

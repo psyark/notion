@@ -13,6 +13,7 @@ import (
 // interfaceが使われる点やUnmarshalerが生成される点で abstractObjectと似ていますが、
 // 以下のような違いがあり、目的に応じて使い分けがされます
 // - unionObject は必ずしも共通のフィールドを必要としない
+// - とあるオブジェクトが直接所属する unionObject の数に制限はない
 // - （ドキュメントのページを跨ぐため）常に objects.global.go に書き込まれる
 //
 // 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がunionObjectです
@@ -45,7 +46,7 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 			for _, member := range canIdentify {
 				g.Case(jen.Lit(member.getIdentifierValue(u.identifierKey)))
 				switch member := member.(type) {
-				case *specificObject:
+				case *concreteObject:
 					g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
 				case *abstractObject:
 					g.Id("t").Op(":=").Op("&").Id(member.derivedUnmarshalerName()).Values()
@@ -68,7 +69,7 @@ func (u *unionObject) findCanIdentify(members []derivedCoder) []derivedCoder {
 	result := []derivedCoder{}
 	for _, member := range members {
 		switch member := member.(type) {
-		case *specificObject:
+		case *concreteObject:
 			result = append(result, member)
 		case *abstractObject:
 			if member.derivedIdentifierKey == u.identifierKey {

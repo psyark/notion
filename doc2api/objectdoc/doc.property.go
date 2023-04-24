@@ -64,13 +64,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Checkbox",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "CheckboxProperty").comment = e.Text
+					getSymbol[concreteObject](b, "CheckboxProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA checkbox database property is rendered in the Notion UI as a column that contains checkboxes. The checkbox type object is empty; there is no additional property configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "CheckboxProperty").addFields(
+					getSymbol[concreteObject](b, "CheckboxProperty").addFields(
 						&field{name: "checkbox", typeCode: jen.Struct(), comment: e.Text},
 					)
 				},
@@ -86,13 +86,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created by ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "CreatedByProperty").comment = e.Text
+					getSymbol[concreteObject](b, "CreatedByProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA created by database property is rendered in the Notion UI as a column that contains people mentions of each row's author as values. \n\nThe created_by type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "CreatedByProperty").addFields(
+					getSymbol[concreteObject](b, "CreatedByProperty").addFields(
 						&field{name: "created_by", typeCode: jen.Struct(), comment: e.Text},
 					)
 				},
@@ -108,13 +108,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Created time",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "CreatedTimeProperty").comment = e.Text
+					getSymbol[concreteObject](b, "CreatedTimeProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA created time database property is rendered in the Notion UI as a column that contains timestamps of when each row was created as values. \n\nThe created_time type object is empty. There is no additional property configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "CreatedTimeProperty").addFields(
+					getSymbol[concreteObject](b, "CreatedTimeProperty").addFields(
 						&field{name: "created_time", typeCode: jen.Struct(), comment: e.Text},
 					)
 				},
@@ -130,13 +130,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "DateProperty").comment = e.Text
+					getSymbol[concreteObject](b, "DateProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA date database property is rendered in the Notion UI as a column that contains date values. \n\nThe date type object is empty; there is no additional configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "DateProperty").addFields(
+					getSymbol[concreteObject](b, "DateProperty").addFields(
 						&field{name: "date", typeCode: jen.Struct(), comment: e.Text},
 					)
 				},
@@ -153,13 +153,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Email",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "EmailProperty").comment = e.Text
+					getSymbol[concreteObject](b, "EmailProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAn email database property is represented in the Notion UI as a column that contains email values. \n\nThe email type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "EmailProperty").addFields(&field{name: "email", typeCode: jen.Struct()}).comment += e.Text
+					getSymbol[concreteObject](b, "EmailProperty").addFields(&field{name: "email", typeCode: jen.Struct()}).comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -173,7 +173,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "FilesProperty").comment = e.Text
+					getSymbol[concreteObject](b, "FilesProperty").comment = e.Text
 				},
 			},
 			&objectDocCalloutElement{
@@ -181,13 +181,13 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					getSymbol[specificObject](b, "FilesProperty").comment += "\n" + e.Body
+					getSymbol[concreteObject](b, "FilesProperty").comment += "\n" + e.Body
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "FilesProperty").addFields(&field{name: "files", typeCode: jen.Struct()}).comment += "\n" + e.Text
+					getSymbol[concreteObject](b, "FilesProperty").addFields(&field{name: "files", typeCode: jen.Struct()}).comment += "\n" + e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -201,13 +201,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "FormulaProperty").comment = e.Text
+					getSymbol[concreteObject](b, "FormulaProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression. \n\nThe formula type object defines the expression in the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "FormulaProperty").comment += e.Text
+					getSymbol[concreteObject](b, "FormulaProperty").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -216,7 +216,7 @@ func init() {
 				Description:  "The formula that is used to compute the values for this property. \n\nRefer to the Notion help center for information about formula syntax.",
 				ExampleValue: `"prop(\"Price\") * 2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "FormulaProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "FormulaProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -230,13 +230,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited by ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "LastEditedByProperty").comment = e.Text
+					getSymbol[concreteObject](b, "LastEditedByProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values. \n\nThe last_edited_by type object is empty. There is no additional property configuration.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "LastEditedByProperty").addFields(
+					getSymbol[concreteObject](b, "LastEditedByProperty").addFields(
 						&field{name: "last_edited_by", typeCode: jen.Struct()},
 					).comment += e.Text
 				},
@@ -244,13 +244,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Last edited time",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "LastEditedTimeProperty").comment = e.Text
+					getSymbol[concreteObject](b, "LastEditedTimeProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values. \n\nThe last_edited_time type object is empty. There is no additional property configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "LastEditedTimeProperty").addFields(
+					getSymbol[concreteObject](b, "LastEditedTimeProperty").addFields(
 						&field{name: "last_edited_time", typeCode: jen.Struct()},
 					).comment += e.Text
 				},
@@ -266,14 +266,14 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Multi-select ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "MultiSelectProperty").comment = e.Text
+					getSymbol[concreteObject](b, "MultiSelectProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options. \n\nThe multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "MultiSelectProperty").comment += e.Text
-					getSymbol[specificObject](b, "MultiSelectProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "MultiSelectProperty").comment += e.Text
+					getSymbol[concreteObject](b, "MultiSelectProperty").typeObject.addFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
 				},
@@ -308,13 +308,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Number",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "NumberProperty").comment = e.Text
+					getSymbol[concreteObject](b, "NumberProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "NumberProperty").comment += e.Text
+					getSymbol[concreteObject](b, "NumberProperty").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -323,7 +323,7 @@ func init() {
 				Description:  "The way that the number is displayed in Notion. Potential values include: \n\n- argentine_peso\n- baht\n- canadian_dollar\n- chilean_peso\n- colombian_peso\n- danish_krone\n- dirham\n- dollar\n- euro\n- forint\n- franc\n- hong_kong_dollar\n- koruna\n- krona\n- leu\n- lira\n-  mexican_peso\n- new_taiwan_dollar\n- new_zealand_dollar\n- norwegian_krone\n- number\n- number_with_commas\n- percent\n- philippine_peso\n- pound \n- rand\n- real\n- ringgit\n- riyal\n- ruble\n- rupee\n- rupiah\n- shekel\n- singapore_dollar\n- uruguayan_peso\n- yen,\n- yuan\n- won\n- zloty",
 				ExampleValue: `"percent"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "NumberProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "NumberProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -338,13 +338,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "PeopleProperty").comment = e.Text
+					getSymbol[concreteObject](b, "PeopleProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "PeopleProperty").addFields(
+					getSymbol[concreteObject](b, "PeopleProperty").addFields(
 						&field{name: "people", typeCode: jen.Struct()},
 					).comment += e.Text
 				},
@@ -360,13 +360,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Phone number",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "PhoneNumberProperty").comment = e.Text
+					getSymbol[concreteObject](b, "PhoneNumberProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA phone number database property is rendered in the Notion UI as a column that contains phone number values. \n\nThe phone_number type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "PhoneNumberProperty").addFields(
+					getSymbol[concreteObject](b, "PhoneNumberProperty").addFields(
 						&field{name: "phone_number", typeCode: jen.Struct()},
 					).comment += e.Text
 				},
@@ -382,13 +382,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "RelationProperty").comment = e.Text
+					getSymbol[concreteObject](b, "RelationProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values. \n\nThe relation type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "RelationProperty").addFields(
+					getSymbol[concreteObject](b, "RelationProperty").addFields(
 						&interfaceField{name: "relation", typeName: "Relation"},
 					).comment += e.Text
 					b.addAbstractObject("Relation", "type", e.Text)
@@ -412,7 +412,7 @@ func init() {
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "synced_property_name",
@@ -420,7 +420,7 @@ func init() {
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"Ingredients"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -442,13 +442,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rich text",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "RichTextProperty").comment = e.Text
+					getSymbol[concreteObject](b, "RichTextProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "RichTextProperty").addFields(
+					getSymbol[concreteObject](b, "RichTextProperty").addFields(
 						&field{name: "rich_text", typeCode: jen.Struct()},
 					).comment += e.Text
 				},
@@ -464,13 +464,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").comment = e.Text
+					getSymbol[concreteObject](b, "RollupProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database. \n\nThe rollup type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -479,7 +479,7 @@ func init() {
 				Description:  "The function that computes the rollup value from the related pages.\n\nPossible values include: \n\n- average\n- checked\n- count_per_group\n- count\n- count_values \n- date_range\n- earliest_date \n- empty\n- latest_date\n- max\n- median\n- min\n- not_empty\n- percent_checked\n- percent_empty\n- percent_not_empty\n- percent_per_group\n- percent_unchecked\n- range\n- unchecked\n- unique\n- show_original\n- show_unique\n- sum",
 				ExampleValue: `"sum"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "relation_property_id",
@@ -487,7 +487,7 @@ func init() {
 				Description:  "The id of the related database property that is rolled up.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "relation_property_name",
@@ -495,7 +495,7 @@ func init() {
 				Description:  "The name of the related database property that is rolled up.",
 				ExampleValue: `Tasks"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "rollup_property_id",
@@ -503,7 +503,7 @@ func init() {
 				Description:  "The id of the rollup property.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "rollup_property_name",
@@ -511,7 +511,7 @@ func init() {
 				Description:  "The name of the rollup property.",
 				ExampleValue: `"Days to complete"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -525,19 +525,19 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "SelectProperty").comment = e.Text
+					getSymbol[concreteObject](b, "SelectProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row. \n\nThe select type object contains an array of objects representing the available options. Each option object includes the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "SelectProperty").comment = e.Text
-					getSymbol[specificObject](b, "SelectProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "SelectProperty").comment = e.Text
+					getSymbol[concreteObject](b, "SelectProperty").typeObject.addFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
 					// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
 					// 以下の共通の構造体を使います
-					b.addSpecificObject("Option", e.Text)
+					b.addConcreteObject("Option", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -546,7 +546,7 @@ func init() {
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `- "red"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Option").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "id",
@@ -554,7 +554,7 @@ func init() {
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Option").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "name",
@@ -562,7 +562,7 @@ func init() {
 				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for select values.",
 				ExampleValue: `"Fruit"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Option").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -576,13 +576,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "StatusProperty").comment = e.Text
+					getSymbol[concreteObject](b, "StatusProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects. \n\nThe options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "StatusProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "StatusProperty").typeObject.addFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 						&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 					)
@@ -610,7 +610,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addSpecificObject("StatusGroup", e.Text)
+					b.addConcreteObject("StatusGroup", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -619,7 +619,7 @@ func init() {
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include: \n\n- blue\n- brown\n- default\n- gray\n- green\n- orange\n- pink\n- purple\n- red\n- yellow",
 				ExampleValue: `"purple"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "id",
@@ -627,7 +627,7 @@ func init() {
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
 				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "name",
@@ -635,7 +635,7 @@ func init() {
 				Description:  "The name of the option as it appears in the Notion UI.\n\nNote: Commas (\",\") are not valid for status values.",
 				ExampleValue: `"To do"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Description:  "A sorted list of ids of all of the options that belong to a group.",
@@ -643,7 +643,7 @@ func init() {
 				Field:        "option_ids",
 				Type:         "an array of strings (UUID)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "StatusGroup").addFields(e.asField(jen.Index().String()))
+					getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.Index().String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -663,13 +663,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Title",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "TitleProperty").comment = e.Text
+					getSymbol[concreteObject](b, "TitleProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "TitleProperty").addFields(&field{
+					getSymbol[concreteObject](b, "TitleProperty").addFields(&field{
 						name:     "title",
 						typeCode: jen.Struct(),
 					}).comment += e.Text
@@ -698,13 +698,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "URL",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[specificObject](b, "UrlProperty").comment = e.Text
+					getSymbol[concreteObject](b, "UrlProperty").comment = e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA URL database property is represented in the Notion UI as a column that contains URL values. \n\nThe url type object is empty. There is no additional property configuration.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "UrlProperty").addFields(
+					getSymbol[concreteObject](b, "UrlProperty").addFields(
 						&field{name: "url", typeCode: jen.Struct()},
 					).comment += e.Text
 				},

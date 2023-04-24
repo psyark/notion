@@ -73,13 +73,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "The annotation object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addSpecificObject("Annotations", e.Text)
+					b.addConcreteObject("Annotations", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nAll rich text objects contain an annotations object that sets the styling for the rich text. annotations includes the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "Annotations").comment += "\n" + e.Text
+					getSymbol[concreteObject](b, "Annotations").comment += "\n" + e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -88,7 +88,7 @@ func init() {
 				Description:  "Whether the text is bolded.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:     "italic",
@@ -96,7 +96,7 @@ func init() {
 				Description:  "Whether the text is italicized.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:     "strikethrough",
@@ -104,7 +104,7 @@ func init() {
 				Description:  "Whether the text is struck through.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:     "underline",
@@ -112,7 +112,7 @@ func init() {
 				Description:  "Whether the text is underlined.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:     "code",
@@ -120,7 +120,7 @@ func init() {
 				Description:  "Whether the text is code style.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:     "color",
@@ -128,7 +128,7 @@ func init() {
 				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Annotations").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -144,7 +144,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNotion supports inline LaTeX equations as rich text object’s with a type value of \"equation\". The corresponding equation type object contains the following: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "EquationRichText").comment += e.Text
+					getSymbol[concreteObject](b, "EquationRichText").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -153,7 +153,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "EquationRichText").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "EquationRichText").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -207,7 +207,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDatabase mentions contain a database reference within the corresponding\u00a0database\u00a0field. A database reference is an object with an\u00a0id\u00a0key and a string value (UUIDv4) corresponding to a database ID.\n\nIf an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a database mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "DatabaseMention").comment += e.Text
+					getSymbol[concreteObject](b, "DatabaseMention").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -215,7 +215,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					getSymbol[specificObject](b, "DatabaseMention").comment += "\n" + e.Code
+					getSymbol[concreteObject](b, "DatabaseMention").comment += "\n" + e.Code
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -229,7 +229,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate mentions contain a\u00a0date property value object\u00a0within the corresponding\u00a0date\u00a0field.\n\nExample rich text mention object for a date mention",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "DateMention").comment += e.Text
+					getSymbol[concreteObject](b, "DateMention").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -256,7 +256,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.\n\nExample rich text mention object for a link_preview mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "MentionRichText").comment += e.Text
+					getSymbol[concreteObject](b, "MentionRichText").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -278,7 +278,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPage mentions contain a page reference within the corresponding\u00a0page\u00a0field. A page reference is an object with an\u00a0id\u00a0property and a string value (UUIDv4) corresponding to a page ID.\n\nIf an integration doesn’t have access to the mentioned page, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a page mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "PageMention").comment += e.Text
+					getSymbol[concreteObject](b, "PageMention").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -301,7 +301,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nThe content inside a template button in the Notion UI can include placeholder date and user mentions that populate when a template is duplicated. Template mention type objects contain these populated values. \n\nTemplate mention rich text objects contain a\u00a0template_mention\u00a0object with a nested\u00a0type\u00a0key that is either\u00a0\"template_mention_date\"\u00a0or\u00a0\"template_mention_user\".\n\nIf the\u00a0type\u00a0key is\u00a0\"template_mention_date\", then the rich text object contains the following template_mention_date field:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "TemplateMention").comment += e.Text
+					getSymbol[concreteObject](b, "TemplateMention").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -318,7 +318,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a template_mention_date mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "TemplateMentionDate").comment += e.Text
+					getSymbol[concreteObject](b, "TemplateMentionDate").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -348,7 +348,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a template_mention_user mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "TemplateMentionUser").comment += e.Text
+					getSymbol[concreteObject](b, "TemplateMentionUser").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -370,7 +370,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"user\", then the corresponding user field contains a\u00a0user object. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "UserMention").comment += e.Text
+					getSymbol[concreteObject](b, "UserMention").comment += e.Text
 				},
 			},
 			&objectDocCalloutElement{
@@ -378,13 +378,13 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					getSymbol[specificObject](b, "UserMention").comment += "\n" + e.Body
+					getSymbol[concreteObject](b, "UserMention").comment += "\n" + e.Body
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "Example rich text mention object for a user mention",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "UserMention").comment += "\n\n" + e.Text
+					getSymbol[concreteObject](b, "UserMention").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -404,7 +404,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "TextRichText").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "TextRichText").typeObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -413,7 +413,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "TextRichText").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "TextRichText").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "link",
@@ -421,7 +421,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "TextRichText").typeObject.addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					getSymbol[concreteObject](b, "TextRichText").typeObject.addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 				},
 			}},
 			&objectDocHeadingElement{

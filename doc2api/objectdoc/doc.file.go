@@ -68,7 +68,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nAll Notion-hosted files have a\u00a0type\u00a0of\u00a0\"file\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "NotionHostedFile").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "NotionHostedFile").typeObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -77,7 +77,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "NotionHostedFile").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "NotionHostedFile").typeObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "expiry_time",
@@ -85,13 +85,13 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "NotionHostedFile").typeObject.addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "NotionHostedFile").typeObject.addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "You can retrieve links to Notion-hosted files via the Retrieve block children endpoint. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "NotionHostedFile").typeObject.comment += "\n" + e.Text
+					getSymbol[concreteObject](b, "NotionHostedFile").typeObject.comment += "\n" + e.Text
 				},
 			},
 			&objectDocHeadingElement{
@@ -134,7 +134,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nAn external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of \"external\". The corresponding file specific object contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "ExternalFile").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "ExternalFile").typeObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -143,13 +143,13 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "ExternalFile").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "ExternalFile").typeObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocParagraphElement{
 				Text: "The Notion API supports adding, retrieving, and updating links to external files.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "ExternalFile").typeObject.comment += "\n\n" + e.Text
+					getSymbol[concreteObject](b, "ExternalFile").typeObject.comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocHeadingElement{

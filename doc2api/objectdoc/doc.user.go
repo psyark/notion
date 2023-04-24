@@ -16,7 +16,7 @@ func init() {
 					b.addAbstractObject("User", "type", e.Text)
 					b.addAbstractList("User", "Users")
 					b.addDerivedWithName("", "User", "PartialUser", "")
-					b.addSpecificObject("DetailedUserCommon", "")
+					b.addConcreteObject("DetailedUserCommon", "")
 				},
 			},
 			&objectDocCalloutElement{
@@ -90,7 +90,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "DetailedUserCommon").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "DetailedUserCommon").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Property:     "avatar_url",
@@ -98,7 +98,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "DetailedUserCommon").addFields(e.asField(NullString))
+					getSymbol[concreteObject](b, "DetailedUserCommon").addFields(e.asField(NullString))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -113,7 +113,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nUser objects that represent people have the type property set to \"person\". These objects also have the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "PersonUser").comment += e.Text
+					getSymbol[concreteObject](b, "PersonUser").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -127,7 +127,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "PersonUser").typeObject.addFields(&field{
+					getSymbol[concreteObject](b, "PersonUser").typeObject.addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -146,7 +146,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[specificObject](b, "BotUser").comment += e.Text
+					getSymbol[concreteObject](b, "BotUser").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -165,8 +165,8 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) {
 					field := e.asField(jen.Op("*").Id("BotUserDataOwner"))
 					field.omitEmpty = true
-					getSymbol[specificObject](b, "BotUser").typeObject.addFields(field)
-					b.addSpecificObject("BotUserDataOwner", e.Description)
+					getSymbol[concreteObject](b, "BotUser").typeObject.addFields(field)
+					b.addConcreteObject("BotUserDataOwner", e.Description)
 					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 				},
 			}, {
@@ -175,7 +175,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "BotUserDataOwner").addFields(
+					getSymbol[concreteObject](b, "BotUserDataOwner").addFields(
 						&field{name: "type", typeCode: jen.String(), comment: e.Description},
 						&field{name: "workspace", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
 						&field{name: "user", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
@@ -187,7 +187,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "BotUser").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "BotUser").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 		},

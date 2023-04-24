@@ -118,7 +118,7 @@ func init() {
 						b.addDerived(name, "Pagination", "")
 					}
 					b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-					getSymbol[specificObject](b, "PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
+					getSymbol[concreteObject](b, "PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
 				},
 			}, {
 				Description: "An object containing type-specific pagination information. For\u00a0property_items, the value corresponds to the\u00a0paginated page property type. For all other types, the value is an empty object.",
@@ -126,11 +126,11 @@ func init() {
 				Type:        "paginated list object",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO 各派生クラスを定義
-					getSymbol[specificObject](b, "PagePagination").addFields(
+					getSymbol[concreteObject](b, "PagePagination").addFields(
 						&field{name: "page", typeCode: jen.Struct(), comment: e.Description},
 						&field{name: "results", typeCode: jen.Index().Id("Page")},
 					)
-					getSymbol[specificObject](b, "PropertyItemPagination").addFields(
+					getSymbol[concreteObject](b, "PropertyItemPagination").addFields(
 						&interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description},
 						&field{name: "results", typeCode: jen.Id("PropertyItemArray")},
 					)

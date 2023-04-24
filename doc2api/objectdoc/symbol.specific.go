@@ -6,15 +6,19 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
-// specificObject は本来"type"や"object"キーで区別される各オブジェクトです
-// （例：type="external" である ExternalFile）
+// concreteObject はAPIのjson応答に実際に出現する具体的なオブジェクトです。
+// これには以下の2パターンがあり、それぞれ次のような性質を持ちます
 //
-// ですが、現在はspecificObjectの入れ子として存在するデータ構造にも使われています
+// (1) abstractObject の一種として出現するもの (derived object / specific object)
+// - parent が存在します
+// - derivedIdentifierValue が設定されています （例：type="external" である ExternalFile）
+//   - ただし、設定されていない一部の例外（PartialUser）があります
+//
+// (2) 他のオブジェクト固有のデータ
 // （例：Annotations, PersonData）
-// TODO 上記を解消し、derivedObjectみたいな名前にする？
 //
 // 生成されるGoコードではstructポインタで表現されます
-type specificObject struct {
+type concreteObject struct {
 	objectCommon
 	derivedIdentifierValue string
 
@@ -25,12 +29,12 @@ type specificObject struct {
 	typeObjectMayNull bool
 }
 
-func (c *specificObject) addToUnion(union *unionObject) {
+func (c *concreteObject) addToUnion(union *unionObject) {
 	c.unions = append(c.unions, union)
 	union.members = append(union.members, c)
 }
 
-func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
+func (c *concreteObject) addFields(fields ...fieldCoder) *concreteObject {
 	if c.derivedIdentifierValue != "" {
 		for _, f := range fields {
 			if f, ok := f.(*fixedStringField); ok {
@@ -44,7 +48,7 @@ func (c *specificObject) addFields(fields ...fieldCoder) *specificObject {
 	return c
 }
 
-func (c *specificObject) symbolCode(b *builder) jen.Code {
+func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	// typeObjectが使われているならtypeObjectへの参照を追加する
 	if len(c.typeObject.fields) != 0 {
 		if c.derivedIdentifierValue == "" {

@@ -13,7 +13,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Database objects describe the property schema of a database in Notion. Pages are the items (or children) in a database. Page property values must conform to the property objects laid out in the parent database object.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addSpecificObject("Database", e.Text)
+					b.addConcreteObject("Database", e.Text)
 				},
 			},
 			&objectDocHeadingElement{
@@ -33,7 +33,7 @@ func init() {
 				ExampleValue: `"database"`,
 				output: func(e *objectDocParameter, b *builder) {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[specificObject](b, "Database").addFields(e.asFixedStringField())
+					getSymbol[concreteObject](b, "Database").addFields(e.asFixedStringField())
 				},
 			}, {
 				Field:        "id*",
@@ -42,7 +42,7 @@ func init() {
 				ExampleValue: `"2f26ee68-df30-4251-aad4-8ddc420cba3d"`,
 				output: func(e *objectDocParameter, b *builder) {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[specificObject](b, "Database").addFields(e.asField(UUID))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(UUID))
 				},
 			}, {
 				Field:        "created_time",
@@ -50,7 +50,7 @@ func init() {
 				Description:  "Date and time when this database was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Field:        "created_by",
@@ -58,7 +58,7 @@ func init() {
 				Description:  "User who created the database.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("PartialUser")))
 				},
 			}, {
 				Field:        "last_edited_time",
@@ -66,7 +66,7 @@ func init() {
 				Description:  "Date and time when this database was updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T21:49:37.913Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Field:        "last_edited_by",
@@ -74,7 +74,7 @@ func init() {
 				Description:  "User who last edited the database.",
 				ExampleValue: "{\"object\": \"user\",\"id\": \"45ee8d13-687b-47ce-a5ca-6e2e45548c4b\"}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("PartialUser")))
 				},
 			}, {
 				Field:        "title",
@@ -82,28 +82,28 @@ func init() {
 				Description:  "Name of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
 				ExampleValue: "\"title\": [\n        {\n            \"type\": \"text\",\n            \"text\": {\n                \"content\": \"Can I create a URL property\",\n                \"link\": null\n            },\n            \"annotations\": {\n                \"bold\": false,\n                \"italic\": false,\n                \"strikethrough\": false,\n                \"underline\": false,\n                \"code\": false,\n                \"color\": \"default\"\n            },\n            \"plain_text\": \"Can I create a URL property\",\n            \"href\": null\n        }\n    ]",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
 				},
 			}, {
 				Field:       "description",
 				Type:        "array of rich text objects",
 				Description: "Description of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
 				},
 			}, {
 				Description: "Page icon.",
 				Field:       "icon",
 				Type:        "File Object or Emoji object",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asInterfaceField("FileOrEmoji"))
+					getSymbol[concreteObject](b, "Database").addFields(e.asInterfaceField("FileOrEmoji"))
 				},
 			}, {
 				Description: "Page cover image.",
 				Field:       "cover",
 				Type:        "File object (only type of \"external\" is supported currently)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Op("*").Id("ExternalFile")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Op("*").Id("ExternalFile")))
 				},
 			}, {
 				Description: "Schema of properties for the database as they appear in Notion.\n\nkey string\nThe name of the property as it appears in Notion.\n\nvalue object\nA Property object.",
@@ -111,7 +111,7 @@ func init() {
 				Type:        "object",
 				output: func(e *objectDocParameter, b *builder) {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Id("PropertyMap")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("PropertyMap")))
 				},
 			}, {
 				Description:  "Information about the database's parent. See Parent object.",
@@ -119,7 +119,7 @@ func init() {
 				Field:        "parent",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asInterfaceField("Parent"))
+					getSymbol[concreteObject](b, "Database").addFields(e.asInterfaceField("Parent"))
 				},
 			}, {
 				Field:        "url",
@@ -127,7 +127,7 @@ func init() {
 				Description:  "The URL of the Notion database.",
 				ExampleValue: "\"https://www.notion.so/668d797c76fa49349b05ad288df2d136\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "archived",
@@ -135,7 +135,7 @@ func init() {
 				Description:  "The archived status of the  database.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Field:        "is_inline",
@@ -143,7 +143,7 @@ func init() {
 				Description:  "Has the value true if the database appears in the page as an inline block. Otherwise has the value false if the database appears as a child page.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[specificObject](b, "Database").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Bool()))
 				},
 			}},
 		},

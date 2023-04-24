@@ -134,7 +134,7 @@ func convertAll() error {
 						global.addAlwaysStringIfNotExists(f.value)
 					}
 				}
-			case *specificObject:
+			case *concreteObject:
 				for _, f := range c.fields {
 					if f, ok := f.(*fixedStringField); ok {
 						global.addAlwaysStringIfNotExists(f.value)
@@ -172,7 +172,7 @@ func convertAll() error {
 
 					// TypeでもHasMoreでもないフィールドを見つけ
 					var field fieldCoder
-					for _, f := range v.(*specificObject).fields {
+					for _, f := range v.(*concreteObject).fields {
 						if f.goName() != "Type" && f.goName() != "HasMore" {
 							field = f
 							break
