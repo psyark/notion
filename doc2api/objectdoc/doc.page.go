@@ -25,7 +25,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "All pages have a Parent. If the parent is a database, the property values conform to the schema laid out database's properties. Otherwise, the only property value is the title.\n\nPage content is available as blocks. The content can be read using retrieve block children and appended using append block children.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("Page").comment += "\n" + e.Text
+					getSymbol[specificObject](b, "Page").comment += "\n" + e.Text
 				},
 			},
 			&objectDocHeadingElement{
@@ -47,7 +47,7 @@ func init() {
 				ExampleValue: `"page"`,
 				output: func(e *objectDocParameter, b *builder) {
 					e.Property = strings.TrimSuffix(e.Property, "*")
-					b.getSpecificObject("Page").addFields(e.asFixedStringField())
+					getSymbol[specificObject](b, "Page").addFields(e.asFixedStringField())
 				},
 			}, {
 				Property:     "id*",
@@ -55,7 +55,7 @@ func init() {
 				Description:  "Unique identifier of the page.",
 				ExampleValue: `"45ee8d13-687b-47ce-a5ca-6e2e45548c4b"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(&field{
+					getSymbol[specificObject](b, "Page").addFields(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
 						typeCode: UUID,
 						comment:  e.Description,
@@ -67,7 +67,7 @@ func init() {
 				Description:  "Date and time when this page was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Property:     "created_by",
@@ -75,7 +75,7 @@ func init() {
 				Description:  "User who created the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Id("PartialUser")))
 				},
 			}, {
 				Property:     "last_edited_time",
@@ -83,7 +83,7 @@ func init() {
 				Description:  "Date and time when this page was updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Property:     "last_edited_by",
@@ -91,7 +91,7 @@ func init() {
 				Description:  "User who last edited the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Id("PartialUser")))
 				},
 			}, {
 				Property:     "archived",
@@ -99,21 +99,21 @@ func init() {
 				Description:  "The archived status of the page.",
 				ExampleValue: "false",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Bool()))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Property:    "icon",
 				Type:        `File Object (only type of "external" is supported currently) or Emoji object`,
 				Description: "Page icon.",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asInterfaceField("FileOrEmoji"))
+					getSymbol[specificObject](b, "Page").addFields(e.asInterfaceField("FileOrEmoji"))
 				},
 			}, {
 				Property:    "cover",
 				Type:        `File object (only type of "external" is supported currently)`,
 				Description: "Page cover image.",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asInterfaceField("File"))
+					getSymbol[specificObject](b, "Page").addFields(e.asInterfaceField("File"))
 				},
 			}, {
 				Property:     "properties",
@@ -121,7 +121,7 @@ func init() {
 				Description:  "Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well.\n\nIf parent.type is \"page_id\" or \"workspace\", then the only valid key is title.\n\nIf parent.type is \"database_id\", then the keys and values of this field are determined by the properties  of the database this page belongs to.\n\nkey string\nName of a property as it appears in Notion.\n\nvalue object\nSee Property value object.",
 				ExampleValue: `{ "id": "A%40Hk" }`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.Id("PropertyValueMap")))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.Id("PropertyValueMap")))
 				},
 			}, {
 				Property:     "parent",
@@ -129,7 +129,7 @@ func init() {
 				Description:  "Information about the page's parent. See Parent object.",
 				ExampleValue: `{ "type": "database_id", "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce" }`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asInterfaceField("Parent"))
+					getSymbol[specificObject](b, "Page").addFields(e.asInterfaceField("Parent"))
 				},
 			}, {
 				Property:     "url",
@@ -137,7 +137,7 @@ func init() {
 				Description:  "The URL of the Notion page.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("Page").addFields(e.asField(jen.String()))
+					getSymbol[specificObject](b, "Page").addFields(e.asField(jen.String()))
 				},
 			}},
 		},

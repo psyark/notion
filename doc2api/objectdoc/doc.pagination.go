@@ -53,7 +53,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEndpoints that return lists of objects support cursor-based pagination requests. By default, Notion returns ten items per API call. If the number of items in a response from a support endpoint exceeds the default, then an integration can use pagination to request a specific set of the results and/or to limit the number of returned items.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getAbstractObject("Pagination").comment += e.Text
+					getSymbol[abstractObject](b, "Pagination").comment += e.Text
 				},
 			},
 			&objectDocHeadingElement{
@@ -75,7 +75,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf an endpoint supports pagination, then the response object contains the below fields. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getAbstractObject("Pagination").fieldsComment += e.Text
+					getSymbol[abstractObject](b, "Pagination").fieldsComment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -83,7 +83,7 @@ func init() {
 				Type:        "boolean",
 				Description: "Whether the response includes the end of the list. false if there are no more results. Otherwise, true.",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getAbstractObject("Pagination").addFields(e.asField(jen.Bool()))
+					getSymbol[abstractObject](b, "Pagination").addFields(e.asField(jen.Bool()))
 				},
 			}, {
 				Field:       "next_cursor",
@@ -91,14 +91,14 @@ func init() {
 				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.\n\nOnly available when has_more is true.",
 				output: func(e *objectDocParameter, b *builder) {
 					// RetrievePagePropertyItemでnullを確認
-					b.getAbstractObject("Pagination").addFields(e.asField(jen.Id("*").String()))
+					getSymbol[abstractObject](b, "Pagination").addFields(e.asField(jen.Id("*").String()))
 				},
 			}, {
 				Field:       "object",
 				Type:        `"list"`,
 				Description: `The constant string "list".`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getAbstractObject("Pagination").addFields(e.asFixedStringField())
+					getSymbol[abstractObject](b, "Pagination").addFields(e.asFixedStringField())
 				},
 			}, {
 				Description: "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
@@ -118,7 +118,7 @@ func init() {
 						b.addDerived(name, "Pagination", "")
 					}
 					b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-					b.getSpecificObject("PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
+					getSymbol[specificObject](b, "PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
 				},
 			}, {
 				Description: "An object containing type-specific pagination information. For\u00a0property_items, the value corresponds to the\u00a0paginated page property type. For all other types, the value is an empty object.",
@@ -126,11 +126,11 @@ func init() {
 				Type:        "paginated list object",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO 各派生クラスを定義
-					b.getSpecificObject("PagePagination").addFields(
+					getSymbol[specificObject](b, "PagePagination").addFields(
 						&field{name: "page", typeCode: jen.Struct(), comment: e.Description},
 						&field{name: "results", typeCode: jen.Index().Id("Page")},
 					)
-					b.getSpecificObject("PropertyItemPagination").addFields(
+					getSymbol[specificObject](b, "PropertyItemPagination").addFields(
 						&interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description},
 						&field{name: "results", typeCode: jen.Id("PropertyItemArray")},
 					)

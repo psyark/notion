@@ -47,7 +47,7 @@ func (b *builder) addDerived(derivedIdentifierValue string, parentName string, c
 
 // addDerivedWithName は任意の名前で派生クラスを作成します
 func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName string, derivedName string, comment string) *specificObject {
-	parent := b.getAbstractObject(parentName)
+	parent := getSymbol[abstractObject](b, parentName)
 	derived := &specificObject{}
 	derived.name_ = derivedName
 	derived.derivedIdentifierValue = derivedIdentifierValue
@@ -68,7 +68,7 @@ func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName s
 
 // Deprecated: use addUnionToGlobalIfNotExists
 func (b *builder) addAbstractObjectToGlobalIfNotExists(name string, specifiedBy string) *abstractObject {
-	if o := b.getAbstractObject(name); o != nil {
+	if o := getSymbol[abstractObject](b, name); o != nil {
 		return o
 	}
 	return b.global.addAbstractObject(name, specifiedBy, "")
@@ -118,24 +118,6 @@ func (b *builder) addAlwaysStringIfNotExists(value string) {
 func (b *builder) getSymbol(name string) symbolCoder {
 	if item, ok := b.globalSymbols.Load(name); ok {
 		if item, ok := item.(symbolCoder); ok {
-			return item
-		}
-	}
-	return nil
-}
-
-func (b *builder) getAbstractObject(name string) *abstractObject {
-	if item, ok := b.globalSymbols.Load(name); ok {
-		if item, ok := item.(*abstractObject); ok {
-			return item
-		}
-	}
-	return nil
-}
-
-func (b *builder) getSpecificObject(name string) *specificObject {
-	if item, ok := b.globalSymbols.Load(name); ok {
-		if item, ok := item.(*specificObject); ok {
 			return item
 		}
 	}

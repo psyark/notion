@@ -147,7 +147,7 @@ type abstractList struct {
 
 func (c *abstractList) name() string { return c.name_ }
 func (c *abstractList) symbolCode(b *builder) jen.Code {
-	target := b.getAbstractObject(c.targetName)
+	target := getSymbol[abstractObject](b, c.targetName)
 	return jen.Line().Type().Id(c.name()).Index().Id(c.targetName).Line().Func().Params(jen.Id("a").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 		jen.Id("t").Op(":=").Index().Id(target.derivedUnmarshalerName()).Values(),
 		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(
@@ -168,7 +168,7 @@ type abstractMap struct {
 
 func (c *abstractMap) name() string { return c.name_ }
 func (c *abstractMap) symbolCode(b *builder) jen.Code {
-	target := b.getAbstractObject(c.targetName)
+	target := getSymbol[abstractObject](b, c.targetName)
 	return jen.Line().Type().Id(c.name()).Map(jen.String()).Id(c.targetName).Line().Func().Params(jen.Id("m").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 		jen.Id("t").Op(":=").Map(jen.String()).Id(target.derivedUnmarshalerName()).Values(),
 		jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Op("&").Id("t")).Op(";").Err().Op("!=").Nil()).Block(

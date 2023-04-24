@@ -32,7 +32,7 @@ func init() {
 				Description:   "The ID of the database that this page belongs to.",
 				ExampleValues: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DatabaseParent").addFields(e.asField(UUID))
+					getSymbol[specificObject](b, "DatabaseParent").addFields(e.asField(UUID))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -61,7 +61,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"59833787-2cf9-4fdf-8782-e53db20768a5"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("PageParent").addFields(e.asField(UUID))
+					getSymbol[specificObject](b, "PageParent").addFields(e.asField(UUID))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -81,7 +81,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA page with a workspace parent is a top-level page within a Notion workspace. The parent property is an object containing the following keys:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("WorkspaceParent").comment += e.Text
+					getSymbol[specificObject](b, "WorkspaceParent").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -96,7 +96,7 @@ func init() {
 				Description:   "Always true.",
 				ExampleValues: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("WorkspaceParent").addFields(e.asField(jen.Bool()))
+					getSymbol[specificObject](b, "WorkspaceParent").addFields(e.asField(jen.Bool()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -116,7 +116,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA page may have a block parent if it is created inline in a chunk of text, or is located beneath another block like a toggle or bullet block. The parent property is an object containing the following keys:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("BlockParent").comment += e.Text
+					getSymbol[specificObject](b, "BlockParent").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -131,7 +131,7 @@ func init() {
 				Description:   "The ID of the page that this page belongs to.",
 				ExampleValues: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("BlockParent").addFields(e.asField(UUID))
+					getSymbol[specificObject](b, "BlockParent").addFields(e.asField(UUID))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

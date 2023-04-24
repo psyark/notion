@@ -167,7 +167,7 @@ func convertAll() error {
 		file.Func().Id("getTypeForBinding").Params(jen.Id("p").Id("Property")).String().Block(
 			jen.Switch(jen.Id("p").Assert(jen.Type())).BlockFunc(func(g *jen.Group) {
 				// PropertyValueの各派生に対し
-				for _, v := range global.getAbstractObject("PropertyValue").derivedObjects {
+				for _, v := range getSymbol[abstractObject](global, "PropertyValue").derivedObjects {
 					g.Case(jen.Op("*").Id(strings.TrimSuffix(v.name(), "Value")))
 
 					// TypeでもHasMoreでもないフィールドを見つけ

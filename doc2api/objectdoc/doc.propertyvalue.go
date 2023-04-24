@@ -63,7 +63,7 @@ func init() {
 				Title: "Property values in the page object have a 25 page reference limit",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getAbstractObject("PropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					getSymbol[abstractObject](b, "PropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -73,7 +73,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEach page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getAbstractObject("PropertyValue").comment += e.Text
+					getSymbol[abstractObject](b, "PropertyValue").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -84,7 +84,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) {
 					field := e.asField(jen.String())
 					field.omitEmpty = true // Rollup内でIDが無い場合がある
-					b.getAbstractObject("PropertyValue").addFields(field)
+					getSymbol[abstractObject](b, "PropertyValue").addFields(field)
 				},
 			}, {
 				Property:     "type (optional)",
@@ -102,7 +102,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nTitle property value objects contain an array of rich text objects within the title property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("TitlePropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "TitlePropertyValue").addFields(&field{
 						name:     "title",
 						typeCode: jen.Id("RichTextArray"),
 						comment:  e.Text,
@@ -129,7 +129,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("TitlePropertyValue").comment += "\n\n" + e.Body
+					getSymbol[specificObject](b, "TitlePropertyValue").comment += "\n\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -141,7 +141,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRich Text property value objects contain an array of rich text objects within the rich_text property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("RichTextPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "RichTextPropertyValue").addFields(&field{
 						name:     "rich_text",
 						typeCode: jen.Id("RichTextArray"),
 						comment:  e.Text,
@@ -166,7 +166,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("RichTextPropertyValue").comment += "\n\n" + e.Body
+					getSymbol[specificObject](b, "RichTextPropertyValue").comment += "\n\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -178,7 +178,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNumber property value objects contain a number within the number property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("NumberPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "NumberPropertyValue").addFields(&field{
 						name:     "number",
 						typeCode: NullFloat,
 						comment:  e.Text,
@@ -207,7 +207,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nSelect property value objects contain the following data within the select property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("SelectPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "SelectPropertyValue").addFields(&field{
 						name:     "select",
 						typeCode: jen.Op("*").Id("Option"), // null
 						comment:  e.Text,
@@ -253,7 +253,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nStatus property value objects contain the following data within the status property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("StatusPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "StatusPropertyValue").addFields(&field{
 						name:     "status",
 						typeCode: jen.Id("Option"),
 						comment:  e.Text,
@@ -299,7 +299,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nMulti-select property value objects contain an array of multi-select option values within the multi_select property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("MultiSelectPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "MultiSelectPropertyValue").addFields(&field{
 						name:     "multi_select",
 						typeCode: jen.Index().Id("Option"),
 						comment:  e.Text,
@@ -349,7 +349,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("DatePropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "DatePropertyValue").addFields(&field{
 						name:     "date",
 						typeCode: jen.Op("*").Id("DatePropertyValueData"), // null
 						comment:  e.Text,
@@ -364,7 +364,7 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[specificObject](b, "DatePropertyValueData").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Property:     "end",
@@ -372,7 +372,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Op("*").Id("ISO8601String")))
+					getSymbol[specificObject](b, "DatePropertyValueData").addFields(e.asField(jen.Op("*").Id("ISO8601String")))
 				},
 			}, {
 				Property:     "time_zone",
@@ -380,7 +380,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DatePropertyValueData").addFields(e.asField(jen.Op("*").String()))
+					getSymbol[specificObject](b, "DatePropertyValueData").addFields(e.asField(jen.Op("*").String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -428,7 +428,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFormula property value objects represent the result of evaluating a formula described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("FormulaPropertyValue").comment += e.Text
+					getSymbol[specificObject](b, "FormulaPropertyValue").comment += e.Text
 				},
 			},
 			&objectDocCalloutElement{
@@ -436,7 +436,7 @@ func init() {
 				Title: "Formula values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("FormulaPropertyValue").comment += "\n" + e.Title + "\n" + e.Body
+					getSymbol[specificObject](b, "FormulaPropertyValue").comment += "\n" + e.Title + "\n" + e.Body
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -460,7 +460,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nString formula property values contain an optional string within the string property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("StringFormula").addFields(&field{
+					getSymbol[specificObject](b, "StringFormula").addFields(&field{
 						name:     "string",
 						typeCode: NullString,
 						comment:  e.Text,
@@ -476,7 +476,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNumber formula property values contain an optional number within the number property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("NumberFormula").addFields(&field{
+					getSymbol[specificObject](b, "NumberFormula").addFields(&field{
 						name:     "number",
 						typeCode: jen.Float64(),
 						comment:  e.Text,
@@ -492,7 +492,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nBoolean formula property values contain a boolean within the boolean property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("BooleanFormula").addFields(&field{
+					getSymbol[specificObject](b, "BooleanFormula").addFields(&field{
 						name:     "boolean",
 						typeCode: jen.Bool(),
 						comment:  e.Text,
@@ -508,7 +508,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDate formula property values contain an optional date property value within the date property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("DateFormula").addFields(&field{
+					getSymbol[specificObject](b, "DateFormula").addFields(&field{
 						name:     "date",
 						typeCode: jen.Id("DatePropertyValue"),
 						comment:  e.Text,
@@ -524,12 +524,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRelation property value objects contain an array of page references within the\u00a0relation property. A page reference is an object with an id key and a string value (UUIDv4) corresponding to a page ID in another database.\n\nA relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.\n\nNote that updating a relation property value with an empty array will clear the list.  ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("RelationPropertyValue").comment += e.Text
-					b.getSpecificObject("RelationPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "RelationPropertyValue").comment += e.Text
+					getSymbol[specificObject](b, "RelationPropertyValue").addFields(&field{
 						name:     "relation",
 						typeCode: jen.Index().Id("PageReference"),
 					})
-					b.getSpecificObject("RelationPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "RelationPropertyValue").addFields(&field{
 						name:     "has_more",
 						typeCode: jen.Bool(),
 					})
@@ -562,7 +562,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nRollup property value objects represent the result of evaluating a rollup described in the \ndatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a rollup cannot be updated directly.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("RollupPropertyValue").comment += e.Text
+					getSymbol[specificObject](b, "RollupPropertyValue").comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -576,7 +576,7 @@ func init() {
 				Title: "Rollup values may not match the Notion UI.",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("RollupPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					getSymbol[specificObject](b, "RollupPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -620,7 +620,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("PeoplePropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "PeoplePropertyValue").addFields(&field{
 						name:     "people",
 						typeCode: jen.Id("Users"),
 						comment:  e.Text,
@@ -643,7 +643,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("PeoplePropertyValue").comment += "\n\n" + e.Body
+					getSymbol[specificObject](b, "PeoplePropertyValue").comment += "\n\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -655,7 +655,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("FilesPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "FilesPropertyValue").addFields(&field{
 						name:     "files",
 						typeCode: jen.Id("Files"),
 						comment:  e.Text,
@@ -673,7 +673,7 @@ func init() {
 				Title: "When updating a file property, the value will be overwritten by the array of files passed.",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					b.getSpecificObject("FilesPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
+					getSymbol[specificObject](b, "FilesPropertyValue").comment += "\n\n" + e.Title + "\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
@@ -685,7 +685,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCheckbox property value objects contain a boolean within the checkbox property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("CheckboxPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "CheckboxPropertyValue").addFields(&field{
 						name:     "checkbox",
 						typeCode: jen.Bool(), // null や undefined は通らない
 						comment:  e.Text,
@@ -712,7 +712,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nURL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("UrlPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "UrlPropertyValue").addFields(&field{
 						name:     "url",
 						typeCode: NullString,
 						comment:  e.Text,
@@ -739,7 +739,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEmail property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("EmailPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "EmailPropertyValue").addFields(&field{
 						name:     "email",
 						typeCode: NullString,
 						comment:  e.Text,
@@ -766,7 +766,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nPhone number property value objects contain a string within the phone_number property. No structure is enforced.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("PhoneNumberPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "PhoneNumberPropertyValue").addFields(&field{
 						name:     "phone_number",
 						typeCode: NullString,
 						comment:  e.Text,
@@ -793,7 +793,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned. \n\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("CreatedTimePropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "CreatedTimePropertyValue").addFields(&field{
 						name:     "created_time",
 						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Text,
@@ -809,7 +809,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCreated by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("CreatedByPropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "CreatedByPropertyValue").addFields(&field{
 						name:     "created_by",
 						typeCode: jen.Id("PartialUser"),
 						comment:  e.Text,
@@ -825,7 +825,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("LastEditedTimePropertyValue").addFields(&field{
+					getSymbol[specificObject](b, "LastEditedTimePropertyValue").addFields(&field{
 						name:     "last_edited_time",
 						typeCode: jen.Id("ISO8601String"),
 						comment:  e.Text,
@@ -841,7 +841,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("LastEditedByPropertyValue").addFields(&interfaceField{
+					getSymbol[specificObject](b, "LastEditedByPropertyValue").addFields(&interfaceField{
 						name:     "last_edited_by",
 						typeName: "User",
 						comment:  e.Text,

@@ -34,25 +34,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Where user objects appear in the API",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.getAbstractObject("User").comment += "\n\n" + e.Text
+					getSymbol[abstractObject](b, "User").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nUser objects appear in the API in nearly all objects returned by the API, including:\n* Block object under created_by and last_edited_by.\n* Page object under created_by and last_edited_by and in people property items.\n* Database object under created_by and last_edited_by.\n* Rich text object, as user mentions.\n* Property object when the property is a people property.\n\nUser objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getAbstractObject("User").comment += "\n\n" + e.Text
+					getSymbol[abstractObject](b, "User").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "All users",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.getAbstractObject("User").fieldsComment += "\n" + e.Text
+					getSymbol[abstractObject](b, "User").fieldsComment += "\n" + e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThese fields are shared by all users, including people and bots. Fields marked with * are always present.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getAbstractObject("User").fieldsComment += e.Text
+					getSymbol[abstractObject](b, "User").fieldsComment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -62,7 +62,7 @@ func init() {
 				ExampleValue: `"user"`,
 				output: func(e *objectDocParameter, b *builder) {
 					e.Property = strings.TrimSuffix(e.Property, "*")
-					b.getAbstractObject("User").addFields(e.asFixedStringField())
+					getSymbol[abstractObject](b, "User").addFields(e.asFixedStringField())
 				},
 			}, {
 				Property:     "id*",
@@ -70,7 +70,7 @@ func init() {
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getAbstractObject("User").addFields(&field{
+					getSymbol[abstractObject](b, "User").addFields(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
 						typeCode: UUID,
 						comment:  e.Description,
@@ -90,7 +90,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DetailedUserCommon").addFields(e.asField(jen.String()))
+					getSymbol[specificObject](b, "DetailedUserCommon").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Property:     "avatar_url",
@@ -98,7 +98,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("DetailedUserCommon").addFields(e.asField(NullString))
+					getSymbol[specificObject](b, "DetailedUserCommon").addFields(e.asField(NullString))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -113,7 +113,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nUser objects that represent people have the type property set to \"person\". These objects also have the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("PersonUser").comment += e.Text
+					getSymbol[specificObject](b, "PersonUser").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -127,7 +127,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("PersonUser").typeObject.addFields(&field{
+					getSymbol[specificObject](b, "PersonUser").typeObject.addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -146,7 +146,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.getSpecificObject("BotUser").comment += e.Text
+					getSymbol[specificObject](b, "BotUser").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -165,7 +165,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) {
 					field := e.asField(jen.Op("*").Id("BotUserDataOwner"))
 					field.omitEmpty = true
-					b.getSpecificObject("BotUser").typeObject.addFields(field)
+					getSymbol[specificObject](b, "BotUser").typeObject.addFields(field)
 					b.addSpecificObject("BotUserDataOwner", e.Description)
 					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 				},
@@ -175,7 +175,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("BotUserDataOwner").addFields(
+					getSymbol[specificObject](b, "BotUserDataOwner").addFields(
 						&field{name: "type", typeCode: jen.String(), comment: e.Description},
 						&field{name: "workspace", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
 						&field{name: "user", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
@@ -187,7 +187,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.getSpecificObject("BotUser").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[specificObject](b, "BotUser").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 		},
