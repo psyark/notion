@@ -53,7 +53,7 @@ func init() {
 				Description:  "The name of the property as it appears in the database, or the property ID.",
 				ExampleValue: `"Task completed"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[abstractObject](b, "Filter").addFields(e.asField(jen.String()))
+					getSymbol[abstractObject](b, "Filter").addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "checkbox  \ndate\nfiles \nformula \nmulti_select \nnumber \npeople \nphone_number  \nrelation \nrich_text \nselect \nstatus \ntimestamp",
@@ -644,7 +644,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO テスト
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -656,22 +656,20 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RollupFilter").comment += e.Text
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "Filter conditions for array rollup values",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
+				Text:   "Filter conditions for array rollup values",
+				output: func(e *objectDocHeadingElement, b *builder) {},
 			},
 			&objectDocParametersElement{{
-				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where the rollup property value matches the provided criteria.",
-				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				Field:        "any",
 				Type:         "object",
+				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where the rollup property value matches the provided criteria.",
+				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RollupFilter").typeObject.addFields(e.asInterfaceField("Filter"))
 				},
 			}, {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where every rollup property value matches the provided criteria.",

@@ -25,7 +25,7 @@ type Filter interface {
 Each filter object contains the following fields:
 */
 type FilterCommon struct {
-	Property string `json:"property"` // The name of the property as it appears in the database, or the property ID.
+	Property string `json:"property,omitempty"` // The name of the property as it appears in the database, or the property ID.
 }
 
 func (c *FilterCommon) GetProperty() string {
@@ -361,12 +361,34 @@ type RichTextFilterData struct {
 	StartsWith     string `json:"starts_with,omitempty"`      // The string to compare the text property value against.  Returns database entries with a text property value that starts with the provided string.
 }
 
-// Rollup
+/*
+Rollup
+A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.
+*/
 type RollupFilter struct {
 	FilterCommon
+	Rollup RollupFilterData `json:"rollup"`
 }
 
 func (_ *RollupFilter) isFilter() {}
+
+type RollupFilterData struct {
+	Any Filter `json:"any"` // The value to compare each rollup property value against. Can be a filter condition for any other type.   Returns database entries where the rollup property value matches the provided criteria.
+}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *RollupFilterData) UnmarshalJSON(data []byte) error {
+	type Alias RollupFilterData
+	t := &struct {
+		*Alias
+		Any filterUnmarshaler `json:"any"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RollupFilterData: %w", err)
+	}
+	o.Any = t.Any.value
+	return nil
+}
 
 // Select
 type SelectFilter struct {

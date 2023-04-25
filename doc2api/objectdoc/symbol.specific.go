@@ -75,19 +75,22 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 
 	// struct本体
 	code := &jen.Statement{}
-	code.Add(c.objectCommon.symbolCode(b))
+	if c.comment != "" {
+		code.Comment(c.comment).Line()
+	}
+
+	code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
 
 	// インターフェイスを実装
 	for _, iface := range c.allInterfaces() {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + iface.name()).Params().Block().Line()
 	}
-	// 親のスペシャルメソッドを実装 TODO リカーシブ
+	// 親のスペシャルメソッドを実装
 	if c.parent != nil {
 		for _, sm := range c.parent.specialMethods {
 			code.Add(sm.implementationCode(c))
 		}
 	}
-
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(c.fieldUnmarshalerCode(b))
 

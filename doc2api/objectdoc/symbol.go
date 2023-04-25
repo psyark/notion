@@ -99,7 +99,11 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 		code.Comment(c.comment).Line()
 	}
 
-	return code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
+	code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
+	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
+	code.Add(c.fieldUnmarshalerCode(b))
+
+	return code
 }
 
 func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
