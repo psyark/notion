@@ -466,13 +466,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("people", "Filter", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nYou can apply a people filter condition to people, created_by, and last_edited_by database property types. \n\nThe people filter condition contains the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "PeopleFilter").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -481,15 +481,15 @@ func init() {
 				Field:        "contains",
 				Type:         "string (UUIDv4)",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
-				Description:  "The value to compare the people property value against.\n\nReturns database entries where the people property value does not contain the provided string.",
-				ExampleValue: "\"6c574cee-ca68-41c8-86e0-1b9e992689fb\"",
 				Field:        "does_not_contain",
 				Type:         "string (UUIDv4)",
+				Description:  "The value to compare the people property value against.\n\nReturns database entries where the people property value does not contain the provided string.",
+				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Description:  "Whether the people property value does not contain any data. \n\nReturns database entries where the people property value does not contain any data.",
@@ -497,7 +497,7 @@ func init() {
 				Field:        "is_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether the people property value contains data. \n\nReturns database entries where the people property value is not empty.",
@@ -505,7 +505,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -519,16 +519,16 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Relation",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("relation", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The value to compare the relation property value against. \n\nReturns database entries where the relation property value contains the provided string.",
-				ExampleValue: "\"6c574cee-ca68-41c8-86e0-1b9e992689fb\"",
 				Field:        "contains",
 				Type:         "string (UUIDv4)",
+				Description:  "The value to compare the relation property value against. \n\nReturns database entries where the relation property value contains the provided string.",
+				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
@@ -645,7 +645,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("rollup", "Filter", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -748,38 +748,38 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("select", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value matches the provided string.",
-				ExampleValue: "\"This week\"",
 				Field:        "equals",
 				Type:         "string",
+				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value matches the provided string.",
+				ExampleValue: `"This week"`,
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value does not match the provided string.",
-				ExampleValue: "\"Backlog\"",
 				Field:        "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value does not match the provided string.",
+				ExampleValue: `"Backlog"`,
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the select property value does not contain data.\n\nReturns database entries where the select property value is empty.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the select property value does not contain data.\n\nReturns database entries where the select property value is empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the select property value contains data.\n\nReturns database entries where the select property value is not empty.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the select property value contains data.\n\nReturns database entries where the select property value is not empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -795,38 +795,38 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("status", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value matches the provided string.",
-				ExampleValue: "\"This week\"",
 				Field:        "equals",
 				Type:         "string",
+				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value matches the provided string.",
+				ExampleValue: `"This week"`,
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value does not match the provided string.",
-				ExampleValue: "\"Backlog\"",
 				Field:        "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value does not match the provided string.",
+				ExampleValue: `"Backlog"`,
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the status property value does not contain data.\n\nReturns database entries where the status property value is empty.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the status property value does not contain data.\n\nReturns database entries where the status property value is empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the status property value contains data.\n\nReturns database entries where the status property value is not empty.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the status property value contains data.\n\nReturns database entries where the status property value is not empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -842,7 +842,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Timestamp",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("timestamp", "Filter", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -852,18 +852,18 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "A constant string representing the type of timestamp to use as a filter.",
-				ExampleValue: "\"created_time\"",
 				Field:        "timestamp",
 				Type:         "created_time last_edited_time",
+				Description:  "A constant string representing the type of timestamp to use as a filter.",
+				ExampleValue: `"created_time"`,
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "A date filter condition used to filter the specified timestamp.",
-				ExampleValue: "Refer to the date filter condition.",
 				Field:        "created_time\nlast_edited_time",
 				Type:         "object",
+				Description:  "A date filter condition used to filter the specified timestamp.",
+				ExampleValue: "Refer to the date filter condition.",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
