@@ -64,19 +64,6 @@ func (c *objectCommon) setParent(parent *abstractObject) {
 	c.parent = parent
 }
 
-// このオブジェクトが所属するインターフェイスを返す
-func (c *objectCommon) allInterfaces() []symbolCoder {
-	ifs := []symbolCoder{}
-	for _, u := range c.unions {
-		ifs = append(ifs, u)
-	}
-	if c.parent != nil {
-		ifs = append(ifs, c.parent)
-		ifs = append(ifs, c.parent.allInterfaces()...)
-	}
-	return ifs
-}
-
 func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {
 	c.fields = append(c.fields, fields...)
 	return c

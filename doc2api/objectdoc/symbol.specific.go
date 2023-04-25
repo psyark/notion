@@ -88,10 +88,17 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 		}
 	}).Line()
 
-	// インターフェイスを実装
-	for _, iface := range c.allInterfaces() {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + iface.name()).Params().Block().Line()
+	// 先祖インターフェイスを実装
+	for _, union := range c.unions {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
 	}
+	for ancestor := c.parent; ancestor != nil; ancestor = ancestor.parent {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + ancestor.name()).Params().Block().Line()
+		for _, union := range ancestor.unions {
+			code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
+		}
+	}
+
 	// 親のスペシャルメソッドを実装
 	if c.parent != nil {
 		for _, sm := range c.parent.specialMethods {

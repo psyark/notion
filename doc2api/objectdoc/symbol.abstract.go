@@ -53,8 +53,8 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 
 	// インターフェイス本体とisメソッド
 	code.Type().Id(c.name()).InterfaceFunc(func(g *jen.Group) {
-		for _, iface := range c.allInterfaces() {
-			g.Id(iface.name()) // 親インターフェイスの継承
+		for _, union := range c.unions {
+			g.Id(union.name()) // Unionインターフェイスの継承
 		}
 		g.Id("is" + c.name()).Params() // このインターフェイスのisメソッド
 		for _, sm := range c.specialMethods {
