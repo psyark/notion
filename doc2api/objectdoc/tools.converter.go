@@ -202,7 +202,7 @@ func convertAll() error {
 	for _, c := range global.localSymbols {
 		if c, ok := c.(*abstractObject); ok {
 			sort.Slice(c.derivedObjects, func(i, j int) bool {
-				return c.derivedObjects[i].getIdentifierValue(c.derivedIdentifierKey) < c.derivedObjects[j].getIdentifierValue(c.derivedIdentifierKey)
+				return c.derivedObjects[i].derivedIdentifierValue < c.derivedObjects[j].derivedIdentifierValue
 			})
 		}
 	}

@@ -42,17 +42,17 @@ func (c *objectCommon) name() string {
 	return c.name_
 }
 
-// TODO: derivedIdentifierValueみたいなプロパティにする？
-func (c *objectCommon) getIdentifierValue(specifiedBy string) string {
+// 指定したidentifierKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
+// abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
+// unionがmemberを見分ける際には依然としてこの方法しかない
+func (c *objectCommon) getIdentifierValue(identifierKey string) string {
 	for _, f := range c.fields {
-		if f, ok := f.(*fixedStringField); ok && f.name == specifiedBy {
+		if f, ok := f.(*fixedStringField); ok && f.name == identifierKey {
 			return f.value
 		}
 	}
 	if c.parent != nil {
-		if v := c.parent.getIdentifierValue(specifiedBy); v != "" {
-			return v
-		}
+		return c.parent.getIdentifierValue(identifierKey)
 	}
 	return ""
 }
