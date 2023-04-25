@@ -22,11 +22,37 @@ type concreteObject struct {
 	objectCommon
 	derivedIdentifierValue string
 
+	// parent はこのオブジェクトの派生元です。派生元とは共通のフィールドを提供しているオブジェクトであり、
+	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
+	parent *abstractObject
+
 	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
 	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
 	typeObject        objectCommon
 	typeObjectMayNull bool
+}
+
+func (c *concreteObject) setParent(parent *abstractObject) {
+	if c.parent != nil {
+		panic(fmt.Errorf("👪 %s has two parents: %s vs %s", c.name(), c.parent.name(), parent.name()))
+	}
+	c.parent = parent
+}
+
+// 指定したidentifierKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
+// abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
+// unionがmemberを見分ける際には依然としてこの方法しかない
+func (c *concreteObject) getIdentifierValue(identifierKey string) string {
+	for _, f := range c.fields {
+		if f, ok := f.(*fixedStringField); ok && f.name == identifierKey {
+			return f.value
+		}
+	}
+	if c.parent != nil {
+		return c.parent.getIdentifierValue(identifierKey)
+	}
+	return ""
 }
 
 func (c *concreteObject) addToUnion(union *unionObject) {
@@ -92,9 +118,9 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	for _, union := range c.unions {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
 	}
-	for ancestor := c.parent; ancestor != nil; ancestor = ancestor.parent {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + ancestor.name()).Params().Block().Line()
-		for _, union := range ancestor.unions {
+	if c.parent != nil {
+		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + c.parent.name()).Params().Block().Line()
+		for _, union := range c.parent.unions {
 			code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
 		}
 	}

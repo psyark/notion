@@ -29,10 +29,6 @@ type objectCommon struct {
 	comment string
 	fields  []fieldCoder
 
-	// parent はこのオブジェクトの派生元です。派生元とは共通のフィールドを提供しているオブジェクトであり、
-	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
-	parent *abstractObject
-
 	// unions は自分が所属するunionObjectです。
 	// objectCommonを継承する各クラスは、symbolCode メソッド中でこのunionのisメソッドを実装する必要があります
 	unions []*unionObject
@@ -51,17 +47,7 @@ func (c *objectCommon) getIdentifierValue(identifierKey string) string {
 			return f.value
 		}
 	}
-	if c.parent != nil {
-		return c.parent.getIdentifierValue(identifierKey)
-	}
 	return ""
-}
-
-func (c *objectCommon) setParent(parent *abstractObject) {
-	if c.parent != nil {
-		panic(fmt.Errorf("👪 %s has two parents: %s vs %s", c.name(), c.parent.name(), parent.name()))
-	}
-	c.parent = parent
 }
 
 func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {

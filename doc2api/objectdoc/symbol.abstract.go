@@ -35,13 +35,7 @@ func (c *abstractObject) addFields(fields ...fieldCoder) *abstractObject {
 }
 
 func (c *abstractObject) hasCommonField() bool {
-	if len(c.fields) != 0 {
-		return true
-	}
-	if c.parent != nil {
-		return c.parent.hasCommonField()
-	}
-	return false
+	return len(c.fields) != 0
 }
 
 func (c *abstractObject) symbolCode(b *builder) jen.Code {
