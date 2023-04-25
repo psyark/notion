@@ -28,7 +28,7 @@ type concreteObject struct {
 
 	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
-	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData）
+	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData, ArrayRollupFilter）
 	typeObject        objectCommon
 	typeObjectMayNull bool
 }
