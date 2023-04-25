@@ -106,7 +106,7 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	}
 
 	code.Type().Id(c.name_).StructFunc(func(g *jen.Group) {
-		if c.parent != nil && c.parent.hasCommonField() {
+		if c.parent != nil && len(c.parent.fields) != 0 {
 			g.Id(c.parent.commonObjectName())
 		}
 		for _, f := range c.fields {

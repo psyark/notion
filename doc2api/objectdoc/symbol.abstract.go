@@ -34,10 +34,6 @@ func (c *abstractObject) addFields(fields ...fieldCoder) *abstractObject {
 	return c
 }
 
-func (c *abstractObject) hasCommonField() bool {
-	return len(c.fields) != 0
-}
-
 func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	code := jen.Line()
 
