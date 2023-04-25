@@ -216,7 +216,7 @@ func init() {
 				Description:  "The formula that is used to compute the values for this property. \n\nRefer to the Notion help center for information about formula syntax.",
 				ExampleValue: `"prop(\"Price\") * 2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "FormulaProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "FormulaProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -273,7 +273,7 @@ func init() {
 				Text: "\nA multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options. \n\nThe multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "MultiSelectProperty").comment += e.Text
-					getSymbol[concreteObject](b, "MultiSelectProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "MultiSelectProperty").addTypeSpecificFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
 				},
@@ -323,7 +323,7 @@ func init() {
 				Description:  "The way that the number is displayed in Notion. Potential values include: \n\n- argentine_peso\n- baht\n- canadian_dollar\n- chilean_peso\n- colombian_peso\n- danish_krone\n- dirham\n- dollar\n- euro\n- forint\n- franc\n- hong_kong_dollar\n- koruna\n- krona\n- leu\n- lira\n-  mexican_peso\n- new_taiwan_dollar\n- new_zealand_dollar\n- norwegian_krone\n- number\n- number_with_commas\n- percent\n- philippine_peso\n- pound \n- rand\n- real\n- ringgit\n- riyal\n- ruble\n- rupee\n- rupiah\n- shekel\n- singapore_dollar\n- uruguayan_peso\n- yen,\n- yuan\n- won\n- zloty",
 				ExampleValue: `"percent"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "NumberProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -412,7 +412,7 @@ func init() {
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "DualPropertyRelation").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "synced_property_name",
@@ -420,7 +420,7 @@ func init() {
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
 				ExampleValue: `"Ingredients"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DualPropertyRelation").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "DualPropertyRelation").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -470,7 +470,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database. \n\nThe rollup type object contains the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "RollupProperty").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -479,7 +479,7 @@ func init() {
 				Description:  "The function that computes the rollup value from the related pages.\n\nPossible values include: \n\n- average\n- checked\n- count_per_group\n- count\n- count_values \n- date_range\n- earliest_date \n- empty\n- latest_date\n- max\n- median\n- min\n- not_empty\n- percent_checked\n- percent_empty\n- percent_not_empty\n- percent_per_group\n- percent_unchecked\n- range\n- unchecked\n- unique\n- show_original\n- show_unique\n- sum",
 				ExampleValue: `"sum"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "relation_property_id",
@@ -487,7 +487,7 @@ func init() {
 				Description:  "The id of the related database property that is rolled up.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "relation_property_name",
@@ -495,7 +495,7 @@ func init() {
 				Description:  "The name of the related database property that is rolled up.",
 				ExampleValue: `Tasks"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "rollup_property_id",
@@ -503,7 +503,7 @@ func init() {
 				Description:  "The id of the rollup property.",
 				ExampleValue: `"fy:{"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "rollup_property_name",
@@ -511,7 +511,7 @@ func init() {
 				Description:  "The name of the rollup property.",
 				ExampleValue: `"Days to complete"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupProperty").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RollupProperty").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -532,7 +532,7 @@ func init() {
 				Text: "\nA select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row. \n\nThe select type object contains an array of objects representing the available options. Each option object includes the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "SelectProperty").comment = e.Text
-					getSymbol[concreteObject](b, "SelectProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "SelectProperty").addTypeSpecificFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 					)
 					// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
@@ -582,7 +582,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nA status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects. \n\nThe options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "StatusProperty").typeObject.addFields(
+					getSymbol[concreteObject](b, "StatusProperty").addTypeSpecificFields(
 						&field{name: "options", typeCode: jen.Index().Id("Option")},
 						&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 					)

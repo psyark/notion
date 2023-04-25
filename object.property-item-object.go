@@ -360,7 +360,10 @@ type MultiSelectPropertyItem struct {
 func (_ *MultiSelectPropertyItem) isPropertyItem()                         {}
 func (_ *MultiSelectPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// Date property values
+/*
+Date property values
+Date property value objects contain the following data within the date property:
+*/
 type DatePropertyItem struct {
 	PropertyItemCommon
 	Type alwaysDate            `json:"type"`
@@ -370,10 +373,6 @@ type DatePropertyItem struct {
 func (_ *DatePropertyItem) isPropertyItem()                         {}
 func (_ *DatePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-/*
-
-Date property value objects contain the following data within the date property:
-*/
 type DatePropertyItemData struct {
 	Start    ISO8601String  `json:"start"`     // An ISO 8601 format date, with optional time.
 	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.

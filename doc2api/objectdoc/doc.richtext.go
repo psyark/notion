@@ -153,7 +153,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "EquationRichText").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "EquationRichText").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -404,7 +404,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").typeObject.comment = e.Text
+					getSymbol[concreteObject](b, "TextRichText").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -413,7 +413,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").typeObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "TextRichText").addTypeSpecificFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "link",
@@ -421,7 +421,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").typeObject.addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					getSymbol[concreteObject](b, "TextRichText").addTypeSpecificFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 				},
 			}},
 			&objectDocHeadingElement{

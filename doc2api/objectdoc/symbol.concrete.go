@@ -26,11 +26,13 @@ type concreteObject struct {
 	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
 	parent *abstractObject
 
-	// typeObject はこのspecificObjectが そのtype値と同名のフィールドに保持する固有データです
+	// typeSpecificFields はこのオブジェクトが そのtype値と同名のフィールドに保持する固有データです
 	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
+	typeSpecificFields []fieldCoder
 	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData, ArrayRollupFilter）
-	typeObject        objectCommon
-	typeObjectMayNull bool
+
+	typeObjectIsAbstract bool
+	typeObjectMayNull    bool
 }
 
 func (c *concreteObject) setParent(parent *abstractObject) {
@@ -74,9 +76,14 @@ func (c *concreteObject) addFields(fields ...fieldCoder) *concreteObject {
 	return c
 }
 
+func (c *concreteObject) addTypeSpecificFields(fields ...fieldCoder) *concreteObject {
+	c.typeSpecificFields = append(c.typeSpecificFields, fields...)
+	return c
+}
+
 func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	// typeObjectが使われているならtypeObjectへの参照を追加する
-	if len(c.typeObject.fields) != 0 {
+	if len(c.typeSpecificFields) != 0 {
 		if c.derivedIdentifierValue == "" {
 			panic(fmt.Sprintf("タイプが不明です: %v", c.name()))
 		}
@@ -135,9 +142,12 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	code.Add(c.fieldUnmarshalerCode(b))
 
 	// type object
-	if len(c.typeObject.fields) != 0 {
-		c.typeObject.name_ = c.name() + "Data"
-		code.Add(c.typeObject.symbolCode(b))
+	if len(c.typeSpecificFields) != 0 {
+		tso := objectCommon{
+			name_:  c.name() + "Data",
+			fields: c.typeSpecificFields,
+		}
+		code.Add(tso.symbolCode(b))
 	}
 
 	return code

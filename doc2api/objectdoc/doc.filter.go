@@ -92,7 +92,7 @@ func init() {
 				Field:        "equals",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CheckboxFilter").typeObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "CheckboxFilter").addTypeSpecificFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether a checkbox property value differs from the provided value. \n\nReturns or excludes all database entries with a difference in values.",
@@ -100,7 +100,7 @@ func init() {
 				Field:        "does_not_equal",
 				Type:         "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CheckboxFilter").typeObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "CheckboxFilter").addTypeSpecificFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -137,7 +137,7 @@ func init() {
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is after the provided date.",
 				ExampleValue: "\"2021-05-10\"\n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "before",
@@ -145,7 +145,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is before the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "equals",
@@ -153,7 +153,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is the provided date.",
 				ExampleValue: "\"2021-05-10\" \n\n\"2021-05-10T12:00:00\"\n\n\"2021-10-15T12:00:00-07:00\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -161,7 +161,7 @@ func init() {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value contains no data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is not empty.",
@@ -169,7 +169,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next month.",
@@ -177,7 +177,7 @@ func init() {
 				Field:        "next_month",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next week.",
@@ -185,7 +185,7 @@ func init() {
 				Field:        "next_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the next year.",
@@ -193,7 +193,7 @@ func init() {
 				Field:        "next_year",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is on or after the provided date.",
@@ -201,7 +201,7 @@ func init() {
 				Field:        "on_or_after",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is on or before the provided date.",
@@ -209,7 +209,7 @@ func init() {
 				Field:        "on_or_before",
 				Type:         "string (ISO 8601 date)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past month.",
@@ -217,7 +217,7 @@ func init() {
 				Field:        "past_month",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past week.",
@@ -225,7 +225,7 @@ func init() {
 				Field:        "past_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is within the past year.",
@@ -233,7 +233,7 @@ func init() {
 				Field:        "past_year",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}, {
 				Description:  "A filter that limits the results to database entries where the date property value is this week.",
@@ -241,7 +241,7 @@ func init() {
 				Field:        "this_week",
 				Type:         "object (empty)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DateFilter").typeObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+					getSymbol[concreteObject](b, "DateFilter").addTypeSpecificFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -264,7 +264,7 @@ func init() {
 				Field:        "is_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "FilesFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "FilesFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether the files property value contains data. \n\nReturns all entries with a populated files property value.",
@@ -272,7 +272,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "FilesFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "FilesFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -351,7 +351,7 @@ func init() {
 				Description:  "The value to compare the multi-select property value against. \n\nReturns database entries where the multi-select value contains the provided string.",
 				ExampleValue: `"Marketing"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "MultiSelectFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_contain",
@@ -359,7 +359,7 @@ func init() {
 				Description:  "The value to the multi-select property value against. \n\nReturns database entries where the multi-select value does not contain the provided string.",
 				ExampleValue: `"Engineering"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "MultiSelectFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -367,7 +367,7 @@ func init() {
 				Description:  "Whether the multi-select property value is empty.\n\nReturns database entries where the multi-select value does not contain any data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "MultiSelectFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -375,7 +375,7 @@ func init() {
 				Description:  "Whether the multi-select property value is not empty.\n\nReturns database entries where the multi-select value does contains data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "MultiSelectFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -398,7 +398,7 @@ func init() {
 				Field:        "does_not_equal",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is the same as the provided number.",
@@ -406,7 +406,7 @@ func init() {
 				Field:        "equals",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value exceeds the provided number.",
@@ -414,7 +414,7 @@ func init() {
 				Field:        "greater_than",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is equal to or exceeds the provided number.",
@@ -422,7 +422,7 @@ func init() {
 				Field:        "greater_than_or_equal_to",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -430,7 +430,7 @@ func init() {
 				Description:  "Whether the number property value is empty. \n\nReturns database entries where the number property value does not contain any data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -438,7 +438,7 @@ func init() {
 				Description:  "Whether the number property value is not empty. \n\nReturns database entries where the number property value contains data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "less_than",
@@ -446,7 +446,7 @@ func init() {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is less than the provided number.",
 				ExampleValue: "42",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is equal to or is less than the provided number.",
@@ -454,7 +454,7 @@ func init() {
 				Field:        "less_than_or_equal_to",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+					getSymbol[concreteObject](b, "NumberFilter").addTypeSpecificFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -483,7 +483,7 @@ func init() {
 				Field:        "contains",
 				Type:         "string (UUIDv4)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
+					getSymbol[concreteObject](b, "PeopleFilter").addTypeSpecificFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Field:        "does_not_contain",
@@ -491,7 +491,7 @@ func init() {
 				Description:  "The value to compare the people property value against.\n\nReturns database entries where the people property value does not contain the provided string.",
 				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
+					getSymbol[concreteObject](b, "PeopleFilter").addTypeSpecificFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Description:  "Whether the people property value does not contain any data. \n\nReturns database entries where the people property value does not contain any data.",
@@ -499,7 +499,7 @@ func init() {
 				Field:        "is_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "PeopleFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Description:  "Whether the people property value contains data. \n\nReturns database entries where the people property value is not empty.",
@@ -507,7 +507,7 @@ func init() {
 				Field:        "is_not_empty",
 				Type:         "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PeopleFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "PeopleFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -530,7 +530,7 @@ func init() {
 				Description:  "The value to compare the relation property value against. \n\nReturns database entries where the relation property value contains the provided string.",
 				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
+					getSymbol[concreteObject](b, "RelationFilter").addTypeSpecificFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Field:        "does_not_contain",
@@ -538,7 +538,7 @@ func init() {
 				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
 				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
+					getSymbol[concreteObject](b, "RelationFilter").addTypeSpecificFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -546,7 +546,7 @@ func init() {
 				Description:  "Whether the relation property value does not contain data. \n\nReturns database entries where the relation property value does not contain any data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "RelationFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -554,7 +554,7 @@ func init() {
 				Description:  "Whether the relation property value contains data. \n\nReturns database entries where the property value is not empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "RelationFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -580,7 +580,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_contain",
@@ -588,7 +588,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_equal",
@@ -596,7 +596,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "ends_with",
@@ -604,7 +604,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
 				ExampleValue: `"Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "equals",
@@ -612,7 +612,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
 				ExampleValue: `"Moved to Q2"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -620,7 +620,7 @@ func init() {
 				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -628,7 +628,7 @@ func init() {
 				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
 				Field:        "starts_with",
@@ -636,7 +636,7 @@ func init() {
 				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
 				ExampleValue: `"Moved"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RichTextFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "RichTextFilter").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -669,7 +669,7 @@ func init() {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where the rollup property value matches the provided criteria.",
 				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "RollupFilter").typeObject.addFields(e.asInterfaceField("Filter"))
+					getSymbol[concreteObject](b, "RollupFilter").addTypeSpecificFields(e.asInterfaceField("Filter"))
 				},
 			}, {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where every rollup property value matches the provided criteria.",

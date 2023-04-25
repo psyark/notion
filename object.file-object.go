@@ -73,7 +73,11 @@ func (a *Files) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Notion-hosted files
+/*
+Notion-hosted files
+All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:
+You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.
+*/
 type NotionHostedFile struct {
 	Type alwaysFile           `json:"type"`
 	Name string               `json:"name,omitempty"` // undocumented
@@ -83,17 +87,17 @@ type NotionHostedFile struct {
 func (_ *NotionHostedFile) isFile()        {}
 func (_ *NotionHostedFile) isFileOrEmoji() {}
 
-/*
-
-All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:
-You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.
-*/
 type NotionHostedFileData struct {
 	Url        string        `json:"url"`         // An authenticated S3 URL to the file.   The URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.
 	ExpiryTime ISO8601String `json:"expiry_time"` // The date and time when the link expires, formatted as an ISO 8601 date time string.
 }
 
-// External files
+/*
+External files
+An external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of "external". The corresponding file specific object contains the following fields:
+
+The Notion API supports adding, retrieving, and updating links to external files.
+*/
 type ExternalFile struct {
 	Type     alwaysExternal   `json:"type"`
 	External ExternalFileData `json:"external"`
@@ -102,12 +106,6 @@ type ExternalFile struct {
 func (_ *ExternalFile) isFile()        {}
 func (_ *ExternalFile) isFileOrEmoji() {}
 
-/*
-
-An external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of "external". The corresponding file specific object contains the following fields:
-
-The Notion API supports adding, retrieving, and updating links to external files.
-*/
 type ExternalFileData struct {
 	Url string `json:"url"` // A link to the externally hosted content.
 }
