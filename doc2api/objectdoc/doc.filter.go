@@ -284,22 +284,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Formula",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("formula", "Filter", e.Text).addFields(
+						&interfaceField{name: "formula", typeName: "FormulaFilterData"},
+					)
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThe primary field of the formula filter condition object matches the type of the formula’s result. For example, to filter a formula property that computes a checkbox, use a formula filter condition object with a checkbox field containing a checkbox filter condition as its value.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "FormulaFilter").comment += e.Text
+					b.addAbstractObject("FormulaFilterData", "", "")
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "A checkbox filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
-				ExampleValue: "Refer to the checkbox filter condition.",
 				Field:        "checkbox",
 				Type:         "object",
+				Description:  "A checkbox filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
+				ExampleValue: "Refer to the checkbox filter condition.",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("checkbox", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("CheckboxFilterData")))
 				},
 			}, {
 				Description:  "A date filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -307,7 +310,7 @@ func init() {
 				Field:        "date",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("date", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("DateFilterData")))
 				},
 			}, {
 				Description:  "A number filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -315,7 +318,7 @@ func init() {
 				Field:        "number",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("number", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("NumberFilterData")))
 				},
 			}, {
 				Description:  "A rich text filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -323,7 +326,7 @@ func init() {
 				Field:        "string",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("string", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("RichTextFilterData")))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -331,46 +334,46 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Multi-select",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("multi_select", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The value to compare the multi-select property value against. \n\nReturns database entries where the multi-select value contains the provided string.",
-				ExampleValue: "\"Marketing\"",
 				Field:        "contains",
 				Type:         "string",
+				Description:  "The value to compare the multi-select property value against. \n\nReturns database entries where the multi-select value contains the provided string.",
+				ExampleValue: `"Marketing"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
-				Description:  "The value to the multi-select property value against. \n\nReturns database entries where the multi-select value does not contain the provided string.",
-				ExampleValue: "\"Engineering\"",
 				Field:        "does_not_contain",
 				Type:         "string",
+				Description:  "The value to the multi-select property value against. \n\nReturns database entries where the multi-select value does not contain the provided string.",
+				ExampleValue: `"Engineering"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
-				Description:  "Whether the multi-select property value is empty.\n\nReturns database entries where the multi-select value does not contain any data.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the multi-select property value is empty.\n\nReturns database entries where the multi-select value does not contain any data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
-				Description:  "Whether the multi-select property value is not empty.\n\nReturns database entries where the multi-select value does contains data.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the multi-select property value is not empty.\n\nReturns database entries where the multi-select value does contains data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "MultiSelectFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -378,13 +381,13 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Number",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("number", "Filter", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -393,7 +396,7 @@ func init() {
 				Field:        "does_not_equal",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is the same as the provided number.",
@@ -401,7 +404,7 @@ func init() {
 				Field:        "equals",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value exceeds the provided number.",
@@ -409,7 +412,7 @@ func init() {
 				Field:        "greater_than",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is equal to or exceeds the provided number.",
@@ -417,31 +420,31 @@ func init() {
 				Field:        "greater_than_or_equal_to",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
-				Description:  "Whether the number property value is empty. \n\nReturns database entries where the number property value does not contain any data.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the number property value is empty. \n\nReturns database entries where the number property value does not contain any data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
-				Description:  "Whether the number property value is not empty. \n\nReturns database entries where the number property value contains data.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the number property value is not empty. \n\nReturns database entries where the number property value contains data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
-				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is less than the provided number.",
-				ExampleValue: "42",
 				Field:        "less_than",
 				Type:         "number",
+				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is less than the provided number.",
+				ExampleValue: "42",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}, {
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is equal to or is less than the provided number.",
@@ -449,7 +452,7 @@ func init() {
 				Field:        "less_than_or_equal_to",
 				Type:         "number",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberFilter").typeObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -457,7 +460,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -510,7 +513,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -557,7 +560,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -687,7 +690,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -716,7 +719,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -739,7 +742,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -786,7 +789,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -833,7 +836,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -870,7 +873,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocCalloutElement{
@@ -915,7 +918,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", e.Code)
 				},
 			}}},
 			&objectDocParagraphElement{
@@ -952,7 +955,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -960,7 +963,7 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
+					b.addUnmarshalTest("Filter", extractFilter(e.Code))
 				},
 			}}},
 		},

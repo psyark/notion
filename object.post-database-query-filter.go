@@ -45,10 +45,13 @@ func (u *filterUnmarshaler) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	t := struct {
-		Checkbox json.RawMessage `json:"checkbox"`
-		Date     json.RawMessage `json:"date"`
-		Files    json.RawMessage `json:"files"`
-		RichText json.RawMessage `json:"rich_text"`
+		Checkbox    json.RawMessage `json:"checkbox"`
+		Date        json.RawMessage `json:"date"`
+		Files       json.RawMessage `json:"files"`
+		Formula     json.RawMessage `json:"formula"`
+		MultiSelect json.RawMessage `json:"multi_select"`
+		Number      json.RawMessage `json:"number"`
+		RichText    json.RawMessage `json:"rich_text"`
 	}{}
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
@@ -60,6 +63,12 @@ func (u *filterUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &DateFilter{}
 	case t.Files != nil:
 		u.value = &FilesFilter{}
+	case t.Formula != nil:
+		u.value = &FormulaFilter{}
+	case t.MultiSelect != nil:
+		u.value = &MultiSelectFilter{}
+	case t.Number != nil:
+		u.value = &NumberFilter{}
 	case t.RichText != nil:
 		u.value = &RichTextFilter{}
 	default:
@@ -129,6 +138,154 @@ func (_ *FilesFilter) isFilter() {}
 type FilesFilterData struct {
 	IsEmpty    bool `json:"is_empty,omitempty"`     // Whether the files property value does not contain any data.  Returns all database entries with an empty files property value.
 	IsNotEmpty bool `json:"is_not_empty,omitempty"` // Whether the files property value contains data.   Returns all entries with a populated files property value.
+}
+
+/*
+Formula
+The primary field of the formula filter condition object matches the type of the formula’s result. For example, to filter a formula property that computes a checkbox, use a formula filter condition object with a checkbox field containing a checkbox filter condition as its value.
+*/
+type FormulaFilter struct {
+	FilterCommon
+	Formula FormulaFilterData `json:"formula"`
+}
+
+func (_ *FormulaFilter) isFilter() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *FormulaFilter) UnmarshalJSON(data []byte) error {
+	type Alias FormulaFilter
+	t := &struct {
+		*Alias
+		Formula formulaFilterDataUnmarshaler `json:"formula"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling FormulaFilter: %w", err)
+	}
+	o.Formula = t.Formula.value
+	return nil
+}
+
+type FormulaFilterData interface {
+	isFormulaFilterData()
+}
+
+type formulaFilterDataUnmarshaler struct {
+	value FormulaFilterData
+}
+
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "" field of the message.
+*/
+func (u *formulaFilterDataUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
+	t := struct {
+		Checkbox json.RawMessage `json:"checkbox"`
+		Date     json.RawMessage `json:"date"`
+		Number   json.RawMessage `json:"number"`
+		String   json.RawMessage `json:"string"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Checkbox != nil:
+		u.value = &CheckboxFormulaFilterData{}
+	case t.Date != nil:
+		u.value = &DateFormulaFilterData{}
+	case t.Number != nil:
+		u.value = &NumberFormulaFilterData{}
+	case t.String != nil:
+		u.value = &StringFormulaFilterData{}
+	default:
+		return fmt.Errorf("unmarshal FormulaFilterData: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
+}
+
+func (u *formulaFilterDataUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
+}
+
+/*
+A checkbox filter condition to compare the formula result against.
+
+Returns database entries where the formula result matches the provided condition.
+*/
+type CheckboxFormulaFilterData struct {
+	Checkbox CheckboxFilterData `json:"checkbox"` // A checkbox filter condition to compare the formula result against.   Returns database entries where the formula result matches the provided condition.
+}
+
+func (_ *CheckboxFormulaFilterData) isFormulaFilterData() {}
+
+/*
+A date filter condition to compare the formula result against.
+
+Returns database entries where the formula result matches the provided condition.
+*/
+type DateFormulaFilterData struct {
+	Date DateFilterData `json:"date"` // A date filter condition to compare the formula result against.   Returns database entries where the formula result matches the provided condition.
+}
+
+func (_ *DateFormulaFilterData) isFormulaFilterData() {}
+
+/*
+A number filter condition to compare the formula result against.
+
+Returns database entries where the formula result matches the provided condition.
+*/
+type NumberFormulaFilterData struct {
+	Number NumberFilterData `json:"number"` // A number filter condition to compare the formula result against.   Returns database entries where the formula result matches the provided condition.
+}
+
+func (_ *NumberFormulaFilterData) isFormulaFilterData() {}
+
+/*
+A rich text filter condition to compare the formula result against.
+
+Returns database entries where the formula result matches the provided condition.
+*/
+type StringFormulaFilterData struct {
+	String RichTextFilterData `json:"string"` // A rich text filter condition to compare the formula result against.   Returns database entries where the formula result matches the provided condition.
+}
+
+func (_ *StringFormulaFilterData) isFormulaFilterData() {}
+
+// Multi-select
+type MultiSelectFilter struct {
+	FilterCommon
+	MultiSelect MultiSelectFilterData `json:"multi_select"`
+}
+
+func (_ *MultiSelectFilter) isFilter() {}
+
+type MultiSelectFilterData struct {
+	Contains       string `json:"contains,omitempty"`         // The value to compare the multi-select property value against.   Returns database entries where the multi-select value contains the provided string.
+	DoesNotContain string `json:"does_not_contain,omitempty"` // The value to the multi-select property value against.   Returns database entries where the multi-select value does not contain the provided string.
+	IsEmpty        bool   `json:"is_empty,omitempty"`         // Whether the multi-select property value is empty.  Returns database entries where the multi-select value does not contain any data.
+	IsNotEmpty     bool   `json:"is_not_empty,omitempty"`     // Whether the multi-select property value is not empty.  Returns database entries where the multi-select value does contains data.
+}
+
+// Number
+type NumberFilter struct {
+	FilterCommon
+	Number NumberFilterData `json:"number"`
+}
+
+func (_ *NumberFilter) isFilter() {}
+
+type NumberFilterData struct {
+	DoesNotEqual         *float64 `json:"does_not_equal,omitempty"`           // The number to compare the number property value against.   Returns database entries where the number property value differs from the provided number.
+	Equals               *float64 `json:"equals,omitempty"`                   // The number to compare the number property value against.   Returns database entries where the number property value is the same as the provided number.
+	GreaterThan          *float64 `json:"greater_than,omitempty"`             // The number to compare the number property value against.   Returns database entries where the number property value exceeds the provided number.
+	GreaterThanOrEqualTo *float64 `json:"greater_than_or_equal_to,omitempty"` // The number to compare the number property value against.   Returns database entries where the number property value is equal to or exceeds the provided number.
+	IsEmpty              bool     `json:"is_empty,omitempty"`                 // Whether the number property value is empty.   Returns database entries where the number property value does not contain any data.
+	IsNotEmpty           bool     `json:"is_not_empty,omitempty"`             // Whether the number property value is not empty.   Returns database entries where the number property value contains data.
+	LessThan             *float64 `json:"less_than,omitempty"`                // The number to compare the number property value against.   Returns database entries where the page property value is less than the provided number.
+	LessThanOrEqualTo    *float64 `json:"less_than_or_equal_to,omitempty"`    // The number to compare the number property value against.   Returns database entries where the page property value is equal to or is less than the provided number.
 }
 
 // Rich text
