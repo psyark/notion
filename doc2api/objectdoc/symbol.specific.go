@@ -79,7 +79,14 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 		code.Comment(c.comment).Line()
 	}
 
-	code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
+	code.Type().Id(c.name_).StructFunc(func(g *jen.Group) {
+		if c.parent != nil && c.parent.hasCommonField() {
+			g.Id(c.parent.commonObjectName())
+		}
+		for _, f := range c.fields {
+			g.Add(f.fieldCode())
+		}
+	}).Line()
 
 	// インターフェイスを実装
 	for _, iface := range c.allInterfaces() {

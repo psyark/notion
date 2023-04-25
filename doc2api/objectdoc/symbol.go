@@ -77,17 +77,6 @@ func (c *objectCommon) allInterfaces() []symbolCoder {
 	return ifs
 }
 
-func (c *objectCommon) fieldCodes() []jen.Code {
-	fields := []jen.Code{}
-	if c.parent != nil && c.parent.hasCommonField() {
-		fields = append(fields, jen.Id(c.parent.commonObjectName()))
-	}
-	for _, f := range c.fields {
-		fields = append(fields, f.fieldCode())
-	}
-	return fields
-}
-
 func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {
 	c.fields = append(c.fields, fields...)
 	return c
@@ -99,7 +88,12 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 		code.Comment(c.comment).Line()
 	}
 
-	code.Type().Id(c.name_).Struct(c.fieldCodes()...).Line()
+	code.Type().Id(c.name_).StructFunc(func(g *jen.Group) {
+		for _, f := range c.fields {
+			g.Add(f.fieldCode())
+		}
+	}).Line()
+
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(c.fieldUnmarshalerCode(b))
 

@@ -68,7 +68,7 @@ func (c *abstractObject) symbolCode(b *builder) jen.Code {
 	}).Line()
 
 	// 共通フィールド
-	if len(c.fieldCodes()) != 0 {
+	if len(c.fields) != 0 {
 		copyOfC := *c
 		copyOfC.name_ = c.commonObjectName()
 		copyOfC.comment = c.fieldsComment
