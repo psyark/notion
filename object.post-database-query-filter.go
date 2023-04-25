@@ -336,7 +336,10 @@ type RelationFilter struct {
 func (_ *RelationFilter) isFilter() {}
 
 type RelationFilterData struct {
-	Contains *uuid.UUID `json:"contains,omitempty"` // The value to compare the relation property value against.   Returns database entries where the relation property value contains the provided string.
+	Contains       *uuid.UUID `json:"contains,omitempty"`         // The value to compare the relation property value against.   Returns database entries where the relation property value contains the provided string.
+	DoesNotContain *uuid.UUID `json:"does_not_contain,omitempty"` // The value to compare the relation property value against.   Returns entries where the relation property value does not contain the provided string.
+	IsEmpty        bool       `json:"is_empty,omitempty"`         // Whether the relation property value does not contain data.   Returns database entries where the relation property value does not contain any data.
+	IsNotEmpty     bool       `json:"is_not_empty,omitempty"`     // Whether the relation property value contains data.   Returns database entries where the property value is not empty.
 }
 
 // Rich text

@@ -2,8 +2,10 @@ package objectdoc
 
 import (
 	"encoding/json"
+	"regexp"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/google/uuid"
 )
 
 func extractFilter(code string) string {
@@ -531,28 +533,28 @@ func init() {
 					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
-				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
-				ExampleValue: "\"6c574cee-ca68-41c8-86e0-1b9e992689fb\"",
 				Field:        "does_not_contain",
 				Type:         "string (UUIDv4)",
+				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
+				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(NullUUID, omitEmpty))
 				},
 			}, {
-				Description:  "Whether the relation property value does not contain data. \n\nReturns database entries where the relation property value does not contain any data.",
-				ExampleValue: "true",
 				Field:        "is_empty",
 				Type:         "true",
+				Description:  "Whether the relation property value does not contain data. \n\nReturns database entries where the relation property value does not contain any data.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}, {
-				Description:  "Whether the relation property value contains data. \n\nReturns database entries where the property value is not empty.",
-				ExampleValue: "true",
 				Field:        "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the relation property value contains data. \n\nReturns database entries where the property value is not empty.",
+				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "RelationFilter").typeObject.addFields(e.asField(jen.Bool(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -560,7 +562,10 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					b.addUnmarshalTest("Filter", extractFilter(e.Code))
+					code := regexp.MustCompile(`\w{32}`).ReplaceAllStringFunc(e.Code, func(s string) string {
+						return uuid.MustParse(s).String()
+					})
+					b.addUnmarshalTest("Filter", extractFilter(code))
 				},
 			}}},
 			&objectDocHeadingElement{
