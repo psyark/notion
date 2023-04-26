@@ -59,12 +59,12 @@ func (u *fileUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type Files []File
+type FileList []File
 
-func (a *Files) UnmarshalJSON(data []byte) error {
+func (a *FileList) UnmarshalJSON(data []byte) error {
 	t := []fileUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling Files: %w", err)
+		return fmt.Errorf("unmarshaling FileList: %w", err)
 	}
 	*a = make([]File, len(t))
 	for i, u := range t {

@@ -138,7 +138,7 @@ Bookmark block objects contain the following information within the bookmark pro
 type BookmarkBlock struct {
 	BlockCommon
 	Type    alwaysBookmark `json:"type"`
-	Caption RichTextArray  `json:"caption"` // The caption for the bookmark.
+	Caption RichTextList   `json:"caption"` // The caption for the bookmark.
 	Url     string         `json:"url"`     // The link for the bookmark.
 }
 

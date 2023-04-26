@@ -75,12 +75,12 @@ func (u *richTextUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type RichTextArray []RichText
+type RichTextList []RichText
 
-func (a *RichTextArray) UnmarshalJSON(data []byte) error {
+func (a *RichTextList) UnmarshalJSON(data []byte) error {
 	t := []richTextUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling RichTextArray: %w", err)
+		return fmt.Errorf("unmarshaling RichTextList: %w", err)
 	}
 	*a = make([]RichText, len(t))
 	for i, u := range t {

@@ -53,8 +53,8 @@ func init() {
 				Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					pv := b.addAbstractObject("PropertyValue", "type", e.Text)
-					b.addAbstractList("PropertyValue", "PropertyValueArray")
-					b.addAbstractMap("PropertyValue", "PropertyValueMap")
+					b.addAbstractList("PropertyValue")
+					b.addAbstractMap("PropertyValue")
 					pv.specialMethods = append(pv.specialMethods, &getMethodCoder{}, &setMethodCoder{})
 				},
 			},
@@ -104,7 +104,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "TitlePropertyValue").addFields(&field{
 						name:     "title",
-						typeCode: jen.Id("RichTextArray"),
+						typeCode: jen.Id("RichTextList"),
 						comment:  e.Text,
 					})
 				},
@@ -143,7 +143,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "RichTextPropertyValue").addFields(&field{
 						name:     "rich_text",
-						typeCode: jen.Id("RichTextArray"),
+						typeCode: jen.Id("RichTextList"),
 						comment:  e.Text,
 					})
 				},
@@ -622,7 +622,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "PeoplePropertyValue").addFields(&field{
 						name:     "people",
-						typeCode: jen.Id("Users"),
+						typeCode: jen.Id("UserList"),
 						comment:  e.Text,
 					})
 				},
@@ -657,7 +657,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "FilesPropertyValue").addFields(&field{
 						name:     "files",
-						typeCode: jen.Id("Files"),
+						typeCode: jen.Id("FileList"),
 						comment:  e.Text,
 					})
 				},

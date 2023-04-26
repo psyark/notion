@@ -14,7 +14,7 @@ func init() {
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAbstractObject("RichText", "type", e.Text)
-					b.addAbstractList("RichText", "RichTextArray")
+					b.addAbstractList("RichText")
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

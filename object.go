@@ -28,7 +28,7 @@ func (e Error) Error() string {
 	return fmt.Sprintf("(%v) %v", e.Code, e.Message)
 }
 
-func (rta RichTextArray) String() string {
+func (rta RichTextList) String() string {
 	str := ""
 	for _, rt := range rta {
 		str += rt.GetPlainText()

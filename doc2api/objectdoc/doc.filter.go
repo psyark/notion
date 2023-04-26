@@ -27,7 +27,7 @@ func init() {
 				Text: "When you query a database, you can send a filter object in the body of the request that limits the returned entries based on the specified criteria. \n\nFor example, the below query limits the response to entries where the \"Task completed\"  checkbox property value is true: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAbstractObject("Filter", "", e.Text)
-					b.addAbstractList("Filter", "FilterList")
+					b.addAbstractList("Filter")
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

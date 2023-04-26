@@ -15,7 +15,7 @@ func init() {
 				Text: "All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAbstractObject("Property", "type", e.Text)
-					b.addAbstractMap("Property", "PropertyMap")
+					b.addAbstractMap("Property")
 				},
 			},
 			&objectDocCalloutElement{

@@ -82,14 +82,14 @@ func init() {
 				Description:  "Name of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
 				ExampleValue: "\"title\": [\n        {\n            \"type\": \"text\",\n            \"text\": {\n                \"content\": \"Can I create a URL property\",\n                \"link\": null\n            },\n            \"annotations\": {\n                \"bold\": false,\n                \"italic\": false,\n                \"strikethrough\": false,\n                \"underline\": false,\n                \"code\": false,\n                \"color\": \"default\"\n            },\n            \"plain_text\": \"Can I create a URL property\",\n            \"href\": null\n        }\n    ]",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
 				Field:       "description",
 				Type:        "array of rich text objects",
 				Description: "Description of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
 				Description: "Page icon.",

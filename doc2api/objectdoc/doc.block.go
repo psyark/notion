@@ -181,7 +181,7 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.Id("RichTextArray")))
+					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
 				Field:       "url",

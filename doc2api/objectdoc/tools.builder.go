@@ -128,22 +128,20 @@ func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string)
 }
 
 // Deprecated:
-func (b *builder) addAbstractList(targetName string, name string) *abstractList {
+func (b *builder) addAbstractList(targetName string) *abstractList {
 	o := &abstractList{}
-	o.name_ = strings.TrimSpace(name)
 	o.targetName = strings.TrimSpace(targetName)
 	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(name, o)
+	b.globalSymbols.Store(o.name(), o)
 	return o
 }
 
 // Deprecated:
-func (b *builder) addAbstractMap(targetName string, name string) *abstractMap {
+func (b *builder) addAbstractMap(targetName string) *abstractMap {
 	o := &abstractMap{}
-	o.name_ = strings.TrimSpace(name)
 	o.targetName = strings.TrimSpace(targetName)
 	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(name, o)
+	b.globalSymbols.Store(o.name(), o)
 	return o
 }
 

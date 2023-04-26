@@ -147,11 +147,10 @@ type specialMethodCoder interface {
 }
 
 type abstractList struct {
-	name_      string // Deprecated: TODO 消す
 	targetName string
 }
 
-func (c *abstractList) name() string { return c.name_ }
+func (c *abstractList) name() string { return c.targetName + "List" }
 func (c *abstractList) symbolCode(b *builder) jen.Code {
 	target := getSymbol[abstractObject](b, c.targetName)
 	return jen.Line().Type().Id(c.name()).Index().Id(c.targetName).Line().Func().Params(jen.Id("a").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
@@ -168,11 +167,10 @@ func (c *abstractList) symbolCode(b *builder) jen.Code {
 }
 
 type abstractMap struct {
-	name_      string // Deprecated: TODO 消す
 	targetName string
 }
 
-func (c *abstractMap) name() string { return c.name_ }
+func (c *abstractMap) name() string { return c.targetName + "Map" }
 func (c *abstractMap) symbolCode(b *builder) jen.Code {
 	target := getSymbol[abstractObject](b, c.targetName)
 	return jen.Line().Type().Id(c.name()).Map(jen.String()).Id(c.targetName).Line().Func().Params(jen.Id("m").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(

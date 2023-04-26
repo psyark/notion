@@ -130,7 +130,7 @@ type PropertyItemPagination struct {
 	PaginationCommon
 	Type         alwaysPropertyItem    `json:"type"`
 	PropertyItem PaginatedPropertyInfo `json:"property_item"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
-	Results      PropertyItemArray     `json:"results"`
+	Results      PropertyItemList      `json:"results"`
 }
 
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}

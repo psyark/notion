@@ -3,9 +3,9 @@ package notion
 func getTypeForBinding(p Property) string {
 	switch p.(type) {
 	case *TitleProperty:
-		return "RichTextArray"
+		return "RichTextList"
 	case *RichTextProperty:
-		return "RichTextArray"
+		return "RichTextList"
 	case *NumberProperty:
 		return "nullv4.Float"
 	case *SelectProperty:
@@ -23,9 +23,9 @@ func getTypeForBinding(p Property) string {
 	case *RollupProperty:
 		return "Rollup"
 	case *PeopleProperty:
-		return "Users"
+		return "UserList"
 	case *FilesProperty:
-		return "Files"
+		return "FileList"
 	case *CheckboxProperty:
 		return "bool"
 	case *UrlProperty:

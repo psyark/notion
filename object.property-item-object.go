@@ -124,12 +124,12 @@ func (u *propertyItemUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type PropertyItemArray []PropertyItem
+type PropertyItemList []PropertyItem
 
-func (a *PropertyItemArray) UnmarshalJSON(data []byte) error {
+func (a *PropertyItemList) UnmarshalJSON(data []byte) error {
 	t := []propertyItemUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling PropertyItemArray: %w", err)
+		return fmt.Errorf("unmarshaling PropertyItemList: %w", err)
 	}
 	*a = make([]PropertyItem, len(t))
 	for i, u := range t {
@@ -517,8 +517,8 @@ Array rollup property values contain an array of property_item objects within th
 */
 type ArrayRollup struct {
 	RollupCommon
-	Type  alwaysArray        `json:"type"`
-	Array PropertyValueArray `json:"array"`
+	Type  alwaysArray       `json:"type"`
+	Array PropertyValueList `json:"array"`
 }
 
 func (_ *ArrayRollup) isRollup() {}
@@ -557,7 +557,7 @@ File property value objects contain an array of file references within the files
 type FilesPropertyItem struct {
 	PropertyItemCommon
 	Type  alwaysFiles `json:"type"`
-	Files Files       `json:"files"`
+	Files FileList    `json:"files"`
 }
 
 func (_ *FilesPropertyItem) isPropertyItem()                         {}

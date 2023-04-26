@@ -83,12 +83,12 @@ func (u *userUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type Users []User
+type UserList []User
 
-func (a *Users) UnmarshalJSON(data []byte) error {
+func (a *UserList) UnmarshalJSON(data []byte) error {
 	t := []userUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling Users: %w", err)
+		return fmt.Errorf("unmarshaling UserList: %w", err)
 	}
 	*a = make([]User, len(t))
 	for i, u := range t {

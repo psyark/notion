@@ -23,14 +23,14 @@ type TheDatabase struct {
 	Select                 *Option                `notion:"DaP%40"`
 	Phone                  nullv4.String          `notion:"%7Cb%60H"`
 	LastEditedTime         ISO8601String          `notion:"%7B%7Cmj"`
-	Text                   RichTextArray          `notion:"Vl%40o"`
-	Title                  RichTextArray          `notion:"title"`
-	File                   Files                  `notion:"%7Dlj%7B"`
+	Text                   RichTextList           `notion:"Vl%40o"`
+	Title                  RichTextList           `notion:"title"`
+	File                   FileList               `notion:"%7Dlj%7B"`
 	Status                 Option                 `notion:"~_pB"`
 	Checkbox               bool                   `notion:"%3Dh%3AT"`
 	CreatedTime            ISO8601String          `notion:"Ldgn"`
 	NumberRollup           Rollup                 `notion:"QdI%3C"`
-	User                   Users                  `notion:"Ui%5B%3A"`
+	User                   UserList               `notion:"Ui%5B%3A"`
 	URL                    nullv4.String          `notion:"nKu_"`
 	MultiSelect            []Option               `notion:"qe%60%5E"`
 }

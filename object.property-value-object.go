@@ -120,12 +120,12 @@ func (u *propertyValueUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-type PropertyValueArray []PropertyValue
+type PropertyValueList []PropertyValue
 
-func (a *PropertyValueArray) UnmarshalJSON(data []byte) error {
+func (a *PropertyValueList) UnmarshalJSON(data []byte) error {
 	t := []propertyValueUnmarshaler{}
 	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling PropertyValueArray: %w", err)
+		return fmt.Errorf("unmarshaling PropertyValueList: %w", err)
 	}
 	*a = make([]PropertyValue, len(t))
 	for i, u := range t {
@@ -155,8 +155,8 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 */
 type TitlePropertyValue struct {
 	PropertyValueCommon
-	Type  alwaysTitle   `json:"type"`
-	Title RichTextArray `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
+	Type  alwaysTitle  `json:"type"`
+	Title RichTextList `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
 func (_ *TitlePropertyValue) isPropertyValue() {}
@@ -168,7 +168,7 @@ func (o *TitlePropertyValue) get() reflect.Value {
 
 // for binding
 func (o *TitlePropertyValue) set(v reflect.Value) {
-	o.Title = v.Interface().(RichTextArray)
+	o.Title = v.Interface().(RichTextList)
 }
 
 /*
@@ -179,7 +179,7 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 type RichTextPropertyValue struct {
 	PropertyValueCommon
 	Type     alwaysRichText `json:"type"`
-	RichText RichTextArray  `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	RichText RichTextList   `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 func (_ *RichTextPropertyValue) isPropertyValue() {}
@@ -191,7 +191,7 @@ func (o *RichTextPropertyValue) get() reflect.Value {
 
 // for binding
 func (o *RichTextPropertyValue) set(v reflect.Value) {
-	o.RichText = v.Interface().(RichTextArray)
+	o.RichText = v.Interface().(RichTextList)
 }
 
 // Number property values
@@ -491,7 +491,7 @@ The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) e
 type PeoplePropertyValue struct {
 	PropertyValueCommon
 	Type   alwaysPeople `json:"type"`
-	People Users        `json:"people"` //  People property value objects contain an array of user objects within the people property.
+	People UserList     `json:"people"` //  People property value objects contain an array of user objects within the people property.
 }
 
 func (_ *PeoplePropertyValue) isPropertyValue() {}
@@ -503,7 +503,7 @@ func (o *PeoplePropertyValue) get() reflect.Value {
 
 // for binding
 func (o *PeoplePropertyValue) set(v reflect.Value) {
-	o.People = v.Interface().(Users)
+	o.People = v.Interface().(UserList)
 }
 
 /*
@@ -515,7 +515,7 @@ Although we do not support uploading files, if you pass a `file` object containi
 type FilesPropertyValue struct {
 	PropertyValueCommon
 	Type  alwaysFiles `json:"type"`
-	Files Files       `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
+	Files FileList    `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
 func (_ *FilesPropertyValue) isPropertyValue() {}
@@ -527,7 +527,7 @@ func (o *FilesPropertyValue) get() reflect.Value {
 
 // for binding
 func (o *FilesPropertyValue) set(v reflect.Value) {
-	o.Files = v.Interface().(Files)
+	o.Files = v.Interface().(FileList)
 }
 
 // Checkbox property values

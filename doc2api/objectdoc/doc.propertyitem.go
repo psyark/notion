@@ -13,8 +13,8 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					union := b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
 					b.addAbstractObject("PropertyItem", "type", e.Text).addToUnion(union)
-					b.addAbstractList("PropertyItem", "PropertyItemArray")
-					b.addAbstractMap("PropertyItem", "PropertyItemMap")
+					b.addAbstractList("PropertyItem")
+					b.addAbstractMap("PropertyItem")
 				},
 			},
 			&objectDocHeadingElement{
@@ -456,7 +456,7 @@ func init() {
 					// type="rich_text"の場合に入る値などから
 					// array of property_value が正しいと判断している
 					getSymbol[concreteObject](b, "ArrayRollup").addFields(
-						&field{name: "array", typeCode: jen.Id("PropertyValueArray")},
+						&field{name: "array", typeCode: jen.Id("PropertyValueList")},
 					).comment += e.Text
 				},
 			},
@@ -508,7 +508,7 @@ func init() {
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "FilesPropertyItem").addFields(
-						&field{name: "files", typeCode: jen.Id("Files")},
+						&field{name: "files", typeCode: jen.Id("FileList")},
 					).comment += e.Text
 				},
 			},
