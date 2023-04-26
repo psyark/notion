@@ -21,7 +21,7 @@ func init() {
 				In:        "body",
 				Name:      "filter",
 				Type:      "json",
-				typeCode:  jen.Any(), /*TODO*/
+				typeCode:  jen.Id("Filter"),
 				omitEmpty: true,
 			},
 			{
