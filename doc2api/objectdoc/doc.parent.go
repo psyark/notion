@@ -17,7 +17,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database parent",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerivedWithName("database_id", "Parent", "DatabaseParent", e.Text)
+					b.addDerived("database_id", "Parent", e.Text, withName("DatabaseParent"))
 				},
 			},
 			&objectDocParametersElement{{
@@ -46,7 +46,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page parent",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerivedWithName("page_id", "Parent", "PageParent", e.Text)
+					b.addDerived("page_id", "Parent", e.Text, withName("PageParent"))
 				},
 			},
 			&objectDocParametersElement{{
@@ -110,7 +110,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Block parent",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerivedWithName("block_id", "Parent", "BlockParent", e.Text)
+					b.addDerived("block_id", "Parent", e.Text, withName("BlockParent"))
 				},
 			},
 			&objectDocParagraphElement{

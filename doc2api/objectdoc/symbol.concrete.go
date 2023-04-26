@@ -26,13 +26,8 @@ type concreteObject struct {
 	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
 	parent *abstractObject
 
-	// typeSpecificFields はこのオブジェクトが そのtype値と同名のフィールドに保持する固有データです
-	// Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.
-	typeSpecificFields []fieldCoder
-	// TODO typeObjectがAbstractだった場合の対応（TemplateMentionData, ArrayRollupFilter）
-
-	typeObjectIsAbstract bool
-	typeObjectMayNull    bool
+	typeSpecificObject   *concreteObject
+	typeSpecificAbstract *abstractObject
 }
 
 func (c *concreteObject) setParent(parent *abstractObject) {
@@ -76,36 +71,7 @@ func (c *concreteObject) addFields(fields ...fieldCoder) *concreteObject {
 	return c
 }
 
-func (c *concreteObject) addTypeSpecificFields(fields ...fieldCoder) *concreteObject {
-	c.typeSpecificFields = append(c.typeSpecificFields, fields...)
-	return c
-}
-
 func (c *concreteObject) symbolCode(b *builder) jen.Code {
-	// typeObjectが使われているならtypeObjectへの参照を追加する
-	if len(c.typeSpecificFields) != 0 {
-		if c.derivedIdentifierValue == "" {
-			panic(fmt.Sprintf("タイプが不明です: %v", c.name()))
-		}
-
-		var valueOfTypeField *field
-		for _, f := range c.fields {
-			if f, ok := f.(*field); ok && f.name == c.derivedIdentifierValue {
-				valueOfTypeField = f
-				break
-			}
-		}
-		if valueOfTypeField == nil {
-			if c.typeObjectMayNull {
-				c.addFields(&field{name: c.derivedIdentifierValue, typeCode: jen.Op("*").Id(c.name() + "Data")})
-			} else {
-				c.addFields(&field{name: c.derivedIdentifierValue, typeCode: jen.Id(c.name() + "Data")})
-			}
-		} else {
-			fmt.Printf("👻 %s には %s が存在しますが、自動生成されるため消すことが望ましいです\n", c.name(), valueOfTypeField.name)
-		}
-	}
-
 	// struct本体
 	code := &jen.Statement{}
 	if c.comment != "" {
@@ -140,15 +106,6 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	}
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(c.fieldUnmarshalerCode(b))
-
-	// type object
-	if len(c.typeSpecificFields) != 0 {
-		tso := objectCommon{
-			name_:  c.name() + "Data",
-			fields: c.typeSpecificFields,
-		}
-		code.Add(tso.symbolCode(b))
-	}
 
 	return code
 }

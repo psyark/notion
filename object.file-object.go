@@ -80,8 +80,8 @@ You can retrieve links to Notion-hosted files via the Retrieve block children en
 */
 type NotionHostedFile struct {
 	Type alwaysFile           `json:"type"`
-	Name string               `json:"name,omitempty"` // undocumented
 	File NotionHostedFileData `json:"file"`
+	Name string               `json:"name,omitempty"` // undocumented
 }
 
 func (_ *NotionHostedFile) isFile()        {}

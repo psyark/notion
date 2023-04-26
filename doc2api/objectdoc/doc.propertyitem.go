@@ -256,13 +256,12 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date property values",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("date", "PropertyItem", e.Text)
+					b.addDerived("date", "PropertyItem", e.Text, addSpecificField(true))
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nDate property value objects contain the following data within the date property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "DatePropertyItem").typeObjectMayNull = true
 					getSymbol[concreteObject](b, "DatePropertyItem").comment += e.Text
 				},
 			},
@@ -272,7 +271,7 @@ func init() {
 				Description:  "An ISO 8601 format date, with optional time.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DatePropertyItem").addTypeSpecificFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "DatePropertyItem").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}, {
 				Property:     "end",
@@ -280,7 +279,7 @@ func init() {
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
 				ExampleValue: `"2020-12-08T12:00:00Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DatePropertyItem").addTypeSpecificFields(e.asField(jen.Op("*").Id("ISO8601String")))
+					getSymbol[concreteObject](b, "DatePropertyItem").typeSpecificObject.addFields(e.asField(jen.Op("*").Id("ISO8601String")))
 				},
 			}, {
 				Property:     "time_zone",
@@ -288,7 +287,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DatePropertyItem").addTypeSpecificFields(e.asField(NullString))
+					getSymbol[concreteObject](b, "DatePropertyItem").typeSpecificObject.addFields(e.asField(NullString))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

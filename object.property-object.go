@@ -330,98 +330,6 @@ func (o *RelationProperty) UnmarshalJSON(data []byte) error {
 }
 
 /*
-Rich text
-A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.
-*/
-type RichTextProperty struct {
-	PropertyCommon
-	Type     alwaysRichText `json:"type"`
-	RichText struct{}       `json:"rich_text"`
-}
-
-func (_ *RichTextProperty) isProperty() {}
-
-/*
-
-A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.
-
-The rollup type object contains the following fields:
-*/
-type RollupProperty struct {
-	PropertyCommon
-	Type   alwaysRollup       `json:"type"`
-	Rollup RollupPropertyData `json:"rollup"`
-}
-
-func (_ *RollupProperty) isProperty() {}
-
-type RollupPropertyData struct {
-	Function             string `json:"function"`               // The function that computes the rollup value from the related pages.  Possible values include:   - average - checked - count_per_group - count - count_values  - date_range - earliest_date  - empty - latest_date - max - median - min - not_empty - percent_checked - percent_empty - percent_not_empty - percent_per_group - percent_unchecked - range - unchecked - unique - show_original - show_unique - sum
-	RelationPropertyId   string `json:"relation_property_id"`   // The id of the related database property that is rolled up.
-	RelationPropertyName string `json:"relation_property_name"` // The name of the related database property that is rolled up.
-	RollupPropertyId     string `json:"rollup_property_id"`     // The id of the rollup property.
-	RollupPropertyName   string `json:"rollup_property_name"`   // The name of the rollup property.
-}
-
-/*
-
-A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
-
-The select type object contains an array of objects representing the available options. Each option object includes the following fields:
-*/
-type SelectProperty struct {
-	PropertyCommon
-	Type   alwaysSelect       `json:"type"`
-	Select SelectPropertyData `json:"select"`
-}
-
-func (_ *SelectProperty) isProperty() {}
-
-type SelectPropertyData struct {
-	Options []Option `json:"options"`
-}
-
-// Status
-type StatusProperty struct {
-	PropertyCommon
-	Type   alwaysStatus       `json:"type"`
-	Status StatusPropertyData `json:"status"`
-}
-
-func (_ *StatusProperty) isProperty() {}
-
-type StatusPropertyData struct {
-	Options []Option      `json:"options"`
-	Groups  []StatusGroup `json:"groups"`
-}
-
-/*
-Title
-A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.
-*/
-type TitleProperty struct {
-	PropertyCommon
-	Type  alwaysTitle `json:"type"`
-	Title struct{}    `json:"title"`
-}
-
-func (_ *TitleProperty) isProperty() {}
-
-/*
-URL
-A URL database property is represented in the Notion UI as a column that contains URL values.
-
-The url type object is empty. There is no additional property configuration.
-*/
-type UrlProperty struct {
-	PropertyCommon
-	Type alwaysUrl `json:"type"`
-	Url  struct{}  `json:"url"`
-}
-
-func (_ *UrlProperty) isProperty() {}
-
-/*
 
 A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
 
@@ -498,6 +406,58 @@ type DualPropertyRelationData struct {
 }
 
 /*
+Rich text
+A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.
+*/
+type RichTextProperty struct {
+	PropertyCommon
+	Type     alwaysRichText `json:"type"`
+	RichText struct{}       `json:"rich_text"`
+}
+
+func (_ *RichTextProperty) isProperty() {}
+
+/*
+
+A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.
+
+The rollup type object contains the following fields:
+*/
+type RollupProperty struct {
+	PropertyCommon
+	Type   alwaysRollup       `json:"type"`
+	Rollup RollupPropertyData `json:"rollup"`
+}
+
+func (_ *RollupProperty) isProperty() {}
+
+type RollupPropertyData struct {
+	Function             string `json:"function"`               // The function that computes the rollup value from the related pages.  Possible values include:   - average - checked - count_per_group - count - count_values  - date_range - earliest_date  - empty - latest_date - max - median - min - not_empty - percent_checked - percent_empty - percent_not_empty - percent_per_group - percent_unchecked - range - unchecked - unique - show_original - show_unique - sum
+	RelationPropertyId   string `json:"relation_property_id"`   // The id of the related database property that is rolled up.
+	RelationPropertyName string `json:"relation_property_name"` // The name of the related database property that is rolled up.
+	RollupPropertyId     string `json:"rollup_property_id"`     // The id of the rollup property.
+	RollupPropertyName   string `json:"rollup_property_name"`   // The name of the rollup property.
+}
+
+/*
+
+A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
+
+The select type object contains an array of objects representing the available options. Each option object includes the following fields:
+*/
+type SelectProperty struct {
+	PropertyCommon
+	Type   alwaysSelect       `json:"type"`
+	Select SelectPropertyData `json:"select"`
+}
+
+func (_ *SelectProperty) isProperty() {}
+
+type SelectPropertyData struct {
+	Options []Option `json:"options"`
+}
+
+/*
 
 A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
 
@@ -509,6 +469,20 @@ type Option struct {
 	Name  string `json:"name"`  // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for select values.
 }
 
+// Status
+type StatusProperty struct {
+	PropertyCommon
+	Type   alwaysStatus       `json:"type"`
+	Status StatusPropertyData `json:"status"`
+}
+
+func (_ *StatusProperty) isProperty() {}
+
+type StatusPropertyData struct {
+	Options []Option      `json:"options"`
+	Groups  []StatusGroup `json:"groups"`
+}
+
 // A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields:
 type StatusGroup struct {
 	Color     string   `json:"color"`      // The color of the option as rendered in the Notion UI. Possible values include:   - blue - brown - default - gray - green - orange - pink - purple - red - yellow
@@ -516,3 +490,29 @@ type StatusGroup struct {
 	Name      string   `json:"name"`       // The name of the option as it appears in the Notion UI.  Note: Commas (",") are not valid for status values.
 	OptionIds []string `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.
 }
+
+/*
+Title
+A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.
+*/
+type TitleProperty struct {
+	PropertyCommon
+	Type  alwaysTitle `json:"type"`
+	Title struct{}    `json:"title"`
+}
+
+func (_ *TitleProperty) isProperty() {}
+
+/*
+URL
+A URL database property is represented in the Notion UI as a column that contains URL values.
+
+The url type object is empty. There is no additional property configuration.
+*/
+type UrlProperty struct {
+	PropertyCommon
+	Type alwaysUrl `json:"type"`
+	Url  struct{}  `json:"url"`
+}
+
+func (_ *UrlProperty) isProperty() {}

@@ -15,7 +15,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAbstractObject("User", "type", e.Text)
 					b.addAbstractList("User", "Users")
-					b.addDerivedWithName("", "User", "PartialUser", "")
+					b.addDerived("", "User", "", withName("PartialUser"))
 					b.addConcreteObject("DetailedUserCommon", "")
 				},
 			},
@@ -104,7 +104,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("person", "User", e.Text).addFields(&field{
+					b.addDerived("person", "User", e.Text, addSpecificField()).addFields(&field{
 						name:     "",
 						typeCode: jen.Id("DetailedUserCommon"),
 					})
@@ -127,7 +127,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PersonUser").addTypeSpecificFields(&field{
+					getSymbol[concreteObject](b, "PersonUser").typeSpecificObject.addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -137,7 +137,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("bot", "User", e.Text).addFields(&field{
+					b.addDerived("bot", "User", e.Text, addSpecificField()).addFields(&field{
 						name:     "",
 						typeCode: jen.Id("DetailedUserCommon"),
 					})
@@ -165,7 +165,7 @@ func init() {
 				output: func(e *objectDocParameter, b *builder) {
 					field := e.asField(jen.Op("*").Id("BotUserDataOwner"))
 					field.omitEmpty = true
-					getSymbol[concreteObject](b, "BotUser").addTypeSpecificFields(field)
+					getSymbol[concreteObject](b, "BotUser").typeSpecificObject.addFields(field)
 					b.addConcreteObject("BotUserDataOwner", e.Description)
 					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 				},
@@ -187,7 +187,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BotUser").addTypeSpecificFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "BotUser").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 		},

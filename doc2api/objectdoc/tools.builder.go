@@ -4,6 +4,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
 )
 
@@ -39,16 +40,46 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 	return obj
 }
 
-// addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
-func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string) *concreteObject {
-	return b.addDerivedWithName(derivedIdentifierValue, parentName, strcase.UpperCamelCase(derivedIdentifierValue)+parentName, comment)
+type addDerivedOptions struct {
+	derivedName            string
+	addSpecificField       bool
+	specificFieldMayNull   bool
+	specificTypeIsAbstract bool
+	specificTypeDIK        string
+}
+type addDerivedOption func(o *addDerivedOptions)
+
+func withName(derivedName string) addDerivedOption {
+	return func(o *addDerivedOptions) { o.derivedName = derivedName }
+}
+func addSpecificField(mayNull ...bool) addDerivedOption {
+	return func(o *addDerivedOptions) {
+		o.addSpecificField = true
+		if len(mayNull) == 1 {
+			o.specificFieldMayNull = mayNull[0]
+		}
+	}
+}
+func addAbstractSpecificField(derivedIdentifierKey string) addDerivedOption {
+	return func(o *addDerivedOptions) {
+		o.addSpecificField = true
+		o.specificTypeIsAbstract = true
+		o.specificTypeDIK = derivedIdentifierKey
+	}
 }
 
-// addDerivedWithName は任意の名前で派生クラスを作成します
-func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName string, derivedName string, comment string) *concreteObject {
+// addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
+func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string, options ...addDerivedOption) *concreteObject {
+	opt := &addDerivedOptions{
+		derivedName: strcase.UpperCamelCase(derivedIdentifierValue) + parentName,
+	}
+	for _, o := range options {
+		o(opt)
+	}
+
 	parent := getSymbol[abstractObject](b, parentName)
 	derived := &concreteObject{}
-	derived.name_ = derivedName
+	derived.name_ = opt.derivedName
 	derived.derivedIdentifierValue = derivedIdentifierValue
 	derived.comment = comment
 
@@ -62,6 +93,23 @@ func (b *builder) addDerivedWithName(derivedIdentifierValue string, parentName s
 
 	b.localSymbols = append(b.localSymbols, derived)
 	b.globalSymbols.Store(derived.name(), derived)
+
+	// DIV固有のタイプとフィールドを作成
+	if opt.addSpecificField {
+		specifitFieldTypeName := opt.derivedName + "Data"
+		if opt.specificTypeIsAbstract {
+			derived.typeSpecificAbstract = b.addAbstractObject(specifitFieldTypeName, opt.specificTypeDIK, "")
+			derived.addFields(&interfaceField{name: derivedIdentifierValue, typeName: specifitFieldTypeName})
+		} else {
+			derived.typeSpecificObject = b.addConcreteObject(specifitFieldTypeName, "")
+			if opt.specificFieldMayNull {
+				derived.addFields(&field{name: derivedIdentifierValue, typeCode: jen.Op("*").Id(specifitFieldTypeName)})
+			} else {
+				derived.addFields(&field{name: derivedIdentifierValue, typeCode: jen.Id(specifitFieldTypeName)})
+			}
+		}
+	}
+
 	return derived
 }
 

@@ -50,11 +50,6 @@ func (c *objectCommon) getIdentifierValue(identifierKey string) string {
 	return ""
 }
 
-func (c *objectCommon) addFields(fields ...fieldCoder) *objectCommon {
-	c.fields = append(c.fields, fields...)
-	return c
-}
-
 func (c *objectCommon) symbolCode(b *builder) jen.Code {
 	code := &jen.Statement{}
 	if c.comment != "" {

@@ -114,9 +114,9 @@ User objects that represent people have the type property set to "person". These
 */
 type PersonUser struct {
 	UserCommon
-	Type alwaysPerson `json:"type"`
-	DetailedUserCommon
+	Type   alwaysPerson   `json:"type"`
 	Person PersonUserData `json:"person"`
+	DetailedUserCommon
 }
 
 func (_ *PersonUser) isUser() {}
@@ -131,9 +131,9 @@ A user object's type property is"bot" when the user object represents a bot. A b
 */
 type BotUser struct {
 	UserCommon
-	Type alwaysBot `json:"type"`
+	Type alwaysBot   `json:"type"`
+	Bot  BotUserData `json:"bot"`
 	DetailedUserCommon
-	Bot BotUserData `json:"bot"`
 }
 
 func (_ *BotUser) isUser() {}

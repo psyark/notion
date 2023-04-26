@@ -60,7 +60,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerivedWithName("file", "File", "NotionHostedFile", e.Text).addFields(
+					b.addDerived("file", "File", e.Text, withName("NotionHostedFile"), addSpecificField()).addFields(
 						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
 					)
 				},
@@ -77,7 +77,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NotionHostedFile").addTypeSpecificFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "NotionHostedFile").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "expiry_time",
@@ -85,7 +85,7 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NotionHostedFile").addTypeSpecificFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "NotionHostedFile").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}},
 			&objectDocParagraphElement{
@@ -128,7 +128,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("external", "File", e.Text)
+					b.addDerived("external", "File", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
@@ -143,7 +143,7 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ExternalFile").addTypeSpecificFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "ExternalFile").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocParagraphElement{

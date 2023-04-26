@@ -138,7 +138,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("equation", "RichText", e.Text)
+					b.addDerived("equation", "RichText", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
@@ -153,7 +153,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "EquationRichText").addTypeSpecificFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "EquationRichText").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -292,10 +292,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerivedWithName("template_mention", "Mention", "TemplateMention", e.Text).addFields(
-						&interfaceField{name: "template_mention", typeName: "TemplateMentionData"},
-					)
-					b.addAbstractObject("TemplateMentionData", "type", "") // TODO typeObject化
+					b.addDerived("template_mention", "Mention", e.Text, withName("TemplateMention"), addAbstractSpecificField("type"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -310,7 +307,7 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.addDerivedWithName(e.Field, "TemplateMentionData", "TemplateMentionDate", "").addFields(
+					b.addDerived(e.Field, "TemplateMentionData", "", withName("TemplateMentionDate")).addFields(
 						&field{name: e.Field, typeCode: jen.String(), comment: e.Description},
 					)
 				},
@@ -340,7 +337,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.addDerivedWithName(e.Field, "TemplateMentionData", "TemplateMentionUser", "").addFields(
+					b.addDerived(e.Field, "TemplateMentionData", "", withName("TemplateMentionUser")).addFields(
 						e.asFixedStringField(), // TODO 特殊な例なので asFiexedStringFieldと分けるか検討
 					)
 				},
@@ -398,7 +395,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("text", "RichText", e.Text)
+					b.addDerived("text", "RichText", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
@@ -413,7 +410,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").addTypeSpecificFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "TextRichText").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "link",
@@ -421,7 +418,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").addTypeSpecificFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					getSymbol[concreteObject](b, "TextRichText").typeSpecificObject.addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 				},
 			}},
 			&objectDocHeadingElement{
