@@ -27,6 +27,7 @@ func init() {
 				Text: "When you query a database, you can send a filter object in the body of the request that limits the returned entries based on the specified criteria. \n\nFor example, the below query limits the response to entries where the \"Task completed\"  checkbox property value is true: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAbstractObject("Filter", "", e.Text)
+					b.addAbstractList("Filter", "FilterList")
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -913,14 +914,13 @@ func init() {
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					b.addUnmarshalTest("Filter", e.Code)
+					// サンプルコードがめちゃくちゃ
+					// b.addUnmarshalTest("Filter", e.Code)
 				},
 			}}},
 			&objectDocParagraphElement{
-				Text: "A compound filter condition contains an and or or key with a value that is an array of filter objects or nested compound filter objects. Nesting is supported up to two levels deep. ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
+				Text:   "A compound filter condition contains an and or or key with a value that is an array of filter objects or nested compound filter objects. Nesting is supported up to two levels deep. ",
+				output: func(e *objectDocParagraphElement, b *builder) {},
 			},
 			&objectDocParametersElement{{
 				Description:  "An array of filter objects or compound filter conditions.\n\nReturns database entries that match all of the provided filter conditions.",
@@ -928,7 +928,7 @@ func init() {
 				Field:        "and",
 				Type:         "array",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("and", "Filter", e.Description).addFields(e.asField(jen.Id("FilterList")))
 				},
 			}, {
 				Description:  "An array of filter objects or compound filter conditions.\n\nReturns database entries that match any of the provided filter conditions",
@@ -936,14 +936,12 @@ func init() {
 				Field:        "or",
 				Type:         "array",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("or", "Filter", e.Description).addFields(e.asField(jen.Id("FilterList")))
 				},
 			}},
 			&objectDocHeadingElement{
-				Text: "Example compound filter conditions",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
+				Text:   "Example compound filter conditions",
+				output: func(e *objectDocHeadingElement, b *builder) {},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"filter\": {\n    \"and\": [\n      {\n        \"property\": \"Complete\",\n        \"checkbox\": {\n          \"equals\": true\n        }\n      },\n      {\n        \"property\": \"Working days\",\n        \"number\": {\n          \"greater_than\": 10\n        }\n      }\n    ]\n  }\n}",

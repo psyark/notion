@@ -59,6 +59,8 @@ func (u *filterUnmarshaler) UnmarshalJSON(data []byte) error {
 		Select      json.RawMessage `json:"select"`
 		Status      json.RawMessage `json:"status"`
 		Timestamp   json.RawMessage `json:"timestamp"`
+		And         json.RawMessage `json:"and"`
+		Or          json.RawMessage `json:"or"`
 	}{}
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
@@ -90,6 +92,10 @@ func (u *filterUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &StatusFilter{}
 	case t.Timestamp != nil:
 		u.value = &TimestampFilter{}
+	case t.And != nil:
+		u.value = &AndFilter{}
+	case t.Or != nil:
+		u.value = &OrFilter{}
 	default:
 		return fmt.Errorf("unmarshal Filter: %s", string(data))
 	}
@@ -98,6 +104,20 @@ func (u *filterUnmarshaler) UnmarshalJSON(data []byte) error {
 
 func (u *filterUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
+}
+
+type FilterList []Filter
+
+func (a *FilterList) UnmarshalJSON(data []byte) error {
+	t := []filterUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return fmt.Errorf("unmarshaling FilterList: %w", err)
+	}
+	*a = make([]Filter, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
 }
 
 // Checkbox
@@ -570,3 +590,27 @@ type TimestampFilter struct {
 }
 
 func (_ *TimestampFilter) isFilter() {}
+
+/*
+An array of filter objects or compound filter conditions.
+
+Returns database entries that match all of the provided filter conditions.
+*/
+type AndFilter struct {
+	FilterCommon
+	And FilterList `json:"and"` // An array of filter objects or compound filter conditions.  Returns database entries that match all of the provided filter conditions.
+}
+
+func (_ *AndFilter) isFilter() {}
+
+/*
+An array of filter objects or compound filter conditions.
+
+Returns database entries that match any of the provided filter conditions
+*/
+type OrFilter struct {
+	FilterCommon
+	Or FilterList `json:"or"` // An array of filter objects or compound filter conditions.  Returns database entries that match any of the provided filter conditions
+}
+
+func (_ *OrFilter) isFilter() {}

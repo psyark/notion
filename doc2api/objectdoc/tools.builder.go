@@ -127,6 +127,7 @@ func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string)
 	return u
 }
 
+// Deprecated:
 func (b *builder) addAbstractList(targetName string, name string) *abstractList {
 	o := &abstractList{}
 	o.name_ = strings.TrimSpace(name)
@@ -136,6 +137,7 @@ func (b *builder) addAbstractList(targetName string, name string) *abstractList 
 	return o
 }
 
+// Deprecated:
 func (b *builder) addAbstractMap(targetName string, name string) *abstractMap {
 	o := &abstractMap{}
 	o.name_ = strings.TrimSpace(name)
