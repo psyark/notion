@@ -647,13 +647,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Rollup",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("rollup", "Filter", e.Text, addSpecificField())
+					b.addDerived("rollup", "Filter", e.Text, addAbstractSpecificField(""))
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type. \n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "RollupFilter").comment += e.Text
+					getSymbol[abstractObject](b, "RollupFilterData").comment += e.Text
 				},
 			},
 			&objectDocHeadingElement{
@@ -666,8 +666,7 @@ func init() {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where the rollup property value matches the provided criteria.",
 				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-					getSymbol[concreteObject](b, "RollupFilter").typeSpecificObject.addFields(e.asInterfaceField("Filter"))
+					b.addDerived("any", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
 				},
 			}, {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where every rollup property value matches the provided criteria.",
@@ -675,7 +674,7 @@ func init() {
 				Field:        "every",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("every", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
 				},
 			}, {
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where no rollup property value matches the provided criteria.",
@@ -683,7 +682,7 @@ func init() {
 				Field:        "none",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					b.addDerived("none", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -697,13 +696,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Filter conditions for date rollup values ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("date", "RollupFilterData", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA rollup value is stored as a date only if the \"Earliest date\", \"Latest date\", or \"Date range\" computation is selected for the property in the Notion UI. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "DateRollupFilterData").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -712,7 +711,7 @@ func init() {
 				Field:        "date",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "DateRollupFilterData").addFields(e.asField(jen.Id("DateFilterData")))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -726,7 +725,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Filter conditions for number rollup values ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("number", "RollupFilterData", e.Text)
 				},
 			},
 			&objectDocParametersElement{{
@@ -735,7 +734,7 @@ func init() {
 				Field:        "number",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "NumberRollupFilterData").addFields(e.asField(jen.Id("NumberFilterData")))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -749,7 +748,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Select",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("select", "Filter", e.Text)
+					b.addDerived("select", "Filter", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParametersElement{{
@@ -758,7 +757,7 @@ func init() {
 				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value matches the provided string.",
 				ExampleValue: `"This week"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_equal",
@@ -766,7 +765,7 @@ func init() {
 				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value does not match the provided string.",
 				ExampleValue: `"Backlog"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -774,7 +773,7 @@ func init() {
 				Description:  "Whether the select property value does not contain data.\n\nReturns database entries where the select property value is empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -782,7 +781,7 @@ func init() {
 				Description:  "Whether the select property value contains data.\n\nReturns database entries where the select property value is not empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -796,7 +795,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Status",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("status", "Filter", e.Text)
+					b.addDerived("status", "Filter", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParametersElement{{
@@ -805,7 +804,7 @@ func init() {
 				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value matches the provided string.",
 				ExampleValue: `"This week"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "does_not_equal",
@@ -813,7 +812,7 @@ func init() {
 				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value does not match the provided string.",
 				ExampleValue: `"Backlog"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_empty",
@@ -821,7 +820,7 @@ func init() {
 				Description:  "Whether the status property value does not contain data.\n\nReturns database entries where the status property value is empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}, {
 				Field:        "is_not_empty",
@@ -829,7 +828,7 @@ func init() {
 				Description:  "Whether the status property value contains data.\n\nReturns database entries where the status property value is not empty.",
 				ExampleValue: "true",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -849,7 +848,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nUse a timestamp filter condition to filter results based on created_time or last_edited_time values. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "TimestampFilter").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -858,7 +857,7 @@ func init() {
 				Description:  "A constant string representing the type of timestamp to use as a filter.",
 				ExampleValue: `"created_time"`,
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "TimestampFilter").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "created_time\nlast_edited_time",
@@ -866,7 +865,10 @@ func init() {
 				Description:  "A date filter condition used to filter the specified timestamp.",
 				ExampleValue: "Refer to the date filter condition.",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "TimestampFilter").addFields(
+						&field{name: "created_time", typeCode: jen.Op("*").Id("DateFilterData"), comment: e.Description, omitEmpty: true},
+						&field{name: "last_edited_time", typeCode: jen.Op("*").Id("DateFilterData"), comment: e.Description, omitEmpty: true},
+					)
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -882,20 +884,16 @@ func init() {
 				Title: "",
 				Type:  "warning",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "TimestampFilter").comment += "\n" + e.Body
 				},
 			},
 			&objectDocHeadingElement{
-				Text: "Compound filter conditions",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
+				Text:   "Compound filter conditions",
+				output: func(e *objectDocHeadingElement, b *builder) {},
 			},
 			&objectDocParagraphElement{
-				Text: "\nYou can use a compound filter condition to limit the results of a database query based on multiple conditions. This mimics filter chaining in the Notion UI. ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
+				Text:   "\nYou can use a compound filter condition to limit the results of a database query based on multiple conditions. This mimics filter chaining in the Notion UI. ",
+				output: func(e *objectDocParagraphElement, b *builder) {},
 			},
 			&objectDocImageElement{Images: []*objectDocImageElementImage{{
 				Caption: "An example filter chain in the Notion UI",
@@ -904,15 +902,11 @@ func init() {
 				Name:    "Untitled.png",
 				Url:     "https://files.readme.io/14ec7e8-Untitled.png",
 				Width:   1340,
-				output: func(e *objectDocImageElementImage, b *builder) {
-					// TODO
-				},
+				output:  func(e *objectDocImageElementImage, b *builder) {},
 			}}},
 			&objectDocParagraphElement{
-				Text: "The above filters in the Notion UI are equivalent to the following compound filter condition via the API:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
+				Text:   "The above filters in the Notion UI are equivalent to the following compound filter condition via the API:",
+				output: func(e *objectDocParagraphElement, b *builder) {},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"and\": [\n    {\n      \"property\": \"Done\",\n      \"checkbox\": {\n        \"equals\": true\n      }\n    }, \n    {\n      \"or\": [\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"A\"\n        },\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"B\"\n        }\n      ]\n    }\n  ]\n}",

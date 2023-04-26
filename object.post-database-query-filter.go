@@ -361,10 +361,7 @@ type RichTextFilterData struct {
 	StartsWith     string `json:"starts_with,omitempty"`      // The string to compare the text property value against.  Returns database entries with a text property value that starts with the provided string.
 }
 
-/*
-Rollup
-A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.
-*/
+// Rollup
 type RollupFilter struct {
 	FilterCommon
 	Rollup RollupFilterData `json:"rollup"`
@@ -372,41 +369,204 @@ type RollupFilter struct {
 
 func (_ *RollupFilter) isFilter() {}
 
-type RollupFilterData struct {
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *RollupFilter) UnmarshalJSON(data []byte) error {
+	type Alias RollupFilter
+	t := &struct {
+		*Alias
+		Rollup rollupFilterDataUnmarshaler `json:"rollup"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling RollupFilter: %w", err)
+	}
+	o.Rollup = t.Rollup.value
+	return nil
+}
+
+/*
+
+A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.
+*/
+type RollupFilterData interface {
+	isRollupFilterData()
+}
+
+type rollupFilterDataUnmarshaler struct {
+	value RollupFilterData
+}
+
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "" field of the message.
+*/
+func (u *rollupFilterDataUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
+	t := struct {
+		Any    json.RawMessage `json:"any"`
+		Every  json.RawMessage `json:"every"`
+		None   json.RawMessage `json:"none"`
+		Date   json.RawMessage `json:"date"`
+		Number json.RawMessage `json:"number"`
+	}{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return err
+	}
+	switch {
+	case t.Any != nil:
+		u.value = &AnyRollupFilterData{}
+	case t.Every != nil:
+		u.value = &EveryRollupFilterData{}
+	case t.None != nil:
+		u.value = &NoneRollupFilterData{}
+	case t.Date != nil:
+		u.value = &DateRollupFilterData{}
+	case t.Number != nil:
+		u.value = &NumberRollupFilterData{}
+	default:
+		return fmt.Errorf("unmarshal RollupFilterData: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
+}
+
+func (u *rollupFilterDataUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
+}
+
+/*
+The value to compare each rollup property value against. Can be a filter condition for any other type.
+
+Returns database entries where the rollup property value matches the provided criteria.
+*/
+type AnyRollupFilterData struct {
 	Any Filter `json:"any"` // The value to compare each rollup property value against. Can be a filter condition for any other type.   Returns database entries where the rollup property value matches the provided criteria.
 }
 
+func (_ *AnyRollupFilterData) isRollupFilterData() {}
+
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *RollupFilterData) UnmarshalJSON(data []byte) error {
-	type Alias RollupFilterData
+func (o *AnyRollupFilterData) UnmarshalJSON(data []byte) error {
+	type Alias AnyRollupFilterData
 	t := &struct {
 		*Alias
 		Any filterUnmarshaler `json:"any"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling RollupFilterData: %w", err)
+		return fmt.Errorf("unmarshaling AnyRollupFilterData: %w", err)
 	}
 	o.Any = t.Any.value
 	return nil
 }
 
+/*
+The value to compare each rollup property value against. Can be a filter condition for any other type.
+
+Returns database entries where every rollup property value matches the provided criteria.
+*/
+type EveryRollupFilterData struct {
+	Every Filter `json:"every"` // The value to compare each rollup property value against. Can be a filter condition for any other type.   Returns database entries where every rollup property value matches the provided criteria.
+}
+
+func (_ *EveryRollupFilterData) isRollupFilterData() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *EveryRollupFilterData) UnmarshalJSON(data []byte) error {
+	type Alias EveryRollupFilterData
+	t := &struct {
+		*Alias
+		Every filterUnmarshaler `json:"every"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling EveryRollupFilterData: %w", err)
+	}
+	o.Every = t.Every.value
+	return nil
+}
+
+/*
+The value to compare each rollup property value against. Can be a filter condition for any other type.
+
+Returns database entries where no rollup property value matches the provided criteria.
+*/
+type NoneRollupFilterData struct {
+	None Filter `json:"none"` // The value to compare each rollup property value against. Can be a filter condition for any other type.   Returns database entries where no rollup property value matches the provided criteria.
+}
+
+func (_ *NoneRollupFilterData) isRollupFilterData() {}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *NoneRollupFilterData) UnmarshalJSON(data []byte) error {
+	type Alias NoneRollupFilterData
+	t := &struct {
+		*Alias
+		None filterUnmarshaler `json:"none"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling NoneRollupFilterData: %w", err)
+	}
+	o.None = t.None.value
+	return nil
+}
+
+/*
+Filter conditions for date rollup values
+A rollup value is stored as a date only if the "Earliest date", "Latest date", or "Date range" computation is selected for the property in the Notion UI.
+*/
+type DateRollupFilterData struct {
+	Date DateFilterData `json:"date"` // A date filter condition to compare the rollup value against.   Returns database entries where the rollup value matches the provided condition.
+}
+
+func (_ *DateRollupFilterData) isRollupFilterData() {}
+
+// Filter conditions for number rollup values
+type NumberRollupFilterData struct {
+	Number NumberFilterData `json:"number"` // A number filter condition to compare the rollup value against.   Returns database entries where the rollup value matches the provided condition.
+}
+
+func (_ *NumberRollupFilterData) isRollupFilterData() {}
+
 // Select
 type SelectFilter struct {
 	FilterCommon
+	Select SelectFilterData `json:"select"`
 }
 
 func (_ *SelectFilter) isFilter() {}
 
+type SelectFilterData struct {
+	Equals       string `json:"equals,omitempty"`         // The string to compare the select property value against.  Returns database entries where the select property value matches the provided string.
+	DoesNotEqual string `json:"does_not_equal,omitempty"` // The string to compare the select property value against.  Returns database entries where the select property value does not match the provided string.
+	IsEmpty      string `json:"is_empty,omitempty"`       // Whether the select property value does not contain data.  Returns database entries where the select property value is empty.
+	IsNotEmpty   string `json:"is_not_empty,omitempty"`   // Whether the select property value contains data.  Returns database entries where the select property value is not empty.
+}
+
 // Status
 type StatusFilter struct {
 	FilterCommon
+	Status StatusFilterData `json:"status"`
 }
 
 func (_ *StatusFilter) isFilter() {}
 
-// Timestamp
+type StatusFilterData struct {
+	Equals       string `json:"equals,omitempty"`         // The string to compare the status property value against.  Returns database entries where the status property value matches the provided string.
+	DoesNotEqual string `json:"does_not_equal,omitempty"` // The string to compare the status property value against.  Returns database entries where the status property value does not match the provided string.
+	IsEmpty      string `json:"is_empty,omitempty"`       // Whether the status property value does not contain data.  Returns database entries where the status property value is empty.
+	IsNotEmpty   string `json:"is_not_empty,omitempty"`   // Whether the status property value contains data.  Returns database entries where the status property value is not empty.
+}
+
+/*
+Timestamp
+Use a timestamp filter condition to filter results based on created_time or last_edited_time values.
+The `timestamp` filter condition does not require a property name. The API throws an error if you provide one.
+*/
 type TimestampFilter struct {
 	FilterCommon
+	Timestamp      string          `json:"timestamp"`                  // A constant string representing the type of timestamp to use as a filter.
+	CreatedTime    *DateFilterData `json:"created_time,omitempty"`     // A date filter condition used to filter the specified timestamp.
+	LastEditedTime *DateFilterData `json:"last_edited_time,omitempty"` // A date filter condition used to filter the specified timestamp.
 }
 
 func (_ *TimestampFilter) isFilter() {}
