@@ -127,7 +127,8 @@ func init() {
 				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.String()))
+					// color should be `"default"`, `"gray"`,,,, `"red_background"`, or `undefined`, instead was `""`.
+					getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 			&objectDocHeadingElement{

@@ -95,12 +95,12 @@ The annotation object
 All rich text objects contain an annotations object that sets the styling for the rich text. annotations includes the following fields:
 */
 type Annotations struct {
-	Bold          bool   `json:"bold"`          // Whether the text is bolded.
-	Italic        bool   `json:"italic"`        // Whether the text is italicized.
-	Strikethrough bool   `json:"strikethrough"` // Whether the text is struck through.
-	Underline     bool   `json:"underline"`     // Whether the text is underlined.
-	Code          bool   `json:"code"`          // Whether the text is code style.
-	Color         string `json:"color"`         // Color of the text. Possible values include:   - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" -"orange_background" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background” - "yellow" - "yellow_background"
+	Bold          bool   `json:"bold"`            // Whether the text is bolded.
+	Italic        bool   `json:"italic"`          // Whether the text is italicized.
+	Strikethrough bool   `json:"strikethrough"`   // Whether the text is struck through.
+	Underline     bool   `json:"underline"`       // Whether the text is underlined.
+	Code          bool   `json:"code"`            // Whether the text is code style.
+	Color         string `json:"color,omitempty"` // Color of the text. Possible values include:   - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" -"orange_background" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background” - "yellow" - "yellow_background"
 }
 
 /*
