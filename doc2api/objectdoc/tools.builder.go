@@ -30,13 +30,44 @@ func (b *builder) addConcreteObject(name string, comment string) *concreteObject
 	return obj
 }
 
-func (b *builder) addAbstractObject(name string, specifiedBy string, comment string) *abstractObject {
+type addAbstractOptions struct {
+	addList bool
+	addMap  bool
+}
+
+type addAbstractOption func(*addAbstractOptions)
+
+func addList() addAbstractOption {
+	return func(aao *addAbstractOptions) { aao.addList = true }
+}
+func addMap() addAbstractOption {
+	return func(aao *addAbstractOptions) { aao.addMap = true }
+}
+
+func (b *builder) addAbstractObject(name string, specifiedBy string, comment string, options ...addAbstractOption) *abstractObject {
+	aao := &addAbstractOptions{}
+	for _, o := range options {
+		o(aao)
+	}
+
 	obj := &abstractObject{}
-	obj.name_ = strings.TrimSpace(name)
+	obj.name_ = name
 	obj.derivedIdentifierKey = specifiedBy
 	obj.comment = comment
 	b.localSymbols = append(b.localSymbols, obj)
 	b.globalSymbols.Store(name, obj)
+
+	if aao.addList {
+		col := &abstractList{targetName: name}
+		b.localSymbols = append(b.localSymbols, col)
+		b.globalSymbols.Store(col.name(), col)
+	}
+	if aao.addMap {
+		col := &abstractMap{targetName: name}
+		b.localSymbols = append(b.localSymbols, col)
+		b.globalSymbols.Store(col.name(), col)
+	}
+
 	return obj
 }
 
@@ -125,24 +156,6 @@ func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string)
 	b.globalSymbols.Store(name, u)
 
 	return u
-}
-
-// Deprecated:
-func (b *builder) addAbstractList(targetName string) *abstractList {
-	o := &abstractList{}
-	o.targetName = strings.TrimSpace(targetName)
-	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(o.name(), o)
-	return o
-}
-
-// Deprecated:
-func (b *builder) addAbstractMap(targetName string) *abstractMap {
-	o := &abstractMap{}
-	o.targetName = strings.TrimSpace(targetName)
-	b.localSymbols = append(b.localSymbols, o)
-	b.globalSymbols.Store(o.name(), o)
-	return o
 }
 
 func (b *builder) addAlwaysStringIfNotExists(value string) {

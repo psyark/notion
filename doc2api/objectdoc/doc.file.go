@@ -12,8 +12,7 @@ func init() {
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
 					b.addUnionToGlobalIfNotExists("FileOrEmoji", "type")
-					b.addAbstractObject("File", "type", e.Body).addToUnion(getSymbol[unionObject](b, "FileOrEmoji"))
-					b.addAbstractList("File")
+					b.addAbstractObject("File", "type", e.Body, addList()).addToUnion(getSymbol[unionObject](b, "FileOrEmoji"))
 				},
 			},
 			&objectDocParagraphElement{

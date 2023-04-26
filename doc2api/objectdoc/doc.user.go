@@ -13,8 +13,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAbstractObject("User", "type", e.Text)
-					b.addAbstractList("User")
+					b.addAbstractObject("User", "type", e.Text, addList())
 					b.addDerived("", "User", "", withName("PartialUser"))
 					b.addConcreteObject("DetailedUserCommon", "")
 				},
