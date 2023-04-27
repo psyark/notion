@@ -11,7 +11,7 @@ import (
 // memberCoder はunionObjectのメンバーとして存在できるオブジェクトを作成するためのCoderです
 type memberCoder interface {
 	symbolCoder
-	getIdentifierValue(identifierKey string) string
+	getDiscriminatorValue(identifierKey string) string
 }
 
 var _ = []memberCoder{
@@ -56,10 +56,10 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 			}
 
 			sort.Slice(canIdentify, func(i, j int) bool {
-				return canIdentify[i].getIdentifierValue(u.identifierKey) < canIdentify[j].getIdentifierValue(u.identifierKey)
+				return canIdentify[i].getDiscriminatorValue(u.identifierKey) < canIdentify[j].getDiscriminatorValue(u.identifierKey)
 			})
 			for _, member := range canIdentify {
-				g.Case(jen.Lit(member.getIdentifierValue(u.identifierKey)))
+				g.Case(jen.Lit(member.getDiscriminatorValue(u.identifierKey)))
 				switch member := member.(type) {
 				case *concreteObject:
 					g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
@@ -86,7 +86,7 @@ func (u *unionObject) findCanIdentify(member memberCoder) []memberCoder {
 	case *concreteObject:
 		result = append(result, member)
 	case *abstractObject:
-		if member.derivedIdentifierKey == u.identifierKey {
+		if member.discriminatorKey == u.identifierKey {
 			for _, member2 := range member.derivedObjects {
 				result = append(result, member2)
 			}

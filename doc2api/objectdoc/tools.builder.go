@@ -52,7 +52,7 @@ func (b *builder) addAbstractObject(name string, specifiedBy string, comment str
 
 	obj := &abstractObject{}
 	obj.name_ = name
-	obj.derivedIdentifierKey = specifiedBy
+	obj.discriminatorKey = specifiedBy
 	obj.comment = comment
 	b.localSymbols = append(b.localSymbols, obj)
 	b.globalSymbols.Store(name, obj)
@@ -111,11 +111,11 @@ func (b *builder) addDerived(derivedIdentifierValue string, parentName string, c
 	parent := getSymbol[abstractObject](b, parentName)
 	derived := &concreteObject{}
 	derived.name_ = opt.derivedName
-	derived.derivedIdentifierValue = derivedIdentifierValue
+	derived.discriminatorValue = derivedIdentifierValue
 	derived.comment = comment
 
-	if parent.derivedIdentifierKey != "" && derivedIdentifierValue != "" {
-		derived.fields = append(derived.fields, &fixedStringField{name: parent.derivedIdentifierKey, value: derivedIdentifierValue})
+	if parent.discriminatorKey != "" && derivedIdentifierValue != "" {
+		derived.fields = append(derived.fields, &fixedStringField{name: parent.discriminatorKey, value: derivedIdentifierValue})
 	}
 
 	// 親子関係を設定

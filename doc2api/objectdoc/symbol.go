@@ -38,10 +38,10 @@ func (c *objectCommon) name() string {
 	return c.name_
 }
 
-// 指定したidentifierKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
+// 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
 // abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
 // unionがmemberを見分ける際には依然としてこの方法しかない
-func (c *objectCommon) getIdentifierValue(identifierKey string) string {
+func (c *objectCommon) getDiscriminatorValue(identifierKey string) string {
 	for _, f := range c.fields {
 		if f, ok := f.(*fixedStringField); ok && f.name == identifierKey {
 			return f.value

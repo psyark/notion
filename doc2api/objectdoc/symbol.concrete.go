@@ -11,7 +11,7 @@ import (
 //
 // (1) abstractObject の一種として出現するもの (derived object / specific object)
 // - parent が存在します
-// - derivedIdentifierValue が設定されています （例：type="external" である ExternalFile）
+// - discriminatorValue が設定されています （例：type="external" である ExternalFile）
 //   - ただし、設定されていない一部の例外（PartialUser）があります
 //
 // (2) 他のオブジェクト固有のデータ
@@ -20,7 +20,7 @@ import (
 // 生成されるGoコードではstructポインタで表現されます
 type concreteObject struct {
 	objectCommon
-	derivedIdentifierValue string
+	discriminatorValue string
 
 	// parent はこのオブジェクトの派生元です。派生元とは共通のフィールドを提供しているオブジェクトであり、
 	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
@@ -37,17 +37,17 @@ func (c *concreteObject) setParent(parent *abstractObject) {
 	c.parent = parent
 }
 
-// 指定したidentifierKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
+// 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
 // abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
 // unionがmemberを見分ける際には依然としてこの方法しかない
-func (c *concreteObject) getIdentifierValue(identifierKey string) string {
+func (c *concreteObject) getDiscriminatorValue(identifierKey string) string {
 	for _, f := range c.fields {
 		if f, ok := f.(*fixedStringField); ok && f.name == identifierKey {
 			return f.value
 		}
 	}
 	if c.parent != nil {
-		return c.parent.getIdentifierValue(identifierKey)
+		return c.parent.getDiscriminatorValue(identifierKey)
 	}
 	return ""
 }
@@ -58,10 +58,10 @@ func (c *concreteObject) addToUnion(union *unionObject) {
 }
 
 func (c *concreteObject) addFields(fields ...fieldCoder) *concreteObject {
-	if c.derivedIdentifierValue != "" {
+	if c.discriminatorValue != "" {
 		for _, f := range fields {
 			if f, ok := f.(*fixedStringField); ok {
-				if f.value == c.derivedIdentifierValue {
+				if f.value == c.discriminatorValue {
 					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", c.name(), f.value))
 				}
 			}

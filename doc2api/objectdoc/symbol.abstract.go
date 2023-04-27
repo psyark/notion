@@ -18,10 +18,10 @@ import (
 // 生成されるGoコードではinterface（共通するフィールドがある場合はstructも）で表現されます
 type abstractObject struct {
 	objectCommon
-	derivedIdentifierKey string // "type", "object" など、派生を識別するためのプロパティ名
-	fieldsComment        string
-	derivedObjects       []*concreteObject // derivedObjects は、この abstractObjectから派生した concreteObject です
-	specialMethods       []specialMethodCoder
+	discriminatorKey string // "type", "object" など、派生を識別するためのプロパティ名
+	fieldsComment    string
+	derivedObjects   []*concreteObject // derivedObjects は、この abstractObjectから派生した concreteObject です
+	specialMethods   []specialMethodCoder
 }
 
 func (c *abstractObject) addToUnion(union *unionObject) {
@@ -85,29 +85,29 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 	code.Line().Type().Id(c.derivedUnmarshalerName()).Struct(
 		jen.Id("value").Id(c.name()),
 	)
-	code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.derivedIdentifierKey))
+	code.Line().Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", c.discriminatorKey))
 	code.Line().Func().Params(jen.Id("u").Op("*").Id(c.derivedUnmarshalerName())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().BlockFunc(func(g *jen.Group) {
 		g.If(jen.String().Call(jen.Id("data"))).Op("==").Lit("null").Block(
 			jen.Id("u").Dot("value").Op("=").Nil(),
 			jen.Return().Nil(),
 		)
 
-		if c.derivedIdentifierKey != "" && false {
+		if c.discriminatorKey != "" && false {
 			// TODO 従来こちらのコードを使ってきたが、Filterのようなオブジェクトではelse以下を使い分ける必要があった
 			// 試しに else 以下に統一したところ、特段問題が無いようだったので、いずれ後者に統一するかを検討する
 			// その場合、getType やderivedIdentifierKeyも削れるか検討する
-			g.Switch().Id("get" + strcase.UpperCamelCase(c.derivedIdentifierKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
+			g.Switch().Id("get" + strcase.UpperCamelCase(c.discriminatorKey)).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
 				for _, derived := range c.derivedObjects {
-					g.Case(jen.Lit(derived.getIdentifierValue(c.derivedIdentifierKey)))
+					g.Case(jen.Lit(derived.getDiscriminatorValue(c.discriminatorKey)))
 					g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 				}
-				g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.derivedIdentifierKey)), jen.String().Call(jen.Id("data"))))
+				g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", c.name(), c.discriminatorKey)), jen.String().Call(jen.Id("data"))))
 			})
 		} else {
 			g.Id("t").Op(":=").StructFunc(func(g *jen.Group) {
 				for _, derived := range c.derivedObjects {
-					if derived.derivedIdentifierValue != "" {
-						g.Id(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": derived.derivedIdentifierValue})
+					if derived.discriminatorValue != "" {
+						g.Id(strcase.UpperCamelCase(derived.discriminatorValue)).Qual("encoding/json", "RawMessage").Tag(map[string]string{"json": derived.discriminatorValue})
 					}
 				}
 			}).Values()
@@ -117,8 +117,8 @@ func (c *abstractObject) derivedUnmarshaler() jen.Code {
 			g.Switch().BlockFunc(func(g *jen.Group) {
 				defaultCode := jen.Default().Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshal %s: %%s", c.name())), jen.String().Call(jen.Id("data")))
 				for _, derived := range c.derivedObjects {
-					if derived.derivedIdentifierValue != "" {
-						g.Case(jen.Id("t").Dot(strcase.UpperCamelCase(derived.derivedIdentifierValue)).Op("!=").Nil())
+					if derived.discriminatorValue != "" {
+						g.Case(jen.Id("t").Dot(strcase.UpperCamelCase(derived.discriminatorValue)).Op("!=").Nil())
 						g.Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
 					} else {
 						defaultCode = jen.Default().Id("u").Dot("value").Op("=").Op("&").Id(derived.name()).Values()
