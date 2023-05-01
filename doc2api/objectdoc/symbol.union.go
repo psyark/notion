@@ -83,7 +83,7 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 func (u *unionObject) findCanIdentify(member memberCoder) []memberCoder {
 	result := []memberCoder{}
 	switch member := member.(type) {
-	case *concreteObject:
+	case *concreteObject, *adaptiveObject: // TODO adaptiveはここでいいのか？
 		result = append(result, member)
 	case *abstractObject:
 		if member.discriminatorKey == u.identifierKey {

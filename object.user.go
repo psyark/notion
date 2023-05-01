@@ -2,7 +2,6 @@ package notion
 
 import (
 	"encoding/json"
-	"fmt"
 	uuid "github.com/google/uuid"
 	nullv4 "gopkg.in/guregu/null.v4"
 )
@@ -24,88 +23,36 @@ User objects appear in the API in nearly all objects returned by the API, includ
 * Property object when the property is a people property.
 
 User objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.
-*/
-type User interface {
-	isUser()
-	GetObject() alwaysUser
-	GetId() uuid.UUID
-}
-
-/*
 
 All users
 These fields are shared by all users, including people and bots. Fields marked with * are always present.
 */
-type UserCommon struct {
-	Object alwaysUser `json:"object"` // Always "user"
-	Id     uuid.UUID  `json:"id"`     // Unique identifier for this user.
-}
-
-func (c *UserCommon) GetObject() alwaysUser {
-	return c.Object
-}
-func (c *UserCommon) GetId() uuid.UUID {
-	return c.Id
-}
-
-type userUnmarshaler struct {
-	value User
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *userUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
-	}
-	t := struct {
-		Person json.RawMessage `json:"person"`
-		Bot    json.RawMessage `json:"bot"`
-	}{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
-	}
-	switch {
-	case t.Person != nil:
-		u.value = &PersonUser{}
-	case t.Bot != nil:
-		u.value = &BotUser{}
-	default:
-		u.value = &PartialUser{}
-	}
-	return json.Unmarshal(data, u.value)
-}
-
-func (u *userUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
-}
-
-type UserList []User
-
-func (a *UserList) UnmarshalJSON(data []byte) error {
-	t := []userUnmarshaler{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling UserList: %w", err)
-	}
-	*a = make([]User, len(t))
-	for i, u := range t {
-		(*a)[i] = u.value
-	}
-	return nil
-}
-
-type PartialUser struct {
-	UserCommon
-}
-
-func (_ *PartialUser) isUser() {}
-
-type DetailedUserCommon struct {
+type User struct {
+	Type      string        `json:"type,omitempty"`
+	Object    alwaysUser    `json:"object"`     // Always "user"
+	Id        uuid.UUID     `json:"id"`         // Unique identifier for this user.
 	Name      string        `json:"name"`       // User's name, as displayed in Notion.
 	AvatarUrl nullv4.String `json:"avatar_url"` // Chosen avatar image.
+	Person    *PersonUser   `json:"person"`     // People
+	Bot       *BotUser      `json:"bot"`        // Bots
+}
+
+func (o User) MarshalJSON() ([]byte, error) {
+	if o.Type == "" {
+		// TODO
+	}
+	type Alias User
+	data, err := json.Marshal(Alias(o))
+	if err != nil {
+		return nil, err
+	}
+	visibility := map[string]bool{
+		"avatar_url": o.Type != "",
+		"bot":        o.Type == "bot",
+		"name":       o.Type != "",
+		"person":     o.Type == "person",
+	}
+	return omitFields(data, visibility)
 }
 
 /*
@@ -113,15 +60,6 @@ People
 User objects that represent people have the type property set to "person". These objects also have the following properties:
 */
 type PersonUser struct {
-	UserCommon
-	Type   alwaysPerson   `json:"type"`
-	Person PersonUserData `json:"person"`
-	DetailedUserCommon
-}
-
-func (_ *PersonUser) isUser() {}
-
-type PersonUserData struct {
 	Email string `json:"email"` // Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.
 }
 
@@ -130,15 +68,6 @@ Bots
 A user object's type property is"bot" when the user object represents a bot. A bot user object has the following properties:
 */
 type BotUser struct {
-	UserCommon
-	Type alwaysBot   `json:"type"`
-	Bot  BotUserData `json:"bot"`
-	DetailedUserCommon
-}
-
-func (_ *BotUser) isUser() {}
-
-type BotUserData struct {
 	Owner         *BotUserDataOwner `json:"owner,omitempty"`          // Information about who owns this bot.
 	WorkspaceName string            `json:"workspace_name,omitempty"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
 }

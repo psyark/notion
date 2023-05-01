@@ -93,7 +93,7 @@ type BlockPagination struct {
 	PaginationCommon
 	Type    alwaysBlock `json:"type"`
 	Block   struct{}    `json:"block"`
-	Results BlockList   `json:"results"`
+	Results []Block     `json:"results"`
 }
 
 func (_ *BlockPagination) isPagination() {}
@@ -162,7 +162,7 @@ type UserPagination struct {
 	PaginationCommon
 	Type    alwaysUser `json:"type"`
 	User    struct{}   `json:"user"`
-	Results UserList   `json:"results"`
+	Results []User     `json:"results"`
 }
 
 func (_ *UserPagination) isPagination() {}

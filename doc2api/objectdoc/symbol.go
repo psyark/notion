@@ -19,6 +19,7 @@ var _ = []symbolCoder{
 	&abstractObject{},
 	&abstractList{},
 	&abstractMap{},
+	&adaptiveObject{},
 	&unionObject{},
 	&unmarshalTest{},
 	alwaysString(""),
@@ -90,7 +91,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 					} else if u := getSymbol[unionObject](b, f.typeName); u != nil {
 						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 					} else {
-						panic(fmt.Errorf("unknown symbol: %s", f.typeName))
+						panic(fmt.Errorf("unknown symbol: %s (in %s)", f.typeName, c.name()))
 					}
 				}
 			}).Values(jen.Dict{
@@ -124,7 +125,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	case *abstractObject:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.derivedUnmarshalerName()).Values()
 		referCode = jen.Id("target").Dot("value")
-	case *concreteObject, *abstractMap:
+	case *concreteObject, *abstractMap, *adaptiveObject:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
 		referCode = jen.Id("target")
 	default:

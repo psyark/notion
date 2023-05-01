@@ -75,7 +75,7 @@ func init() {
 				Description:  "User who created the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("User")))
 				},
 			}, {
 				Property:     "last_edited_time",
@@ -91,7 +91,7 @@ func init() {
 				Description:  "User who last edited the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("PartialUser")))
+					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("User")))
 				},
 			}, {
 				Property:     "archived",
@@ -113,7 +113,7 @@ func init() {
 				Type:        `File object (only type of "external" is supported currently)`,
 				Description: "Page cover image.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Page").addFields(e.asInterfaceField("File"))
+					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Op("*").Id("File")))
 				},
 			}, {
 				Property:     "properties",

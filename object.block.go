@@ -39,143 +39,83 @@ Some block types contain nested blocks. The following block types support child 
 The API does not support all block types.
 Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a `type` set to `"unsupported"`.
 */
-type Block interface {
-	isBlock()
-	GetObject() alwaysBlock
-	GetId() uuid.UUID
-	GetParent() Parent
-	GetCreatedTime() ISO8601String
-	GetCreatedBy() PartialUser
-	GetLastEditedTime() ISO8601String
-	GetLastEditedBy() PartialUser
-	GetArchived() bool
-	GetHasChildren() bool
-}
-type BlockCommon struct {
-	Object         alwaysBlock   `json:"object"`           // Always "block".
-	Id             uuid.UUID     `json:"id"`               // Identifier for the block.
-	Parent         Parent        `json:"parent"`           // Information about the block's parent. See Parent object.
-	CreatedTime    ISO8601String `json:"created_time"`     // Date and time when this block was created. Formatted as an ISO 8601 date time string.
-	CreatedBy      PartialUser   `json:"created_by"`       // User who created the block.
-	LastEditedTime ISO8601String `json:"last_edited_time"` // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
-	LastEditedBy   PartialUser   `json:"last_edited_by"`   // User who last edited the block.
-	Archived       bool          `json:"archived"`         // The archived status of the block.
-	HasChildren    bool          `json:"has_children"`     // Whether or not the block has children blocks nested within it.
+type Block struct {
+	Type             string                 `json:"type"`
+	Object           alwaysBlock            `json:"object"`             // Always "block".
+	Id               uuid.UUID              `json:"id"`                 // Identifier for the block.
+	Parent           Parent                 `json:"parent"`             // Information about the block's parent. See Parent object.
+	CreatedTime      ISO8601String          `json:"created_time"`       // Date and time when this block was created. Formatted as an ISO 8601 date time string.
+	CreatedBy        User                   `json:"created_by"`         // User who created the block.
+	LastEditedTime   ISO8601String          `json:"last_edited_time"`   // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
+	LastEditedBy     User                   `json:"last_edited_by"`     // User who last edited the block.
+	Archived         bool                   `json:"archived"`           // The archived status of the block.
+	HasChildren      bool                   `json:"has_children"`       // Whether or not the block has children blocks nested within it.
+	Bookmark         *BookmarkBlock         `json:"bookmark"`           // Bookmark
+	Breadcrumb       struct{}               `json:"breadcrumb"`         //  Breadcrumb block objects do not contain any information within the breadcrumb property.
+	BulletedListItem *BulletedListItemBlock `json:"bulleted_list_item"` // Bulleted list item
+	Callout          *CalloutBlock          `json:"callout"`            // Callout
+	ChildDatabase    *ChildDatabaseBlock    `json:"child_database"`     // Child database
+	ChildPage        *ChildPageBlock        `json:"child_page"`         // Child page
+	Code             *CodeBlock             `json:"code"`               // Code
+	ColumnList       struct{}               `json:"column_list"`        //  Column lists are parent blocks for columns. They do not contain any information within the column_list property.
+	Column           struct{}               `json:"column"`             // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
+	Divider          struct{}               `json:"divider"`            //  Divider block objects do not contain any information within the divider property.
+	Embed            *EmbedBlock            `json:"embed"`              // Embed
+	Equation         *EquationBlock         `json:"equation"`           // Equation
+	File             FileWithCaption        `json:"file"`               // File
+	Heading1         *HeadingBlock          `json:"heading_1"`
+	Heading2         *HeadingBlock          `json:"heading_2"`
+	Heading3         *HeadingBlock          `json:"heading_3"`
+	Image            File                   `json:"image"`        //  Image block objects contain a file object detailing information about the image.
+	LinkPreview      *LinkPreviewBlock      `json:"link_preview"` //  Link Preview block objects contain the originally pasted url:
+	Paragraph        *ParagraphBlock        `json:"paragraph"`    // Paragraph
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *BlockCommon) UnmarshalJSON(data []byte) error {
-	type Alias BlockCommon
+func (o *Block) UnmarshalJSON(data []byte) error {
+	type Alias Block
 	t := &struct {
 		*Alias
 		Parent parentUnmarshaler `json:"parent"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling BlockCommon: %w", err)
+		return fmt.Errorf("unmarshaling Block: %w", err)
 	}
 	o.Parent = t.Parent.value
 	return nil
 }
 
-func (c *BlockCommon) GetObject() alwaysBlock {
-	return c.Object
-}
-func (c *BlockCommon) GetId() uuid.UUID {
-	return c.Id
-}
-func (c *BlockCommon) GetParent() Parent {
-	return c.Parent
-}
-func (c *BlockCommon) GetCreatedTime() ISO8601String {
-	return c.CreatedTime
-}
-func (c *BlockCommon) GetCreatedBy() PartialUser {
-	return c.CreatedBy
-}
-func (c *BlockCommon) GetLastEditedTime() ISO8601String {
-	return c.LastEditedTime
-}
-func (c *BlockCommon) GetLastEditedBy() PartialUser {
-	return c.LastEditedBy
-}
-func (c *BlockCommon) GetArchived() bool {
-	return c.Archived
-}
-func (c *BlockCommon) GetHasChildren() bool {
-	return c.HasChildren
-}
-
-type blockUnmarshaler struct {
-	value Block
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
+func (o Block) MarshalJSON() ([]byte, error) {
+	if o.Type == "" {
+		// TODO
 	}
-	t := struct {
-		Bookmark         json.RawMessage `json:"bookmark"`
-		Breadcrumb       json.RawMessage `json:"breadcrumb"`
-		BulletedListItem json.RawMessage `json:"bulleted_list_item"`
-		Callout          json.RawMessage `json:"callout"`
-		ChildDatabase    json.RawMessage `json:"child_database"`
-		ChildPage        json.RawMessage `json:"child_page"`
-		Code             json.RawMessage `json:"code"`
-		ColumnList       json.RawMessage `json:"column_list"`
-		Column           json.RawMessage `json:"column"`
-		Paragraph        json.RawMessage `json:"paragraph"`
-	}{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+	type Alias Block
+	data, err := json.Marshal(Alias(o))
+	if err != nil {
+		return nil, err
 	}
-	switch {
-	case t.Bookmark != nil:
-		u.value = &BookmarkBlock{}
-	case t.Breadcrumb != nil:
-		u.value = &BreadcrumbBlock{}
-	case t.BulletedListItem != nil:
-		u.value = &BulletedListItemBlock{}
-	case t.Callout != nil:
-		u.value = &CalloutBlock{}
-	case t.ChildDatabase != nil:
-		u.value = &ChildDatabaseBlock{}
-	case t.ChildPage != nil:
-		u.value = &ChildPageBlock{}
-	case t.Code != nil:
-		u.value = &CodeBlock{}
-	case t.ColumnList != nil:
-		u.value = &ColumnListBlock{}
-	case t.Column != nil:
-		u.value = &ColumnBlock{}
-	case t.Paragraph != nil:
-		u.value = &ParagraphBlock{}
-	default:
-		return fmt.Errorf("unmarshal Block: %s", string(data))
+	visibility := map[string]bool{
+		"bookmark":           o.Type == "bookmark",
+		"breadcrumb":         o.Type == "breadcrumb",
+		"bulleted_list_item": o.Type == "bulleted_list_item",
+		"callout":            o.Type == "callout",
+		"child_database":     o.Type == "child_database",
+		"child_page":         o.Type == "child_page",
+		"code":               o.Type == "code",
+		"column":             o.Type == "column",
+		"column_list":        o.Type == "column_list",
+		"divider":            o.Type == "divider",
+		"embed":              o.Type == "embed",
+		"equation":           o.Type == "equation",
+		"file":               o.Type == "file",
+		"heading_1":          o.Type == "heading_1",
+		"heading_2":          o.Type == "heading_2",
+		"heading_3":          o.Type == "heading_3",
+		"image":              o.Type == "image",
+		"link_preview":       o.Type == "link_preview",
+		"paragraph":          o.Type == "paragraph",
 	}
-	return json.Unmarshal(data, u.value)
-}
-
-func (u *blockUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
-}
-
-type BlockList []Block
-
-func (a *BlockList) UnmarshalJSON(data []byte) error {
-	t := []blockUnmarshaler{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling BlockList: %w", err)
-	}
-	*a = make([]Block, len(t))
-	for i, u := range t {
-		(*a)[i] = u.value
-	}
-	return nil
+	return omitFields(data, visibility)
 }
 
 /*
@@ -183,46 +123,18 @@ Bookmark
 Bookmark block objects contain the following information within the bookmark property:
 */
 type BookmarkBlock struct {
-	BlockCommon
-	Type     alwaysBookmark    `json:"type"`
-	Bookmark BookmarkBlockData `json:"bookmark"`
+	Caption []RichText `json:"caption"` // The caption for the bookmark.
+	Url     string     `json:"url"`     // The link for the bookmark.
 }
-
-func (_ *BookmarkBlock) isBlock() {}
-
-type BookmarkBlockData struct {
-	Caption RichTextList `json:"caption"` // The caption for the bookmark.
-	Url     string       `json:"url"`     // The link for the bookmark.
-}
-
-/*
-Breadcrumb
-Breadcrumb block objects do not contain any information within the breadcrumb property.
-*/
-type BreadcrumbBlock struct {
-	BlockCommon
-	Type       alwaysBreadcrumb `json:"type"`
-	Breadcrumb struct{}         `json:"breadcrumb"`
-}
-
-func (_ *BreadcrumbBlock) isBlock() {}
 
 /*
 Bulleted list item
 Bulleted list item block objects contain the following information within the bulleted_list_item property:
 */
 type BulletedListItemBlock struct {
-	BlockCommon
-	Type             alwaysBulletedListItem    `json:"type"`
-	BulletedListItem BulletedListItemBlockData `json:"bulleted_list_item"`
-}
-
-func (_ *BulletedListItemBlock) isBlock() {}
-
-type BulletedListItemBlockData struct {
-	RichText RichTextList `json:"rich_text"` // The rich text in the bulleted_list_item block.
-	Color    string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children BlockList    `json:"children"`  // The nested child blocks (if any) of the bulleted_list_item block.
+	RichText []RichText `json:"rich_text"` // The rich text in the bulleted_list_item block.
+	Color    string     `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block    `json:"children"`  // The nested child blocks (if any) of the bulleted_list_item block.
 }
 
 /*
@@ -230,113 +142,77 @@ Callout
 Callout block objects contain the following information within the callout property:
 */
 type CalloutBlock struct {
-	BlockCommon
-	Type    alwaysCallout    `json:"type"`
-	Callout CalloutBlockData `json:"callout"`
+	RichText []RichText  `json:"rich_text"` // The rich text in the callout block.
+	Icon     FileOrEmoji `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Color    string      `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 }
-
-func (_ *CalloutBlock) isBlock() {}
-
-type CalloutBlockData struct {
-	RichText RichTextList `json:"rich_text"` // The rich text in the callout block.
-	Icon     FileOrEmoji  `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
-	Color    string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-}
-
-// Child database
-type ChildDatabaseBlock struct {
-	BlockCommon
-	Type          alwaysChildDatabase    `json:"type"`
-	ChildDatabase ChildDatabaseBlockData `json:"child_database"`
-}
-
-func (_ *ChildDatabaseBlock) isBlock() {}
 
 /*
 
 Child database block objects contain the following information within the child_database property:
 */
-type ChildDatabaseBlockData struct {
+type ChildDatabaseBlock struct {
 	Title string `json:"title"` // The plain text title of the database.
 }
-
-// Child page
-type ChildPageBlock struct {
-	BlockCommon
-	Type      alwaysChildPage    `json:"type"`
-	ChildPage ChildPageBlockData `json:"child_page"`
-}
-
-func (_ *ChildPageBlock) isBlock() {}
 
 /*
 
 Child page block objects contain the following information within the child_page property:
 */
-type ChildPageBlockData struct {
+type ChildPageBlock struct {
 	Title string `json:"title"` // The plain text title of the page.
 }
-
-// Code
-type CodeBlock struct {
-	BlockCommon
-	Type alwaysCode    `json:"type"`
-	Code CodeBlockData `json:"code"`
-}
-
-func (_ *CodeBlock) isBlock() {}
 
 /*
 
 Code block objects contain the following information within the code property:
 */
-type CodeBlockData struct {
-	Caption  RichTextList `json:"caption"`   // The rich text in the caption of the code block.
-	RichText RichTextList `json:"rich_text"` // The rich text in the code block.
-	Language string       `json:"language"`  // The language of the code contained in the code block.
+type CodeBlock struct {
+	Caption  []RichText `json:"caption"`   // The rich text in the caption of the code block.
+	RichText []RichText `json:"rich_text"` // The rich text in the code block.
+	Language string     `json:"language"`  // The language of the code contained in the code block.
 }
 
 /*
 
-Column lists are parent blocks for columns. They do not contain any information within the column_list property.
+Embed block objects include information about another website displayed within the Notion UI. The embed property contains the following information:
 */
-type ColumnListBlock struct {
-	BlockCommon
-	Type       alwaysColumnList    `json:"type"`
-	ColumnList ColumnListBlockData `json:"column_list"`
+type EmbedBlock struct {
+	Url string `json:"url"` // The link to the website that the embed block displays.
 }
 
-func (_ *ColumnListBlock) isBlock() {}
+/*
 
-type ColumnListBlockData struct{}
-
-// Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
-type ColumnBlock struct {
-	BlockCommon
-	Type   alwaysColumn    `json:"type"`
-	Column ColumnBlockData `json:"column"`
+Equation block objects are represented as children of paragraph blocks. They are nested within a rich text object and contain the following information within the equation property:
+*/
+type EquationBlock struct {
+	Expression string `json:"expression"` // A KaTeX compatible string.
 }
 
-func (_ *ColumnBlock) isBlock() {}
+/*
 
-type ColumnBlockData struct{}
-
-// Paragraph
-type ParagraphBlock struct {
-	BlockCommon
-	Type      alwaysParagraph    `json:"type"`
-	Paragraph ParagraphBlockData `json:"paragraph"`
+All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
+*/
+type HeadingBlock struct {
+	RichText     []RichText `json:"rich_text"`     // The rich text of the heading.
+	Color        string     `json:"color"`         // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	IsToggleable bool       `json:"is_toggleable"` // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
 }
 
-func (_ *ParagraphBlock) isBlock() {}
+/*
+
+Link Preview block objects contain the originally pasted url:
+*/
+type LinkPreviewBlock struct {
+	Url string `json:"url"`
+}
 
 /*
 
 Paragraph block objects contain the following information within the paragraph property:
 */
-type ParagraphBlockData struct {
-	RichText  RichTextList `json:"rich_text"` // The rich text displayed in the paragraph block.
-	Color     string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children  BlockList    `json:"children"`  // The nested child blocks (if any) of the paragraph block.
-	Nandakore struct{}     `json:"nandakore"`
+type ParagraphBlock struct {
+	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
+	Color    string     `json:"color"`              // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
 }

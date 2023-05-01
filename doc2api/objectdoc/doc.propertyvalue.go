@@ -102,7 +102,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "TitlePropertyValue").addFields(&field{
 						name:     "title",
-						typeCode: jen.Id("RichTextList"),
+						typeCode: jen.Index().Id("RichText"),
 						comment:  e.Text,
 					})
 				},
@@ -141,7 +141,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "RichTextPropertyValue").addFields(&field{
 						name:     "rich_text",
-						typeCode: jen.Id("RichTextList"),
+						typeCode: jen.Index().Id("RichText"),
 						comment:  e.Text,
 					})
 				},
@@ -620,7 +620,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "PeoplePropertyValue").addFields(&field{
 						name:     "people",
-						typeCode: jen.Id("UserList"),
+						typeCode: jen.Index().Id("User"),
 						comment:  e.Text,
 					})
 				},
@@ -655,7 +655,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "FilesPropertyValue").addFields(&field{
 						name:     "files",
-						typeCode: jen.Id("FileList"),
+						typeCode: jen.Index().Id("File"),
 						comment:  e.Text,
 					})
 				},
@@ -809,7 +809,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "CreatedByPropertyValue").addFields(&field{
 						name:     "created_by",
-						typeCode: jen.Id("PartialUser"),
+						typeCode: jen.Id("User"),
 						comment:  e.Text,
 					})
 				},
@@ -839,9 +839,9 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "LastEditedByPropertyValue").addFields(&interfaceField{
+					getSymbol[concreteObject](b, "LastEditedByPropertyValue").addFields(&field{
 						name:     "last_edited_by",
-						typeName: "User",
+						typeCode: jen.Id("User"),
 						comment:  e.Text,
 					})
 				},

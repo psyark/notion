@@ -155,8 +155,8 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 */
 type TitlePropertyValue struct {
 	PropertyValueCommon
-	Type  alwaysTitle  `json:"type"`
-	Title RichTextList `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
+	Type  alwaysTitle `json:"type"`
+	Title []RichText  `json:"title"` //  Title property value objects contain an array of rich text objects within the title property.
 }
 
 func (_ *TitlePropertyValue) isPropertyValue() {}
@@ -168,7 +168,7 @@ func (o *TitlePropertyValue) get() reflect.Value {
 
 // for binding
 func (o *TitlePropertyValue) set(v reflect.Value) {
-	o.Title = v.Interface().(RichTextList)
+	o.Title = v.Interface().([]RichText)
 }
 
 /*
@@ -179,7 +179,7 @@ The [Retrieve a page endpoint](https://developers.notion.com/reference/retrieve-
 type RichTextPropertyValue struct {
 	PropertyValueCommon
 	Type     alwaysRichText `json:"type"`
-	RichText RichTextList   `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	RichText []RichText     `json:"rich_text"` //  Rich Text property value objects contain an array of rich text objects within the rich_text property.
 }
 
 func (_ *RichTextPropertyValue) isPropertyValue() {}
@@ -191,7 +191,7 @@ func (o *RichTextPropertyValue) get() reflect.Value {
 
 // for binding
 func (o *RichTextPropertyValue) set(v reflect.Value) {
-	o.RichText = v.Interface().(RichTextList)
+	o.RichText = v.Interface().([]RichText)
 }
 
 // Number property values
@@ -491,7 +491,7 @@ The [Retrieve a page](https://developers.notion.com/reference/retrieve-a-page) e
 type PeoplePropertyValue struct {
 	PropertyValueCommon
 	Type   alwaysPeople `json:"type"`
-	People UserList     `json:"people"` //  People property value objects contain an array of user objects within the people property.
+	People []User       `json:"people"` //  People property value objects contain an array of user objects within the people property.
 }
 
 func (_ *PeoplePropertyValue) isPropertyValue() {}
@@ -503,7 +503,7 @@ func (o *PeoplePropertyValue) get() reflect.Value {
 
 // for binding
 func (o *PeoplePropertyValue) set(v reflect.Value) {
-	o.People = v.Interface().(UserList)
+	o.People = v.Interface().([]User)
 }
 
 /*
@@ -515,7 +515,7 @@ Although we do not support uploading files, if you pass a `file` object containi
 type FilesPropertyValue struct {
 	PropertyValueCommon
 	Type  alwaysFiles `json:"type"`
-	Files FileList    `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
+	Files []File      `json:"files"` //  File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 }
 
 func (_ *FilesPropertyValue) isPropertyValue() {}
@@ -527,7 +527,7 @@ func (o *FilesPropertyValue) get() reflect.Value {
 
 // for binding
 func (o *FilesPropertyValue) set(v reflect.Value) {
-	o.Files = v.Interface().(FileList)
+	o.Files = v.Interface().([]File)
 }
 
 // Checkbox property values
@@ -629,7 +629,7 @@ func (o *CreatedTimePropertyValue) set(v reflect.Value) {
 type CreatedByPropertyValue struct {
 	PropertyValueCommon
 	Type      alwaysCreatedBy `json:"type"`
-	CreatedBy PartialUser     `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
+	CreatedBy User            `json:"created_by"` //  Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 }
 
 func (_ *CreatedByPropertyValue) isPropertyValue() {}
@@ -641,7 +641,7 @@ func (o *CreatedByPropertyValue) get() reflect.Value {
 
 // for binding
 func (o *CreatedByPropertyValue) set(v reflect.Value) {
-	o.CreatedBy = v.Interface().(PartialUser)
+	o.CreatedBy = v.Interface().(User)
 }
 
 // Last edited time property values
@@ -680,18 +680,4 @@ func (o *LastEditedByPropertyValue) get() reflect.Value {
 // for binding
 func (o *LastEditedByPropertyValue) set(v reflect.Value) {
 	o.LastEditedBy = v.Interface().(User)
-}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *LastEditedByPropertyValue) UnmarshalJSON(data []byte) error {
-	type Alias LastEditedByPropertyValue
-	t := &struct {
-		*Alias
-		LastEditedBy userUnmarshaler `json:"last_edited_by"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling LastEditedByPropertyValue: %w", err)
-	}
-	o.LastEditedBy = t.LastEditedBy.value
-	return nil
 }

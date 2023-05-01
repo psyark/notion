@@ -10,7 +10,7 @@ import (
 // https://developers.notion.com/reference/rich-text
 
 func TestRichText_unmarshal(t *testing.T) {
-	target := &richTextUnmarshaler{}
+	target := &RichText{}
 	tests := []string{
 		"{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"Some words \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Some words \",\n  \"href\": null\n}",
 		"{\n  \"type\": \"equation\",\n  \"equation\": {\n    \"expression\": \"E = mc^2\"\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"E = mc^2\",\n  \"href\": null\n}",
@@ -28,7 +28,7 @@ func TestRichText_unmarshal(t *testing.T) {
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(err)
 		}
-		got, _ := json.Marshal(target.value)
+		got, _ := json.Marshal(target)
 		if want, got, ok := compareJSON(want, got); !ok {
 			t.Fatal(fmt.Errorf("mismatch:\nwant: %s\ngot : %s", want, got))
 		}

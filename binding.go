@@ -126,6 +126,6 @@ func ToTaggedStruct(db *Database) string {
 		fields = append(fields, jen.Id(name).Op(getTypeForBinding(prop)).Tag(map[string]string{"notion": prop.GetId()}))
 	}
 
-	code := jen.Type().Id(safeName(db.Title.String())).Struct(fields...)
+	code := jen.Type().Id(safeName(String(db.Title))).Struct(fields...)
 	return (&jen.Statement{code}).GoString()
 }

@@ -13,9 +13,12 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAbstractObject("User", "type", e.Text, addList())
-					b.addDerived("", "User", "", withName("PartialUser"))
-					b.addConcreteObject("DetailedUserCommon", "")
+					ao := b.addAdaptiveObject("User", "type", e.Text)
+					for _, f := range ao.fields {
+						if f, ok := f.(*field); ok && f.name == "type" {
+							f.omitEmpty = true
+						}
+					}
 				},
 			},
 			&objectDocCalloutElement{
@@ -33,25 +36,25 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Where user objects appear in the API",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[abstractObject](b, "User").comment += "\n\n" + e.Text
+					getSymbol[adaptiveObject](b, "User").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nUser objects appear in the API in nearly all objects returned by the API, including:\n* Block object under created_by and last_edited_by.\n* Page object under created_by and last_edited_by and in people property items.\n* Database object under created_by and last_edited_by.\n* Rich text object, as user mentions.\n* Property object when the property is a people property.\n\nUser objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[abstractObject](b, "User").comment += "\n\n" + e.Text
+					getSymbol[adaptiveObject](b, "User").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocHeadingElement{
 				Text: "All users",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[abstractObject](b, "User").fieldsComment += "\n" + e.Text
+					getSymbol[adaptiveObject](b, "User").comment += "\n" + e.Text
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nThese fields are shared by all users, including people and bots. Fields marked with * are always present.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[abstractObject](b, "User").fieldsComment += e.Text
+					getSymbol[adaptiveObject](b, "User").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -61,7 +64,7 @@ func init() {
 				ExampleValue: `"user"`,
 				output: func(e *objectDocParameter, b *builder) {
 					e.Property = strings.TrimSuffix(e.Property, "*")
-					getSymbol[abstractObject](b, "User").addFields(e.asFixedStringField())
+					getSymbol[adaptiveObject](b, "User").addFields(e.asFixedStringField())
 				},
 			}, {
 				Property:     "id*",
@@ -69,7 +72,7 @@ func init() {
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[abstractObject](b, "User").addFields(&field{
+					getSymbol[adaptiveObject](b, "User").addFields(&field{
 						name:     strings.TrimSuffix(e.Property, "*"),
 						typeCode: UUID,
 						comment:  e.Description,
@@ -89,7 +92,7 @@ func init() {
 				Description:  "User's name, as displayed in Notion.",
 				ExampleValue: `"Avocado Lovelace"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DetailedUserCommon").addFields(e.asField(jen.String()))
+					getSymbol[adaptiveObject](b, "User").addFields(e.asField(jen.String(), discriminatorNotEmpty))
 				},
 			}, {
 				Property:     "avatar_url",
@@ -97,16 +100,14 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "DetailedUserCommon").addFields(e.asField(NullString))
+					getSymbol[adaptiveObject](b, "User").addFields(e.asField(NullString, discriminatorNotEmpty))
 				},
 			}},
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("person", "User", e.Text, addSpecificField()).addFields(&field{
-						name:     "",
-						typeCode: jen.Id("DetailedUserCommon"),
-					})
+					b.addAdaptiveField("person", "User", e.Text)
+					getSymbol[concreteObject](b, "PersonUser")
 				},
 			},
 			&objectDocParagraphElement{
@@ -126,7 +127,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PersonUser").typeSpecificObject.addFields(&field{
+					getSymbol[concreteObject](b, "PersonUser").addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -136,10 +137,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("bot", "User", e.Text, addSpecificField()).addFields(&field{
-						name:     "",
-						typeCode: jen.Id("DetailedUserCommon"),
-					})
+					b.addAdaptiveField("bot", "User", e.Text)
+					getSymbol[concreteObject](b, "BotUser")
 				},
 			},
 			&objectDocParagraphElement{
@@ -162,9 +161,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					field := e.asField(jen.Op("*").Id("BotUserDataOwner"))
-					field.omitEmpty = true
-					getSymbol[concreteObject](b, "BotUser").typeSpecificObject.addFields(field)
+					getSymbol[concreteObject](b, "BotUser").addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
 					b.addConcreteObject("BotUserDataOwner", e.Description)
 					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 				},
@@ -186,7 +183,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BotUser").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "BotUser").addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 		},

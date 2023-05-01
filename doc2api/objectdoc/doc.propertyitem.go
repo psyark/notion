@@ -117,7 +117,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					// ドキュメントには "array of rich text" と書いてあるが間違い
 					getSymbol[concreteObject](b, "TitlePropertyItem").addFields(
-						&interfaceField{name: "title", typeName: "RichText", comment: e.Text},
+						&field{name: "title", typeCode: jen.Id("RichText"), comment: e.Text},
 					)
 				},
 			},
@@ -138,7 +138,7 @@ func init() {
 				output: func(e *objectDocParagraphElement, b *builder) {
 					// ドキュメントには "array of rich text" と書いてあるが間違い
 					getSymbol[concreteObject](b, "RichTextPropertyItem").addFields(
-						&interfaceField{name: "rich_text", typeName: "RichText", comment: e.Text},
+						&field{name: "rich_text", typeCode: jen.Id("RichText"), comment: e.Text},
 					)
 				},
 			},
@@ -486,7 +486,7 @@ func init() {
 				Text: "\nPeople property value objects contain an array of user objects within the people property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "PeoplePropertyItem").addFields(
-						&interfaceField{name: "people", typeName: "User"},
+						&field{name: "people", typeCode: jen.Id("User")},
 					).comment += e.Text
 				},
 			},
@@ -506,7 +506,7 @@ func init() {
 				Text: "\nFile property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "FilesPropertyItem").addFields(
-						&field{name: "files", typeCode: jen.Id("FileList")},
+						&field{name: "files", typeCode: jen.Index().Id("File")},
 					).comment += e.Text
 				},
 			},
@@ -626,7 +626,7 @@ func init() {
 				Text: "\nCreated by property value objects contain a user object within the created_by property. The user object describes the user who created this page.",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "CreatedByPropertyItem").addFields(
-						&interfaceField{name: "created_by", typeName: "User"},
+						&field{name: "created_by", typeCode: jen.Id("User")},
 					).comment += e.Text
 				},
 			},
@@ -680,7 +680,7 @@ func init() {
 				Text: "\nLast edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					getSymbol[concreteObject](b, "LastEditedByPropertyItem").addFields(
-						&interfaceField{name: "last_edited_by", typeName: "User"},
+						&field{name: "last_edited_by", typeCode: jen.Id("User")},
 					).comment += e.Text
 				},
 			},

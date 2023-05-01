@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+type FileWithCaption any    // TODO
 type CommentList any        // TODO
 type PageOrDatabaseList any // TODO
 
@@ -31,10 +32,10 @@ func (e Error) Error() string {
 	return fmt.Sprintf("(%v) %v", e.Code, e.Message)
 }
 
-func (rta RichTextList) String() string {
+func String(rta []RichText) string {
 	str := ""
 	for _, rt := range rta {
-		str += rt.GetPlainText()
+		str += rt.PlainText
 	}
 	return str
 }

@@ -26,7 +26,9 @@ type concreteObject struct {
 	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
 	parent *abstractObject
 
-	typeSpecificObject   *concreteObject
+	// Deprecated:
+	typeSpecificObject *concreteObject
+	// Deprecated:
 	typeSpecificAbstract *abstractObject
 }
 

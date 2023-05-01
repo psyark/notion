@@ -22,10 +22,12 @@ var _ = []fieldCoder{
 
 // 一般的なフィールド
 type field struct {
-	name      string
-	typeCode  jen.Code
-	comment   string
-	omitEmpty bool
+	name                  string
+	typeCode              jen.Code
+	comment               string
+	omitEmpty             bool
+	discriminatorValue    string
+	discriminatorNotEmpty bool // Userに使う
 }
 
 func (f *field) fieldCode() jen.Code {

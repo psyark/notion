@@ -25,12 +25,9 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	switch getType(data) {
+	case "":
 	case "emoji":
 		u.value = &Emoji{}
-	case "external":
-		u.value = &ExternalFile{}
-	case "file":
-		u.value = &NotionHostedFile{}
 	default:
 		return fmt.Errorf("unmarshaling FileOrEmoji: data has unknown type field: %s", string(data))
 	}
@@ -96,76 +93,16 @@ func (s alwaysBlockId) MarshalJSON() ([]byte, error) {
 	return []byte("\"block_id\""), nil
 }
 
-type alwaysBookmark string
-
-func (s alwaysBookmark) MarshalJSON() ([]byte, error) {
-	return []byte("\"bookmark\""), nil
-}
-
 type alwaysBoolean string
 
 func (s alwaysBoolean) MarshalJSON() ([]byte, error) {
 	return []byte("\"boolean\""), nil
 }
 
-type alwaysBot string
-
-func (s alwaysBot) MarshalJSON() ([]byte, error) {
-	return []byte("\"bot\""), nil
-}
-
-type alwaysBreadcrumb string
-
-func (s alwaysBreadcrumb) MarshalJSON() ([]byte, error) {
-	return []byte("\"breadcrumb\""), nil
-}
-
-type alwaysBulletedListItem string
-
-func (s alwaysBulletedListItem) MarshalJSON() ([]byte, error) {
-	return []byte("\"bulleted_list_item\""), nil
-}
-
-type alwaysCallout string
-
-func (s alwaysCallout) MarshalJSON() ([]byte, error) {
-	return []byte("\"callout\""), nil
-}
-
 type alwaysCheckbox string
 
 func (s alwaysCheckbox) MarshalJSON() ([]byte, error) {
 	return []byte("\"checkbox\""), nil
-}
-
-type alwaysChildDatabase string
-
-func (s alwaysChildDatabase) MarshalJSON() ([]byte, error) {
-	return []byte("\"child_database\""), nil
-}
-
-type alwaysChildPage string
-
-func (s alwaysChildPage) MarshalJSON() ([]byte, error) {
-	return []byte("\"child_page\""), nil
-}
-
-type alwaysCode string
-
-func (s alwaysCode) MarshalJSON() ([]byte, error) {
-	return []byte("\"code\""), nil
-}
-
-type alwaysColumn string
-
-func (s alwaysColumn) MarshalJSON() ([]byte, error) {
-	return []byte("\"column\""), nil
-}
-
-type alwaysColumnList string
-
-func (s alwaysColumnList) MarshalJSON() ([]byte, error) {
-	return []byte("\"column_list\""), nil
 }
 
 type alwaysComment string
@@ -222,24 +159,6 @@ func (s alwaysEmoji) MarshalJSON() ([]byte, error) {
 	return []byte("\"emoji\""), nil
 }
 
-type alwaysEquation string
-
-func (s alwaysEquation) MarshalJSON() ([]byte, error) {
-	return []byte("\"equation\""), nil
-}
-
-type alwaysExternal string
-
-func (s alwaysExternal) MarshalJSON() ([]byte, error) {
-	return []byte("\"external\""), nil
-}
-
-type alwaysFile string
-
-func (s alwaysFile) MarshalJSON() ([]byte, error) {
-	return []byte("\"file\""), nil
-}
-
 type alwaysFiles string
 
 func (s alwaysFiles) MarshalJSON() ([]byte, error) {
@@ -264,28 +183,10 @@ func (s alwaysLastEditedTime) MarshalJSON() ([]byte, error) {
 	return []byte("\"last_edited_time\""), nil
 }
 
-type alwaysLinkPreview string
-
-func (s alwaysLinkPreview) MarshalJSON() ([]byte, error) {
-	return []byte("\"link_preview\""), nil
-}
-
 type alwaysList string
 
 func (s alwaysList) MarshalJSON() ([]byte, error) {
 	return []byte("\"list\""), nil
-}
-
-type alwaysMe string
-
-func (s alwaysMe) MarshalJSON() ([]byte, error) {
-	return []byte("\"me\""), nil
-}
-
-type alwaysMention string
-
-func (s alwaysMention) MarshalJSON() ([]byte, error) {
-	return []byte("\"mention\""), nil
 }
 
 type alwaysMultiSelect string
@@ -318,22 +219,10 @@ func (s alwaysPageOrDatabase) MarshalJSON() ([]byte, error) {
 	return []byte("\"page_or_database\""), nil
 }
 
-type alwaysParagraph string
-
-func (s alwaysParagraph) MarshalJSON() ([]byte, error) {
-	return []byte("\"paragraph\""), nil
-}
-
 type alwaysPeople string
 
 func (s alwaysPeople) MarshalJSON() ([]byte, error) {
 	return []byte("\"people\""), nil
-}
-
-type alwaysPerson string
-
-func (s alwaysPerson) MarshalJSON() ([]byte, error) {
-	return []byte("\"person\""), nil
 }
 
 type alwaysPhoneNumber string
@@ -388,30 +277,6 @@ type alwaysString string
 
 func (s alwaysString) MarshalJSON() ([]byte, error) {
 	return []byte("\"string\""), nil
-}
-
-type alwaysTemplateMention string
-
-func (s alwaysTemplateMention) MarshalJSON() ([]byte, error) {
-	return []byte("\"template_mention\""), nil
-}
-
-type alwaysTemplateMentionDate string
-
-func (s alwaysTemplateMentionDate) MarshalJSON() ([]byte, error) {
-	return []byte("\"template_mention_date\""), nil
-}
-
-type alwaysTemplateMentionUser string
-
-func (s alwaysTemplateMentionUser) MarshalJSON() ([]byte, error) {
-	return []byte("\"template_mention_user\""), nil
-}
-
-type alwaysText string
-
-func (s alwaysText) MarshalJSON() ([]byte, error) {
-	return []byte("\"text\""), nil
 }
 
 type alwaysTitle string

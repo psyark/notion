@@ -121,7 +121,7 @@ func init() {
 
 						var resultsField fieldCoder = &field{name: "results", typeCode: jen.Id(strcase.UpperCamelCase(name) + "List")}
 						switch name {
-						case "database", "page":
+						case "database", "page", "block", "user":
 							resultsField = &field{name: "results", typeCode: jen.Index().Id(strcase.UpperCamelCase(name))}
 						}
 

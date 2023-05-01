@@ -1,6 +1,7 @@
 package objectdoc
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -44,7 +45,49 @@ func addMap() addAbstractOption {
 	return func(aao *addAbstractOptions) { aao.addMap = true }
 }
 
+func (b *builder) addAdaptiveObject(name string, discriminatorKey string, comment string) *adaptiveObject {
+	ao := &adaptiveObject{}
+	ao.name_ = name
+	ao.discriminatorKey = discriminatorKey
+	ao.comment = comment
+	ao.addFields(&field{
+		name:     discriminatorKey,
+		typeCode: jen.String(),
+	})
+	b.localSymbols = append(b.localSymbols, ao)
+	b.globalSymbols.Store(name, ao)
+	return ao
+}
+
+func (b *builder) addAdaptiveField(discriminatorValue string, name string, comment string) *adaptiveObject {
+	dataName := strcase.UpperCamelCase(discriminatorValue) + name
+	b.addConcreteObject(dataName, comment)
+	return b.addAdaptiveFieldWithType(discriminatorValue, name, comment, jen.Op("*").Id(dataName))
+}
+
+func (b *builder) addAdaptiveEmptyField(discriminatorValue string, name string, comment string) *adaptiveObject {
+	return b.addAdaptiveFieldWithType(discriminatorValue, name, comment, jen.Struct())
+}
+
+func (b *builder) addAdaptiveFieldWithType(discriminatorValue string, name string, comment string, typeCode jen.Code) *adaptiveObject {
+	ao := getSymbol[adaptiveObject](b, name)
+
+	// TODO abstract に対応
+	// TODO discriminatorValue 以外のフィールド名に対応
+
+	ao.addFields(&field{
+		name:               discriminatorValue,
+		typeCode:           typeCode,
+		comment:            comment,
+		discriminatorValue: discriminatorValue,
+	})
+	return ao
+}
+
+// Deprecated: use addAdapiveObject
 func (b *builder) addAbstractObject(name string, specifiedBy string, comment string, options ...addAbstractOption) *abstractObject {
+	fmt.Println("🔧", name)
+
 	aao := &addAbstractOptions{}
 	for _, o := range options {
 		o(aao)
@@ -100,6 +143,7 @@ func addAbstractSpecificField(derivedIdentifierKey string) addDerivedOption {
 }
 
 // addDerived はdiscriminatorValueとparentNameから決まる名前で派生クラスを作成します
+// Deprecated:
 func (b *builder) addDerived(discriminatorValue string, parentName string, comment string, options ...addDerivedOption) *concreteObject {
 	opt := &addDerivedOptions{
 		derivedName: strcase.UpperCamelCase(discriminatorValue) + parentName,
@@ -176,7 +220,7 @@ func (b *builder) getSymbol(name string) symbolCoder {
 	return nil
 }
 
-func getSymbol[T abstractObject | concreteObject | unionObject](b *builder, name string) *T {
+func getSymbol[T abstractObject | concreteObject | unionObject | adaptiveObject](b *builder, name string) *T {
 	if item, ok := b.globalSymbols.Load(name); ok {
 		if item, ok := item.(*T); ok {
 			return item

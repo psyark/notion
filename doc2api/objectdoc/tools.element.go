@@ -277,6 +277,10 @@ var omitEmpty fieldOption = func(f *field) {
 	f.omitEmpty = true
 }
 
+var discriminatorNotEmpty fieldOption = func(f *field) {
+	f.discriminatorNotEmpty = true
+}
+
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
 func (e *objectDocParameter) asField(typeCode jen.Code, options ...fieldOption) *field {
 	f := &field{

@@ -282,20 +282,6 @@ type TitlePropertyItem struct {
 func (_ *TitlePropertyItem) isPropertyItem()                         {}
 func (_ *TitlePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *TitlePropertyItem) UnmarshalJSON(data []byte) error {
-	type Alias TitlePropertyItem
-	t := &struct {
-		*Alias
-		Title richTextUnmarshaler `json:"title"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling TitlePropertyItem: %w", err)
-	}
-	o.Title = t.Title.value
-	return nil
-}
-
 // Rich Text property values
 type RichTextPropertyItem struct {
 	PropertyItemCommon
@@ -305,20 +291,6 @@ type RichTextPropertyItem struct {
 
 func (_ *RichTextPropertyItem) isPropertyItem()                         {}
 func (_ *RichTextPropertyItem) isPropertyItemOrPropertyItemPagination() {}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *RichTextPropertyItem) UnmarshalJSON(data []byte) error {
-	type Alias RichTextPropertyItem
-	t := &struct {
-		*Alias
-		RichText richTextUnmarshaler `json:"rich_text"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling RichTextPropertyItem: %w", err)
-	}
-	o.RichText = t.RichText.value
-	return nil
-}
 
 // Number property values
 type NumberPropertyItem struct {
@@ -536,20 +508,6 @@ type PeoplePropertyItem struct {
 func (_ *PeoplePropertyItem) isPropertyItem()                         {}
 func (_ *PeoplePropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *PeoplePropertyItem) UnmarshalJSON(data []byte) error {
-	type Alias PeoplePropertyItem
-	t := &struct {
-		*Alias
-		People userUnmarshaler `json:"people"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling PeoplePropertyItem: %w", err)
-	}
-	o.People = t.People.value
-	return nil
-}
-
 /*
 Files property values
 File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
@@ -557,7 +515,7 @@ File property value objects contain an array of file references within the files
 type FilesPropertyItem struct {
 	PropertyItemCommon
 	Type  alwaysFiles `json:"type"`
-	Files FileList    `json:"files"`
+	Files []File      `json:"files"`
 }
 
 func (_ *FilesPropertyItem) isPropertyItem()                         {}
@@ -641,20 +599,6 @@ type CreatedByPropertyItem struct {
 func (_ *CreatedByPropertyItem) isPropertyItem()                         {}
 func (_ *CreatedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
 
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *CreatedByPropertyItem) UnmarshalJSON(data []byte) error {
-	type Alias CreatedByPropertyItem
-	t := &struct {
-		*Alias
-		CreatedBy userUnmarshaler `json:"created_by"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling CreatedByPropertyItem: %w", err)
-	}
-	o.CreatedBy = t.CreatedBy.value
-	return nil
-}
-
 /*
 Last edited time property values
 Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
@@ -680,17 +624,3 @@ type LastEditedByPropertyItem struct {
 
 func (_ *LastEditedByPropertyItem) isPropertyItem()                         {}
 func (_ *LastEditedByPropertyItem) isPropertyItemOrPropertyItemPagination() {}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *LastEditedByPropertyItem) UnmarshalJSON(data []byte) error {
-	type Alias LastEditedByPropertyItem
-	t := &struct {
-		*Alias
-		LastEditedBy userUnmarshaler `json:"last_edited_by"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling LastEditedByPropertyItem: %w", err)
-	}
-	o.LastEditedBy = t.LastEditedBy.value
-	return nil
-}

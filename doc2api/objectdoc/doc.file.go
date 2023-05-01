@@ -12,13 +12,15 @@ func init() {
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
 					b.addUnionToGlobalIfNotExists("FileOrEmoji", "type")
-					b.addAbstractObject("File", "type", e.Body, addList()).addToUnion(getSymbol[unionObject](b, "FileOrEmoji"))
+					b.addAdaptiveObject("File", "type", e.Body).addFields(
+						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
+					).addToUnion(getSymbol[unionObject](b, "FileOrEmoji"))
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "File objects contain data about a file that is uploaded to Notion, or data about an external file that is linked to in Notion. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[abstractObject](b, "File").comment += "\n\n" + e.Text
+					getSymbol[adaptiveObject](b, "File").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -40,7 +42,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Page, embed, image, video, file, pdf, and bookmark block types all contain file objects. Icon and cover page object values also contain file objects.\n\nEach file object includes the following fields:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[abstractObject](b, "File").comment += "\n\n" + e.Text
+					getSymbol[adaptiveObject](b, "File").comment += "\n\n" + e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -59,9 +61,8 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("file", "File", e.Text, withName("NotionHostedFile"), addSpecificField()).addFields(
-						&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
-					)
+					b.addConcreteObject("NotionHostedFile", "")
+					b.addAdaptiveFieldWithType("file", "File", e.Text, jen.Op("*").Id("NotionHostedFile"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -76,7 +77,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NotionHostedFile").typeSpecificObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "NotionHostedFile").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "expiry_time",
@@ -84,7 +85,7 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "NotionHostedFile").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String")))
+					getSymbol[concreteObject](b, "NotionHostedFile").addFields(e.asField(jen.Id("ISO8601String")))
 				},
 			}},
 			&objectDocParagraphElement{
@@ -127,7 +128,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("external", "File", e.Text, addSpecificField())
+					b.addAdaptiveField("external", "File", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -142,7 +143,7 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ExternalFile").typeSpecificObject.addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "ExternalFile").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocParagraphElement{
@@ -256,7 +257,7 @@ func init() {
 				Title: "",
 				Type:  "info",
 				output: func(e *objectDocCalloutElement, b *builder) {
-					getSymbol[abstractObject](b, "File").comment += "\n\n" + e.Body
+					getSymbol[adaptiveObject](b, "File").comment += "\n\n" + e.Body
 				},
 			},
 		},
