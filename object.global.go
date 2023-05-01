@@ -156,6 +156,18 @@ func (s alwaysCode) MarshalJSON() ([]byte, error) {
 	return []byte("\"code\""), nil
 }
 
+type alwaysColumn string
+
+func (s alwaysColumn) MarshalJSON() ([]byte, error) {
+	return []byte("\"column\""), nil
+}
+
+type alwaysColumnList string
+
+func (s alwaysColumnList) MarshalJSON() ([]byte, error) {
+	return []byte("\"column_list\""), nil
+}
+
 type alwaysComment string
 
 func (s alwaysComment) MarshalJSON() ([]byte, error) {
@@ -304,6 +316,12 @@ type alwaysPageOrDatabase string
 
 func (s alwaysPageOrDatabase) MarshalJSON() ([]byte, error) {
 	return []byte("\"page_or_database\""), nil
+}
+
+type alwaysParagraph string
+
+func (s alwaysParagraph) MarshalJSON() ([]byte, error) {
+	return []byte("\"paragraph\""), nil
 }
 
 type alwaysPeople string

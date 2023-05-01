@@ -99,10 +99,10 @@ func addAbstractSpecificField(derivedIdentifierKey string) addDerivedOption {
 	}
 }
 
-// addDerived はderivedIdentifierValueとparentNameから決まる名前で派生クラスを作成します
-func (b *builder) addDerived(derivedIdentifierValue string, parentName string, comment string, options ...addDerivedOption) *concreteObject {
+// addDerived はdiscriminatorValueとparentNameから決まる名前で派生クラスを作成します
+func (b *builder) addDerived(discriminatorValue string, parentName string, comment string, options ...addDerivedOption) *concreteObject {
 	opt := &addDerivedOptions{
-		derivedName: strcase.UpperCamelCase(derivedIdentifierValue) + parentName,
+		derivedName: strcase.UpperCamelCase(discriminatorValue) + parentName,
 	}
 	for _, o := range options {
 		o(opt)
@@ -111,11 +111,11 @@ func (b *builder) addDerived(derivedIdentifierValue string, parentName string, c
 	parent := getSymbol[abstractObject](b, parentName)
 	derived := &concreteObject{}
 	derived.name_ = opt.derivedName
-	derived.discriminatorValue = derivedIdentifierValue
+	derived.discriminatorValue = discriminatorValue
 	derived.comment = comment
 
-	if parent.discriminatorKey != "" && derivedIdentifierValue != "" {
-		derived.fields = append(derived.fields, &fixedStringField{name: parent.discriminatorKey, value: derivedIdentifierValue})
+	if parent.discriminatorKey != "" && discriminatorValue != "" {
+		derived.fields = append(derived.fields, &fixedStringField{name: parent.discriminatorKey, value: discriminatorValue})
 	}
 
 	// 親子関係を設定
@@ -130,13 +130,13 @@ func (b *builder) addDerived(derivedIdentifierValue string, parentName string, c
 		specifitFieldTypeName := opt.derivedName + "Data"
 		if opt.specificTypeIsAbstract {
 			derived.typeSpecificAbstract = b.addAbstractObject(specifitFieldTypeName, opt.specificTypeDIK, "")
-			derived.addFields(&interfaceField{name: derivedIdentifierValue, typeName: specifitFieldTypeName})
+			derived.addFields(&interfaceField{name: discriminatorValue, typeName: specifitFieldTypeName})
 		} else {
 			derived.typeSpecificObject = b.addConcreteObject(specifitFieldTypeName, "")
 			if opt.specificFieldMayNull {
-				derived.addFields(&field{name: derivedIdentifierValue, typeCode: jen.Op("*").Id(specifitFieldTypeName)})
+				derived.addFields(&field{name: discriminatorValue, typeCode: jen.Op("*").Id(specifitFieldTypeName)})
 			} else {
-				derived.addFields(&field{name: derivedIdentifierValue, typeCode: jen.Id(specifitFieldTypeName)})
+				derived.addFields(&field{name: discriminatorValue, typeCode: jen.Id(specifitFieldTypeName)})
 			}
 		}
 	}

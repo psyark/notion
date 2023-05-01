@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
 )
 
 func init() {
@@ -104,18 +105,30 @@ func init() {
 				Description: "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
 				Field:       "results",
 				Type:        "array of objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// 各派生クラスで定義
-				},
+				output:      func(e *objectDocParameter, b *builder) {},
 			}, {
 				Description: "A constant string that represents the type of the objects in results.",
 				Field:       "type",
 				Type:        "\"block\"\n\n\"comment\"\n\n\"database\"\n\n\"page\"\n\n\"page_or_database\"\n\n\"property_item\"\n\n\"user\"",
 				output: func(e *objectDocParameter, b *builder) {
-					// 各派生クラスを作成
 					for _, name := range strings.Split(e.Type, "\n\n") {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
-						b.addDerived(name, "Pagination", "")
+
+						var typeSpecificField fieldCoder = &field{name: name, typeCode: jen.Struct()}
+						if name == "property_item" {
+							typeSpecificField = &interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description}
+						}
+
+						var resultsField fieldCoder = &field{name: "results", typeCode: jen.Id(strcase.UpperCamelCase(name) + "List")}
+						switch name {
+						case "database", "page":
+							resultsField = &field{name: "results", typeCode: jen.Index().Id(strcase.UpperCamelCase(name))}
+						}
+
+						b.addDerived(name, "Pagination", "").addFields(
+							typeSpecificField,
+							resultsField,
+						)
 					}
 					b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
 					getSymbol[concreteObject](b, "PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
@@ -124,17 +137,7 @@ func init() {
 				Description: "An object containing type-specific pagination information. For\u00a0property_items, the value corresponds to the\u00a0paginated page property type. For all other types, the value is an empty object.",
 				Field:       "{type}",
 				Type:        "paginated list object",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO 各派生クラスを定義
-					getSymbol[concreteObject](b, "PagePagination").addFields(
-						&field{name: "page", typeCode: jen.Struct(), comment: e.Description},
-						&field{name: "results", typeCode: jen.Index().Id("Page")},
-					)
-					getSymbol[concreteObject](b, "PropertyItemPagination").addFields(
-						&interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description},
-						&field{name: "results", typeCode: jen.Id("PropertyItemList")},
-					)
-				},
+				output:      func(e *objectDocParameter, b *builder) {},
 			}},
 			&objectDocHeadingElement{
 				Text:   "Parameters for paginated requests",

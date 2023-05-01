@@ -65,7 +65,7 @@ func init() {
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[abstractObject](b, "Block").addFields(e.asField(jen.Id("Parent")))
+					getSymbol[abstractObject](b, "Block").addFields(e.asInterfaceField("Parent"))
 				},
 			}, {
 				Field:        "type",
@@ -395,15 +395,13 @@ func init() {
 				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
-				Text: "Column list and column",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
+				Text:   "Column list and column",
+				output: func(e *objectDocHeadingElement, b *builder) {},
 			},
 			&objectDocParagraphElement{
 				Text: "\nColumn lists are parent blocks for columns. They do not contain any information within the column_list property. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					b.addDerived("column_list", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -417,7 +415,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					b.addDerived("column", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -770,13 +768,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Paragraph",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("paragraph", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nParagraph block objects contain the following information within the paragraph property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ParagraphBlock").typeSpecificObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -784,38 +782,38 @@ func init() {
 				Field:       "rich_text",
 				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ParagraphBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				Field:       "color",
 				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ParagraphBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}, {
 				Description: "The nested child blocks (if any) of the paragraph block.",
 				Field:       "children",
 				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ParagraphBlock").typeSpecificObject.addFields(e.asField(jen.Id("BlockList")))
+					getSymbol[concreteObject](b, "ParagraphBlock").typeSpecificObject.addFields(&field{
+						name:     "nandakore",
+						typeCode: jen.Struct(),
+					})
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n} ",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "PDF",

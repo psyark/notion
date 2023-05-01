@@ -112,3 +112,10 @@ func TestQueryDatabase(t *testing.T) {
 		})
 	}
 }
+
+func TestRetrieveBlockChildren(t *testing.T) {
+	ctx := context.Background()
+	if _, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, requestId(t.Name()), useCache(), validateResult()); err != nil {
+		t.Fatal(err)
+	}
+}

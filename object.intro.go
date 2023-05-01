@@ -91,21 +91,27 @@ func (u *paginationUnmarshaler) MarshalJSON() ([]byte, error) {
 
 type BlockPagination struct {
 	PaginationCommon
-	Type alwaysBlock `json:"type"`
+	Type    alwaysBlock `json:"type"`
+	Block   struct{}    `json:"block"`
+	Results BlockList   `json:"results"`
 }
 
 func (_ *BlockPagination) isPagination() {}
 
 type CommentPagination struct {
 	PaginationCommon
-	Type alwaysComment `json:"type"`
+	Type    alwaysComment `json:"type"`
+	Comment struct{}      `json:"comment"`
+	Results CommentList   `json:"results"`
 }
 
 func (_ *CommentPagination) isPagination() {}
 
 type DatabasePagination struct {
 	PaginationCommon
-	Type alwaysDatabase `json:"type"`
+	Type     alwaysDatabase `json:"type"`
+	Database struct{}       `json:"database"`
+	Results  []Database     `json:"results"`
 }
 
 func (_ *DatabasePagination) isPagination() {}
@@ -113,7 +119,7 @@ func (_ *DatabasePagination) isPagination() {}
 type PagePagination struct {
 	PaginationCommon
 	Type    alwaysPage `json:"type"`
-	Page    struct{}   `json:"page"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
+	Page    struct{}   `json:"page"`
 	Results []Page     `json:"results"`
 }
 
@@ -121,7 +127,9 @@ func (_ *PagePagination) isPagination() {}
 
 type PageOrDatabasePagination struct {
 	PaginationCommon
-	Type alwaysPageOrDatabase `json:"type"`
+	Type           alwaysPageOrDatabase `json:"type"`
+	PageOrDatabase struct{}             `json:"page_or_database"`
+	Results        PageOrDatabaseList   `json:"results"`
 }
 
 func (_ *PageOrDatabasePagination) isPagination() {}
@@ -129,7 +137,7 @@ func (_ *PageOrDatabasePagination) isPagination() {}
 type PropertyItemPagination struct {
 	PaginationCommon
 	Type         alwaysPropertyItem    `json:"type"`
-	PropertyItem PaginatedPropertyInfo `json:"property_item"` // An object containing type-specific pagination information. For property_items, the value corresponds to the paginated page property type. For all other types, the value is an empty object.
+	PropertyItem PaginatedPropertyInfo `json:"property_item"` // A constant string that represents the type of the objects in results.
 	Results      PropertyItemList      `json:"results"`
 }
 
@@ -152,7 +160,9 @@ func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {
 
 type UserPagination struct {
 	PaginationCommon
-	Type alwaysUser `json:"type"`
+	Type    alwaysUser `json:"type"`
+	User    struct{}   `json:"user"`
+	Results UserList   `json:"results"`
 }
 
 func (_ *UserPagination) isPagination() {}

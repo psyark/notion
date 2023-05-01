@@ -6,6 +6,9 @@ import (
 	"github.com/google/uuid"
 )
 
+type CommentList any        // TODO
+type PageOrDatabaseList any // TODO
+
 type ISO8601String = string
 
 type URLReference struct {

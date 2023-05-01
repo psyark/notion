@@ -63,6 +63,20 @@ type BlockCommon struct {
 	HasChildren    bool          `json:"has_children"`     // Whether or not the block has children blocks nested within it.
 }
 
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *BlockCommon) UnmarshalJSON(data []byte) error {
+	type Alias BlockCommon
+	t := &struct {
+		*Alias
+		Parent parentUnmarshaler `json:"parent"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling BlockCommon: %w", err)
+	}
+	o.Parent = t.Parent.value
+	return nil
+}
+
 func (c *BlockCommon) GetObject() alwaysBlock {
 	return c.Object
 }
@@ -112,6 +126,9 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 		ChildDatabase    json.RawMessage `json:"child_database"`
 		ChildPage        json.RawMessage `json:"child_page"`
 		Code             json.RawMessage `json:"code"`
+		ColumnList       json.RawMessage `json:"column_list"`
+		Column           json.RawMessage `json:"column"`
+		Paragraph        json.RawMessage `json:"paragraph"`
 	}{}
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
@@ -131,6 +148,12 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = &ChildPageBlock{}
 	case t.Code != nil:
 		u.value = &CodeBlock{}
+	case t.ColumnList != nil:
+		u.value = &ColumnListBlock{}
+	case t.Column != nil:
+		u.value = &ColumnBlock{}
+	case t.Paragraph != nil:
+		u.value = &ParagraphBlock{}
 	default:
 		return fmt.Errorf("unmarshal Block: %s", string(data))
 	}
@@ -271,4 +294,49 @@ type CodeBlockData struct {
 	Caption  RichTextList `json:"caption"`   // The rich text in the caption of the code block.
 	RichText RichTextList `json:"rich_text"` // The rich text in the code block.
 	Language string       `json:"language"`  // The language of the code contained in the code block.
+}
+
+/*
+
+Column lists are parent blocks for columns. They do not contain any information within the column_list property.
+*/
+type ColumnListBlock struct {
+	BlockCommon
+	Type       alwaysColumnList    `json:"type"`
+	ColumnList ColumnListBlockData `json:"column_list"`
+}
+
+func (_ *ColumnListBlock) isBlock() {}
+
+type ColumnListBlockData struct{}
+
+// Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
+type ColumnBlock struct {
+	BlockCommon
+	Type   alwaysColumn    `json:"type"`
+	Column ColumnBlockData `json:"column"`
+}
+
+func (_ *ColumnBlock) isBlock() {}
+
+type ColumnBlockData struct{}
+
+// Paragraph
+type ParagraphBlock struct {
+	BlockCommon
+	Type      alwaysParagraph    `json:"type"`
+	Paragraph ParagraphBlockData `json:"paragraph"`
+}
+
+func (_ *ParagraphBlock) isBlock() {}
+
+/*
+
+Paragraph block objects contain the following information within the paragraph property:
+*/
+type ParagraphBlockData struct {
+	RichText  RichTextList `json:"rich_text"` // The rich text displayed in the paragraph block.
+	Color     string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children  BlockList    `json:"children"`  // The nested child blocks (if any) of the paragraph block.
+	Nandakore struct{}     `json:"nandakore"`
 }
