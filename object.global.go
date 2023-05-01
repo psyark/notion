@@ -114,10 +114,46 @@ func (s alwaysBot) MarshalJSON() ([]byte, error) {
 	return []byte("\"bot\""), nil
 }
 
+type alwaysBreadcrumb string
+
+func (s alwaysBreadcrumb) MarshalJSON() ([]byte, error) {
+	return []byte("\"breadcrumb\""), nil
+}
+
+type alwaysBulletedListItem string
+
+func (s alwaysBulletedListItem) MarshalJSON() ([]byte, error) {
+	return []byte("\"bulleted_list_item\""), nil
+}
+
+type alwaysCallout string
+
+func (s alwaysCallout) MarshalJSON() ([]byte, error) {
+	return []byte("\"callout\""), nil
+}
+
 type alwaysCheckbox string
 
 func (s alwaysCheckbox) MarshalJSON() ([]byte, error) {
 	return []byte("\"checkbox\""), nil
+}
+
+type alwaysChildDatabase string
+
+func (s alwaysChildDatabase) MarshalJSON() ([]byte, error) {
+	return []byte("\"child_database\""), nil
+}
+
+type alwaysChildPage string
+
+func (s alwaysChildPage) MarshalJSON() ([]byte, error) {
+	return []byte("\"child_page\""), nil
+}
+
+type alwaysCode string
+
+func (s alwaysCode) MarshalJSON() ([]byte, error) {
+	return []byte("\"code\""), nil
 }
 
 type alwaysComment string

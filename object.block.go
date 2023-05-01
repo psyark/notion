@@ -105,7 +105,13 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	t := struct {
-		Bookmark json.RawMessage `json:"bookmark"`
+		Bookmark         json.RawMessage `json:"bookmark"`
+		Breadcrumb       json.RawMessage `json:"breadcrumb"`
+		BulletedListItem json.RawMessage `json:"bulleted_list_item"`
+		Callout          json.RawMessage `json:"callout"`
+		ChildDatabase    json.RawMessage `json:"child_database"`
+		ChildPage        json.RawMessage `json:"child_page"`
+		Code             json.RawMessage `json:"code"`
 	}{}
 	if err := json.Unmarshal(data, &t); err != nil {
 		return err
@@ -113,6 +119,18 @@ func (u *blockUnmarshaler) UnmarshalJSON(data []byte) error {
 	switch {
 	case t.Bookmark != nil:
 		u.value = &BookmarkBlock{}
+	case t.Breadcrumb != nil:
+		u.value = &BreadcrumbBlock{}
+	case t.BulletedListItem != nil:
+		u.value = &BulletedListItemBlock{}
+	case t.Callout != nil:
+		u.value = &CalloutBlock{}
+	case t.ChildDatabase != nil:
+		u.value = &ChildDatabaseBlock{}
+	case t.ChildPage != nil:
+		u.value = &ChildPageBlock{}
+	case t.Code != nil:
+		u.value = &CodeBlock{}
 	default:
 		return fmt.Errorf("unmarshal Block: %s", string(data))
 	}
@@ -123,23 +141,134 @@ func (u *blockUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
-/*
-Bookmark block objects contain the following information within the bookmark property:
-{
-  //...other keys excluded
-  "type": "bookmark",
-  //...other keys excluded
-  "bookmark": {
-    "caption": [],
-    "url": "https://companywebsite.com"
-  }
+type BlockList []Block
+
+func (a *BlockList) UnmarshalJSON(data []byte) error {
+	t := []blockUnmarshaler{}
+	if err := json.Unmarshal(data, &t); err != nil {
+		return fmt.Errorf("unmarshaling BlockList: %w", err)
+	}
+	*a = make([]Block, len(t))
+	for i, u := range t {
+		(*a)[i] = u.value
+	}
+	return nil
 }
+
+/*
+Bookmark
+Bookmark block objects contain the following information within the bookmark property:
 */
 type BookmarkBlock struct {
 	BlockCommon
-	Type    alwaysBookmark `json:"type"`
-	Caption RichTextList   `json:"caption"` // The caption for the bookmark.
-	Url     string         `json:"url"`     // The link for the bookmark.
+	Type     alwaysBookmark    `json:"type"`
+	Bookmark BookmarkBlockData `json:"bookmark"`
 }
 
 func (_ *BookmarkBlock) isBlock() {}
+
+type BookmarkBlockData struct {
+	Caption RichTextList `json:"caption"` // The caption for the bookmark.
+	Url     string       `json:"url"`     // The link for the bookmark.
+}
+
+/*
+Breadcrumb
+Breadcrumb block objects do not contain any information within the breadcrumb property.
+*/
+type BreadcrumbBlock struct {
+	BlockCommon
+	Type       alwaysBreadcrumb `json:"type"`
+	Breadcrumb struct{}         `json:"breadcrumb"`
+}
+
+func (_ *BreadcrumbBlock) isBlock() {}
+
+/*
+Bulleted list item
+Bulleted list item block objects contain the following information within the bulleted_list_item property:
+*/
+type BulletedListItemBlock struct {
+	BlockCommon
+	Type             alwaysBulletedListItem    `json:"type"`
+	BulletedListItem BulletedListItemBlockData `json:"bulleted_list_item"`
+}
+
+func (_ *BulletedListItemBlock) isBlock() {}
+
+type BulletedListItemBlockData struct {
+	RichText RichTextList `json:"rich_text"` // The rich text in the bulleted_list_item block.
+	Color    string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children BlockList    `json:"children"`  // The nested child blocks (if any) of the bulleted_list_item block.
+}
+
+/*
+Callout
+Callout block objects contain the following information within the callout property:
+*/
+type CalloutBlock struct {
+	BlockCommon
+	Type    alwaysCallout    `json:"type"`
+	Callout CalloutBlockData `json:"callout"`
+}
+
+func (_ *CalloutBlock) isBlock() {}
+
+type CalloutBlockData struct {
+	RichText RichTextList `json:"rich_text"` // The rich text in the callout block.
+	Icon     FileOrEmoji  `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Color    string       `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+}
+
+// Child database
+type ChildDatabaseBlock struct {
+	BlockCommon
+	Type          alwaysChildDatabase    `json:"type"`
+	ChildDatabase ChildDatabaseBlockData `json:"child_database"`
+}
+
+func (_ *ChildDatabaseBlock) isBlock() {}
+
+/*
+
+Child database block objects contain the following information within the child_database property:
+*/
+type ChildDatabaseBlockData struct {
+	Title string `json:"title"` // The plain text title of the database.
+}
+
+// Child page
+type ChildPageBlock struct {
+	BlockCommon
+	Type      alwaysChildPage    `json:"type"`
+	ChildPage ChildPageBlockData `json:"child_page"`
+}
+
+func (_ *ChildPageBlock) isBlock() {}
+
+/*
+
+Child page block objects contain the following information within the child_page property:
+*/
+type ChildPageBlockData struct {
+	Title string `json:"title"` // The plain text title of the page.
+}
+
+// Code
+type CodeBlock struct {
+	BlockCommon
+	Type alwaysCode    `json:"type"`
+	Code CodeBlockData `json:"code"`
+}
+
+func (_ *CodeBlock) isBlock() {}
+
+/*
+
+Code block objects contain the following information within the code property:
+*/
+type CodeBlockData struct {
+	Caption  RichTextList `json:"caption"`   // The rich text in the caption of the code block.
+	RichText RichTextList `json:"rich_text"` // The rich text in the code block.
+	Language string       `json:"language"`  // The language of the code contained in the code block.
+}

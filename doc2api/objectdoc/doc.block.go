@@ -13,14 +13,16 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAbstractObject("Block", "type", e.Text)
+					b.addAbstractObject("Block", "type", e.Text, addList())
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}",
 				Language: "json",
 				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
+				output: func(e *objectDocCodeElementCode, b *builder) {
+					b.addUnmarshalTest("Block", e.Code)
+				},
 			}}},
 			&objectDocParagraphElement{
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
@@ -53,11 +55,8 @@ func init() {
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[abstractObject](b, "Block").addFields(&field{
-						name:     strings.TrimSuffix(e.Field, "*"),
-						typeCode: UUID,
-						comment:  e.Description,
-					})
+					e.Field = strings.TrimSuffix(e.Field, "*")
+					getSymbol[abstractObject](b, "Block").addFields(e.asField(UUID))
 				},
 			}, {
 				Field:        "parent",
@@ -65,11 +64,8 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[abstractObject](b, "Block").addFields(&field{
-						name:     strings.TrimSuffix(e.Field, "*"),
-						typeCode: jen.Id("Parent"),
-						comment:  e.Description,
-					})
+					e.Field = strings.TrimSuffix(e.Field, "*")
+					getSymbol[abstractObject](b, "Block").addFields(e.asField(jen.Id("Parent")))
 				},
 			}, {
 				Field:        "type",
@@ -167,13 +163,13 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addDerived("bookmark", "Block", "")
+					b.addDerived("bookmark", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBookmark block objects contain the following information within the bookmark property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").comment = strings.TrimSpace(e.Text)
+					getSymbol[concreteObject](b, "BookmarkBlock").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -181,262 +177,222 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.Id("RichTextList")))
+					getSymbol[concreteObject](b, "BookmarkBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
 				Field:       "url",
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BookmarkBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
 				Language: "json",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").comment += "\n" + strings.TrimSpace(e.Code)
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Breadcrumb",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("breadcrumb", "Block", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBreadcrumb block objects do not contain any information within the breadcrumb property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "BreadcrumbBlock").addFields(&field{
+						name:     "breadcrumb",
+						typeCode: jen.Struct(),
+					}).comment += e.Text
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Bulleted list item",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("bulleted_list_item", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nBulleted list item block objects contain the following information within the bulleted_list_item property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "BulletedListItemBlock").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text in the bulleted_list_item block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
+				Description: "The rich text in the bulleted_list_item block.",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "BulletedListItemBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Field:       "color",
+				Type:        "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "BulletedListItemBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}, {
-				Description:  "The nested child blocks (if any) of the bulleted_list_item block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks (if any) of the bulleted_list_item block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "BulletedListItemBlock").typeSpecificObject.addFields(e.asField(jen.Id("BlockList")))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Callout",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("callout", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nCallout block objects contain the following information within the callout property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CalloutBlock").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text in the callout block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
+				Description: "The rich text in the callout block.",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CalloutBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
-				Description:  "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
-				ExampleValue: "",
-				Field:        "icon",
-				Property:     "",
-				Type:         "object",
+				Field:       "icon",
+				Type:        "object",
+				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CalloutBlock").typeSpecificObject.addFields(e.asField(jen.Id("FileOrEmoji")))
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CalloutBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
 				Language: "json",
 				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Child database",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("child_database", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nChild database block objects contain the following information within the child_database property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ChildDatabaseBlock").typeSpecificObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The plain text title of the database.",
-				ExampleValue: "",
-				Field:        "title",
-				Property:     "",
-				Type:         "string",
+				Description: "The plain text title of the database.",
+				Field:       "title",
+				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ChildDatabaseBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n} ",
 				Language: "json",
-				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocCalloutElement{
-				Body:  "To create or update `child_database` type blocks, use the [Create a database](ref:create-a-database) and the [Update a database](ref:update-a-database) endpoints, specifying the ID of the parent page in the `parent` body param.",
-				Title: "Creating and updating `child_database` blocks",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
+				Body:   "To create or update `child_database` type blocks, use the [Create a database](ref:create-a-database) and the [Update a database](ref:update-a-database) endpoints, specifying the ID of the parent page in the `parent` body param.",
+				Title:  "Creating and updating `child_database` blocks",
+				Type:   "info",
+				output: func(e *objectDocCalloutElement, b *builder) {},
 			},
 			&objectDocHeadingElement{
 				Text: "Child page",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("child_page", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nChild page block objects contain the following information within the child_page property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ChildPageBlock").typeSpecificObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The plain text title of the page.",
-				ExampleValue: "",
-				Field:        "title",
-				Property:     "",
-				Type:         "string",
+				Description: "The plain text title of the page.",
+				Field:       "title",
+				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "ChildPageBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n} ",
 				Language: "json",
-				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocCalloutElement{
-				Body:  "To create or update `child_page` type blocks, use the [Create a page](https://developers.notion.com/reference/post-page) and the [Update page](https://developers.notion.com/reference/patch-page) endpoints, specifying the ID of the parent page in the `parent` body param.",
-				Title: "Creating and updating `child_page` blocks",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
+				Body:   "To create or update `child_page` type blocks, use the [Create a page](https://developers.notion.com/reference/post-page) and the [Update page](https://developers.notion.com/reference/patch-page) endpoints, specifying the ID of the parent page in the `parent` body param.",
+				Title:  "Creating and updating `child_page` blocks",
+				Type:   "info",
+				output: func(e *objectDocCalloutElement, b *builder) {},
 			},
 			&objectDocHeadingElement{
 				Text: "Code",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
+					b.addDerived("code", "Block", e.Text, addSpecificField())
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nCode block objects contain the following information within the code property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CodeBlock").typeSpecificObject.comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text in the caption of the code block.",
-				ExampleValue: "",
-				Field:        "caption",
-				Property:     "",
-				Type:         "array of Rich text object text objects",
+				Description: "The rich text in the caption of the code block.",
+				Field:       "caption",
+				Type:        "array of Rich text object text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CodeBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
-				Description:  "The rich text in the code block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of Rich text object text objects",
+				Description: "The rich text in the code block.",
+				Field:       "rich_text",
+				Type:        "array of Rich text object text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CodeBlock").typeSpecificObject.addFields(e.asField(jen.Id("RichTextList")))
 				},
 			}, {
-				Description:  "The language of the code contained in the code block.",
-				ExampleValue: "",
-				Field:        "language",
-				Property:     "",
-				Type:         "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
+				Description: "The language of the code contained in the code block.",
+				Field:       "language",
+				Type:        "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
 				output: func(e *objectDocParameter, b *builder) {
-					// TODO
+					getSymbol[concreteObject](b, "CodeBlock").typeSpecificObject.addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n} ",
 				Language: "json",
-				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					// TODO
-				},
+				output:   func(e *objectDocCodeElementCode, b *builder) {},
 			}}},
 			&objectDocHeadingElement{
 				Text: "Column list and column",
@@ -523,11 +479,9 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The link to the website that the embed block displays.",
-				ExampleValue: "",
-				Field:        "url",
-				Property:     "",
-				Type:         "string",
+				Description: "The link to the website that the embed block displays.",
+				Field:       "url",
+				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -561,11 +515,9 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "A KaTeX compatible string.",
-				ExampleValue: "",
-				Field:        "expression",
-				Property:     "",
-				Type:         "string",
+				Description: "A KaTeX compatible string.",
+				Field:       "expression",
+				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -591,29 +543,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The caption of the file block.",
-				ExampleValue: "",
-				Field:        "caption",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The caption of the file block.",
+				Field:       "caption",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "A constant string.",
-				ExampleValue: "",
-				Field:        "type",
-				Property:     "",
-				Type:         "\"file\"\n\n\"external\"",
+				Description: "A constant string.",
+				Field:       "type",
+				Type:        "\"file\"\n\n\"external\"",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "A file object that details information about the file contained in the block.",
-				ExampleValue: "",
-				Field:        "file",
-				Property:     "",
-				Type:         "file object",
+				Description: "A file object that details information about the file contained in the block.",
+				Field:       "file",
+				Type:        "file object",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -639,29 +585,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text of the heading.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text of the heading.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
-				ExampleValue: "",
-				Field:        "is_toggleable",
-				Property:     "",
-				Type:         "boolean",
+				Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
+				Field:       "is_toggleable",
+				Type:        "boolean",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -763,20 +703,16 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "A constant string representing the type of the mention.",
-				ExampleValue: "",
-				Field:        "type",
-				Property:     "",
-				Type:         "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+				Description: "A constant string representing the type of the mention.",
+				Field:       "type",
+				Type:        "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "An object with type-specific information about the mention.",
-				ExampleValue: "",
-				Field:        "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
-				Property:     "",
-				Type:         "object",
+				Description: "An object with type-specific information about the mention.",
+				Field:       "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+				Type:        "object",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -802,29 +738,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the numbered_list_item block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the numbered_list_item block.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks (if any) of the numbered_list_item block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks (if any) of the numbered_list_item block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -850,29 +780,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the paragraph block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the paragraph block.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks (if any) of the paragraph block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks (if any) of the paragraph block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -906,29 +830,26 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "A caption, if provided, for the PDF block.",
-				ExampleValue: "",
-				Field:        "",
-				Property:     "caption",
-				Type:         "array of rich text objects",
+				Description: "A caption, if provided, for the PDF block.",
+				Field:       "",
+				Property:    "caption",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
-				ExampleValue: "",
-				Field:        "",
-				Property:     "type",
-				Type:         "\"external\"\n\n\"file\"",
+				Description: "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
+				Field:       "",
+				Property:    "type",
+				Type:        "\"external\"\n\n\"file\"",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "An object containing type-specific information about the PDF.",
-				ExampleValue: "",
-				Field:        "",
-				Property:     "external \n\nfile",
-				Type:         "file object",
+				Description: "An object containing type-specific information about the PDF.",
+				Field:       "",
+				Property:    "external \n\nfile",
+				Type:        "file object",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -954,29 +875,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the quote block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the quote block.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks, if any, of the quote block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks, if any, of the quote block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1022,20 +937,16 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The value is always null to signify that this is an original synced block that does not refer to another block.",
-				ExampleValue: "",
-				Field:        "synced_from",
-				Property:     "",
-				Type:         "null",
+				Description: "The value is always null to signify that this is an original synced block that does not refer to another block.",
+				Field:       "synced_from",
+				Type:        "null",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1061,20 +972,16 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
-				ExampleValue: "",
-				Field:        "type",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
+				Field:       "type",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "An identifier for the original synced_block.",
-				ExampleValue: "",
-				Field:        "block_id",
-				Property:     "",
-				Type:         "string (UUIDv4)",
+				Description: "An identifier for the original synced_block.",
+				Field:       "block_id",
+				Type:        "string (UUIDv4)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1108,29 +1015,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The number of columns in the table. \n\nNote that this cannot be changed via the public API once a table is created.",
-				ExampleValue: "",
-				Field:        "table_width",
-				Property:     "",
-				Type:         "integer",
+				Description: "The number of columns in the table. \n\nNote that this cannot be changed via the public API once a table is created.",
+				Field:       "table_width",
+				Type:        "integer",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
-				ExampleValue: "",
-				Field:        "has_column_header",
-				Property:     "",
-				Type:         "boolean",
+				Description: "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
+				Field:       "has_column_header",
+				Type:        "boolean",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
-				ExampleValue: "",
-				Field:        "has_row_header",
-				Property:     "",
-				Type:         "boolean",
+				Description: "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
+				Field:       "has_row_header",
+				Type:        "boolean",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1164,11 +1065,10 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
-				ExampleValue: "",
-				Field:        "",
-				Property:     "cells",
-				Type:         "array of array of rich text objects",
+				Description: "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
+				Field:       "",
+				Property:    "cells",
+				Type:        "array of array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1202,11 +1102,10 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "",
-				Property:     "color",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "",
+				Property:    "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1246,20 +1145,16 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the title of the template.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the title of the template.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1285,38 +1180,30 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the To do block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the To do block.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "Whether the To do is checked.",
-				ExampleValue: "",
-				Field:        "checked",
-				Property:     "",
-				Type:         "boolean (optional)",
+				Description: "Whether the To do is checked.",
+				Field:       "checked",
+				Type:        "boolean (optional)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks, if any, of the To do block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks, if any, of the To do block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
@@ -1342,29 +1229,23 @@ func init() {
 				},
 			},
 			&objectDocParametersElement{{
-				Description:  "The rich text displayed in the Toggle block.",
-				ExampleValue: "",
-				Field:        "rich_text",
-				Property:     "",
-				Type:         "array of rich text objects",
+				Description: "The rich text displayed in the Toggle block.",
+				Field:       "rich_text",
+				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Field:        "color",
-				Property:     "",
-				Type:         "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Field:       "color",
+				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
 			}, {
-				Description:  "The nested child blocks, if any, of the Toggle block.",
-				ExampleValue: "",
-				Field:        "children",
-				Property:     "",
-				Type:         "array of block objects",
+				Description: "The nested child blocks, if any, of the Toggle block.",
+				Field:       "children",
+				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
 					// TODO
 				},
