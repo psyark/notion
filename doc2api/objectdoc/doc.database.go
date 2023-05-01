@@ -103,7 +103,7 @@ func init() {
 				Field:       "cover",
 				Type:        "File object (only type of \"external\" is supported currently)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Op("*").Id("ExternalFile")))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Op("*").Id("File")))
 				},
 			}, {
 				Description: "Schema of properties for the database as they appear in Notion.\n\nkey string\nThe name of the property as it appears in Notion.\n\nvalue object\nA Property object.",

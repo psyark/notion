@@ -50,25 +50,25 @@ type Block struct {
 	LastEditedBy     User                   `json:"last_edited_by"`     // User who last edited the block.
 	Archived         bool                   `json:"archived"`           // The archived status of the block.
 	HasChildren      bool                   `json:"has_children"`       // Whether or not the block has children blocks nested within it.
-	Bookmark         *BookmarkBlock         `json:"bookmark"`           // Bookmark
+	Bookmark         *BlockBookmark         `json:"bookmark"`           // Bookmark
 	Breadcrumb       struct{}               `json:"breadcrumb"`         //  Breadcrumb block objects do not contain any information within the breadcrumb property.
-	BulletedListItem *BulletedListItemBlock `json:"bulleted_list_item"` // Bulleted list item
-	Callout          *CalloutBlock          `json:"callout"`            // Callout
-	ChildDatabase    *ChildDatabaseBlock    `json:"child_database"`     // Child database
-	ChildPage        *ChildPageBlock        `json:"child_page"`         // Child page
-	Code             *CodeBlock             `json:"code"`               // Code
+	BulletedListItem *BlockBulletedListItem `json:"bulleted_list_item"` // Bulleted list item
+	Callout          *BlockCallout          `json:"callout"`            // Callout
+	ChildDatabase    *BlockChildDatabase    `json:"child_database"`     // Child database
+	ChildPage        *BlockChildPage        `json:"child_page"`         // Child page
+	Code             *BlockCode             `json:"code"`               // Code
 	ColumnList       struct{}               `json:"column_list"`        //  Column lists are parent blocks for columns. They do not contain any information within the column_list property.
 	Column           struct{}               `json:"column"`             // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
 	Divider          struct{}               `json:"divider"`            //  Divider block objects do not contain any information within the divider property.
-	Embed            *EmbedBlock            `json:"embed"`              // Embed
-	Equation         *EquationBlock         `json:"equation"`           // Equation
+	Embed            *BlockEmbed            `json:"embed"`              // Embed
+	Equation         *BlockEquation         `json:"equation"`           // Equation
 	File             FileWithCaption        `json:"file"`               // File
-	Heading1         *HeadingBlock          `json:"heading_1"`
-	Heading2         *HeadingBlock          `json:"heading_2"`
-	Heading3         *HeadingBlock          `json:"heading_3"`
+	Heading1         *BlockHeading          `json:"heading_1"`
+	Heading2         *BlockHeading          `json:"heading_2"`
+	Heading3         *BlockHeading          `json:"heading_3"`
 	Image            File                   `json:"image"`        //  Image block objects contain a file object detailing information about the image.
-	LinkPreview      *LinkPreviewBlock      `json:"link_preview"` //  Link Preview block objects contain the originally pasted url:
-	Paragraph        *ParagraphBlock        `json:"paragraph"`    // Paragraph
+	LinkPreview      *BlockLinkPreview      `json:"link_preview"` //  Link Preview block objects contain the originally pasted url:
+	Paragraph        *BlockParagraph        `json:"paragraph"`    // Paragraph
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
@@ -122,7 +122,7 @@ func (o Block) MarshalJSON() ([]byte, error) {
 Bookmark
 Bookmark block objects contain the following information within the bookmark property:
 */
-type BookmarkBlock struct {
+type BlockBookmark struct {
 	Caption []RichText `json:"caption"` // The caption for the bookmark.
 	Url     string     `json:"url"`     // The link for the bookmark.
 }
@@ -131,7 +131,7 @@ type BookmarkBlock struct {
 Bulleted list item
 Bulleted list item block objects contain the following information within the bulleted_list_item property:
 */
-type BulletedListItemBlock struct {
+type BlockBulletedListItem struct {
 	RichText []RichText `json:"rich_text"` // The rich text in the bulleted_list_item block.
 	Color    string     `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children"`  // The nested child blocks (if any) of the bulleted_list_item block.
@@ -141,7 +141,7 @@ type BulletedListItemBlock struct {
 Callout
 Callout block objects contain the following information within the callout property:
 */
-type CalloutBlock struct {
+type BlockCallout struct {
 	RichText []RichText  `json:"rich_text"` // The rich text in the callout block.
 	Icon     FileOrEmoji `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
 	Color    string      `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
@@ -151,7 +151,7 @@ type CalloutBlock struct {
 
 Child database block objects contain the following information within the child_database property:
 */
-type ChildDatabaseBlock struct {
+type BlockChildDatabase struct {
 	Title string `json:"title"` // The plain text title of the database.
 }
 
@@ -159,7 +159,7 @@ type ChildDatabaseBlock struct {
 
 Child page block objects contain the following information within the child_page property:
 */
-type ChildPageBlock struct {
+type BlockChildPage struct {
 	Title string `json:"title"` // The plain text title of the page.
 }
 
@@ -167,7 +167,7 @@ type ChildPageBlock struct {
 
 Code block objects contain the following information within the code property:
 */
-type CodeBlock struct {
+type BlockCode struct {
 	Caption  []RichText `json:"caption"`   // The rich text in the caption of the code block.
 	RichText []RichText `json:"rich_text"` // The rich text in the code block.
 	Language string     `json:"language"`  // The language of the code contained in the code block.
@@ -177,7 +177,7 @@ type CodeBlock struct {
 
 Embed block objects include information about another website displayed within the Notion UI. The embed property contains the following information:
 */
-type EmbedBlock struct {
+type BlockEmbed struct {
 	Url string `json:"url"` // The link to the website that the embed block displays.
 }
 
@@ -185,7 +185,7 @@ type EmbedBlock struct {
 
 Equation block objects are represented as children of paragraph blocks. They are nested within a rich text object and contain the following information within the equation property:
 */
-type EquationBlock struct {
+type BlockEquation struct {
 	Expression string `json:"expression"` // A KaTeX compatible string.
 }
 
@@ -193,7 +193,7 @@ type EquationBlock struct {
 
 All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
 */
-type HeadingBlock struct {
+type BlockHeading struct {
 	RichText     []RichText `json:"rich_text"`     // The rich text of the heading.
 	Color        string     `json:"color"`         // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	IsToggleable bool       `json:"is_toggleable"` // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
@@ -203,7 +203,7 @@ type HeadingBlock struct {
 
 Link Preview block objects contain the originally pasted url:
 */
-type LinkPreviewBlock struct {
+type BlockLinkPreview struct {
 	Url string `json:"url"`
 }
 
@@ -211,7 +211,7 @@ type LinkPreviewBlock struct {
 
 Paragraph block objects contain the following information within the paragraph property:
 */
-type ParagraphBlock struct {
+type BlockParagraph struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
 	Color    string     `json:"color"`              // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.

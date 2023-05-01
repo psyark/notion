@@ -22,7 +22,7 @@ type Database struct {
 	Title          []RichText     `json:"title"`            // Name of the database as it appears in Notion. See rich text object) for a breakdown of the properties.
 	Description    []RichText     `json:"description"`      // Description of the database as it appears in Notion. See rich text object) for a breakdown of the properties.
 	Icon           FileOrEmoji    `json:"icon"`             // Page icon.
-	Cover          *ExternalFile  `json:"cover"`            // Page cover image.
+	Cover          *File          `json:"cover"`            // Page cover image.
 	Properties     PropertyMap    `json:"properties"`       // Schema of properties for the database as they appear in Notion.  key string The name of the property as it appears in Notion.  value object A Property object.
 	Parent         Parent         `json:"parent"`           // Information about the database's parent. See Parent object.
 	Url            string         `json:"url"`              // The URL of the Notion database.

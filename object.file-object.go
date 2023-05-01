@@ -17,10 +17,10 @@ Each file object includes the following fields:
 To modify page or database property values that are made from file objects, like `icon`, `cover`, or `files` page property values, use the [update page](https://developers.notion.com/reference/patch-page) or [update database](https://developers.notion.com/reference/update-a-database) endpoints.
 */
 type File struct {
-	Type     string            `json:"type"`
-	Name     string            `json:"name,omitempty"` // undocumented
-	File     *NotionHostedFile `json:"file"`           // Notion-hosted files
-	External *ExternalFile     `json:"external"`       // External files
+	Type     string        `json:"type"`
+	Name     string        `json:"name,omitempty"` // undocumented
+	File     *FileFile     `json:"file"`           // Notion-hosted files
+	External *FileExternal `json:"external"`       // External files
 }
 
 func (o File) MarshalJSON() ([]byte, error) {
@@ -40,11 +40,11 @@ func (o File) MarshalJSON() ([]byte, error) {
 }
 
 /*
-
+Notion-hosted files
 All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:
 You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.
 */
-type NotionHostedFile struct {
+type FileFile struct {
 	Url        string        `json:"url"`         // An authenticated S3 URL to the file.   The URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.
 	ExpiryTime ISO8601String `json:"expiry_time"` // The date and time when the link expires, formatted as an ISO 8601 date time string.
 }
@@ -55,6 +55,6 @@ An external file is any URL linked to in Notion that isn’t hosted by Notion. A
 
 The Notion API supports adding, retrieving, and updating links to external files.
 */
-type ExternalFile struct {
+type FileExternal struct {
 	Url string `json:"url"` // A link to the externally hosted content.
 }

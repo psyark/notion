@@ -3,9 +3,8 @@ package notion
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	uuid "github.com/google/uuid"
+	"net/http"
 )
 
 // Retrieve block children

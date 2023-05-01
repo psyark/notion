@@ -77,6 +77,8 @@ func (c *converter) convert() error {
 		return err
 	}
 
+	fmt.Println(c.url)
+	fmt.Printf("../../method.%s.go\n", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " ")))
 	return file.Save(fmt.Sprintf("../../method.%s.go", strcase.SnakeCase(strings.ReplaceAll(sp.Doc.Title, " a ", " "))))
 }
 

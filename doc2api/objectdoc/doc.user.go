@@ -107,13 +107,13 @@ func init() {
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
 					b.addAdaptiveField("User", "person", e.Text)
-					getSymbol[concreteObject](b, "PersonUser")
+					getSymbol[concreteObject](b, "UserPerson")
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nUser objects that represent people have the type property set to \"person\". These objects also have the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "PersonUser").comment += e.Text
+					getSymbol[concreteObject](b, "UserPerson").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -127,7 +127,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "PersonUser").addFields(&field{
+					getSymbol[concreteObject](b, "UserPerson").addFields(&field{
 						name:     "email",
 						typeCode: jen.String(),
 						comment:  e.Description,
@@ -138,13 +138,12 @@ func init() {
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) {
 					b.addAdaptiveField("User", "bot", e.Text)
-					getSymbol[concreteObject](b, "BotUser")
 				},
 			},
 			&objectDocParagraphElement{
 				Text: "\nA user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BotUser").comment += e.Text
+					getSymbol[concreteObject](b, "UserBot").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -161,7 +160,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BotUser").addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
+					getSymbol[concreteObject](b, "UserBot").addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
 					b.addConcreteObject("BotUserDataOwner", e.Description)
 					b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 				},
@@ -183,7 +182,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BotUser").addFields(e.asField(jen.String(), omitEmpty))
+					getSymbol[concreteObject](b, "UserBot").addFields(e.asField(jen.String(), omitEmpty))
 				},
 			}},
 		},

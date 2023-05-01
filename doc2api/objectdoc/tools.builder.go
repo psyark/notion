@@ -60,7 +60,7 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 }
 
 func (b *builder) addAdaptiveField(name string, discriminatorValue string, comment string) *adaptiveObject {
-	dataName := strcase.UpperCamelCase(discriminatorValue) + name
+	dataName := name + strcase.UpperCamelCase(discriminatorValue)
 	b.addConcreteObject(dataName, comment)
 	return b.addAdaptiveFieldWithType(name, discriminatorValue, comment, jen.Op("*").Id(dataName))
 }

@@ -60,7 +60,7 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 func TestUpdatePage(t *testing.T) {
 	ctx := context.Background()
 
-	cases := []*UpdatePageParams{
+	cases := []*UpdatePagePropertiesParams{
 		{},
 		{
 			Properties: PropertyValueMap{
@@ -81,7 +81,7 @@ func TestUpdatePage(t *testing.T) {
 	for i, params := range cases {
 		params := params
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
-			if _, err := cli.UpdatePage(ctx, DATABASE_PAGE_FOR_WRITE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
+			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
 				t.Fatal(err)

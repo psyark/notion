@@ -144,7 +144,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nNotion supports inline LaTeX equations as rich text object’s with a type value of \"equation\". The corresponding equation type object contains the following: ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "EquationRichText").comment += e.Text
+					getSymbol[concreteObject](b, "RichTextEquation").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -153,7 +153,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "EquationRichText").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RichTextEquation").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocHeadingElement{
@@ -197,23 +197,19 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Mention", "database", e.Text)
+					b.addAdaptiveFieldWithType("Mention", "database", e.Text, jen.Op("*").Id("PageReference"))
 				},
 			},
 			&objectDocParagraphElement{
-				Text: "\nDatabase mentions contain a database reference within the corresponding\u00a0database\u00a0field. A database reference is an object with an\u00a0id\u00a0key and a string value (UUIDv4) corresponding to a database ID.\n\nIf an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a database mention ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "DatabaseMention").addFields(
-						&field{name: "database", typeCode: jen.Id("PageReference")},
-					).comment += e.Text
-				},
+				Text:   "\nDatabase mentions contain a database reference within the corresponding\u00a0database\u00a0field. A database reference is an object with an\u00a0id\u00a0key and a string value (UUIDv4) corresponding to a database ID.\n\nIf an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults.\n\nExample rich text mention object for a database mention ",
+				output: func(e *objectDocParagraphElement, b *builder) {},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
 				Code:     "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"database\",\n    \"database\": {\n      \"id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Database with test things\",\n  \"href\": \"https://www.notion.so/a1d8501e1ac143e9a6bdea9fe6c8822b\"\n}",
 				Language: "json",
 				Name:     "",
 				output: func(e *objectDocCodeElementCode, b *builder) {
-					getSymbol[concreteObject](b, "DatabaseMention").comment += "\n" + e.Code
+					b.addUnmarshalTest("RichText", e.Code)
 				},
 			}}},
 			&objectDocHeadingElement{
@@ -249,7 +245,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.\n\nExample rich text mention object for a link_preview mention ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "LinkPreviewMention").addFields(
+					getSymbol[concreteObject](b, "MentionLinkPreview").addFields(
 						&field{name: "url", typeCode: jen.String()},
 					).comment += e.Text
 				},
@@ -377,7 +373,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nIf a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").comment += e.Text
+					getSymbol[concreteObject](b, "RichTextText").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -386,7 +382,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "RichTextText").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Field:        "link",
@@ -394,7 +390,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "TextRichText").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+					getSymbol[concreteObject](b, "RichTextText").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 				},
 			}},
 			&objectDocHeadingElement{

@@ -33,8 +33,8 @@ type User struct {
 	Id        uuid.UUID     `json:"id"`         // Unique identifier for this user.
 	Name      string        `json:"name"`       // User's name, as displayed in Notion.
 	AvatarUrl nullv4.String `json:"avatar_url"` // Chosen avatar image.
-	Person    *PersonUser   `json:"person"`     // People
-	Bot       *BotUser      `json:"bot"`        // Bots
+	Person    *UserPerson   `json:"person"`     // People
+	Bot       *UserBot      `json:"bot"`        // Bots
 }
 
 func (o User) MarshalJSON() ([]byte, error) {
@@ -59,7 +59,7 @@ func (o User) MarshalJSON() ([]byte, error) {
 People
 User objects that represent people have the type property set to "person". These objects also have the following properties:
 */
-type PersonUser struct {
+type UserPerson struct {
 	Email string `json:"email"` // Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.
 }
 
@@ -67,7 +67,7 @@ type PersonUser struct {
 Bots
 A user object's type property is"bot" when the user object represents a bot. A bot user object has the following properties:
 */
-type BotUser struct {
+type UserBot struct {
 	Owner         *BotUserDataOwner `json:"owner,omitempty"`          // Information about who owns this bot.
 	WorkspaceName string            `json:"workspace_name,omitempty"` // If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.
 }

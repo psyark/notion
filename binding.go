@@ -69,7 +69,7 @@ func UnmarshalPage(page *Page, dst any) error {
 // GetUpdatePageParams は渡されたsrcと現在のpageを比較し、
 // プロパティ・カバー・アイコンを更新するためのUpdatePageParams、または更新が不要な場合のnilを返します
 // srcは適切にタグ付けされたstruct（またはそのポインタ）である必要があります
-func GetUpdatePageParams(src any, page *Page) (*UpdatePageParams, error) {
+func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, error) {
 	t := reflect.TypeOf(src)
 	v := reflect.ValueOf(src)
 	if t.Kind() != reflect.Pointer {
@@ -82,7 +82,7 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePageParams, error) {
 		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
 	}
 
-	var params *UpdatePageParams
+	var params *UpdatePagePropertiesParams
 	for i := 0; i < t.NumField(); i++ {
 		sf := t.Field(i)
 		if sf.Tag.Get("notion") != "" {
@@ -96,7 +96,7 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePageParams, error) {
 			json2, _ := json.Marshal(v.Field(i).Interface())
 			if string(json1) != string(json2) {
 				if params == nil {
-					params = &UpdatePageParams{Properties: PropertyValueMap{}}
+					params = &UpdatePagePropertiesParams{Properties: PropertyValueMap{}}
 				}
 				pvu := propertyValueUnmarshaler{}
 				data, _ := json.Marshal(prop)

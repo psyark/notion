@@ -19,9 +19,9 @@ type RichText struct {
 	Annotations Annotations       `json:"annotations"` // The information used to style the rich text object. Refer to the annotation object section below for details.
 	PlainText   string            `json:"plain_text"`  // The plain text without annotations.
 	Href        nullv4.String     `json:"href"`        // The URL of any link or Notion mention in this text, if any.
-	Equation    *EquationRichText `json:"equation"`    // Equation
+	Equation    *RichTextEquation `json:"equation"`    // Equation
 	Mention     *Mention          `json:"mention"`     // Mention
-	Text        *TextRichText     `json:"text"`        // Text
+	Text        *RichTextText     `json:"text"`        // Text
 }
 
 func (o RichText) MarshalJSON() ([]byte, error) {
@@ -59,7 +59,7 @@ type Annotations struct {
 Equation
 Notion supports inline LaTeX equations as rich text object’s with a type value of "equation". The corresponding equation type object contains the following:
 */
-type EquationRichText struct {
+type RichTextEquation struct {
 	Expression string `json:"expression"` // The LaTeX string representing the inline equation.
 }
 
@@ -71,9 +71,9 @@ If a rich text object’s type value is "mention", then the corresponding mentio
 */
 type Mention struct {
 	Type            string                 `json:"type"`
-	Database        *DatabaseMention       `json:"database"`         // Database mention type object
+	Database        *PageReference         `json:"database"`         // Database mention type object
 	Date            *DatePropertyValueData `json:"date"`             // Date mention type object
-	LinkPreview     *LinkPreviewMention    `json:"link_preview"`     // Link Preview mention type object
+	LinkPreview     *MentionLinkPreview    `json:"link_preview"`     // Link Preview mention type object
 	Page            *PageReference         `json:"page"`             // Page mention type object
 	TemplateMention *TemplateMention       `json:"template_mention"` // Template mention type object
 	User            *User                  `json:"user"`             // User mention type object
@@ -100,43 +100,12 @@ func (o Mention) MarshalJSON() ([]byte, error) {
 }
 
 /*
-Database mention type object
-Database mentions contain a database reference within the corresponding database field. A database reference is an object with an id key and a string value (UUIDv4) corresponding to a database ID.
-
-If an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as "Untitled" and the annotation object’s values are defaults.
-
-Example rich text mention object for a database mention
-{
-  "type": "mention",
-  "mention": {
-    "type": "database",
-    "database": {
-      "id": "a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b"
-    }
-  },
-  "annotations": {
-    "bold": false,
-    "italic": false,
-    "strikethrough": false,
-    "underline": false,
-    "code": false,
-    "color": "default"
-  },
-  "plain_text": "Database with test things",
-  "href": "https://www.notion.so/a1d8501e1ac143e9a6bdea9fe6c8822b"
-}
-*/
-type DatabaseMention struct {
-	Database PageReference `json:"database"`
-}
-
-/*
 Link Preview mention type object
 If a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.
 
 Example rich text mention object for a link_preview mention
 */
-type LinkPreviewMention struct {
+type MentionLinkPreview struct {
 	Url string `json:"url"`
 }
 
@@ -174,7 +143,7 @@ func (o TemplateMention) MarshalJSON() ([]byte, error) {
 Text
 If a rich text object’s type value is "text", then the corresponding text field contains an object including the following:
 */
-type TextRichText struct {
+type RichTextText struct {
 	Content string        `json:"content"` // The actual text content of the text.
 	Link    *URLReference `json:"link"`    // An object with information about any inline link in this text, if included.   If the text contains an inline link, then the object key is url and the value is the URL’s string web address.   If the text doesn’t have any inline links, then the value is null.
 }

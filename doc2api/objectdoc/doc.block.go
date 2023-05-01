@@ -169,7 +169,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nBookmark block objects contain the following information within the bookmark property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").comment += e.Text
+					getSymbol[concreteObject](b, "BlockBookmark").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -177,14 +177,14 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Field:       "url",
 				Type:        "string",
 				Description: "The link for the bookmark.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BookmarkBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -217,7 +217,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nBulleted list item block objects contain the following information within the bulleted_list_item property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BulletedListItemBlock").comment += e.Text
+					getSymbol[concreteObject](b, "BlockBulletedListItem").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -225,21 +225,21 @@ func init() {
 				Type:        "array of rich text objects",
 				Description: "The rich text in the bulleted_list_item block.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BulletedListItemBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Field:       "color",
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BulletedListItemBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Description: "The nested child blocks (if any) of the bulleted_list_item block.",
 				Field:       "children",
 				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BulletedListItemBlock").addFields(e.asField(jen.Index().Id("Block")))
+					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("Block")))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -257,7 +257,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCallout block objects contain the following information within the callout property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "CalloutBlock").comment += e.Text
+					getSymbol[concreteObject](b, "BlockCallout").comment += e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -265,21 +265,21 @@ func init() {
 				Type:        "array of rich text objects",
 				Description: "The rich text in the callout block.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CalloutBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Field:       "icon",
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CalloutBlock").addFields(e.asField(jen.Id("FileOrEmoji")))
+					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji")))
 				},
 			}, {
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				Field:       "color",
 				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CalloutBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -297,7 +297,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nChild database block objects contain the following information within the child_database property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "ChildDatabaseBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockChildDatabase").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -305,7 +305,7 @@ func init() {
 				Field:       "title",
 				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ChildDatabaseBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockChildDatabase").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -328,7 +328,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nChild page block objects contain the following information within the child_page property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "ChildPageBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockChildPage").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -336,7 +336,7 @@ func init() {
 				Field:       "title",
 				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ChildPageBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockChildPage").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -359,7 +359,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nCode block objects contain the following information within the code property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "CodeBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockCode").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -367,21 +367,21 @@ func init() {
 				Field:       "caption",
 				Type:        "array of Rich text object text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CodeBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Description: "The rich text in the code block.",
 				Field:       "rich_text",
 				Type:        "array of Rich text object text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CodeBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Description: "The language of the code contained in the code block.",
 				Field:       "language",
 				Type:        "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "CodeBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -454,7 +454,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEmbed block objects include information about another website displayed within the Notion UI. The embed property contains the following information:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "EmbedBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockEmbed").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -462,7 +462,7 @@ func init() {
 				Field:       "url",
 				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "EmbedBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockEmbed").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -486,7 +486,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nEquation block objects are represented as children of paragraph blocks. They are nested within a rich text object and contain the following information within the equation property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "EquationBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockEquation").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -494,7 +494,7 @@ func init() {
 				Field:       "expression",
 				Type:        "string",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "EquationBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockEquation").addFields(e.asField(jen.String()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -550,10 +550,10 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nAll heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addConcreteObject("HeadingBlock", e.Text)
-					b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("HeadingBlock"))
-					b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("HeadingBlock"))
-					b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("HeadingBlock"))
+					b.addConcreteObject("BlockHeading", e.Text)
+					b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("BlockHeading"))
+					b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("BlockHeading"))
+					b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("BlockHeading"))
 				},
 			},
 			&objectDocParametersElement{{
@@ -561,21 +561,21 @@ func init() {
 				Field:       "rich_text",
 				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "HeadingBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				Field:       "color",
 				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "HeadingBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
 				Field:       "is_toggleable",
 				Type:        "boolean",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "HeadingBlock").addFields(e.asField(jen.Bool()))
+					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Bool()))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -634,7 +634,7 @@ func init() {
 				Text: "\nLink Preview block objects contain the originally pasted url:",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addAdaptiveField("Block", "link_preview", e.Text)
-					getSymbol[concreteObject](b, "LinkPreviewBlock").addFields(&field{name: "url", typeCode: jen.String()})
+					getSymbol[concreteObject](b, "BlockLinkPreview").addFields(&field{name: "url", typeCode: jen.String()})
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -731,7 +731,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nParagraph block objects contain the following information within the paragraph property:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "ParagraphBlock").comment = e.Text
+					getSymbol[concreteObject](b, "BlockParagraph").comment = e.Text
 				},
 			},
 			&objectDocParametersElement{{
@@ -739,21 +739,21 @@ func init() {
 				Field:       "rich_text",
 				Type:        "array of rich text objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ParagraphBlock").addFields(e.asField(jen.Index().Id("RichText")))
+					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("RichText")))
 				},
 			}, {
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				Field:       "color",
 				Type:        "string (enum)",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ParagraphBlock").addFields(e.asField(jen.String()))
+					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.String()))
 				},
 			}, {
 				Description: "The nested child blocks (if any) of the paragraph block.",
 				Field:       "children",
 				Type:        "array of block objects",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "ParagraphBlock").addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
+					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
 				},
 			}},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{

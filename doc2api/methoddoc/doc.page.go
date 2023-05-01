@@ -116,7 +116,7 @@ func init() {
 				In:        "body",
 				Name:      "icon",
 				Type:      "json",
-				typeCode:  jen.Id("FileOrEmoji"), // TODO ExternalFileOrEmoji
+				typeCode:  jen.Id("FileOrEmoji"),
 				omitEmpty: true,
 			},
 			{
@@ -124,7 +124,7 @@ func init() {
 				In:        "body",
 				Name:      "cover",
 				Type:      "json",
-				typeCode:  jen.Op("*").Id("ExternalFile"),
+				typeCode:  jen.Op("*").Id("File"),
 				omitEmpty: true,
 			},
 		},
