@@ -59,17 +59,17 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 	return ao
 }
 
-func (b *builder) addAdaptiveField(discriminatorValue string, name string, comment string) *adaptiveObject {
+func (b *builder) addAdaptiveField(name string, discriminatorValue string, comment string) *adaptiveObject {
 	dataName := strcase.UpperCamelCase(discriminatorValue) + name
 	b.addConcreteObject(dataName, comment)
-	return b.addAdaptiveFieldWithType(discriminatorValue, name, comment, jen.Op("*").Id(dataName))
+	return b.addAdaptiveFieldWithType(name, discriminatorValue, comment, jen.Op("*").Id(dataName))
 }
 
-func (b *builder) addAdaptiveEmptyField(discriminatorValue string, name string, comment string) *adaptiveObject {
-	return b.addAdaptiveFieldWithType(discriminatorValue, name, comment, jen.Struct())
+func (b *builder) addAdaptiveEmptyField(name string, discriminatorValue string, comment string) *adaptiveObject {
+	return b.addAdaptiveFieldWithType(name, discriminatorValue, comment, jen.Struct())
 }
 
-func (b *builder) addAdaptiveFieldWithType(discriminatorValue string, name string, comment string, typeCode jen.Code) *adaptiveObject {
+func (b *builder) addAdaptiveFieldWithType(name string, discriminatorValue string, comment string, typeCode jen.Code) *adaptiveObject {
 	ao := getSymbol[adaptiveObject](b, name)
 
 	// TODO abstract に対応

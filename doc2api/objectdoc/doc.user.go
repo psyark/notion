@@ -106,7 +106,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "People",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("person", "User", e.Text)
+					b.addAdaptiveField("User", "person", e.Text)
 					getSymbol[concreteObject](b, "PersonUser")
 				},
 			},
@@ -137,7 +137,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bots",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("bot", "User", e.Text)
+					b.addAdaptiveField("User", "bot", e.Text)
 					getSymbol[concreteObject](b, "BotUser")
 				},
 			},

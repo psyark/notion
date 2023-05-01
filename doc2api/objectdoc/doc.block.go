@@ -163,7 +163,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bookmark",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("bookmark", "Block", e.Text)
+					b.addAdaptiveField("Block", "bookmark", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -199,7 +199,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nBreadcrumb block objects do not contain any information within the breadcrumb property.\n",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("breadcrumb", "Block", e.Text)
+					b.addAdaptiveEmptyField("Block", "breadcrumb", e.Text)
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -211,7 +211,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Bulleted list item",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("bulleted_list_item", "Block", e.Text)
+					b.addAdaptiveField("Block", "bulleted_list_item", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -251,7 +251,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Callout",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("callout", "Block", e.Text)
+					b.addAdaptiveField("Block", "callout", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -291,7 +291,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Child database",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("child_database", "Block", e.Text)
+					b.addAdaptiveField("Block", "child_database", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -322,7 +322,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Child page",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("child_page", "Block", e.Text)
+					b.addAdaptiveField("Block", "child_page", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -353,7 +353,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Code",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("code", "Block", e.Text)
+					b.addAdaptiveField("Block", "code", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -396,7 +396,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nColumn lists are parent blocks for columns. They do not contain any information within the column_list property. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("column_list", "Block", e.Text)
+					b.addAdaptiveEmptyField("Block", "column_list", e.Text)
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -408,7 +408,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("column", "Block", e.Text)
+					b.addAdaptiveEmptyField("Block", "column", e.Text)
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -436,7 +436,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nDivider block objects do not contain any information within the divider property.",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("divider", "Block", e.Text)
+					b.addAdaptiveEmptyField("Block", "divider", e.Text)
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -448,7 +448,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Embed",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("embed", "Block", e.Text)
+					b.addAdaptiveField("Block", "embed", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -480,7 +480,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("equation", "Block", e.Text)
+					b.addAdaptiveField("Block", "equation", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -506,7 +506,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "File",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("file", "Block", e.Text, jen.Id("FileWithCaption"))
+					b.addAdaptiveFieldWithType("Block", "file", e.Text, jen.Id("FileWithCaption"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -551,9 +551,9 @@ func init() {
 				Text: "\nAll heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					b.addConcreteObject("HeadingBlock", e.Text)
-					b.addAdaptiveFieldWithType("heading_1", "Block", "", jen.Op("*").Id("HeadingBlock"))
-					b.addAdaptiveFieldWithType("heading_2", "Block", "", jen.Op("*").Id("HeadingBlock"))
-					b.addAdaptiveFieldWithType("heading_3", "Block", "", jen.Op("*").Id("HeadingBlock"))
+					b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("HeadingBlock"))
+					b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("HeadingBlock"))
+					b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("HeadingBlock"))
 				},
 			},
 			&objectDocParametersElement{{
@@ -604,7 +604,7 @@ func init() {
 				Text: "\nImage block objects contain a file object detailing information about the image. ",
 				output: func(e *objectDocParagraphElement, b *builder) {
 					// TODO Fileをadaptiveにする
-					b.addAdaptiveFieldWithType("image", "Block", e.Text, jen.Id("File"))
+					b.addAdaptiveFieldWithType("Block", "image", e.Text, jen.Id("File"))
 				},
 			},
 			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
@@ -633,7 +633,7 @@ func init() {
 			&objectDocParagraphElement{
 				Text: "\nLink Preview block objects contain the originally pasted url:",
 				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveField("link_preview", "Block", e.Text)
+					b.addAdaptiveField("Block", "link_preview", e.Text)
 					getSymbol[concreteObject](b, "LinkPreviewBlock").addFields(&field{name: "url", typeCode: jen.String()})
 				},
 			},
@@ -725,7 +725,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Paragraph",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("paragraph", "Block", e.Text)
+					b.addAdaptiveField("Block", "paragraph", e.Text)
 				},
 			},
 			&objectDocParagraphElement{

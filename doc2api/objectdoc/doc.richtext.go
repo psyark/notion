@@ -138,7 +138,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Equation",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("equation", "RichText", e.Text)
+					b.addAdaptiveField("RichText", "equation", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -172,7 +172,7 @@ func init() {
 				Text: "Mention",
 				output: func(e *objectDocHeadingElement, b *builder) {
 					b.addAdaptiveObject("Mention", "type", e.Text)
-					b.addAdaptiveFieldWithType("mention", "RichText", e.Text, jen.Op("*").Id("Mention"))
+					b.addAdaptiveFieldWithType("RichText", "mention", e.Text, jen.Op("*").Id("Mention"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -197,7 +197,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Database mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("database", "Mention", e.Text)
+					b.addAdaptiveField("Mention", "database", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -219,7 +219,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("date", "Mention", e.Text, jen.Op("*").Id("DatePropertyValueData"))
+					b.addAdaptiveFieldWithType("Mention", "date", e.Text, jen.Op("*").Id("DatePropertyValueData"))
 
 				},
 			},
@@ -243,7 +243,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Link Preview mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("link_preview", "Mention", e.Text)
+					b.addAdaptiveField("Mention", "link_preview", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
@@ -265,7 +265,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Page mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("page", "Mention", e.Text, jen.Op("*").Id("PageReference"))
+					b.addAdaptiveFieldWithType("Mention", "page", e.Text, jen.Op("*").Id("PageReference"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -284,7 +284,7 @@ func init() {
 				Text: "Template mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
 					b.addAdaptiveObject("TemplateMention", "type", "")
-					b.addAdaptiveFieldWithType("template_mention", "Mention", e.Text, jen.Op("*").Id("TemplateMention"))
+					b.addAdaptiveFieldWithType("Mention", "template_mention", e.Text, jen.Op("*").Id("TemplateMention"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -299,7 +299,7 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.addAdaptiveFieldWithType(e.Field, "TemplateMention", "", jen.String())
+					b.addAdaptiveFieldWithType("TemplateMention", e.Field, "", jen.String())
 				},
 			}},
 			&objectDocParagraphElement{
@@ -325,7 +325,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 				output: func(e *objectDocParameter, b *builder) {
-					b.addAdaptiveFieldWithType(e.Field, "TemplateMention", "", jen.String())
+					b.addAdaptiveFieldWithType("TemplateMention", e.Field, "", jen.String())
 				},
 			}},
 			&objectDocParagraphElement{
@@ -343,7 +343,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "User mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("user", "Mention", e.Text, jen.Op("*").Id("User"))
+					b.addAdaptiveFieldWithType("Mention", "user", e.Text, jen.Op("*").Id("User"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -371,7 +371,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Text ",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("text", "RichText", e.Text)
+					b.addAdaptiveField("RichText", "text", e.Text)
 				},
 			},
 			&objectDocParagraphElement{

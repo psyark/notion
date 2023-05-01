@@ -62,7 +62,7 @@ func init() {
 				Text: "Notion-hosted files",
 				output: func(e *objectDocHeadingElement, b *builder) {
 					b.addConcreteObject("NotionHostedFile", "")
-					b.addAdaptiveFieldWithType("file", "File", e.Text, jen.Op("*").Id("NotionHostedFile"))
+					b.addAdaptiveFieldWithType("File", "file", e.Text, jen.Op("*").Id("NotionHostedFile"))
 				},
 			},
 			&objectDocParagraphElement{
@@ -128,7 +128,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "External files",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("external", "File", e.Text)
+					b.addAdaptiveField("File", "external", e.Text)
 				},
 			},
 			&objectDocParagraphElement{
