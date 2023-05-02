@@ -12,10 +12,17 @@ import (
 /*
 Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the "parent". Parent information is represented by a consistent parent object throughout the API.
 
-Parenting rules:
-* Pages can be parented by other pages, databases, blocks, or by the whole workspace.
-* Blocks can be parented by pages, databases, or blocks.
-* Databases can be parented by pages, blocks, or by the whole workspace.
+General parenting rules:
+
+- Pages can be parented by other pages, databases, blocks, or by the whole workspace.
+- Blocks can be parented by pages, databases, or blocks.
+- Databases can be parented by pages, blocks, or by the whole workspace.
+
+> 🚧
+>
+> These parenting rules reflect the possible response you may receive when retrieving information about pages, databases, and blocks via Notion’s REST API. If you are creating new pages, databases, or blocks via Notion’s public REST API, the parenting rules may vary. For example, the parent of a database currently must be a page if it is created via the REST API.
+>
+> Refer to the API reference documentation for creating pages, databases, and blocks for more information on current parenting rules.
 */
 type Parent interface {
 	isParent()

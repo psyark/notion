@@ -1061,12 +1061,6 @@ func init() {
 					// TODO
 				},
 			},
-			&objectDocParagraphElement{
-				Text: "\n",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
 			&objectDocCalloutElement{
 				Body:  "As of March 27, 2023 creation of template blocks will no longer be supported.",
 				Title: "Deprecation Notice",

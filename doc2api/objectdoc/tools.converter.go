@@ -81,13 +81,7 @@ func (c converter) fetchAndBuild(global *builder) (*builder, error) {
 		if len(c.localCopy) < i+1 {
 			requiredCopy = append(requiredCopy, createLocalCopy(remote))
 		} else if err := c.localCopy[i].checkAndOutput(remote, b); err != nil {
-			if errors.Is(err, errUnmatch) {
-				ld, _ := json.MarshalIndent(c.localCopy[i], "", "  ")
-				rd, _ := json.MarshalIndent(remote, "", "  ")
-				return nil, fmt.Errorf("%w\nlocal:\n%#v\nremote:\n%#v", err, string(ld), string(rd))
-			} else {
-				return nil, err
-			}
+			return nil, err
 		}
 	}
 
