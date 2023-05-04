@@ -2,7 +2,6 @@ package notion
 
 import (
 	"encoding/json"
-	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -10,257 +9,81 @@ import (
 // https://developers.notion.com/reference/property-object
 
 // All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.
-type Property interface {
-	isProperty()
-	GetId() string
-	GetName() string
-}
-type PropertyCommon struct {
-	Id   string `json:"id"`   // An identifier for the property, usually a short string of random letters and symbols.      Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
-	Name string `json:"name"` // The name of the property as it appears in Notion.
+type Property struct {
+	Type           string               `json:"type"`
+	Id             string               `json:"id"`               // An identifier for the property, usually a short string of random letters and symbols.      Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
+	Name           string               `json:"name"`             // The name of the property as it appears in Notion.
+	Checkbox       struct{}             `json:"checkbox"`         // Checkbox
+	CreatedBy      struct{}             `json:"created_by"`       // Created by
+	CreatedTime    struct{}             `json:"created_time"`     // Created time
+	Date           struct{}             `json:"date"`             // Date
+	Email          struct{}             `json:"email"`            // Email
+	Files          struct{}             `json:"files"`            // Files
+	Formula        *PropertyFormula     `json:"formula"`          // Formula
+	LastEditedBy   struct{}             `json:"last_edited_by"`   // Last edited by
+	LastEditedTime struct{}             `json:"last_edited_time"` // Last edited time
+	MultiSelect    *PropertyMultiSelect `json:"multi_select"`     // Multi-select
+	Number         *PropertyNumber      `json:"number"`           // Number
+	People         struct{}             `json:"people"`           // People
+	PhoneNumber    struct{}             `json:"phone_number"`     // Phone number
+	Relation       *PropertyRelation    `json:"relation"`         // Relation
+	RichText       struct{}             `json:"rich_text"`        // Rich text
+	Rollup         *PropertyRollup      `json:"rollup"`           // Rollup
+	Select         *PropertySelect      `json:"select"`           // Select
+	Status         *PropertyStatus      `json:"status"`           // Status
+	Title          struct{}             `json:"title"`            // Title
+	Url            struct{}             `json:"url"`              // URL
 }
 
-func (c *PropertyCommon) GetId() string {
-	return c.Id
-}
-func (c *PropertyCommon) GetName() string {
-	return c.Name
-}
-
-type propertyUnmarshaler struct {
-	value Property
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *propertyUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
+func (o Property) MarshalJSON() ([]byte, error) {
+	if o.Type == "" {
+		// TODO
 	}
-	t := struct {
-		Checkbox       json.RawMessage `json:"checkbox"`
-		CreatedBy      json.RawMessage `json:"created_by"`
-		CreatedTime    json.RawMessage `json:"created_time"`
-		Date           json.RawMessage `json:"date"`
-		Email          json.RawMessage `json:"email"`
-		Files          json.RawMessage `json:"files"`
-		Formula        json.RawMessage `json:"formula"`
-		LastEditedBy   json.RawMessage `json:"last_edited_by"`
-		LastEditedTime json.RawMessage `json:"last_edited_time"`
-		MultiSelect    json.RawMessage `json:"multi_select"`
-		Number         json.RawMessage `json:"number"`
-		People         json.RawMessage `json:"people"`
-		PhoneNumber    json.RawMessage `json:"phone_number"`
-		Relation       json.RawMessage `json:"relation"`
-		RichText       json.RawMessage `json:"rich_text"`
-		Rollup         json.RawMessage `json:"rollup"`
-		Select         json.RawMessage `json:"select"`
-		Status         json.RawMessage `json:"status"`
-		Title          json.RawMessage `json:"title"`
-		Url            json.RawMessage `json:"url"`
-	}{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+	type Alias Property
+	data, err := json.Marshal(Alias(o))
+	if err != nil {
+		return nil, err
 	}
-	switch {
-	case t.Checkbox != nil:
-		u.value = &CheckboxProperty{}
-	case t.CreatedBy != nil:
-		u.value = &CreatedByProperty{}
-	case t.CreatedTime != nil:
-		u.value = &CreatedTimeProperty{}
-	case t.Date != nil:
-		u.value = &DateProperty{}
-	case t.Email != nil:
-		u.value = &EmailProperty{}
-	case t.Files != nil:
-		u.value = &FilesProperty{}
-	case t.Formula != nil:
-		u.value = &FormulaProperty{}
-	case t.LastEditedBy != nil:
-		u.value = &LastEditedByProperty{}
-	case t.LastEditedTime != nil:
-		u.value = &LastEditedTimeProperty{}
-	case t.MultiSelect != nil:
-		u.value = &MultiSelectProperty{}
-	case t.Number != nil:
-		u.value = &NumberProperty{}
-	case t.People != nil:
-		u.value = &PeopleProperty{}
-	case t.PhoneNumber != nil:
-		u.value = &PhoneNumberProperty{}
-	case t.Relation != nil:
-		u.value = &RelationProperty{}
-	case t.RichText != nil:
-		u.value = &RichTextProperty{}
-	case t.Rollup != nil:
-		u.value = &RollupProperty{}
-	case t.Select != nil:
-		u.value = &SelectProperty{}
-	case t.Status != nil:
-		u.value = &StatusProperty{}
-	case t.Title != nil:
-		u.value = &TitleProperty{}
-	case t.Url != nil:
-		u.value = &UrlProperty{}
-	default:
-		return fmt.Errorf("unmarshal Property: %s", string(data))
+	visibility := map[string]bool{
+		"checkbox":         o.Type == "checkbox",
+		"created_by":       o.Type == "created_by",
+		"created_time":     o.Type == "created_time",
+		"date":             o.Type == "date",
+		"email":            o.Type == "email",
+		"files":            o.Type == "files",
+		"formula":          o.Type == "formula",
+		"last_edited_by":   o.Type == "last_edited_by",
+		"last_edited_time": o.Type == "last_edited_time",
+		"multi_select":     o.Type == "multi_select",
+		"number":           o.Type == "number",
+		"people":           o.Type == "people",
+		"phone_number":     o.Type == "phone_number",
+		"relation":         o.Type == "relation",
+		"rich_text":        o.Type == "rich_text",
+		"rollup":           o.Type == "rollup",
+		"select":           o.Type == "select",
+		"status":           o.Type == "status",
+		"title":            o.Type == "title",
+		"url":              o.Type == "url",
 	}
-	return json.Unmarshal(data, u.value)
+	return omitFields(data, visibility)
 }
-
-func (u *propertyUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
-}
-
-type PropertyMap map[string]Property
-
-func (m *PropertyMap) UnmarshalJSON(data []byte) error {
-	t := map[string]propertyUnmarshaler{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return fmt.Errorf("unmarshaling PropertyMap: %w", err)
-	}
-	*m = PropertyMap{}
-	for k, u := range t {
-		(*m)[k] = u.value
-	}
-	return nil
-}
-
-// Checkbox
-type CheckboxProperty struct {
-	PropertyCommon
-	Type     alwaysCheckbox `json:"type"`
-	Checkbox struct{}       `json:"checkbox"` // A checkbox database property is rendered in the Notion UI as a column that contains checkboxes. The checkbox type object is empty; there is no additional property configuration.
-}
-
-func (_ *CheckboxProperty) isProperty() {}
-
-/*
-Created by
-
-A created by database property is rendered in the Notion UI as a column that contains people mentions of each row's author as values.
-*/
-type CreatedByProperty struct {
-	PropertyCommon
-	Type      alwaysCreatedBy `json:"type"`
-	CreatedBy struct{}        `json:"created_by"` // The created_by type object is empty. There is no additional property configuration.
-}
-
-func (_ *CreatedByProperty) isProperty() {}
-
-/*
-Created time
-
-A created time database property is rendered in the Notion UI as a column that contains timestamps of when each row was created as values.
-*/
-type CreatedTimeProperty struct {
-	PropertyCommon
-	Type        alwaysCreatedTime `json:"type"`
-	CreatedTime struct{}          `json:"created_time"` // The created_time type object is empty. There is no additional property configuration.
-}
-
-func (_ *CreatedTimeProperty) isProperty() {}
-
-/*
-Date
-
-A date database property is rendered in the Notion UI as a column that contains date values.
-*/
-type DateProperty struct {
-	PropertyCommon
-	Type alwaysDate `json:"type"`
-	Date struct{}   `json:"date"` // The date type object is empty; there is no additional configuration.
-}
-
-func (_ *DateProperty) isProperty() {}
-
-/*
-Email
-
-An email database property is represented in the Notion UI as a column that contains email values.
-*/
-type EmailProperty struct {
-	PropertyCommon
-	Type  alwaysEmail `json:"type"`
-	Email struct{}    `json:"email"` // The email type object is empty. There is no additional property configuration.
-}
-
-func (_ *EmailProperty) isProperty() {}
-
-/*
-Files
-
-A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.
-*/
-type FilesProperty struct {
-	PropertyCommon
-	Type  alwaysFiles `json:"type"`
-	Files struct{}    `json:"files"`
-}
-
-func (_ *FilesProperty) isProperty() {}
 
 /*
 Formula
 
 A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.
 */
-type FormulaProperty struct {
-	PropertyCommon
-	Type    alwaysFormula       `json:"type"`
-	Formula FormulaPropertyData `json:"formula"`
-}
-
-func (_ *FormulaProperty) isProperty() {}
-
-type FormulaPropertyData struct {
+type PropertyFormula struct {
 	Expression string `json:"expression"` // The formula that is used to compute the values for this property.      Refer to the Notion help center for information about formula syntax.
 }
-
-/*
-Last edited by
-
-A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values.
-*/
-type LastEditedByProperty struct {
-	PropertyCommon
-	Type         alwaysLastEditedBy `json:"type"`
-	LastEditedBy struct{}           `json:"last_edited_by"` // The last_edited_by type object is empty. There is no additional property configuration.
-}
-
-func (_ *LastEditedByProperty) isProperty() {}
-
-/*
-Last edited time
-
-A last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values.
-*/
-type LastEditedTimeProperty struct {
-	PropertyCommon
-	Type           alwaysLastEditedTime `json:"type"`
-	LastEditedTime struct{}             `json:"last_edited_time"` // The last_edited_time type object is empty. There is no additional property configuration.
-}
-
-func (_ *LastEditedTimeProperty) isProperty() {}
 
 /*
 Multi-select
 
 A multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options.
 */
-type MultiSelectProperty struct {
-	PropertyCommon
-	Type        alwaysMultiSelect       `json:"type"`
-	MultiSelect MultiSelectPropertyData `json:"multi_select"`
-}
-
-func (_ *MultiSelectProperty) isProperty() {}
-
-type MultiSelectPropertyData struct {
+type PropertyMultiSelect struct {
 	Options []Option `json:"options"`
 }
 
@@ -269,169 +92,46 @@ Number
 
 A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:
 */
-type NumberProperty struct {
-	PropertyCommon
-	Type   alwaysNumber       `json:"type"`
-	Number NumberPropertyData `json:"number"`
-}
-
-func (_ *NumberProperty) isProperty() {}
-
-type NumberPropertyData struct {
+type PropertyNumber struct {
 	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include:      - argentine_peso   - baht   - canadian_dollar   - chilean_peso   - colombian_peso   - danish_krone   - dirham   - dollar   - euro   - forint   - franc   - hong_kong_dollar   - koruna   - krona   - leu   - lira   -  mexican_peso   - new_taiwan_dollar   - new_zealand_dollar   - norwegian_krone   - number   - number_with_commas   - percent   - philippine_peso   - pound   - peruvian_sol   - rand   - real   - ringgit   - riyal   - ruble   - rupee   - rupiah   - shekel   - singapore_dollar   - uruguayan_peso   - yen,   - yuan   - won   - zloty
 }
 
-/*
-People
-
-A people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration.
-*/
-type PeopleProperty struct {
-	PropertyCommon
-	Type   alwaysPeople `json:"type"`
-	People struct{}     `json:"people"`
-}
-
-func (_ *PeopleProperty) isProperty() {}
-
-/*
-Phone number
-
-A phone number database property is rendered in the Notion UI as a column that contains phone number values.
-*/
-type PhoneNumberProperty struct {
-	PropertyCommon
-	Type        alwaysPhoneNumber `json:"type"`
-	PhoneNumber struct{}          `json:"phone_number"` // The phone_number type object is empty. There is no additional property configuration.
-}
-
-func (_ *PhoneNumberProperty) isProperty() {}
-
-/*
-Relation
-
-A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
-*/
-type RelationProperty struct {
-	PropertyCommon
-	Type     alwaysRelation `json:"type"`
-	Relation Relation       `json:"relation"`
-}
-
-func (_ *RelationProperty) isProperty() {}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *RelationProperty) UnmarshalJSON(data []byte) error {
-	type Alias RelationProperty
-	t := &struct {
-		*Alias
-		Relation relationUnmarshaler `json:"relation"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling RelationProperty: %w", err)
-	}
-	o.Relation = t.Relation.value
-	return nil
-}
-
 // A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
-type Relation interface {
-	isRelation()
-	GetDatabaseId() uuid.UUID
-}
-type RelationCommon struct {
-	DatabaseId uuid.UUID `json:"database_id"` // The database that the relation property refers to.      The corresponding linked page values must belong to the database in order to be valid.
-}
-
-func (c *RelationCommon) GetDatabaseId() uuid.UUID {
-	return c.DatabaseId
+type PropertyRelation struct {
+	Type           string                        `json:"type"`
+	SingleProperty struct{}                      `json:"single_property"` // undocumented
+	DualProperty   *PropertyRelationDualProperty `json:"dual_property"`   // undocumented
+	DatabaseId     uuid.UUID                     `json:"database_id"`     // The database that the relation property refers to.      The corresponding linked page values must belong to the database in order to be valid.
 }
 
-type relationUnmarshaler struct {
-	value Relation
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *relationUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
+func (o PropertyRelation) MarshalJSON() ([]byte, error) {
+	if o.Type == "" {
+		// TODO
 	}
-	t := struct {
-		SingleProperty json.RawMessage `json:"single_property"`
-		DualProperty   json.RawMessage `json:"dual_property"`
-	}{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+	type Alias PropertyRelation
+	data, err := json.Marshal(Alias(o))
+	if err != nil {
+		return nil, err
 	}
-	switch {
-	case t.SingleProperty != nil:
-		u.value = &SinglePropertyRelation{}
-	case t.DualProperty != nil:
-		u.value = &DualPropertyRelation{}
-	default:
-		return fmt.Errorf("unmarshal Relation: %s", string(data))
+	visibility := map[string]bool{
+		"dual_property":   o.Type == "dual_property",
+		"single_property": o.Type == "single_property",
 	}
-	return json.Unmarshal(data, u.value)
-}
-
-func (u *relationUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
+	return omitFields(data, visibility)
 }
 
 // undocumented
-type SinglePropertyRelation struct {
-	RelationCommon
-	Type           alwaysSingleProperty `json:"type"`
-	SingleProperty struct{}             `json:"single_property"`
-}
-
-func (_ *SinglePropertyRelation) isRelation() {}
-
-// undocumented
-type DualPropertyRelation struct {
-	RelationCommon
-	Type         alwaysDualProperty       `json:"type"`
-	DualProperty DualPropertyRelationData `json:"dual_property"`
-}
-
-func (_ *DualPropertyRelation) isRelation() {}
-
-type DualPropertyRelationData struct {
+type PropertyRelationDualProperty struct {
 	SyncedPropertyId   string `json:"synced_property_id"`   // The id of the corresponding property that is updated in the related database when this property is changed.
 	SyncedPropertyName string `json:"synced_property_name"` // The name of the corresponding property that is updated in the related database when this property is changed.
 }
-
-/*
-Rich text
-
-A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.
-*/
-type RichTextProperty struct {
-	PropertyCommon
-	Type     alwaysRichText `json:"type"`
-	RichText struct{}       `json:"rich_text"`
-}
-
-func (_ *RichTextProperty) isProperty() {}
 
 /*
 Rollup
 
 A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.
 */
-type RollupProperty struct {
-	PropertyCommon
-	Type   alwaysRollup       `json:"type"`
-	Rollup RollupPropertyData `json:"rollup"`
-}
-
-func (_ *RollupProperty) isProperty() {}
-
-type RollupPropertyData struct {
+type PropertyRollup struct {
 	Function             string `json:"function"`               // The function that computes the rollup value from the related pages.      Possible values include:      - average   - checked   - count_per_group   - count   - count_values   - date_range   - earliest_date   - empty   - latest_date   - max   - median   - min   - not_empty   - percent_checked   - percent_empty   - percent_not_empty   - percent_per_group   - percent_unchecked   - range   - unchecked   - unique   - show_original   - show_unique   - sum
 	RelationPropertyId   string `json:"relation_property_id"`   // The id of the related database property that is rolled up.
 	RelationPropertyName string `json:"relation_property_name"` // The name of the related database property that is rolled up.
@@ -444,15 +144,7 @@ Select
 
 A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
 */
-type SelectProperty struct {
-	PropertyCommon
-	Type   alwaysSelect       `json:"type"`
-	Select SelectPropertyData `json:"select"`
-}
-
-func (_ *SelectProperty) isProperty() {}
-
-type SelectPropertyData struct {
+type PropertySelect struct {
 	Options []Option `json:"options"`
 }
 
@@ -464,15 +156,7 @@ type Option struct {
 }
 
 // Status
-type StatusProperty struct {
-	PropertyCommon
-	Type   alwaysStatus       `json:"type"`
-	Status StatusPropertyData `json:"status"`
-}
-
-func (_ *StatusProperty) isProperty() {}
-
-type StatusPropertyData struct {
+type PropertyStatus struct {
 	Options []Option      `json:"options"`
 	Groups  []StatusGroup `json:"groups"`
 }
@@ -484,29 +168,3 @@ type StatusGroup struct {
 	Name      string   `json:"name"`       // The name of the option as it appears in the Notion UI.      Note: Commas (",") are not valid for status values.
 	OptionIds []string `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.
 }
-
-/*
-Title
-
-A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.
-*/
-type TitleProperty struct {
-	PropertyCommon
-	Type  alwaysTitle `json:"type"`
-	Title struct{}    `json:"title"`
-}
-
-func (_ *TitleProperty) isProperty() {}
-
-/*
-URL
-
-A URL database property is represented in the Notion UI as a column that contains URL values.
-*/
-type UrlProperty struct {
-	PropertyCommon
-	Type alwaysUrl `json:"type"`
-	Url  struct{}  `json:"url"` // The url type object is empty. There is no additional property configuration.
-}
-
-func (_ *UrlProperty) isProperty() {}

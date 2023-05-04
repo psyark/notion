@@ -1,6 +1,7 @@
 package notion
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -9,6 +10,14 @@ import (
 type FileWithCaption any    // TODO
 type CommentList any        // TODO
 type PageOrDatabaseList any // TODO
+
+type PropertyMap map[string]Property
+
+func (m *PropertyMap) UnmarshalJSON(data []byte) error {
+	*m = PropertyMap{}
+	type Alias PropertyMap
+	return json.Unmarshal(data, (*Alias)(m))
+}
 
 type alwaysSingleProperty string // TODO 消す
 

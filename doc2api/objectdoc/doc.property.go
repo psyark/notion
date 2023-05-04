@@ -15,7 +15,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.",
 			}, func(e blockElement) {
-				b.addAbstractObject("Property", "type", e.Text, addMap())
+				b.addAdaptiveObject("Property", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
@@ -31,14 +31,14 @@ func init() {
 				Description:  "An identifier for the property, usually a short string of random letters and symbols.  \n  \nSome automatically generated property types have special human-readable IDs. For example, all Title properties have an id of \"title\".",
 				ExampleValue: `"fy:{"`,
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Property").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject](b, "Property").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "name",
 				Type:        "string",
 				Description: "The name of the property as it appears in Notion.",
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Property").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject](b, "Property").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
@@ -49,24 +49,19 @@ func init() {
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Each database property object also contains a type object. The key of the object is the type of the object, and the value is an object containing type-specific configuration. The following sections detail these type-specific objects along with example property objects for each type.",
-			}, func(e blockElement) {
-			})
+			}, func(e blockElement) {})
 		},
-		func(c *comparator, b *builder) {
+		func(c *comparator, b *builder) { // Checkbox
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Checkbox",
 			}, func(e blockElement) {
-				b.addDerived("checkbox", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "checkbox", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A checkbox database property is rendered in the Notion UI as a column that contains checkboxes. The checkbox type object is empty; there is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "CheckboxProperty").addFields(
-					&field{name: "checkbox", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Task complete\": {\n  \"id\": \"BBla\",\n  \"name\": \"Task complete\",\n  \"type\": \"checkbox\",\n  \"checkbox\": {}\n}\n",
@@ -74,27 +69,21 @@ func init() {
 				b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
 			})
 		},
-		func(c *comparator, b *builder) {
+		func(c *comparator, b *builder) { // Created by
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Created by",
 			}, func(e blockElement) {
-				b.addDerived("created_by", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "created_by", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A created by database property is rendered in the Notion UI as a column that contains people mentions of each row's author as values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "CreatedByProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The created_by type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "CreatedByProperty").addFields(
-					&field{name: "created_by", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Created by\": {\n  \"id\": \"%5BJCR\",\n  \"name\": \"Created by\",\n  \"type\": \"created_by\",\n  \"created_by\": {}\n}\n",
@@ -107,22 +96,16 @@ func init() {
 				Kind: "Heading",
 				Text: "Created time",
 			}, func(e blockElement) {
-				b.addDerived("created_time", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "created_time", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A created time database property is rendered in the Notion UI as a column that contains timestamps of when each row was created as values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "CreatedTimeProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The created_time type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "CreatedTimeProperty").addFields(
-					&field{name: "created_time", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Created time\": {\n  \"id\": \"XcAf\",\n  \"name\": \"Created time\",\n  \"type\": \"created_time\",\n  \"created_time\": {}\n}\n",
@@ -135,22 +118,16 @@ func init() {
 				Kind: "Heading",
 				Text: "Date",
 			}, func(e blockElement) {
-				b.addDerived("date", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "date", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A date database property is rendered in the Notion UI as a column that contains date values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "DateProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The date type object is empty; there is no additional configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "DateProperty").addFields(
-					&field{name: "date", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Task due date\" {\n  \"id\": \"AJP%7D\",\n  \"name\": \"Task due date\",\n  \"type\": \"date\",\n  \"date\": {}\n}\n",
@@ -159,25 +136,21 @@ func init() {
 				b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
 			})
 		},
-		func(c *comparator, b *builder) { // Heading
+		func(c *comparator, b *builder) { // Email
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Email",
 			}, func(e blockElement) {
-				b.addDerived("email", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "email", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "An email database property is represented in the Notion UI as a column that contains email values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "EmailProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The email type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "EmailProperty").addFields(&field{name: "email", typeCode: jen.Struct(), comment: e.Text})
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Contact email\": {\n  \"id\": \"oZbC\",\n  \"name\": \"Contact email\",\n  \"type\": \"email\",\n  \"email\": {}\n}\n",
@@ -190,7 +163,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Files",
 			}, func(e blockElement) {
-				b.addDerived("files", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "files", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
@@ -199,9 +172,7 @@ func init() {
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A files database property is rendered in the Notion UI as a column that has values that are either files uploaded directly to Notion or external links to files. The files type object is empty; there is no additional configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FilesProperty").addFields(&field{name: "files", typeCode: jen.Struct()}).addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Product image\": {\n  \"id\": \"pb%3E%5B\",\n  \"name\": \"Product image\",\n  \"type\": \"files\",\n  \"files\": {}\n}\n",
@@ -214,13 +185,13 @@ func init() {
 				Kind: "Heading",
 				Text: "Formula",
 			}, func(e blockElement) {
-				b.addDerived("formula", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "formula", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FormulaProperty").addComment(e.Text)
+				getSymbol[concreteObject](b, "PropertyFormula").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -232,7 +203,7 @@ func init() {
 				Property:     "expression",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FormulaProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyFormula").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -246,44 +217,32 @@ func init() {
 				Kind: "Heading",
 				Text: "Last edited by",
 			}, func(e blockElement) {
-				b.addDerived("last_edited_by", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "last_edited_by", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "LastEditedByProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The last_edited_by type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "LastEditedByProperty").addFields(
-					&field{name: "last_edited_by", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) { // Last edited time
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Last edited time",
 			}, func(e blockElement) {
-				b.addDerived("last_edited_time", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "last_edited_time", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "LastEditedTimeProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The last_edited_time type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "LastEditedTimeProperty").addFields(
-					&field{name: "last_edited_time", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Last edited time\": {\n  \"id\": \"jGdo\",\n  \"name\": \"Last edited time\",\n  \"type\": \"last_edited_time\",\n  \"last_edited_time\": {}\n}\n",
@@ -296,19 +255,19 @@ func init() {
 				Kind: "Heading",
 				Text: "Multi-select",
 			}, func(e blockElement) {
-				b.addDerived("multi_select", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "multi_select", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "MultiSelectProperty").addComment(e.Text)
+				getSymbol[concreteObject](b, "PropertyMultiSelect").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "MultiSelectProperty").typeSpecificObject.addFields(
+				getSymbol[concreteObject](b, "PropertyMultiSelect").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 				)
 			})
@@ -342,13 +301,13 @@ func init() {
 				Kind: "Heading",
 				Text: "Number",
 			}, func(e blockElement) {
-				b.addDerived("number", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "number", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "NumberProperty").addComment(e.Text)
+				getSymbol[concreteObject](b, "PropertyNumber").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "format",
@@ -356,7 +315,7 @@ func init() {
 				Description:  "The way that the number is displayed in Notion. Potential values include:  \n  \n- argentine_peso  \n- baht  \n- canadian_dollar  \n- chilean_peso  \n- colombian_peso  \n- danish_krone  \n- dirham  \n- dollar  \n- euro  \n- forint  \n- franc  \n- hong_kong_dollar  \n- koruna  \n- krona  \n- leu  \n- lira  \n-  mexican_peso  \n- new_taiwan_dollar  \n- new_zealand_dollar  \n- norwegian_krone  \n- number  \n- number_with_commas  \n- percent  \n- philippine_peso  \n- pound  \n- peruvian_sol  \n- rand  \n- real  \n- ringgit  \n- riyal  \n- ruble  \n- rupee  \n- rupiah  \n- shekel  \n- singapore_dollar  \n- uruguayan_peso  \n- yen,  \n- yuan  \n- won  \n- zloty",
 				ExampleValue: `"percent"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyNumber").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -371,16 +330,12 @@ func init() {
 				Kind: "Heading",
 				Text: "People",
 			}, func(e blockElement) {
-				b.addDerived("people", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "people", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A people database property is rendered in the Notion UI as a column that contains people mentions.  The people type object is empty; there is no additional configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PeopleProperty").addFields(
-					&field{name: "people", typeCode: jen.Struct()},
-				).addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Project owner\": {\n  \"id\": \"FlgQ\",\n  \"name\": \"Project owner\",\n  \"type\": \"people\",\n  \"people\": {}\n}\n",
@@ -393,22 +348,16 @@ func init() {
 				Kind: "Heading",
 				Text: "Phone number",
 			}, func(e blockElement) {
-				b.addDerived("phone_number", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "phone_number", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A phone number database property is rendered in the Notion UI as a column that contains phone number values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PhoneNumberProperty").addFields().addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The phone_number type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PhoneNumberProperty").addFields(
-					&field{name: "phone_number", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Contact phone number\": {\n  \"id\": \"ULHa\",\n  \"name\": \"Contact phone number\",\n  \"type\": \"phone_number\",\n  \"phone_number\": {}\n}\n",
@@ -421,20 +370,19 @@ func init() {
 				Kind: "Heading",
 				Text: "Relation",
 			}, func(e blockElement) {
-				b.addDerived("relation", "Property", e.Text)
+				b.addAdaptiveFieldWithType("Property", "relation", e.Text, jen.Op("*").Id("PropertyRelation"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "RelationProperty").addFields(
-					&interfaceField{name: "relation", typeName: "Relation"},
-				).addComment(e.Text)
-				b.addAbstractObject("Relation", "type", e.Text)
-				b.addDerived("single_property", "Relation", "undocumented").addFields(
-					&field{name: "single_property", typeCode: jen.Struct()},
-				)
-				b.addDerived("dual_property", "Relation", "undocumented", addSpecificField())
+				b.addAdaptiveObject("PropertyRelation", "type", e.Text)
+				// getSymbol[concreteObject](b, "PropertyRelation").addFields(
+				// 	&interfaceField{name: "relation", typeName: "Relation"},
+				// ).addComment(e.Text)
+				// b.addAbstractObject("Relation", "type", e.Text)
+				b.addAdaptiveEmptyField("PropertyRelation", "single_property", "undocumented")
+				b.addAdaptiveField("PropertyRelation", "dual_property", "undocumented")
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -446,7 +394,7 @@ func init() {
 				Property:     "database_id",
 				Type:         "string (UUID)",
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Relation").addFields(e.asField(UUID))
+				getSymbol[adaptiveObject](b, "PropertyRelation").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
@@ -454,7 +402,7 @@ func init() {
 				Property:     "synced_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DualPropertyRelation").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRelationDualProperty").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
@@ -462,7 +410,7 @@ func init() {
 				Property:     "synced_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DualPropertyRelation").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRelationDualProperty").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -482,16 +430,12 @@ func init() {
 				Kind: "Heading",
 				Text: "Rich text",
 			}, func(e blockElement) {
-				b.addDerived("rich_text", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "rich_text", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A rich text database property is rendered in the Notion UI as a column that contains text values. The rich_text type object is empty; there is no additional configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "RichTextProperty").addFields(
-					&field{name: "rich_text", typeCode: jen.Struct()},
-				).addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Project description\": {\n  \"id\": \"NZZ%3B\",\n  \"name\": \"Project description\",\n  \"type\": \"rich_text\",\n  \"rich_text\": {}\n}\n",
@@ -504,13 +448,13 @@ func init() {
 				Kind: "Heading",
 				Text: "Rollup",
 			}, func(e blockElement) {
-				b.addDerived("rollup", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "rollup", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "RollupProperty").addComment(e.Text)
+				getSymbol[concreteObject](b, "PropertyRollup").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -522,7 +466,7 @@ func init() {
 				Property:     "function",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RollupProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the related database property that is rolled up.",
@@ -530,7 +474,7 @@ func init() {
 				Property:     "relation_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RollupProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the related database property that is rolled up.",
@@ -538,7 +482,7 @@ func init() {
 				Property:     "relation_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RollupProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the rollup property.",
@@ -546,7 +490,7 @@ func init() {
 				Property:     "rollup_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RollupProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the rollup property.",
@@ -554,7 +498,7 @@ func init() {
 				Property:     "rollup_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RollupProperty").typeSpecificObject.addFields(e.asField(jen.String()))
+				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -568,19 +512,19 @@ func init() {
 				Kind: "Heading",
 				Text: "Select",
 			}, func(e blockElement) {
-				b.addDerived("select", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "select", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "SelectProperty").addComment(e.Text)
+				getSymbol[concreteObject](b, "PropertySelect").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The select type object contains an array of objects representing the available options. Each option object includes the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "SelectProperty").typeSpecificObject.addFields(
+				getSymbol[concreteObject](b, "PropertySelect").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 				)
 				// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
@@ -623,13 +567,13 @@ func init() {
 				Kind: "Heading",
 				Text: "Status",
 			}, func(e blockElement) {
-				b.addDerived("status", "Property", e.Text, addSpecificField())
+				b.addAdaptiveField("Property", "status", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "StatusProperty").typeSpecificObject.addFields(
+				getSymbol[concreteObject](b, "PropertyStatus").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 					&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 				)
@@ -710,17 +654,12 @@ func init() {
 				Kind: "Heading",
 				Text: "Title",
 			}, func(e blockElement) {
-				b.addDerived("title", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "title", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "TitleProperty").addFields(&field{
-					name:     "title",
-					typeCode: jen.Struct(),
-				}).addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Project name\": {\n  \"id\": \"title\",\n  \"name\": \"Project name\",\n  \"type\": \"title\",\n  \"title\": {}\n}\n",
@@ -741,22 +680,16 @@ func init() {
 				Kind: "Heading",
 				Text: "URL",
 			}, func(e blockElement) {
-				b.addDerived("url", "Property", e.Text)
+				b.addAdaptiveEmptyField("Property", "url", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A URL database property is represented in the Notion UI as a column that contains URL values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "UrlProperty").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The url type object is empty. There is no additional property configuration.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "UrlProperty").addFields(
-					&field{name: "url", typeCode: jen.Struct(), comment: e.Text},
-				)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "\"Project URL\": {\n  \"id\": \"BZKU\",\n  \"name\": \"Project URL\",\n  \"type\": \"url\",\n  \"url\": {}\n}\n",

@@ -121,9 +121,9 @@ func GetCreatePageParams(src any, db *Database) *CreatePageParams {
 func ToTaggedStruct(db *Database) string {
 	fields := []jen.Code{}
 	for _, prop := range db.Properties {
-		name := safeName(prop.GetName())
+		name := safeName(prop.Name)
 		// data, _ := json.Marshal(prop)
-		fields = append(fields, jen.Id(name).Op(getTypeForBinding(prop)).Tag(map[string]string{"notion": prop.GetId()}))
+		fields = append(fields, jen.Id(name).Op(getTypeForBinding(prop)).Tag(map[string]string{"notion": prop.Id}))
 	}
 
 	code := jen.Type().Id(safeName(String(db.Title))).Struct(fields...)

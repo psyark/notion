@@ -132,11 +132,9 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	case *abstractObject:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.derivedUnmarshalerName()).Values()
 		referCode = jen.Id("target").Dot("value")
-	case *concreteObject, *abstractMap, *adaptiveObject:
+	default:
 		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
 		referCode = jen.Id("target")
-	default:
-		panic(symbol)
 	}
 
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
