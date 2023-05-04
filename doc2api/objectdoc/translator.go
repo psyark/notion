@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/dave/jennifer/jen"
@@ -26,7 +25,7 @@ type translator struct {
 	scopes []translationScope
 }
 
-func (t *translator) translate(global *builder) error {
+func (t *translator) translate() error {
 	// URLの取得
 	res, err := http.Get(t.url)
 	if err != nil {
@@ -168,12 +167,8 @@ func registerTranslator(url string, scopes ...translationScope) {
 }
 
 func translateAll() error {
-	global := &builder{
-		globalSymbols: &sync.Map{},
-		fileName:      "../../object.global.go",
-	}
 	for _, t := range registeredTranslators {
-		if err := t.translate(global); err != nil {
+		if err := t.translate(); err != nil {
 			return errors.Wrap(err, t.url)
 		}
 	}

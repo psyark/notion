@@ -129,7 +129,7 @@ func init() {
 				Description:  "Information about the page's parent. See Parent object.",
 				ExampleValue: `{ "type": "database_id", "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce" }`,
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Page").addFields(e.asInterfaceField("Parent"))
+					getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("Parent")))
 				},
 			}, {
 				Property:     "url",

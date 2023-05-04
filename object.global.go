@@ -87,12 +87,6 @@ func (s alwaysBlock) MarshalJSON() ([]byte, error) {
 	return []byte("\"block\""), nil
 }
 
-type alwaysBlockId string
-
-func (s alwaysBlockId) MarshalJSON() ([]byte, error) {
-	return []byte("\"block_id\""), nil
-}
-
 type alwaysBoolean string
 
 func (s alwaysBoolean) MarshalJSON() ([]byte, error) {
@@ -127,12 +121,6 @@ type alwaysDatabase string
 
 func (s alwaysDatabase) MarshalJSON() ([]byte, error) {
 	return []byte("\"database\""), nil
-}
-
-type alwaysDatabaseId string
-
-func (s alwaysDatabaseId) MarshalJSON() ([]byte, error) {
-	return []byte("\"database_id\""), nil
 }
 
 type alwaysDate string
@@ -199,12 +187,6 @@ type alwaysPage string
 
 func (s alwaysPage) MarshalJSON() ([]byte, error) {
 	return []byte("\"page\""), nil
-}
-
-type alwaysPageId string
-
-func (s alwaysPageId) MarshalJSON() ([]byte, error) {
-	return []byte("\"page_id\""), nil
 }
 
 type alwaysPageOrDatabase string
@@ -283,10 +265,4 @@ type alwaysUser string
 
 func (s alwaysUser) MarshalJSON() ([]byte, error) {
 	return []byte("\"user\""), nil
-}
-
-type alwaysWorkspace string
-
-func (s alwaysWorkspace) MarshalJSON() ([]byte, error) {
-	return []byte("\"workspace\""), nil
 }

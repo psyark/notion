@@ -2,7 +2,6 @@ package notion
 
 import (
 	"encoding/json"
-	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -69,20 +68,6 @@ type Block struct {
 	Image            File                   `json:"image"`        //  Image block objects contain a file object detailing information about the image.
 	LinkPreview      *BlockLinkPreview      `json:"link_preview"` //  Link Preview block objects contain the originally pasted url:
 	Paragraph        *BlockParagraph        `json:"paragraph"`    // Paragraph
-}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *Block) UnmarshalJSON(data []byte) error {
-	type Alias Block
-	t := &struct {
-		*Alias
-		Parent parentUnmarshaler `json:"parent"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling Block: %w", err)
-	}
-	o.Parent = t.Parent.value
-	return nil
 }
 
 func (o Block) MarshalJSON() ([]byte, error) {

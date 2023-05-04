@@ -22,6 +22,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+var global = &builder{
+	globalSymbols: &sync.Map{},
+	fileName:      "../../object.global.go",
+}
+
 // converter はNotion API ReferenceからGoコードへの変換ルールです。
 type converter struct {
 	url       string // ドキュメントのURL
@@ -29,7 +34,7 @@ type converter struct {
 }
 
 // fetchAndValidate はリモートドキュメントの取得・ローカルコピーとの比較・クラスの組立てを行います
-func (c converter) fetchAndBuild(global *builder) (*builder, error) {
+func (c converter) fetchAndBuild() (*builder, error) {
 	// URLの取得
 	res, err := http.Get(c.url)
 	if err != nil {
@@ -114,10 +119,6 @@ func registerConverter(c converter) {
 
 // convertAll は登録された全てのconverterで変換を実行します
 func convertAll() error {
-	global := &builder{
-		globalSymbols: &sync.Map{},
-		fileName:      "../../object.global.go",
-	}
 	builders := []*builder{global}
 
 	copyAlways := func(b *builder) {
@@ -143,7 +144,7 @@ func convertAll() error {
 	for _, c := range registeredConverters {
 		c := c
 		eg.Go(func() error {
-			if b, err := c.fetchAndBuild(global); err != nil {
+			if b, err := c.fetchAndBuild(); err != nil {
 				return fmt.Errorf("fetchAndBuild: %s: %w", c.url, err)
 			} else {
 				builders = append(builders, b)

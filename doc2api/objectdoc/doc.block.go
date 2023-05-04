@@ -65,7 +65,7 @@ func init() {
 				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
 				output: func(e *objectDocParameter, b *builder) {
 					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asInterfaceField("Parent"))
+					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("Parent")))
 				},
 			}, {
 				Field:        "type",

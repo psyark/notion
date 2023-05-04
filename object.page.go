@@ -35,13 +35,11 @@ func (o *Page) UnmarshalJSON(data []byte) error {
 	type Alias Page
 	t := &struct {
 		*Alias
-		Icon   fileOrEmojiUnmarshaler `json:"icon"`
-		Parent parentUnmarshaler      `json:"parent"`
+		Icon fileOrEmojiUnmarshaler `json:"icon"`
 	}{Alias: (*Alias)(o)}
 	if err := json.Unmarshal(data, t); err != nil {
 		return fmt.Errorf("unmarshaling Page: %w", err)
 	}
 	o.Icon = t.Icon.value
-	o.Parent = t.Parent.value
 	return nil
 }

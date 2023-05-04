@@ -119,7 +119,7 @@ func init() {
 				Field:        "parent",
 				Type:         "object",
 				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "Database").addFields(e.asInterfaceField("Parent"))
+					getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("Parent")))
 				},
 			}, {
 				Field:        "url",
