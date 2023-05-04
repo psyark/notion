@@ -87,7 +87,7 @@ func (t *specialBlockParser) Close(node ast.Node, reader text.Reader, pc parser.
 
 // CanInterruptParagraph returns true if the parser can interrupt paragraphs,
 // otherwise false.
-func (t *specialBlockParser) CanInterruptParagraph() bool { return false }
+func (t *specialBlockParser) CanInterruptParagraph() bool { return true }
 
 // CanAcceptIndentedLine returns true if the parser can open new node when
 // the given line is being indented more than 3 spaces.
@@ -123,8 +123,7 @@ func (r *docRenderer) renderToplevelChild(source []byte, n ast.Node) error {
 	if n.Kind() == KindSpecialBlock {
 		switch {
 		case strings.HasPrefix(text, "[block:parameters]"):
-			text = strings.TrimPrefix(text, "[block:parameters]")
-			text = strings.TrimSuffix(text, "[/block]")
+			text = strings.TrimSuffix(strings.TrimPrefix(text, "[block:parameters]"), "[/block]")
 
 			table := struct {
 				Data map[string]string `json:"data"`
@@ -145,8 +144,37 @@ func (r *docRenderer) renderToplevelChild(source []byte, n ast.Node) error {
 				}
 				r.elements = append(r.elements, &param)
 			}
+		case strings.HasPrefix(text, "[block:code]"):
+			text = strings.TrimSuffix(strings.TrimPrefix(text, "[block:code]"), "[/block]")
+
+			codes := struct {
+				Codes []struct {
+					Code     string `json:"code"`
+					Language string `json:"language"`
+					Name     string `json:"name"`
+				} `json:"codes"`
+			}{}
+			if err := json.Unmarshal([]byte(text), &codes); err != nil {
+				return err
+			}
+			for _, code := range codes.Codes {
+				r.elements = append(r.elements, &blockElement{Kind: ast.KindFencedCodeBlock.String(), Text: code.Code})
+			}
+		case strings.HasPrefix(text, "[block:callout]"):
+			text = strings.TrimSuffix(strings.TrimPrefix(text, "[block:callout]"), "[/block]")
+			callout := struct {
+				Body  string `json:"body"`
+				Type  string `json:"type"`
+				Title string `json:"title"`
+			}{}
+			if err := json.Unmarshal([]byte(text), &callout); err != nil {
+				return err
+			}
+			r.elements = append(r.elements, &blockElement{Kind: ast.KindBlockquote.String(), Text: callout.Body})
+		case strings.HasPrefix(text, "[block:image]"):
+			// ignore
 		default:
-			return fmt.Errorf("%v", text)
+			return fmt.Errorf("unsupported block: %v", text)
 		}
 	} else {
 		r.elements = append(r.elements, &blockElement{Kind: n.Kind().String(), Text: text})
