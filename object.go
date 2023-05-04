@@ -10,6 +10,18 @@ type FileWithCaption any    // TODO
 type CommentList any        // TODO
 type PageOrDatabaseList any // TODO
 
+type alwaysSingleProperty string // TODO 消す
+
+func (s alwaysSingleProperty) MarshalJSON() ([]byte, error) {
+	return []byte("\"single_property\""), nil
+}
+
+type alwaysDualProperty string // TODO 消す
+
+func (s alwaysDualProperty) MarshalJSON() ([]byte, error) {
+	return []byte("\"dual_property\""), nil
+}
+
 type ISO8601String = string
 
 type URLReference struct {

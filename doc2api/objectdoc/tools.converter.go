@@ -107,6 +107,7 @@ func createLocalCopy(remote objectDocElement) jen.Code {
 var registeredConverters []converter
 
 // registerConverter は後で実行するためにconverterを登録します
+// Deprecated: use registerTranslator
 func registerConverter(c converter) {
 	registeredConverters = append(registeredConverters, c)
 }

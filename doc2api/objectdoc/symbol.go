@@ -2,6 +2,7 @@ package objectdoc
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -37,6 +38,12 @@ type objectCommon struct {
 
 func (c *objectCommon) name() string {
 	return c.name_
+}
+func (c *objectCommon) addComment(comment string) {
+	if c.comment != "" {
+		c.comment += "\n\n"
+	}
+	c.comment += strings.TrimSuffix(strings.TrimPrefix(comment, "\n"), "\n")
 }
 
 // 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す

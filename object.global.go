@@ -141,12 +141,6 @@ func (s alwaysDate) MarshalJSON() ([]byte, error) {
 	return []byte("\"date\""), nil
 }
 
-type alwaysDualProperty string
-
-func (s alwaysDualProperty) MarshalJSON() ([]byte, error) {
-	return []byte("\"dual_property\""), nil
-}
-
 type alwaysEmail string
 
 func (s alwaysEmail) MarshalJSON() ([]byte, error) {
@@ -259,12 +253,6 @@ type alwaysSelect string
 
 func (s alwaysSelect) MarshalJSON() ([]byte, error) {
 	return []byte("\"select\""), nil
-}
-
-type alwaysSingleProperty string
-
-func (s alwaysSingleProperty) MarshalJSON() ([]byte, error) {
-	return []byte("\"single_property\""), nil
 }
 
 type alwaysStatus string
