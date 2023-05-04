@@ -1,6 +1,7 @@
 package objectdoc
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -35,6 +36,22 @@ type parameterElement struct {
 	Type         string
 	Description  string
 	ExampleValue string
+}
+
+func (e *parameterElement) setCell(header string, v string) error {
+	switch header {
+	case "Property", "Field":
+		e.Property = v
+	case "Type":
+		e.Type = v
+	case "Description":
+		e.Description = v
+	case "Example value", "Example values":
+		e.ExampleValue = v
+	default:
+		return fmt.Errorf("%v", header)
+	}
+	return nil
 }
 
 func (e *parameterElement) template() jen.Code {

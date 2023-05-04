@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/yuin/goldmark/ast"
+	xast "github.com/yuin/goldmark/extension/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
@@ -97,57 +98,82 @@ type docRenderer struct {
 	elements []docElement
 }
 
-func (r *docRenderer) Render(w io.Writer, source []byte, n ast.Node) error {
+func (r *docRenderer) Render(_ io.Writer, source []byte, n ast.Node) error {
 	for c := n.FirstChild(); c != nil; c = c.NextSibling() {
-		text := ""
-		if c.Kind() == ast.KindFencedCodeBlock {
-			for i := 0; i < c.Lines().Len(); i++ {
-				line := c.Lines().At(i)
-				text += string(line.Value(source))
-			}
-		} else {
-			text = string(c.Text(source))
+		if err := r.renderToplevelChild(source, c); err != nil {
+			return err
 		}
-		if c.Kind() == KindSpecialBlock {
-			switch {
-			case strings.HasPrefix(text, "[block:parameters]"):
-				text = strings.TrimPrefix(text, "[block:parameters]")
-				text = strings.TrimSuffix(text, "[/block]")
+	}
+	return nil
+}
+func (r *docRenderer) renderToplevelChild(source []byte, n ast.Node) error {
+	if n.Kind() == xast.KindTable {
+		return r.renderMarkdownTable(source, n)
+	}
 
-				table := struct {
-					Data map[string]string `json:"data"`
-					Rows int               `json:"rows"`
-					Cols int               `json:"cols"`
-				}{}
-				if err := json.Unmarshal([]byte(text), &table); err != nil {
+	text := ""
+	if n.Kind() == ast.KindFencedCodeBlock {
+		for i := 0; i < n.Lines().Len(); i++ {
+			line := n.Lines().At(i)
+			text += string(line.Value(source))
+		}
+	} else {
+		text = string(n.Text(source))
+	}
+	if n.Kind() == KindSpecialBlock {
+		switch {
+		case strings.HasPrefix(text, "[block:parameters]"):
+			text = strings.TrimPrefix(text, "[block:parameters]")
+			text = strings.TrimSuffix(text, "[/block]")
+
+			table := struct {
+				Data map[string]string `json:"data"`
+				Rows int               `json:"rows"`
+				Cols int               `json:"cols"`
+			}{}
+			if err := json.Unmarshal([]byte(text), &table); err != nil {
+				return err
+			}
+			for row := 0; row < table.Rows; row++ {
+				param := parameterElement{}
+				for col := 0; col < table.Cols; col++ {
+					h := table.Data[fmt.Sprintf("h-%d", col)]
+					v := table.Data[fmt.Sprintf("%d-%d", row, col)]
+					if err := param.setCell(h, v); err != nil {
+						return err
+					}
+				}
+				r.elements = append(r.elements, &param)
+			}
+		default:
+			return fmt.Errorf("%v", text)
+		}
+	} else {
+		r.elements = append(r.elements, &blockElement{Kind: n.Kind().String(), Text: text})
+	}
+	return nil
+}
+func (r *docRenderer) renderMarkdownTable(source []byte, n ast.Node) error {
+	headers := []string{}
+	for row := n.FirstChild(); row != nil; row = row.NextSibling() {
+		switch row.Kind() {
+		case xast.KindTableHeader:
+			for col := row.FirstChild(); col != nil; col = col.NextSibling() {
+				headers = append(headers, string(col.Text(source)))
+			}
+		case xast.KindTableRow:
+			param := parameterElement{}
+			i := 0
+			for col := row.FirstChild(); col != nil; col = col.NextSibling() {
+				v := string(col.Text(source))
+				if err := param.setCell(headers[i], v); err != nil {
 					return err
 				}
-				for row := 0; row < table.Rows; row++ {
-					param := parameterElement{}
-					for col := 0; col < table.Cols; col++ {
-						h := table.Data[fmt.Sprintf("h-%d", col)]
-						v := table.Data[fmt.Sprintf("%d-%d", row, col)]
-
-						switch h {
-						case "Property", "Field":
-							param.Property = v
-						case "Type":
-							param.Type = v
-						case "Description":
-							param.Description = v
-						case "Example value", "Example values":
-							param.ExampleValue = v
-						default:
-							panic(h)
-						}
-					}
-					r.elements = append(r.elements, &param)
-				}
-			default:
-				return fmt.Errorf("%v", text)
+				i++
 			}
-		} else {
-			r.elements = append(r.elements, &blockElement{Kind: c.Kind().String(), Text: text})
+			r.elements = append(r.elements, &param)
+		default:
+			return fmt.Errorf("unsupported: %v", row.Kind())
 		}
 	}
 	return nil
