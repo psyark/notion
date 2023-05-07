@@ -23,6 +23,7 @@ type File struct {
 	External *FileExternal `json:"external"`       // External files
 }
 
+func (o File) isFileOrEmoji() {}
 func (o File) MarshalJSON() ([]byte, error) {
 	if o.Type == "" {
 		// TODO

@@ -63,17 +63,17 @@ func TestUpdatePage(t *testing.T) {
 	cases := []*UpdatePagePropertiesParams{
 		{},
 		{
-			Properties: PropertyValueMap{
-				"Number":   &NumberPropertyValue{Number: null.FloatFromPtr(nil)},
-				"Date":     &DatePropertyValue{},
-				"Checkbox": &CheckboxPropertyValue{Checkbox: false},
+			Properties: map[string]PropertyValue{
+				"Number":   {Type: "number", Number: null.FloatFromPtr(nil)},
+				"Date":     {Type: "date"},
+				"Checkbox": {Type: "checkbox", Checkbox: false},
 			},
 		},
 		{
-			Properties: PropertyValueMap{
-				"Number":   &NumberPropertyValue{Number: null.FloatFrom(rand.Float64() * 1000)},
-				"Date":     &DatePropertyValue{Date: &DatePropertyValueData{Start: time.Now().Format(time.RFC3339)}},
-				"Checkbox": &CheckboxPropertyValue{Checkbox: true},
+			Properties: map[string]PropertyValue{
+				"Number":   {Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
+				"Date":     {Type: "date", Date: &PropertyValueDate{Start: time.Now().Format(time.RFC3339)}},
+				"Checkbox": {Type: "checkbox", Checkbox: true},
 			},
 		},
 	}

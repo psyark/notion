@@ -215,7 +215,7 @@ func init() {
 			&objectDocHeadingElement{
 				Text: "Date mention type object",
 				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("Mention", "date", e.Text, jen.Op("*").Id("DatePropertyValueData"))
+					b.addAdaptiveFieldWithType("Mention", "date", e.Text, jen.Op("*").Id("PropertyValueDate"))
 
 				},
 			},

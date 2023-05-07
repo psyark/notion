@@ -70,13 +70,13 @@ Mention objects represent an inline mention of a database, date, link preview me
 If a rich text object’s type value is "mention", then the corresponding mention object contains the following:
 */
 type Mention struct {
-	Type            string                 `json:"type"`
-	Database        *PageReference         `json:"database"`         // Database mention type object
-	Date            *DatePropertyValueData `json:"date"`             // Date mention type object
-	LinkPreview     *MentionLinkPreview    `json:"link_preview"`     // Link Preview mention type object
-	Page            *PageReference         `json:"page"`             // Page mention type object
-	TemplateMention *TemplateMention       `json:"template_mention"` // Template mention type object
-	User            *User                  `json:"user"`             // User mention type object
+	Type            string              `json:"type"`
+	Database        *PageReference      `json:"database"`         // Database mention type object
+	Date            *PropertyValueDate  `json:"date"`             // Date mention type object
+	LinkPreview     *MentionLinkPreview `json:"link_preview"`     // Link Preview mention type object
+	Page            *PageReference      `json:"page"`             // Page mention type object
+	TemplateMention *TemplateMention    `json:"template_mention"` // Template mention type object
+	User            *User               `json:"user"`             // User mention type object
 }
 
 func (o Mention) MarshalJSON() ([]byte, error) {

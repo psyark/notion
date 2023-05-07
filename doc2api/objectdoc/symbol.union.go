@@ -61,7 +61,7 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 			for _, member := range canIdentify {
 				g.Case(jen.Lit(member.getDiscriminatorValue(u.identifierKey)))
 				switch member := member.(type) {
-				case *concreteObject:
+				case *concreteObject, *adaptiveObject:
 					g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
 				case *abstractObject:
 					g.Id("t").Op(":=").Op("&").Id(member.derivedUnmarshalerName()).Values()

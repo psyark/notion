@@ -98,7 +98,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 					} else if u := getSymbol[unionObject](b, f.typeName); u != nil {
 						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 					} else {
-						panic(fmt.Errorf("unknown symbol: %s (in %s)", f.typeName, c.name()))
+						panic(fmt.Errorf("%s.%s may not interface", c.name(), f.typeName))
 					}
 				}
 			}).Values(jen.Dict{
@@ -148,7 +148,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
 			jen.Id("want").Op(":=").Index().Byte().Call(jen.Id("wantStr")),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
-				jen.Id("t").Dot("Fatal").Call(jen.Err()),
+				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("%w : %s"), jen.Err(), jen.Id("wantStr"))),
 			),
 			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "Marshal").Call(referCode),
 			jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(

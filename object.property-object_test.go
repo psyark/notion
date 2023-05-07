@@ -34,7 +34,7 @@ func TestPropertyMap_unmarshal(t *testing.T) {
 	for _, wantStr := range tests {
 		want := []byte(wantStr)
 		if err := json.Unmarshal(want, target); err != nil {
-			t.Fatal(err)
+			t.Fatal(fmt.Errorf("%w : %s", err, wantStr))
 		}
 		got, _ := json.Marshal(target)
 		if want, got, ok := compareJSON(want, got); !ok {

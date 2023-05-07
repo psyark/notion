@@ -21,7 +21,7 @@ func init() {
 				Name:     "properties",
 				Required: true,
 				Type:     "json",
-				typeCode: jen.Id("PropertyValueMap"),
+				typeCode: jen.Map(jen.String()).Id("PropertyValue"),
 			},
 			{
 				Desc:     "The content to be rendered on the new page, represented as an array of [block objects](https://developers.notion.com/reference/block).",
@@ -100,7 +100,7 @@ func init() {
 				In:        "body",
 				Name:      "properties",
 				Type:      "json",
-				typeCode:  jen.Id("PropertyValueMap"),
+				typeCode:  jen.Map(jen.String()).Id("PropertyValue"),
 				omitEmpty: true,
 			},
 			{

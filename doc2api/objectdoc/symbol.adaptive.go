@@ -27,6 +27,10 @@ func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
 		o.objectCommon.symbolCode(b),
 	}
 
+	for _, u := range o.unions {
+		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("is" + u.name()).Params().Block()
+	}
+
 	// TODO type 未設定の場合の自動推定
 	code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.If(jen.Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)).Op("==").Lit("")).Block(

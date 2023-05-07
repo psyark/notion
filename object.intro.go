@@ -138,7 +138,7 @@ type PropertyItemPagination struct {
 	PaginationCommon
 	Type         alwaysPropertyItem    `json:"type"`
 	PropertyItem PaginatedPropertyInfo `json:"property_item"` // A constant string that represents the type of the objects in results.
-	Results      PropertyItemList      `json:"results"`
+	Results      []PropertyItem        `json:"results"`
 }
 
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
