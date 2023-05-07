@@ -48,7 +48,7 @@ func init() {
 				Description:  `Always "page".`,
 				ExampleValue: `"page"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asFixedStringField())
+				getSymbol[concreteObject](b, "Page").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "id",

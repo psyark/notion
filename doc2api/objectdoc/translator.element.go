@@ -40,16 +40,16 @@ type parameterElement struct {
 
 func (e *parameterElement) setCell(header string, v string) error {
 	switch header {
-	case "Property", "Field":
+	case "Property", "Field", "Parameter":
 		e.Property = v
-	case "Type":
+	case "Type", "HTTP method":
 		e.Type = v
-	case "Description":
+	case "Description", "Endpoint":
 		e.Description = v
 	case "Example value", "Example values":
 		e.ExampleValue = v
 	default:
-		return fmt.Errorf("%v", header)
+		return fmt.Errorf("setCell: %v", header)
 	}
 	return nil
 }
@@ -89,13 +89,15 @@ func (e *parameterElement) asInterfaceField(typeName string, options ...fieldOpt
 }
 
 // asFixedStringField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (e *parameterElement) asFixedStringField() *fixedStringField {
-	for _, value := range []string{e.ExampleValue, e.ExampleValue, e.Type} {
+func (e *parameterElement) asFixedStringField(b *builder) *fixedStringField {
+	for _, value := range []string{e.ExampleValue, e.Type} {
 		if value != "" {
 			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
+				value = strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`)
+				b.global.addAlwaysStringIfNotExists(value)
 				return &fixedStringField{
 					name:    e.Property,
-					value:   strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`),
+					value:   value,
 					comment: e.Description,
 				}
 			}

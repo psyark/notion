@@ -39,7 +39,7 @@ func init() {
 				Property:     "object",
 				Type:         "\"property_item\"",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PropertyItem").addFields(e.asFixedStringField())
+				getSymbol[adaptiveObject](b, "PropertyItem").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",

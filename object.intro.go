@@ -10,7 +10,10 @@ import (
 
 /*
 Pagination
+
 Endpoints that return lists of objects support cursor-based pagination requests. By default, Notion returns ten items per API call. If the number of items in a response from a support endpoint exceeds the default, then an integration can use pagination to request a specific set of the results and/or to limit the number of returned items.
+
+If an endpoint supports pagination, then the response object contains the below fields.
 */
 type Pagination interface {
 	isPagination()
@@ -18,11 +21,6 @@ type Pagination interface {
 	GetNextCursor() *string
 	GetObject() alwaysList
 }
-
-/*
-
-If an endpoint supports pagination, then the response object contains the below fields.
-*/
 type PaginationCommon struct {
 	HasMore    bool       `json:"has_more"`    // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
 	NextCursor *string    `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  Only available when has_more is true.

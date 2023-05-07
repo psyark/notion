@@ -159,6 +159,7 @@ func (b *builder) addDerived(discriminatorValue string, parentName string, comme
 	derived.comment = comment
 
 	if parent.discriminatorKey != "" && discriminatorValue != "" {
+		b.global.addAlwaysStringIfNotExists(discriminatorValue)
 		derived.fields = append(derived.fields, &fixedStringField{name: parent.discriminatorKey, value: discriminatorValue})
 	}
 
