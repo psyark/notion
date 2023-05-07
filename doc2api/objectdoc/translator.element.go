@@ -40,7 +40,7 @@ type parameterElement struct {
 
 func (e *parameterElement) setCell(header string, v string) error {
 	switch header {
-	case "Property", "Field", "Parameter":
+	case "Property", "Field", "Parameter", "": // "" for https://developers.notion.com/reference/emoji-object
 		e.Property = v
 	case "Type", "HTTP method":
 		e.Type = v
@@ -49,7 +49,7 @@ func (e *parameterElement) setCell(header string, v string) error {
 	case "Example value", "Example values":
 		e.ExampleValue = v
 	default:
-		return fmt.Errorf("setCell: %v", header)
+		return fmt.Errorf("setCell: %q", header)
 	}
 	return nil
 }
