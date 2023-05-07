@@ -2,7 +2,6 @@ package notion
 
 import (
 	"encoding/json"
-	"fmt"
 	nullv4 "gopkg.in/guregu/null.v4"
 )
 
@@ -72,107 +71,35 @@ func (o PropertyItem) MarshalJSON() ([]byte, error) {
 }
 
 // The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
-type PaginatedPropertyInfo interface {
-	isPaginatedPropertyInfo()
-	GetId() string
-	GetNextUrl() *string
-}
-type PaginatedPropertyInfoCommon struct {
-	Id      string  `json:"id"`
-	NextUrl *string `json:"next_url"` // The URL the user can request to get the next page of results.
-}
-
-func (c *PaginatedPropertyInfoCommon) GetId() string {
-	return c.Id
-}
-func (c *PaginatedPropertyInfoCommon) GetNextUrl() *string {
-	return c.NextUrl
+type PaginatedPropertyInfo struct {
+	Type     string   `json:"type"`
+	Id       string   `json:"id"` // undocumented
+	Title    struct{} `json:"title"`
+	RichText struct{} `json:"rich_text"`
+	Relation struct{} `json:"relation"`
+	People   struct{} `json:"people"`
+	Rollup   Rollup   `json:"rollup"`   // undocumented
+	NextUrl  *string  `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 
-type paginatedPropertyInfoUnmarshaler struct {
-	value PaginatedPropertyInfo
-}
-
-/*
-UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
-according to the "type" field of the message.
-*/
-func (u *paginatedPropertyInfoUnmarshaler) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		u.value = nil
-		return nil
+func (o PaginatedPropertyInfo) MarshalJSON() ([]byte, error) {
+	if o.Type == "" {
+		// TODO
 	}
-	t := struct {
-		Title    json.RawMessage `json:"title"`
-		RichText json.RawMessage `json:"rich_text"`
-		Relation json.RawMessage `json:"relation"`
-		People   json.RawMessage `json:"people"`
-		Rollup   json.RawMessage `json:"rollup"`
-	}{}
-	if err := json.Unmarshal(data, &t); err != nil {
-		return err
+	type Alias PaginatedPropertyInfo
+	data, err := json.Marshal(Alias(o))
+	if err != nil {
+		return nil, err
 	}
-	switch {
-	case t.Title != nil:
-		u.value = &TitlePaginatedPropertyInfo{}
-	case t.RichText != nil:
-		u.value = &RichTextPaginatedPropertyInfo{}
-	case t.Relation != nil:
-		u.value = &RelationPaginatedPropertyInfo{}
-	case t.People != nil:
-		u.value = &PeoplePaginatedPropertyInfo{}
-	case t.Rollup != nil:
-		u.value = &RollupPaginatedPropertyInfo{}
-	default:
-		return fmt.Errorf("unmarshal PaginatedPropertyInfo: %s", string(data))
+	visibility := map[string]bool{
+		"people":    o.Type == "people",
+		"relation":  o.Type == "relation",
+		"rich_text": o.Type == "rich_text",
+		"rollup":    o.Type == "rollup",
+		"title":     o.Type == "title",
 	}
-	return json.Unmarshal(data, u.value)
+	return omitFields(data, visibility)
 }
-
-func (u *paginatedPropertyInfoUnmarshaler) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.value)
-}
-
-type TitlePaginatedPropertyInfo struct {
-	PaginatedPropertyInfoCommon
-	Type  alwaysTitle `json:"type"`
-	Title struct{}    `json:"title"`
-}
-
-func (_ *TitlePaginatedPropertyInfo) isPaginatedPropertyInfo() {}
-
-type RichTextPaginatedPropertyInfo struct {
-	PaginatedPropertyInfoCommon
-	Type     alwaysRichText `json:"type"`
-	RichText struct{}       `json:"rich_text"`
-}
-
-func (_ *RichTextPaginatedPropertyInfo) isPaginatedPropertyInfo() {}
-
-type RelationPaginatedPropertyInfo struct {
-	PaginatedPropertyInfoCommon
-	Type     alwaysRelation `json:"type"`
-	Relation struct{}       `json:"relation"`
-}
-
-func (_ *RelationPaginatedPropertyInfo) isPaginatedPropertyInfo() {}
-
-type PeoplePaginatedPropertyInfo struct {
-	PaginatedPropertyInfoCommon
-	Type   alwaysPeople `json:"type"`
-	People struct{}     `json:"people"`
-}
-
-func (_ *PeoplePaginatedPropertyInfo) isPaginatedPropertyInfo() {}
-
-// undocumented
-type RollupPaginatedPropertyInfo struct {
-	PaginatedPropertyInfoCommon
-	Type   alwaysRollup `json:"type"`
-	Rollup Rollup       `json:"rollup"`
-}
-
-func (_ *RollupPaginatedPropertyInfo) isPaginatedPropertyInfo() {}
 
 // Date property values
 type PropertyItemDate struct {

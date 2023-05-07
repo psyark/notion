@@ -137,26 +137,12 @@ func (_ *PageOrDatabasePagination) isPagination() {}
 type PropertyItemPagination struct {
 	PaginationCommon
 	Type         alwaysPropertyItem    `json:"type"`
-	PropertyItem PaginatedPropertyInfo `json:"property_item"` // A constant string that represents the type of the objects in results.
+	PropertyItem PaginatedPropertyInfo `json:"property_item"`
 	Results      []PropertyItem        `json:"results"`
 }
 
 func (_ *PropertyItemPagination) isPropertyItemOrPropertyItemPagination() {}
 func (_ *PropertyItemPagination) isPagination()                           {}
-
-// UnmarshalJSON assigns the appropriate implementation to interface field(s)
-func (o *PropertyItemPagination) UnmarshalJSON(data []byte) error {
-	type Alias PropertyItemPagination
-	t := &struct {
-		*Alias
-		PropertyItem paginatedPropertyInfoUnmarshaler `json:"property_item"`
-	}{Alias: (*Alias)(o)}
-	if err := json.Unmarshal(data, t); err != nil {
-		return fmt.Errorf("unmarshaling PropertyItemPagination: %w", err)
-	}
-	o.PropertyItem = t.PropertyItem.value
-	return nil
-}
 
 type UserPagination struct {
 	PaginationCommon

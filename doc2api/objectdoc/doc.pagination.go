@@ -114,9 +114,9 @@ func init() {
 					for _, name := range strings.Split(e.Type, "\n\n") {
 						name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
 
-						var typeSpecificField fieldCoder = &field{name: name, typeCode: jen.Struct()}
+						typeSpecificField := &field{name: name, typeCode: jen.Struct()}
 						if name == "property_item" {
-							typeSpecificField = &interfaceField{name: "property_item", typeName: "PaginatedPropertyInfo", comment: e.Description}
+							typeSpecificField.typeCode = jen.Id("PaginatedPropertyInfo")
 						}
 
 						var resultsField fieldCoder = &field{name: "results", typeCode: jen.Id(strcase.UpperCamelCase(name) + "List")}

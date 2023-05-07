@@ -66,17 +66,13 @@ func init() {
 				Text: "The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.",
 			}, func(e blockElement) {
 				// TODO 良い名前
-				b.addAbstractObject("PaginatedPropertyInfo", "type", e.Text).addFields(
-					&field{name: "id", typeCode: jen.String()},
+				b.addAdaptiveObject("PaginatedPropertyInfo", "type", e.Text).addFields(
+					&field{name: "id", typeCode: jen.String(), comment: "undocumented"},
 				)
 				for _, derived := range []string{"title", "rich_text", "relation", "people"} {
-					b.addDerived(derived, "PaginatedPropertyInfo", "").addFields(
-						&field{name: derived, typeCode: jen.Struct()},
-					)
+					b.addAdaptiveEmptyField("PaginatedPropertyInfo", derived, "")
 				}
-				b.addDerived("rollup", "PaginatedPropertyInfo", "undocumented").addFields(
-					&field{name: "rollup", typeCode: jen.Id("Rollup")},
-				)
+				b.addAdaptiveFieldWithType("PaginatedPropertyInfo", "rollup", "undocumented", jen.Id("Rollup"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "object",
@@ -108,7 +104,7 @@ func init() {
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
+				getSymbol[adaptiveObject](b, "PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
 			})
 		},
 		func(c *comparator, b *builder) /* Title property values */ {
