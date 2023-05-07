@@ -11,26 +11,6 @@ type FileWithCaption any    // TODO
 type CommentList any        // TODO
 type PageOrDatabaseList any // TODO
 
-type alwaysTitle string
-
-func (a alwaysTitle) MarshalJSON() ([]byte, error) { return []byte(`"title"`), nil }
-
-type alwaysRichText string
-
-func (a alwaysRichText) MarshalJSON() ([]byte, error) { return []byte(`"rich_text"`), nil }
-
-type alwaysRelation string
-
-func (a alwaysRelation) MarshalJSON() ([]byte, error) { return []byte(`"relation"`), nil }
-
-type alwaysPeople string
-
-func (a alwaysPeople) MarshalJSON() ([]byte, error) { return []byte(`"people"`), nil }
-
-type alwaysRollup string
-
-func (a alwaysRollup) MarshalJSON() ([]byte, error) { return []byte(`"rollup"`), nil }
-
 type PropertyMap map[string]Property
 
 func (m *PropertyMap) UnmarshalJSON(data []byte) error {
