@@ -11,10 +11,6 @@ The Notion API does not yet support uploading files to Notion.
 File objects contain data about a file that is uploaded to Notion, or data about an external file that is linked to in Notion.
 
 Page, embed, image, video, file, pdf, and bookmark block types all contain file objects. Icon and cover page object values also contain file objects.
-
-Each file object includes the following fields:
-
-To modify page or database property values that are made from file objects, like `icon`, `cover`, or `files` page property values, use the [update page](https://developers.notion.com/reference/patch-page) or [update database](https://developers.notion.com/reference/update-a-database) endpoints.
 */
 type File struct {
 	Type     string        `json:"type"`
@@ -42,7 +38,9 @@ func (o File) MarshalJSON() ([]byte, error) {
 
 /*
 Notion-hosted files
+
 All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:
+
 You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.
 */
 type FileFile struct {
@@ -52,6 +50,7 @@ type FileFile struct {
 
 /*
 External files
+
 An external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of "external". The corresponding file specific object contains the following fields:
 
 The Notion API supports adding, retrieving, and updating links to external files.

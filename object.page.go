@@ -11,6 +11,7 @@ import (
 
 /*
 The Page object contains the page property values of a single Notion page.
+
 All pages have a Parent. If the parent is a database, the property values conform to the schema laid out database's properties. Otherwise, the only property value is the title.
 
 Page content is available as blocks. The content can be read using retrieve block children and appended using append block children.
