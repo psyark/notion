@@ -48,6 +48,7 @@ func (e *parameterElement) setCell(header string, v string) error {
 		e.Description = v
 	case "Example value", "Example values":
 		e.ExampleValue = v
+	case "Updatable": // https://developers.notion.com/reference/user
 	default:
 		return fmt.Errorf("setCell: %q", header)
 	}
