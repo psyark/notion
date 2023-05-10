@@ -37,35 +37,33 @@ type PropertyItem struct {
 
 func (o PropertyItem) isPropertyItemOrPropertyItemPagination() {}
 func (o PropertyItem) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias PropertyItem
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"checkbox":         o.Type == "checkbox",
-		"created_by":       o.Type == "created_by",
-		"created_time":     o.Type == "created_time",
-		"date":             o.Type == "date",
-		"email":            o.Type == "email",
-		"files":            o.Type == "files",
-		"formula":          o.Type == "formula",
-		"last_edited_by":   o.Type == "last_edited_by",
-		"last_edited_time": o.Type == "last_edited_time",
-		"multi_select":     o.Type == "multi_select",
-		"number":           o.Type == "number",
-		"people":           o.Type == "people",
-		"phone_number":     o.Type == "phone_number",
-		"relation":         o.Type == "relation",
-		"rich_text":        o.Type == "rich_text",
-		"rollup":           o.Type == "rollup",
-		"select":           o.Type == "select",
-		"status":           o.Type == "status",
-		"title":            o.Type == "title",
-		"url":              o.Type == "url",
+		"checkbox":         t == "checkbox",
+		"created_by":       t == "created_by",
+		"created_time":     t == "created_time",
+		"date":             t == "date",
+		"email":            t == "email",
+		"files":            t == "files",
+		"formula":          t == "formula",
+		"last_edited_by":   t == "last_edited_by",
+		"last_edited_time": t == "last_edited_time",
+		"multi_select":     t == "multi_select",
+		"number":           t == "number",
+		"people":           t == "people",
+		"phone_number":     t == "phone_number",
+		"relation":         t == "relation",
+		"rich_text":        t == "rich_text",
+		"rollup":           t == "rollup",
+		"select":           t == "select",
+		"status":           t == "status",
+		"title":            t == "title",
+		"url":              t == "url",
 	}
 	return omitFields(data, visibility)
 }
@@ -83,20 +81,18 @@ type PaginatedPropertyInfo struct {
 }
 
 func (o PaginatedPropertyInfo) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias PaginatedPropertyInfo
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"people":    o.Type == "people",
-		"relation":  o.Type == "relation",
-		"rich_text": o.Type == "rich_text",
-		"rollup":    o.Type == "rollup",
-		"title":     o.Type == "title",
+		"people":    t == "people",
+		"relation":  t == "relation",
+		"rich_text": t == "rich_text",
+		"rollup":    t == "rollup",
+		"title":     t == "title",
 	}
 	return omitFields(data, visibility)
 }
@@ -118,19 +114,17 @@ type Rollup struct {
 }
 
 func (o Rollup) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias Rollup
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"array":      o.Type == "array",
-		"date":       o.Type == "date",
-		"incomplete": o.Type == "incomplete",
-		"number":     o.Type == "number",
+		"array":      t == "array",
+		"date":       t == "date",
+		"incomplete": t == "incomplete",
+		"number":     t == "number",
 	}
 	return omitFields(data, visibility)
 }

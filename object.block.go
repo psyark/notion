@@ -71,34 +71,32 @@ type Block struct {
 }
 
 func (o Block) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias Block
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"bookmark":           o.Type == "bookmark",
-		"breadcrumb":         o.Type == "breadcrumb",
-		"bulleted_list_item": o.Type == "bulleted_list_item",
-		"callout":            o.Type == "callout",
-		"child_database":     o.Type == "child_database",
-		"child_page":         o.Type == "child_page",
-		"code":               o.Type == "code",
-		"column":             o.Type == "column",
-		"column_list":        o.Type == "column_list",
-		"divider":            o.Type == "divider",
-		"embed":              o.Type == "embed",
-		"equation":           o.Type == "equation",
-		"file":               o.Type == "file",
-		"heading_1":          o.Type == "heading_1",
-		"heading_2":          o.Type == "heading_2",
-		"heading_3":          o.Type == "heading_3",
-		"image":              o.Type == "image",
-		"link_preview":       o.Type == "link_preview",
-		"paragraph":          o.Type == "paragraph",
+		"bookmark":           t == "bookmark",
+		"breadcrumb":         t == "breadcrumb",
+		"bulleted_list_item": t == "bulleted_list_item",
+		"callout":            t == "callout",
+		"child_database":     t == "child_database",
+		"child_page":         t == "child_page",
+		"code":               t == "code",
+		"column":             t == "column",
+		"column_list":        t == "column_list",
+		"divider":            t == "divider",
+		"embed":              t == "embed",
+		"equation":           t == "equation",
+		"file":               t == "file",
+		"heading_1":          t == "heading_1",
+		"heading_2":          t == "heading_2",
+		"heading_3":          t == "heading_3",
+		"image":              t == "image",
+		"link_preview":       t == "link_preview",
+		"paragraph":          t == "paragraph",
 	}
 	return omitFields(data, visibility)
 }

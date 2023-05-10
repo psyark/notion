@@ -21,17 +21,15 @@ type File struct {
 
 func (o File) isFileOrEmoji() {}
 func (o File) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias File
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"external": o.Type == "external",
-		"file":     o.Type == "file",
+		"external": t == "external",
+		"file":     t == "file",
 	}
 	return omitFields(data, visibility)
 }

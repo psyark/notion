@@ -10,7 +10,6 @@ import (
 // https://developers.notion.com/reference/post-database-query-filter
 
 func TestFilter_unmarshal(t *testing.T) {
-	target := &filterUnmarshaler{}
 	tests := []string{
 		"{\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"equals\": true\n    }\n  }",
 		"{\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"does_not_equal\": true\n    }\n  }",
@@ -32,6 +31,7 @@ func TestFilter_unmarshal(t *testing.T) {
 		"{\n    \"or\": [\n      {\n        \"property\": \"Description\",\n        \"rich_text\": {\n          \"contains\": \"2023\"\n        }\n      },\n      {\n        \"and\": [\n          {\n            \"property\": \"Department\",\n            \"select\": {\n              \"equals\": \"Engineering\"\n            }\n          },\n          {\n            \"property\": \"Priority goal\",\n            \"checkbox\": {\n              \"equals\": true\n            }\n          }\n        ]\n      }\n    ]\n  }",
 	}
 	for _, wantStr := range tests {
+		target := &filterUnmarshaler{}
 		want := []byte(wantStr)
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(fmt.Errorf("%w : %s", err, wantStr))

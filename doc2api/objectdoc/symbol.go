@@ -138,7 +138,6 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 	}
 
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
-		initCode,
 		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
 			for _, t := range c.jsonCodes {
 				g.Line().Lit(t)
@@ -146,6 +145,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 			g.Line()
 		}),
 		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
+			initCode,
 			jen.Id("want").Op(":=").Index().Byte().Call(jen.Id("wantStr")),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
 				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("%w : %s"), jen.Err(), jen.Id("wantStr"))),

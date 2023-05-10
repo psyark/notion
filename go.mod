@@ -12,12 +12,12 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/stoewer/go-strcase v1.3.0
+	github.com/yuin/goldmark v1.5.4
 	golang.org/x/sync v0.1.0
 	gopkg.in/guregu/null.v4 v4.0.0
 )
 
 require (
 	github.com/andybalholm/cascadia v1.3.2 // indirect
-	github.com/yuin/goldmark v1.5.4
 	golang.org/x/net v0.9.0 // indirect
 )

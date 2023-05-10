@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+type UndefNullString any
+
 type FileWithCaption any    // TODO
 type CommentList any        // TODO
 type PageOrDatabaseList any // TODO
@@ -18,6 +20,8 @@ func (m *PropertyMap) UnmarshalJSON(data []byte) error {
 	type Alias PropertyMap
 	return json.Unmarshal(data, (*Alias)(m))
 }
+
+type PropertyValueMap map[string]PropertyValue
 
 type PropertyItemOrPropertyItemPaginationMap map[string]PropertyItemOrPropertyItemPagination
 

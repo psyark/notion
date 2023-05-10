@@ -18,19 +18,17 @@ type Parent struct {
 }
 
 func (o Parent) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias Parent
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"block_id":    o.Type == "block_id",
-		"database_id": o.Type == "database_id",
-		"page_id":     o.Type == "page_id",
-		"workspace":   o.Type == "workspace",
+		"block_id":    t == "block_id",
+		"database_id": t == "database_id",
+		"page_id":     t == "page_id",
+		"workspace":   t == "workspace",
 	}
 	return omitFields(data, visibility)
 }

@@ -31,11 +31,22 @@ func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
 		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("is" + u.name()).Params().Block()
 	}
 
-	// TODO type 未設定の場合の自動推定
 	code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-		jen.If(jen.Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)).Op("==").Lit("")).Block(
-			jen.Comment("TODO"),
-		),
+		jen.Id("t").Op(":=").Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)),
+
+		// TODO type 未設定の場合の自動推定
+		// jen.If(jen.Id("t").Op("==").Lit("")).Block(
+		// 	jen.Switch().BlockFunc(func(g *jen.Group) {
+		// 		for _, f := range o.fields {
+		// 			if f, ok := f.(*field); ok {
+		// 				if f.discriminatorValue != "" {
+		// 					g.Case(jen.Op("!").Qual("reflect", "ValueOf").Call(jen.Id("o").Dot(strcase.UpperCamelCase(f.name))).Dot("IsZero").Call()).Id("t").Op("=").Lit(f.discriminatorValue)
+		// 				}
+		// 			}
+		// 		}
+		// 	}),
+		// ),
+
 		jen.Type().Id("Alias").Id(o.name()),
 		jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
 		jen.If(jen.Err().Op("!=").Nil()).Block(jen.Return().List(jen.Nil(), jen.Err())),
@@ -43,9 +54,9 @@ func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
 			for _, f := range o.fields {
 				if f, ok := f.(*field); ok {
 					if f.discriminatorNotEmpty {
-						d[jen.Lit(f.name)] = jen.Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)).Op("!=").Lit("")
+						d[jen.Lit(f.name)] = jen.Id("t").Op("!=").Lit("")
 					} else if f.discriminatorValue != "" {
-						d[jen.Lit(f.name)] = jen.Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)).Op("==").Lit(f.discriminatorValue)
+						d[jen.Lit(f.name)] = jen.Id("t").Op("==").Lit(f.discriminatorValue)
 					}
 				}
 			}

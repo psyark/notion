@@ -31,19 +31,17 @@ type User struct {
 }
 
 func (o User) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias User
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"avatar_url": o.Type != "",
-		"bot":        o.Type == "bot",
-		"name":       o.Type != "",
-		"person":     o.Type == "person",
+		"avatar_url": t != "",
+		"bot":        t == "bot",
+		"name":       t != "",
+		"person":     t == "person",
 	}
 	return omitFields(data, visibility)
 }

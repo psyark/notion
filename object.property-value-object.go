@@ -16,7 +16,7 @@ Any property value that has other pages in its value will only use the first 25 
 Each page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
 */
 type PropertyValue struct {
-	Type           string             `json:"type"`
+	Type           string             `json:"type,omitempty"`
 	Id             string             `json:"id,omitempty"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
 	Title          []RichText         `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
 	RichText       []RichText         `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
@@ -42,36 +42,34 @@ type PropertyValue struct {
 }
 
 func (o PropertyValue) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias PropertyValue
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"checkbox":         o.Type == "checkbox",
-		"created_by":       o.Type == "created_by",
-		"created_time":     o.Type == "created_time",
-		"date":             o.Type == "date",
-		"email":            o.Type == "email",
-		"files":            o.Type == "files",
-		"formula":          o.Type == "formula",
-		"has_more":         o.Type == "relation",
-		"last_edited_by":   o.Type == "last_edited_by",
-		"last_edited_time": o.Type == "last_edited_time",
-		"multi_select":     o.Type == "multi_select",
-		"number":           o.Type == "number",
-		"people":           o.Type == "people",
-		"phone_number":     o.Type == "phone_number",
-		"relation":         o.Type == "relation",
-		"rich_text":        o.Type == "rich_text",
-		"rollup":           o.Type == "rollup",
-		"select":           o.Type == "select",
-		"status":           o.Type == "status",
-		"title":            o.Type == "title",
-		"url":              o.Type == "url",
+		"checkbox":         t == "checkbox",
+		"created_by":       t == "created_by",
+		"created_time":     t == "created_time",
+		"date":             t == "date",
+		"email":            t == "email",
+		"files":            t == "files",
+		"formula":          t == "formula",
+		"has_more":         t == "relation",
+		"last_edited_by":   t == "last_edited_by",
+		"last_edited_time": t == "last_edited_time",
+		"multi_select":     t == "multi_select",
+		"number":           t == "number",
+		"people":           t == "people",
+		"phone_number":     t == "phone_number",
+		"relation":         t == "relation",
+		"rich_text":        t == "rich_text",
+		"rollup":           t == "rollup",
+		"select":           t == "select",
+		"status":           t == "status",
+		"title":            t == "title",
+		"url":              t == "url",
 	}
 	return omitFields(data, visibility)
 }
@@ -80,7 +78,7 @@ func (o PropertyValue) MarshalJSON() ([]byte, error) {
 type PropertyValueDate struct {
 	Start    ISO8601String  `json:"start"`     // An ISO 8601 format date, with optional time.
 	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.
-	TimeZone nullv4.String  `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
+	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
 }
 
 // Formula property values
@@ -93,19 +91,17 @@ type Formula struct {
 }
 
 func (o Formula) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias Formula
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"boolean": o.Type == "boolean",
-		"date":    o.Type == "date",
-		"number":  o.Type == "number",
-		"string":  o.Type == "string",
+		"boolean": t == "boolean",
+		"date":    t == "date",
+		"number":  t == "number",
+		"string":  t == "string",
 	}
 	return omitFields(data, visibility)
 }

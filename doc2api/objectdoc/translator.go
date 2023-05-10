@@ -16,16 +16,18 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/util"
+	"golang.org/x/sync/errgroup"
 )
 
-var registeredTranslators []translator
+var registeredTranslators []*translator
 
 type translator struct {
+	b      *builder
 	url    string
 	scopes []translationScope
 }
 
-func (t *translator) translate() error {
+func (t *translator) fetchAndBuild() error {
 	// URLの取得
 	res, err := http.Get(t.url)
 	if err != nil {
@@ -68,7 +70,7 @@ func (t *translator) translate() error {
 	// スコープ実行
 	c := &comparator{elements: ren.elements}
 	fileName := "object." + strings.TrimPrefix(t.url, "https://developers.notion.com/reference/") + ".go"
-	b := &builder{
+	t.b = &builder{
 		global:        global,
 		globalSymbols: global.globalSymbols,
 		fileName:      "../../" + fileName,
@@ -84,7 +86,7 @@ func (t *translator) translate() error {
 					scopeErr = fmt.Errorf("scope[%d]: %s", i, err)
 				}
 			}()
-			scope(c, b)
+			scope(c, t.b)
 		}()
 		if scopeErr != nil {
 			return scopeErr
@@ -123,6 +125,12 @@ func (t *translator) translate() error {
 		return fmt.Errorf("%d element(s) remains", len(c.elements)-c.index)
 	}
 
+	return nil // OK
+}
+
+func (t *translator) output() error {
+	b := t.b
+
 	// ビルダー本体出力
 	if len(b.localSymbols) != 0 {
 		file := jen.NewFile("notion")
@@ -157,20 +165,36 @@ func (t *translator) translate() error {
 		_ = os.Remove(strings.Replace(b.fileName, ".go", "_test.go", 1))
 	}
 
-	return nil // OK
+	return nil
 }
 
 type translationScope func(c *comparator, b *builder)
 
 func registerTranslator(url string, scopes ...translationScope) {
-	registeredTranslators = append(registeredTranslators, translator{url: url, scopes: scopes})
+	registeredTranslators = append(registeredTranslators, &translator{url: url, scopes: scopes})
 }
 
 func translateAll() error {
+	eg := errgroup.Group{}
 	for _, t := range registeredTranslators {
-		if err := t.translate(); err != nil {
+		t := t
+		eg.Go(func() error {
+			if err := t.fetchAndBuild(); err != nil {
+				return errors.Wrap(err, t.url)
+			}
+			return nil
+		})
+	}
+
+	if err := eg.Wait(); err != nil {
+		return errors.Wrap(err, "fetchAndBuild")
+	}
+
+	for _, t := range registeredTranslators {
+		if err := t.output(); err != nil {
 			return errors.Wrap(err, t.url)
 		}
 	}
+
 	return nil
 }

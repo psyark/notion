@@ -25,18 +25,16 @@ type RichText struct {
 }
 
 func (o RichText) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias RichText
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"equation": o.Type == "equation",
-		"mention":  o.Type == "mention",
-		"text":     o.Type == "text",
+		"equation": t == "equation",
+		"mention":  t == "mention",
+		"text":     t == "text",
 	}
 	return omitFields(data, visibility)
 }
@@ -80,21 +78,19 @@ type Mention struct {
 }
 
 func (o Mention) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias Mention
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"database":         o.Type == "database",
-		"date":             o.Type == "date",
-		"link_preview":     o.Type == "link_preview",
-		"page":             o.Type == "page",
-		"template_mention": o.Type == "template_mention",
-		"user":             o.Type == "user",
+		"database":         t == "database",
+		"date":             t == "date",
+		"link_preview":     t == "link_preview",
+		"page":             t == "page",
+		"template_mention": t == "template_mention",
+		"user":             t == "user",
 	}
 	return omitFields(data, visibility)
 }
@@ -124,17 +120,15 @@ type TemplateMention struct {
 }
 
 func (o TemplateMention) MarshalJSON() ([]byte, error) {
-	if o.Type == "" {
-		// TODO
-	}
+	t := o.Type
 	type Alias TemplateMention
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"template_mention_date": o.Type == "template_mention_date",
-		"template_mention_user": o.Type == "template_mention_user",
+		"template_mention_date": t == "template_mention_date",
+		"template_mention_user": t == "template_mention_user",
 	}
 	return omitFields(data, visibility)
 }

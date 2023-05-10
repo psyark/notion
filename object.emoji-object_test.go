@@ -10,11 +10,11 @@ import (
 // https://developers.notion.com/reference/emoji-object
 
 func TestEmoji_unmarshal(t *testing.T) {
-	target := &Emoji{}
 	tests := []string{
 		"{\n  \"type\": \"emoji\",\n  \"emoji\": \"😻\"\n}",
 	}
 	for _, wantStr := range tests {
+		target := &Emoji{}
 		want := []byte(wantStr)
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(fmt.Errorf("%w : %s", err, wantStr))

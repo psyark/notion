@@ -10,7 +10,6 @@ import (
 // https://developers.notion.com/reference/property-object
 
 func TestPropertyMap_unmarshal(t *testing.T) {
-	target := &PropertyMap{}
 	tests := []string{
 		"{\"Task complete\": {\n  \"id\": \"BBla\",\n  \"name\": \"Task complete\",\n  \"type\": \"checkbox\",\n  \"checkbox\": {}\n}\n}",
 		"{\"Created by\": {\n  \"id\": \"%5BJCR\",\n  \"name\": \"Created by\",\n  \"type\": \"created_by\",\n  \"created_by\": {}\n}\n}",
@@ -32,6 +31,7 @@ func TestPropertyMap_unmarshal(t *testing.T) {
 		"{\"Project URL\": {\n  \"id\": \"BZKU\",\n  \"name\": \"Project URL\",\n  \"type\": \"url\",\n  \"url\": {}\n}\n}",
 	}
 	for _, wantStr := range tests {
+		target := &PropertyMap{}
 		want := []byte(wantStr)
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(fmt.Errorf("%w : %s", err, wantStr))
