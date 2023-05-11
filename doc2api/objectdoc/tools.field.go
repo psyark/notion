@@ -14,12 +14,6 @@ type fieldCoder interface {
 	getTypeCode() jen.Code
 }
 
-var _ = []fieldCoder{
-	&field{},
-	&interfaceField{},
-	&fixedStringField{},
-}
-
 // 一般的なフィールド
 type field struct {
 	name                  string

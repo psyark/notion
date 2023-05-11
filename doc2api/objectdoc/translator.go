@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/dave/jennifer/jen"
@@ -18,6 +19,11 @@ import (
 	"github.com/yuin/goldmark/util"
 	"golang.org/x/sync/errgroup"
 )
+
+var global = &builder{
+	globalSymbols: &sync.Map{},
+	fileName:      "../../object.global.go",
+}
 
 var registeredTranslators []*translator
 
