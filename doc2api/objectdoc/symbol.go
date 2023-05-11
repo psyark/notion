@@ -156,9 +156,3 @@ func (c alwaysString) symbolCode(b *builder) jen.Code {
 func (c alwaysString) name() string {
 	return "always" + strcase.UpperCamelCase(string(c))
 }
-
-// specialMethodCoder はabstractObject（とその実装オブジェクト）に特別なメソッドを追加したい場合に使います
-type specialMethodCoder interface {
-	declarationCode() jen.Code
-	implementationCode(*concreteObject) jen.Code
-}
