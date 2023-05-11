@@ -59,6 +59,7 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 	return ao
 }
 
+// TODO 以下3種類の名前をつけ直す
 func (b *builder) addAdaptiveField(name string, discriminatorValue string, comment string) *adaptiveObject {
 	dataName := name + strcase.UpperCamelCase(discriminatorValue)
 	b.addConcreteObject(dataName, comment)

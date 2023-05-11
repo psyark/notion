@@ -1,1218 +1,1237 @@
 package objectdoc
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 )
 
 func init() {
-	registerConverter(converter{
-		url: "https://developers.notion.com/reference/block",
-		localCopy: []objectDocElement{
-			&objectDocParagraphElement{
-				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects. \n\n For example, the following block object represents a Heading 2 in the Notion UI:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveObject("Block", "type", e.Text)
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}",
-				Language: "json",
-				Name:     "",
-				output: func(e *objectDocCodeElementCode, b *builder) {
-					b.addUnmarshalTest("Block", e.Code)
-				},
-			}}},
-			&objectDocParagraphElement{
-				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page. \n",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").comment += "\n\n" + e.Text
-				},
-			},
-			&objectDocHeadingElement{
-				Text:   "Keys",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocCalloutElement{
-				Body:   "Fields marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the [integration capabilities reference](https://developers.notion.com/reference/capabilities) for details.",
-				Title:  "",
-				Type:   "info",
-				output: func(e *objectDocCalloutElement, b *builder) {},
-			},
-			&objectDocParametersElement{{
-				Field:        "object*",
+	registerTranslator(
+		"https://developers.notion.com/reference/block",
+		func(c *comparator, b *builder) /*  */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects.",
+			}, func(e blockElement) {
+				b.addAdaptiveObject("Block", "type", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "For example, the following block object represents a Heading 2 in the Notion UI:",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}",
+			}, func(e blockElement) {
+				b.addUnmarshalTest("Block", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page.",
+			}, func(e blockElement) {
+				getSymbol[adaptiveObject](b, "Block").addComment(e.Text)
+			})
+		},
+		func(c *comparator, b *builder) /* Keys */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Keys",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "Fields marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the integration capabilities reference for details.",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "object",
 				Type:         "string",
 				Description:  `Always "block".`,
 				ExampleValue: `"block"`,
-				output: func(e *objectDocParameter, b *builder) {
-					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asFixedStringField())
-				},
-			}, {
-				Field:        "id*",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asFixedStringField(b))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "id",
 				Type:         "string (UUIDv4)",
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
-				output: func(e *objectDocParameter, b *builder) {
-					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(UUID))
-				},
-			}, {
-				Field:        "parent",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(UUID))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "parent",
 				Type:         "object",
 				Description:  "Information about the block's parent. See Parent object.",
-				ExampleValue: "{ \"type\": \"block_id\", \"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\" }",
-				output: func(e *objectDocParameter, b *builder) {
-					e.Field = strings.TrimSuffix(e.Field, "*")
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("Parent")))
-				},
-			}, {
-				Field:        "type",
+				ExampleValue: `{ "type": "block_id", "block_id": "7d50a184-5bbe-4d90-8f29-6bec57ed817b" }`,
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("Parent")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "type",
 				Type:         "string (enum)",
 				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
 				ExampleValue: `"paragraph"`,
-				output: func(e *objectDocParameter, b *builder) {
-					// 各structで定義
-				},
-			}, {
-				Field:        "created_time",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "created_time",
 				Type:         "string (ISO 8601 date time)",
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("ISO8601String")))
-				},
-			}, {
-				Field:        "created_by",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("ISO8601String")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "created_by",
 				Type:         "Partial User",
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("User")))
-				},
-			}, {
-				Field:        "last_edited_time",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("User")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "last_edited_time",
 				Type:         "string (ISO 8601 date time)",
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("ISO8601String")))
-				},
-			}, {
-				Field:        "last_edited_by",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("ISO8601String")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "last_edited_by",
 				Type:         "Partial User",
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("User")))
-				},
-			}, {
-				Field:        "archived",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Id("User")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "archived",
 				Type:         "boolean",
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Bool()))
-				},
-			}, {
-				Field:        "has_children",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Bool()))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "has_children",
 				Type:         "boolean",
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Bool()))
-				},
-			}, {
-				Field:        "{type}",
-				Type:         "block type object",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject](b, "Block").addFields(e.asField(jen.Bool()))
+			})
+			c.nextMustParameter(parameterElement{
 				Description:  "An object containing type-specific block information.",
 				ExampleValue: "Refer to the block type object section for examples of each block type.",
-				output: func(e *objectDocParameter, b *builder) {
-					// 各structで定義
-				},
-			}},
-			&objectDocHeadingElement{
+				Property:     "{type}",
+				Type:         "block type object",
+			}, func(e parameterElement) {})
+		},
+		func(c *comparator, b *builder) /* Block types that support child blocks */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
 				Text: "Block types that support child blocks",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").comment += "\n" + e.Text
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nSome block types contain nested blocks. The following block types support child blocks: \n\n- Bulleted list item\n- Callout \n- Child database\n- Child page\n- Column\n- Heading 1, when the is_toggleable property is true\n- Heading 2, when the is_toggleable property is true\n- Heading 3, when the is_toggleable property is true\n- Numbered list item\n- Paragraph \n- Quote\n- Synced block\n- Table\n- Template\n- To do\n- Toggle ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").comment += e.Text
-				},
-			},
-			&objectDocCalloutElement{
-				Body:  "Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a `type` set to `\"unsupported\"`.",
-				Title: "The API does not support all block types.",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					getSymbol[adaptiveObject](b, "Block").comment += "\n\n" + e.Title + "\n" + e.Body
-				},
-			},
-			&objectDocHeadingElement{
-				Text:   "Block type objects",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text:   "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.\n",
-				output: func(e *objectDocParagraphElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Some block types contain nested blocks. The following block types support child blocks:",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "List",
+				Text: "Bulleted list itemCalloutChild databaseChild pageColumnHeading 1, when the is_toggleable property is trueHeading 2, when the is_toggleable property is trueHeading 3, when the is_toggleable property is trueNumbered list itemParagraphQuoteSynced blockTableTemplateTo doToggle",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a type set to \"unsupported\".",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Block type objects */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Block type objects",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Bookmark */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
 				Text: "Bookmark",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "bookmark", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nBookmark block objects contain the following information within the bookmark property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockBookmark").comment += e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Field:       "caption",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "bookmark", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Bookmark block objects contain the following information within the bookmark property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "caption",
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Field:       "url",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "url",
 				Type:        "string",
 				Description: "The link for the bookmark.",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
-				Language: "json",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text:   "Breadcrumb",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text: "\nBreadcrumb block objects do not contain any information within the breadcrumb property.\n",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("Block", "breadcrumb", e.Text)
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockBookmark").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Breadcrumb */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Breadcrumb",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Breadcrumb block objects do not contain any information within the breadcrumb property.",
+			}, func(e blockElement) {
+				b.addAdaptiveEmptyField("Block", "breadcrumb", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Bulleted list item */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
 				Text: "Bulleted list item",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "bulleted_list_item", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nBulleted list item block objects contain the following information within the bulleted_list_item property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockBulletedListItem").comment += e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				Description: "The rich text in the bulleted_list_item block.",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Field:       "color",
-				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.String()))
-				},
-			}, {
-				Description: "The nested child blocks (if any) of the bulleted_list_item block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("Block")))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "bulleted_list_item", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Bulleted list item block objects contain the following information within the bulleted_list_item property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text in the bulleted_list_item block.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.String()))
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks (if any) of the bulleted_list_item block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockBulletedListItem").addFields(e.asField(jen.Index().Id("Block")))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Callout */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
 				Text: "Callout",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "callout", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nCallout block objects contain the following information within the callout property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockCallout").comment += e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Field:       "rich_text",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "callout", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Callout block objects contain the following information within the callout property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "rich_text",
 				Type:        "array of rich text objects",
 				Description: "The rich text in the callout block.",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Field:       "icon",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "icon",
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji")))
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Child database",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "child_database", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nChild database block objects contain the following information within the child_database property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockChildDatabase").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The plain text title of the database.",
-				Field:       "title",
-				Type:        "string",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockChildDatabase").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n} ",
-				Language: "json",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:   "To create or update `child_database` type blocks, use the [Create a database](ref:create-a-database) and the [Update a database](ref:update-a-database) endpoints, specifying the ID of the parent page in the `parent` body param.",
-				Title:  "Creating and updating `child_database` blocks",
-				Type:   "info",
-				output: func(e *objectDocCalloutElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text: "Child page",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "child_page", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nChild page block objects contain the following information within the child_page property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockChildPage").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The plain text title of the page.",
-				Field:       "title",
-				Type:        "string",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockChildPage").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n} ",
-				Language: "json",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:   "To create or update `child_page` type blocks, use the [Create a page](https://developers.notion.com/reference/post-page) and the [Update page](https://developers.notion.com/reference/patch-page) endpoints, specifying the ID of the parent page in the `parent` body param.",
-				Title:  "Creating and updating `child_page` blocks",
-				Type:   "info",
-				output: func(e *objectDocCalloutElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text: "Code",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "code", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nCode block objects contain the following information within the code property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockCode").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text in the caption of the code block.",
-				Field:       "caption",
-				Type:        "array of Rich text object text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Description: "The rich text in the code block.",
-				Field:       "rich_text",
-				Type:        "array of Rich text object text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Description: "The language of the code contained in the code block.",
-				Field:       "language",
-				Type:        "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n} ",
-				Language: "json",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text:   "Column list and column",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text: "\nColumn lists are parent blocks for columns. They do not contain any information within the column_list property. ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("Block", "column_list", e.Text)
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"column_list\",\n  //...other keys excluded\n  \"column_list\": {}\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocParagraphElement{
-				Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("Block", "column", e.Text)
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"column\",\n  //...other keys excluded\n  \"column\": {}\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocParagraphElement{
-				Text:   "When creating a column_list block via Append block children, the column_list must have at least two columns, and each column must have at least one child.\n",
-				output: func(e *objectDocParagraphElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text:   "Retrieve the content in a column list ",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text:   "\nFollow these steps to fetch the content in a column_list: \n\n1. Get the column_list ID from a query to Retrieve block children for the parent page. \n\n2. Get the column children from a query to Retrieve block children for the column_list. \n\n3. Get the content in each individual column from a query to Retrieve block children for the unique column ID. \n",
-				output: func(e *objectDocParagraphElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text:   "Divider",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text: "\nDivider block objects do not contain any information within the divider property.",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveEmptyField("Block", "divider", e.Text)
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"divider\",\n  //...other keys excluded\n  \"divider\": {}\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Embed",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "embed", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nEmbed block objects include information about another website displayed within the Notion UI. The embed property contains the following information:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockEmbed").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The link to the website that the embed block displays.",
-				Field:       "url",
-				Type:        "string",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockEmbed").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"embed\",\n  //...other keys excluded\n  \"embed\": {\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:   "The Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.\n\nWe chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.\n\nThe result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
-				Title:  "Differences in embed blocks between the Notion app and the API",
-				Type:   "warning",
-				output: func(e *objectDocCalloutElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text: "Equation",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "equation", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nEquation block objects are represented as children of paragraph blocks. They are nested within a rich text object and contain the following information within the equation property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockEquation").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "A KaTeX compatible string.",
-				Field:       "expression",
-				Type:        "string",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockEquation").addFields(e.asField(jen.String()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"equation\",\n  //...other keys excluded\n  \"equation\": {\n    \"expression\": \"e=mc^2\"\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "File",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveFieldWithType("Block", "file", e.Text, jen.Id("FileWithCaption"))
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nFile block objects contain the following information within the file property: ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The caption of the file block.",
-				Field:       "caption",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "A constant string.",
-				Field:       "type",
-				Type:        "\"file\"\n\n\"external\"",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "A file object that details information about the file contained in the block.",
-				Field:       "file",
-				Type:        "file object",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text:   "Headings",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text: "\nAll heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addConcreteObject("BlockHeading", e.Text)
-					b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("BlockHeading"))
-					b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("BlockHeading"))
-					b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("BlockHeading"))
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text of the heading.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.String()))
-				},
-			}, {
-				Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
-				Field:       "is_toggleable",
-				Type:        "boolean",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Bool()))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_1\",\n  //...other keys excluded\n  \"heading_1\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_2\",\n  //...other keys excluded\n  \"heading_2\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"heading_3\",\n  //...other keys excluded\n  \"heading_3\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text:   "Image",
-				output: func(e *objectDocHeadingElement, b *builder) {},
-			},
-			&objectDocParagraphElement{
-				Text: "\nImage block objects contain a file object detailing information about the image. ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO Fileをadaptiveにする
-					b.addAdaptiveFieldWithType("Block", "image", e.Text, jen.Id("File"))
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Supported image types ",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO 確認する
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nThe image must be directly hosted. In other words, the url cannot point to a service that retrieves the image. The following image types are supported: \n\n- .bmp\n- .gif\n- .heic\n- .jpeg\n- .jpg\n-  .png\n- .svg\n- .tif\n- .tiff\n",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO 確認する
-				},
-			},
-			&objectDocHeadingElement{
-				Text: "Link Preview",
-				output: func(e *objectDocHeadingElement, b *builder) {
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nLink Preview block objects contain the originally pasted url:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					b.addAdaptiveField("Block", "link_preview", e.Text)
-					getSymbol[concreteObject](b, "BlockLinkPreview").addFields(&field{name: "url", typeCode: jen.String()})
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"link_preview\",\n  //...other keys excluded\n  \"link_preview\": {\n    \"url\": \"https://github.com/example/example-repo/pull/1234\"\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:   "The `link_preview` block can only be returned as part of a response. The API does not support creating or appending `link_preview` blocks.",
-				Title:  "",
-				Type:   "warning",
-				output: func(e *objectDocCalloutElement, b *builder) {},
-			},
-			&objectDocHeadingElement{
-				Text: "Mention",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nA mention block object is a child of a rich text object that is nested within a paragraph block object. This block type represents any @ tag in the Notion UI, for a user, date, Notion page, Notion database, or a miniaturized version of a Link Preview.  \n\nA mention block object contains the following fields: ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "A constant string representing the type of the mention.",
-				Field:       "type",
-				Type:        "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "An object with type-specific information about the mention.",
-				Field:       "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
-				Type:        "object",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"page\",\n  \"page\": {\n    \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Numbered list item",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nNumbered list item block objects contain the following information within the numbered_list_item property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the numbered_list_item block.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks (if any) of the numbered_list_item block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"numbered_list_item\",\n  \"numbered_list_item\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Finish reading the docs\",\n          \"link\": null\n        }\n      }\n    ],\n    \"color\": \"default\"\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Paragraph",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					b.addAdaptiveField("Block", "paragraph", e.Text)
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nParagraph block objects contain the following information within the paragraph property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					getSymbol[concreteObject](b, "BlockParagraph").comment = e.Text
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the paragraph block.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("RichText")))
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.String()))
-				},
-			}, {
-				Description: "The nested child blocks (if any) of the paragraph block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "PDF",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nA PDF block object represents a PDF that has been embedded within a Notion page. It contains the following fields:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "A caption, if provided, for the PDF block.",
-				Field:       "",
-				Property:    "caption",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
-				Field:       "",
-				Property:    "type",
-				Type:        "\"external\"\n\n\"file\"",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "An object containing type-specific information about the PDF.",
-				Field:       "",
-				Property:    "external \n\nfile",
-				Type:        "file object",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n\t\"type\": \"pdf\",\n  //...other keys excluded\n  \"pdf\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/files/doc.pdf\"\n    }\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Quote",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nQuote block objects contain the following information within the quote property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the quote block.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks, if any, of the quote block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n\t//...other keys excluded\n\t\"type\": \"quote\",\n   //...other keys excluded\n   \"quote\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"To be or not to be...\",\n        \"link\": null\n      },\n    \t//...other keys excluded\n    }],\n    //...other keys excluded\n    \"color\": \"default\"\n   }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Synced block",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nSimilar to the Notion UI, there are two versions of a synced_block object: the original block that was created first and doesn't yet sync with anything else, and the duplicate block or blocks synced to the original.",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocCalloutElement{
-				Body:  "An original synced block must be created before corresponding duplicate block or blocks can be made.",
-				Title: "",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocHeadingElement{
-				Text: "Original synced block",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nOriginal synced block objects contain the following information within the synced_block property: ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The value is always null to signify that this is an original synced block that does not refer to another block.",
-				Field:       "synced_from",
-				Type:        "null",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Duplicate synced block",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nDuplicate synced block objects contain the following information within the synced_from object: ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
-				Field:       "type",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "An identifier for the original synced_block.",
-				Field:       "block_id",
-				Type:        "string (UUIDv4)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:  "The API does not supported updating synced block content.",
-				Title: "",
-				Type:  "warning",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocHeadingElement{
-				Text: "Table",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nTable block objects are parent blocks for table row children. Table block objects contain the following fields within the table property: ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The number of columns in the table. \n\nNote that this cannot be changed via the public API once a table is created.",
-				Field:       "table_width",
-				Type:        "integer",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
-				Field:       "has_column_header",
-				Type:        "boolean",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
-				Field:       "has_row_header",
-				Type:        "boolean",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"table\",\n  \"table\": {\n    \"table_width\": 2,\n    \"has_column_header\": false,\n    \"has_row_header\": false\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:  "Note that the number of columns in a table can only be set when the table is first created. Calls to the Update block endpoint to update `table_width` fail.",
-				Title: "`table_width` can only be set when the table is first created.",
-				Type:  "warning",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocHeadingElement{
-				Text: "Table rows",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nFollow these steps to fetch the table_rows of a table: \n\n1. Get the table ID from a query to Retrieve block children for the parent page. \n\n2. Get the table_rows from a query to Retrieve block children for the table. \n\nA table_row block object contains the following fields within the table_row property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
-				Field:       "",
-				Property:    "cells",
-				Type:        "array of array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"table_row\",\n  \"table_row\": {\n    \"cells\": [\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 1 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 1 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 2 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 2 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 3 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 3 content\",\n          \"href\": null\n        }\n      ]\n    ]\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocCalloutElement{
-				Body:  "When creating a table block via the [Append block children](ref:patch-block-children) endpoint, the `table` must have at least one `table_row` whose `cells` array has the same length as the `table_width`.",
-				Title: "",
-				Type:  "info",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocHeadingElement{
-				Text: "Table of contents",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nTable of contents block objects contain the following information within the table_of_contents property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji")))
+			})
+			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n\t\"type\": \"table_of_contents\",\n  \"table_of_contents\": {\n  \t\"color\": \"default\"\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Template",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocCalloutElement{
-				Body:  "As of March 27, 2023 creation of template blocks will no longer be supported.",
-				Title: "Deprecation Notice",
-				Type:  "danger",
-				output: func(e *objectDocCalloutElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "Template blocks represent template buttons in the Notion UI.\n\nTemplate block objects contain the following information within the template property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the title of the template.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"template\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Add a new to-do\",\n          \"link\": null\n        },\n        \"annotations\": {\n          //...other keys excluded\n        },\n        \"plain_text\": \"Add a new to-do\",\n        \"href\": null\n      }\n    ]\n  }\n}",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "To do",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nTo do block objects contain the following information within the to_do property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the To do block.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "Whether the To do is checked.",
-				Field:       "checked",
-				Type:        "boolean (optional)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks, if any, of the To do block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Toggle blocks",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nToggle block objects contain the following information within the toggle property:",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParametersElement{{
-				Description: "The rich text displayed in the Toggle block.",
-				Field:       "rich_text",
-				Type:        "array of rich text objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				Field:       "color",
-				Type:        "string (enum)",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}, {
-				Description: "The nested child blocks, if any, of the Toggle block.",
-				Field:       "children",
-				Type:        "array of block objects",
-				output: func(e *objectDocParameter, b *builder) {
-					// TODO
-				},
-			}},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  //...other keys excluded\n  \"type\": \"toggle\",\n  \"toggle\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Additional project details\",\n        \"link\": null\n      }\n      //...other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Video",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\nVideo block objects contain a file object detailing information about the image. ",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocCodeElement{Codes: []*objectDocCodeElementCode{{
-				Code:     "{\n  \"type\": \"video\",\n  //...other keys excluded\n  \"video\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/video.mp4\"\n    }\n  }\n} ",
-				Language: "json",
-				Name:     "",
-				output:   func(e *objectDocCodeElementCode, b *builder) {},
-			}}},
-			&objectDocHeadingElement{
-				Text: "Supported video types",
-				output: func(e *objectDocHeadingElement, b *builder) {
-					// TODO
-				},
-			},
-			&objectDocParagraphElement{
-				Text: "\n- .amv\n- .asf\n- .avi\n- .f4v\n- .flv\n- .gifv\n- .mkv\n- .mov\n- .mpg\n- .mpeg\n- .mpv\n- .mp4\n- .m4v\n- .qt\n- .wmv",
-				output: func(e *objectDocParagraphElement, b *builder) {
-					// TODO
-				},
-			},
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCallout").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
+			}, func(e blockElement) {})
 		},
-	})
+		func(c *comparator, b *builder) /* Child database */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Child database",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "child_database", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Child database block objects contain the following information within the child_database property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "title",
+				Type:        "string",
+				Description: "The plain text title of the database.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockChildDatabase").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "To create or update child_database type blocks, use the Create a database and the Update a database endpoints, specifying the ID of the parent page in the parent body param.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Child page */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Child page",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "child_page", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Child page block objects contain the following information within the child_page property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "title",
+				Type:        "string",
+				Description: "The plain text title of the page.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockChildPage").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "To create or update child_page type blocks, use the Create a page and the Update page endpoints, specifying the ID of the parent page in the parent body param.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Code */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Code",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "code", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Code block objects contain the following information within the code property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "caption",
+				Type:        "array of Rich text object text objects",
+				Description: "The rich text in the caption of the code block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "rich_text",
+				Type:        "array of Rich text object text objects",
+				Description: "The rich text in the code block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "language",
+				Type:        "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
+				Description: "The language of the code contained in the code block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockCode").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Column list and column */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Column list and column",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Column lists are parent blocks for columns. They do not contain any information within the column_list property.",
+			}, func(e blockElement) {
+				b.addAdaptiveEmptyField("Block", "column_list", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"column_list\",\n  //...other keys excluded\n  \"column_list\": {}\n}",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
+			}, func(e blockElement) {
+				b.addAdaptiveEmptyField("Block", "column", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"column\",\n  //...other keys excluded\n  \"column\": {}\n}",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "When creating a column_list block via Append block children, the column_list must have at least two columns, and each column must have at least one child.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Retrieve the content in a column list */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Retrieve the content in a column list",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Follow these steps to fetch the content in a column_list:",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "List",
+				Text: "Get the column_list ID from a query to Retrieve block children for the parent page.Get the column children from a query to Retrieve block children for the column_list.Get the content in each individual column from a query to Retrieve block children for the unique column ID.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Divider */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Divider",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Divider block objects do not contain any information within the divider property.",
+			}, func(e blockElement) {
+				b.addAdaptiveEmptyField("Block", "divider", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"divider\",\n  //...other keys excluded\n  \"divider\": {}\n}",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Embed */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Embed",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "embed", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Embed block objects include information about another website displayed within the Notion UI. The embed property contains the following information:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "url",
+				Type:        "string",
+				Description: "The link to the website that the embed block displays.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockEmbed").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"embed\",\n  //...other keys excluded\n  \"embed\": {\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "The Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.\n\nWe chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.\n\nThe result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Equation */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Equation",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "equation", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Equation block objects are represented as children of paragraph blocks. They are nested within a rich text object and contain the following information within the equation property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "expression",
+				Type:        "string",
+				Description: "A KaTeX compatible string.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockEquation").addFields(e.asField(jen.String()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"equation\",\n  //...other keys excluded\n  \"equation\": {\n    \"expression\": \"e=mc^2\"\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* File */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "File",
+			}, func(e blockElement) {
+				b.addAdaptiveFieldWithType("Block", "file", e.Text, jen.Id("FileWithCaption"))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "File block objects contain the following information within the file property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Description:  "The caption of the file block.",
+				ExampleValue: "",
+				Property:     "caption",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Description:  "A constant string.",
+				ExampleValue: "",
+				Property:     "type",
+				Type:         "\"file\"\n\n\"external\"",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Description:  "A file object that details information about the file contained in the block.",
+				ExampleValue: "",
+				Property:     "file",
+				Type:         "file object",
+			}, func(e parameterElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n} ",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Headings */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Headings",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
+			}, func(e blockElement) {
+				b.addConcreteObject("BlockHeading", e.Text)
+				b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("BlockHeading"))
+				b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("BlockHeading"))
+				b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("BlockHeading"))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "rich_text",
+				Type:        "array of rich text objects",
+				Description: "The rich text of the heading.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "color",
+				Type:        "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.String()))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "is_toggleable",
+				Type:        "boolean",
+				Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockHeading").addFields(e.asField(jen.Bool()))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_1\",\n  //...other keys excluded\n  \"heading_1\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_2\",\n  //...other keys excluded\n  \"heading_2\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_3\",\n  //...other keys excluded\n  \"heading_3\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Image */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Image",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Image block objects contain a file object detailing information about the image.",
+			}, func(e blockElement) {
+				b.addAdaptiveFieldWithType("Block", "image", e.Text, jen.Id("File"))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n} ",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Supported image types */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Supported image types",
+			}, func(e blockElement) {
+				// TODO 確認する
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "The image must be directly hosted. In other words, the url cannot point to a service that retrieves the image. The following image types are supported:",
+			}, func(e blockElement) {
+				// TODO 確認する
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "List",
+				Text: ".bmp.gif.heic.jpeg.jpg.png.svg.tif.tiff",
+			}, func(e blockElement) {
+				// TODO 確認する
+			})
+		},
+		func(c *comparator, b *builder) /* Link Preview */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Link Preview",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Link Preview block objects contain the originally pasted url:",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "link_preview", e.Text)
+				getSymbol[concreteObject](b, "BlockLinkPreview").addFields(&field{name: "url", typeCode: jen.String()})
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"link_preview\",\n  //...other keys excluded\n  \"link_preview\": {\n    \"url\": \"https://github.com/example/example-repo/pull/1234\"\n  }\n}",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "The link_preview block can only be returned as part of a response. The API does not support creating or appending link_preview blocks.",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* Mention */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Mention",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "A mention block object is a child of a rich text object that is nested within a paragraph block object. This block type represents any @ tag in the Notion UI, for a user, date, Notion page, Notion database, or a miniaturized version of a Link Preview.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "A mention block object contains the following fields:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "A constant string representing the type of the mention.",
+				ExampleValue: "",
+				Property:     "type",
+				Type:         "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "An object with type-specific information about the mention.",
+				ExampleValue: "",
+				Property:     "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+				Type:         "object",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"page\",\n  \"page\": {\n    \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Numbered list item */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Numbered list item",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Numbered list item block objects contain the following information within the numbered_list_item property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text displayed in the numbered_list_item block.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks (if any) of the numbered_list_item block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"numbered_list_item\",\n  \"numbered_list_item\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Finish reading the docs\",\n          \"link\": null\n        }\n      }\n    ],\n    \"color\": \"default\"\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Paragraph */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Paragraph",
+			}, func(e blockElement) {
+				b.addAdaptiveField("Block", "paragraph", e.Text)
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Paragraph block objects contain the following information within the paragraph property:",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "rich_text",
+				Type:        "array of rich text objects",
+				Description: "The rich text displayed in the paragraph block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("RichText")))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "color",
+				Type:        "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.String()))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:    "children",
+				Type:        "array of block objects",
+				Description: "The nested child blocks (if any) of the paragraph block.",
+			}, func(e parameterElement) {
+				getSymbol[concreteObject](b, "BlockParagraph").addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n} ",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}",
+			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) /* PDF */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "PDF",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "A PDF block object represents a PDF that has been embedded within a Notion page. It contains the following fields:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "A caption, if provided, for the PDF block.",
+				ExampleValue: "",
+				Property:     "caption",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
+				ExampleValue: "",
+				Property:     "type",
+				Type:         "\"external\"\n\n\"file\"",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "An object containing type-specific information about the PDF.",
+				ExampleValue: "",
+				Property:     "external \n\nfile",
+				Type:         "file object",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"pdf\",\n  //...other keys excluded\n  \"pdf\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/files/doc.pdf\"\n    }\n  }\n} ",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Quote */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Quote",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Quote block objects contain the following information within the quote property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text displayed in the quote block.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks, if any, of the quote block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n\t//...other keys excluded\n\t\"type\": \"quote\",\n   //...other keys excluded\n   \"quote\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"To be or not to be...\",\n        \"link\": null\n      },\n    \t//...other keys excluded\n    }],\n    //...other keys excluded\n    \"color\": \"default\"\n   }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Synced block */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Synced block",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Similar to the Notion UI, there are two versions of a synced_block object: the original block that was created first and doesn't yet sync with anything else, and the duplicate block or blocks synced to the original.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "An original synced block must be created before corresponding duplicate block or blocks can be made.",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Original synced block */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Original synced block",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Original synced block objects contain the following information within the synced_block property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The value is always null to signify that this is an original synced block that does not refer to another block.",
+				ExampleValue: "",
+				Property:     "synced_from",
+				Type:         "null",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Duplicate synced block */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Duplicate synced block",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Duplicate synced block objects contain the following information within the synced_from object:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
+				ExampleValue: "",
+				Property:     "type",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "An identifier for the original synced_block.",
+				ExampleValue: "",
+				Property:     "block_id",
+				Type:         "string (UUIDv4)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "The API does not supported updating synced block content.",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Table */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Table",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Table block objects are parent blocks for table row children. Table block objects contain the following fields within the table property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The number of columns in the table. \n\nNote that this cannot be changed via the public API once a table is created.",
+				ExampleValue: "",
+				Property:     "table_width",
+				Type:         "integer",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
+				ExampleValue: "",
+				Property:     "has_column_header",
+				Type:         "boolean",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
+				ExampleValue: "",
+				Property:     "has_row_header",
+				Type:         "boolean",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"table\",\n  \"table\": {\n    \"table_width\": 2,\n    \"has_column_header\": false,\n    \"has_row_header\": false\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "Note that the number of columns in a table can only be set when the table is first created. Calls to the Update block endpoint to update table_width fail.",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Table rows */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Table rows",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Follow these steps to fetch the table_rows of a table:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "List",
+				Text: "Get the table ID from a query to Retrieve block children for the parent page.Get the table_rows from a query to Retrieve block children for the table.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "A table_row block object contains the following fields within the table_row property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
+				ExampleValue: "",
+				Property:     "cells",
+				Type:         "array of array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"table_row\",\n  \"table_row\": {\n    \"cells\": [\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 1 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 1 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 2 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 2 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 3 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 3 content\",\n          \"href\": null\n        }\n      ]\n    ]\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "When creating a table block via the Append block children endpoint, the table must have at least one table_row whose cells array has the same length as the table_width.",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Table of contents */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Table of contents",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Table of contents block objects contain the following information within the table_of_contents property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"table_of_contents\",\n  \"table_of_contents\": {\n  \t\"color\": \"default\"\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Template */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Template",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "As of March 27, 2023 creation of template blocks will no longer be supported.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Template blocks represent template buttons in the Notion UI.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Template block objects contain the following information within the template property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text displayed in the title of the template.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"template\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Add a new to-do\",\n          \"link\": null\n        },\n        \"annotations\": {\n          //...other keys excluded\n        },\n        \"plain_text\": \"Add a new to-do\",\n        \"href\": null\n      }\n    ]\n  }\n}",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* To do */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "To do",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "To do block objects contain the following information within the to_do property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text displayed in the To do block.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "Whether the To do is checked.",
+				ExampleValue: "",
+				Property:     "checked",
+				Type:         "boolean (optional)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks, if any, of the To do block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Toggle blocks */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Toggle blocks",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Toggle block objects contain the following information within the toggle property:",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The rich text displayed in the Toggle block.",
+				ExampleValue: "",
+				Property:     "rich_text",
+				Type:         "array of rich text objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				ExampleValue: "",
+				Property:     "color",
+				Type:         "string (enum)",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustParameter(parameterElement{
+				Description:  "The nested child blocks, if any, of the Toggle block.",
+				ExampleValue: "",
+				Property:     "children",
+				Type:         "array of block objects",
+			}, func(e parameterElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"toggle\",\n  \"toggle\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Additional project details\",\n        \"link\": null\n      }\n      //...other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Video */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Video",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Video block objects contain a file object detailing information about the image.",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  \"type\": \"video\",\n  //...other keys excluded\n  \"video\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/video.mp4\"\n    }\n  }\n} ",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+		func(c *comparator, b *builder) /* Supported video types */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "Supported video types",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "List",
+				Text: ".amv.asf.avi.f4v.flv.gifv.mkv.mov.mpg.mpeg.mpv.mp4.m4v.qt.wmv",
+			}, func(e blockElement) {
+				// TODO
+			})
+		},
+	)
 }
