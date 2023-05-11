@@ -5,6 +5,8 @@ import (
 )
 
 func init() {
+	var parent *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/parent-object",
 		func(c *comparator, b *builder) /*  */ {
@@ -12,7 +14,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the \"parent\". Parent information is represented by a consistent parent object throughout the API.",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("Parent", "type", e.Text)
+				parent = b.addAdaptiveObject("Parent", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -44,7 +46,7 @@ func init() {
 				Property:     "database_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("Parent", "database_id", e.Description, UUID)
+				parent.addAdaptiveFieldWithType("database_id", e.Description, UUID)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -70,7 +72,7 @@ func init() {
 				Property:     "page_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("Parent", "page_id", e.Description, UUID)
+				parent.addAdaptiveFieldWithType("page_id", e.Description, UUID)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -101,7 +103,7 @@ func init() {
 				Property:     "workspace",
 				Type:         "boolean",
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("Parent", "workspace", e.Description, jen.Bool())
+				parent.addAdaptiveFieldWithType("workspace", e.Description, jen.Bool())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -131,7 +133,7 @@ func init() {
 				Property:     "block_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("Parent", "block_id", e.Description, UUID)
+				parent.addAdaptiveFieldWithType("block_id", e.Description, UUID)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

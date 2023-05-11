@@ -5,6 +5,7 @@ import (
 )
 
 func init() {
+	var block *adaptiveObject
 	registerTranslator(
 		"https://developers.notion.com/reference/block",
 		func(c *comparator, b *builder) /*  */ {
@@ -12,7 +13,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects.",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("Block", "type", e.Text)
+				block = b.addAdaptiveObject("Block", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -158,7 +159,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Bookmark",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "bookmark", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("bookmark", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -192,7 +193,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Breadcrumb block objects do not contain any information within the breadcrumb property.",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Block", "breadcrumb", e.Text)
+				block.addAdaptiveFieldWithEmptyStruct("breadcrumb", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -204,7 +205,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Bulleted list item",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "bulleted_list_item", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("bulleted_list_item", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -244,7 +245,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Callout",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "callout", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("callout", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -281,7 +282,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Child database",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "child_database", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("child_database", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -308,7 +309,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Child page",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "child_page", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("child_page", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -335,7 +336,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Code",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "code", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("code", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -376,7 +377,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Column lists are parent blocks for columns. They do not contain any information within the column_list property.",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Block", "column_list", e.Text)
+				block.addAdaptiveFieldWithEmptyStruct("column_list", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -386,7 +387,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Block", "column", e.Text)
+				block.addAdaptiveFieldWithEmptyStruct("column", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -420,7 +421,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Divider block objects do not contain any information within the divider property.",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Block", "divider", e.Text)
+				block.addAdaptiveFieldWithEmptyStruct("divider", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -432,7 +433,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Embed",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "embed", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("embed", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -459,7 +460,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Equation",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "equation", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("equation", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -482,7 +483,7 @@ func init() {
 				Kind: "Heading",
 				Text: "File",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Block", "file", e.Text, jen.Id("FileWithCaption"))
+				block.addAdaptiveFieldWithType("file", e.Text, jen.Id("FileWithCaption"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -523,9 +524,9 @@ func init() {
 				Text: "All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 			}, func(e blockElement) {
 				b.addConcreteObject("BlockHeading", e.Text)
-				b.addAdaptiveFieldWithType("Block", "heading_1", "", jen.Op("*").Id("BlockHeading"))
-				b.addAdaptiveFieldWithType("Block", "heading_2", "", jen.Op("*").Id("BlockHeading"))
-				b.addAdaptiveFieldWithType("Block", "heading_3", "", jen.Op("*").Id("BlockHeading"))
+				block.addAdaptiveFieldWithType("heading_1", "", jen.Op("*").Id("BlockHeading"))
+				block.addAdaptiveFieldWithType("heading_2", "", jen.Op("*").Id("BlockHeading"))
+				block.addAdaptiveFieldWithType("heading_3", "", jen.Op("*").Id("BlockHeading"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "rich_text",
@@ -570,7 +571,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Image block objects contain a file object detailing information about the image.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Block", "image", e.Text, jen.Id("File"))
+				block.addAdaptiveFieldWithType("image", e.Text, jen.Id("File"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -606,7 +607,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Link Preview block objects contain the originally pasted url:",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "link_preview", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
 				getSymbol[concreteObject](b, "BlockLinkPreview").addFields(&field{name: "url", typeCode: jen.String()})
 			})
 			c.nextMustBlock(blockElement{
@@ -709,7 +710,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Paragraph",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Block", "paragraph", e.Text)
+				block.addAdaptiveFieldWithSpecificObject("paragraph", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",

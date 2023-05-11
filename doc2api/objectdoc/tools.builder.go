@@ -59,32 +59,6 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 	return ao
 }
 
-// TODO 以下3種類の名前をつけ直す
-func (b *builder) addAdaptiveField(name string, discriminatorValue string, comment string) *adaptiveObject {
-	dataName := name + strcase.UpperCamelCase(discriminatorValue)
-	b.addConcreteObject(dataName, comment)
-	return b.addAdaptiveFieldWithType(name, discriminatorValue, comment, jen.Op("*").Id(dataName))
-}
-
-func (b *builder) addAdaptiveEmptyField(name string, discriminatorValue string, comment string) *adaptiveObject {
-	return b.addAdaptiveFieldWithType(name, discriminatorValue, comment, jen.Struct())
-}
-
-func (b *builder) addAdaptiveFieldWithType(name string, discriminatorValue string, comment string, typeCode jen.Code) *adaptiveObject {
-	ao := getSymbol[adaptiveObject](b, name)
-
-	// TODO abstract に対応
-	// TODO discriminatorValue 以外のフィールド名に対応
-
-	ao.addFields(&field{
-		name:               discriminatorValue,
-		typeCode:           typeCode,
-		comment:            comment,
-		discriminatorValue: discriminatorValue,
-	})
-	return ao
-}
-
 // Deprecated: use addAdapiveObject
 func (b *builder) addAbstractObject(name string, specifiedBy string, comment string, options ...addAbstractOption) *abstractObject {
 	fmt.Println("🔧", name)

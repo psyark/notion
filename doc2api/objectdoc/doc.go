@@ -7,7 +7,7 @@ import "github.com/dave/jennifer/jen"
 var (
 	UUID     = jen.Qual("github.com/google/uuid", "UUID")
 	NullUUID = jen.Op("*").Qual("github.com/google/uuid", "UUID")
-	// Deprecated: omitemptyと相性悪い
+	// TODO: omitemptyと相性悪いので代替するか検討
 	NullString = jen.Qual("gopkg.in/guregu/null.v4", "String")
 	NullFloat  = jen.Qual("gopkg.in/guregu/null.v4", "Float")
 )

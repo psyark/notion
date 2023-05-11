@@ -17,6 +17,29 @@ func (o *adaptiveObject) addFields(fields ...fieldCoder) *adaptiveObject {
 	return o
 }
 
+// addAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
+func (o *adaptiveObject) addAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
+	o.addFields(&field{
+		name:               discriminatorValue,
+		typeCode:           typeCode,
+		comment:            comment,
+		discriminatorValue: discriminatorValue,
+	})
+}
+
+// addAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
+func (o *adaptiveObject) addAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
+	o.addAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
+}
+
+// addAdaptiveFieldWithSpecificObject は専用のConcreteObjectを作成し、その型のAdaptiveFieldを追加します
+func (o *adaptiveObject) addAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *builder) *concreteObject {
+	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
+	co := b.addConcreteObject(dataName, comment)
+	o.addAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
+	return co
+}
+
 func (c *adaptiveObject) addToUnion(union *unionObject) {
 	c.unions = append(c.unions, union)
 	union.members = append(union.members, c)

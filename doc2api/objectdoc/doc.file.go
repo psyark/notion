@@ -3,6 +3,8 @@ package objectdoc
 import "github.com/dave/jennifer/jen"
 
 func init() {
+	var file *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/file-object",
 		func(c *comparator, b *builder) /*  */ {
@@ -10,10 +12,10 @@ func init() {
 				Kind: "Blockquote",
 				Text: "The Notion API does not yet support uploading files to Notion.",
 			}, func(e blockElement) {
-				union := b.addUnionToGlobalIfNotExists("FileOrEmoji", "type")
-				b.addAdaptiveObject("File", "type", e.Text).addFields(
+				file = b.addAdaptiveObject("File", "type", e.Text).addFields(
 					&field{name: "name", typeCode: jen.String(), comment: "undocumented", omitEmpty: true},
-				).addToUnion(union)
+				)
+				file.addToUnion(b.addUnionToGlobalIfNotExists("FileOrEmoji", "type"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -61,7 +63,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Notion-hosted files",
 			}, func(e blockElement) {
-				b.addAdaptiveField("File", "file", e.Text)
+				file.addAdaptiveFieldWithSpecificObject("file", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -130,7 +132,7 @@ func init() {
 				Kind: "Heading",
 				Text: "External files",
 			}, func(e blockElement) {
-				b.addAdaptiveField("File", "external", e.Text)
+				file.addAdaptiveFieldWithSpecificObject("external", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",

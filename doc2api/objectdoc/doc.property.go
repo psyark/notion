@@ -8,6 +8,8 @@ import (
 )
 
 func init() {
+	var property *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/property-object",
 		func(c *comparator, b *builder) {
@@ -15,7 +17,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("Property", "type", e.Text)
+				property = b.addAdaptiveObject("Property", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
@@ -56,7 +58,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Checkbox",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "checkbox", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("checkbox", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -74,7 +76,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Created by",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "created_by", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("created_by", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -96,7 +98,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Created time",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "created_time", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("created_time", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -118,7 +120,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Date",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "date", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("date", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -141,7 +143,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Email",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "email", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("email", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -163,7 +165,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Files",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "files", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("files", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
@@ -185,7 +187,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Formula",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "formula", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("formula", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -217,7 +219,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Last edited by",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "last_edited_by", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("last_edited_by", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -233,7 +235,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Last edited time",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "last_edited_time", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("last_edited_time", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -255,7 +257,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Multi-select",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "multi_select", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("multi_select", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -301,7 +303,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Number",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "number", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("number", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -330,7 +332,7 @@ func init() {
 				Kind: "Heading",
 				Text: "People",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "people", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("people", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -348,7 +350,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Phone number",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "phone_number", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("phone_number", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -370,19 +372,19 @@ func init() {
 				Kind: "Heading",
 				Text: "Relation",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Property", "relation", e.Text, jen.Op("*").Id("PropertyRelation"))
+				property.addAdaptiveFieldWithType("relation", e.Text, jen.Op("*").Id("PropertyRelation"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("PropertyRelation", "type", e.Text)
+				pr := b.addAdaptiveObject("PropertyRelation", "type", e.Text)
 				// getSymbol[concreteObject](b, "PropertyRelation").addFields(
 				// 	&interfaceField{name: "relation", typeName: "Relation"},
 				// ).addComment(e.Text)
 				// b.addAbstractObject("Relation", "type", e.Text)
-				b.addAdaptiveEmptyField("PropertyRelation", "single_property", "undocumented")
-				b.addAdaptiveField("PropertyRelation", "dual_property", "undocumented")
+				pr.addAdaptiveFieldWithEmptyStruct("single_property", "undocumented")
+				pr.addAdaptiveFieldWithSpecificObject("dual_property", "undocumented", b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -430,7 +432,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Rich text",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "rich_text", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("rich_text", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -448,7 +450,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Rollup",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "rollup", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("rollup", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -512,7 +514,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Select",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "select", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("select", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -567,7 +569,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Status",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Property", "status", e.Text)
+				property.addAdaptiveFieldWithSpecificObject("status", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -654,7 +656,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Title",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "title", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("title", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -680,7 +682,7 @@ func init() {
 				Kind: "Heading",
 				Text: "URL",
 			}, func(e blockElement) {
-				b.addAdaptiveEmptyField("Property", "url", e.Text)
+				property.addAdaptiveFieldWithEmptyStruct("url", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",

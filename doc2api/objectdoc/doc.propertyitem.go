@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var propertyItem, rollup *adaptiveObject
+
 	addTest := func(b *builder) func(e blockElement) {
 		return func(e blockElement) {
 			b.addUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
@@ -20,8 +22,8 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item",
 			}, func(e blockElement) {
-				union := b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-				b.addAdaptiveObject("PropertyItem", "type", e.Text).addToUnion(union)
+				propertyItem = b.addAdaptiveObject("PropertyItem", "type", e.Text)
+				propertyItem.addToUnion(b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object"))
 			})
 		},
 		func(c *comparator, b *builder) /* All property items */ {
@@ -66,13 +68,13 @@ func init() {
 				Text: "The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.",
 			}, func(e blockElement) {
 				// TODO 良い名前
-				b.addAdaptiveObject("PaginatedPropertyInfo", "type", e.Text).addFields(
+				ppi := b.addAdaptiveObject("PaginatedPropertyInfo", "type", e.Text).addFields(
 					&field{name: "id", typeCode: jen.String(), comment: "undocumented"},
 				)
 				for _, derived := range []string{"title", "rich_text", "relation", "people"} {
-					b.addAdaptiveEmptyField("PaginatedPropertyInfo", derived, "")
+					ppi.addAdaptiveFieldWithEmptyStruct(derived, "")
 				}
-				b.addAdaptiveFieldWithType("PaginatedPropertyInfo", "rollup", "undocumented", jen.Id("Rollup"))
+				ppi.addAdaptiveFieldWithType("rollup", "undocumented", jen.Id("Rollup"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "object",
@@ -117,7 +119,7 @@ func init() {
 				Text: "Title property value objects contain an array of rich text objects within the title property.",
 			}, func(e blockElement) {
 				// ドキュメントには "array of rich text" と書いてあるが間違い
-				b.addAdaptiveFieldWithType("PropertyItem", "title", e.Text, jen.Id("RichText"))
+				propertyItem.addAdaptiveFieldWithType("title", e.Text, jen.Id("RichText"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -134,7 +136,7 @@ func init() {
 				Text: "Rich Text property value objects contain an array of rich text objects within the rich_text property.",
 			}, func(e blockElement) {
 				// ドキュメントには "array of rich text" と書いてあるが間違い
-				b.addAdaptiveFieldWithType("PropertyItem", "rich_text", e.Text, jen.Id("RichText"))
+				propertyItem.addAdaptiveFieldWithType("rich_text", e.Text, jen.Id("RichText"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -150,7 +152,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Number property value objects contain a number within the number property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "number", e.Text, NullFloat)
+				propertyItem.addAdaptiveFieldWithType("number", e.Text, NullFloat)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -166,8 +168,8 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Select property value objects contain the following data within the select property:",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "select", e.Text, jen.Op("*").Id("Option"))
-				b.addAdaptiveFieldWithType("PropertyItem", "status", "undocumented", jen.Op("*").Id("Option"))
+				propertyItem.addAdaptiveFieldWithType("select", e.Text, jen.Op("*").Id("Option"))
+				propertyItem.addAdaptiveFieldWithType("status", "undocumented", jen.Op("*").Id("Option"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
@@ -201,7 +203,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Multi-select property value objects contain an array of multi-select option values within the multi_select property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "multi_select", e.Text, jen.Index().Id("Option"))
+				propertyItem.addAdaptiveFieldWithType("multi_select", e.Text, jen.Index().Id("Option"))
 			})
 		},
 		func(c *comparator, b *builder) /* Multi-select option values */ {
@@ -233,39 +235,41 @@ func init() {
 			}, addTest(b))
 		},
 		func(c *comparator, b *builder) /* Date property values */ {
+			var propertyItemDate *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Date property values",
 			}, func(e blockElement) {
-				b.addAdaptiveField("PropertyItem", "date", e.Text)
+				propertyItemDate = propertyItem.addAdaptiveFieldWithSpecificObject("date", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Date property value objects contain the following data within the date property:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "An ISO 8601 format date, with optional time.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "start",
 				Type:         "string (ISO 8601 date and time)",
+				Description:  "An ISO 8601 format date, with optional time.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyItemDate").addFields(e.asField(jen.Id("ISO8601String")))
+				propertyItemDate.addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "end",
 				Type:         "string (optional, ISO 8601 date and time)",
+				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyItemDate").addFields(e.asField(jen.Op("*").Id("ISO8601String")))
+				propertyItemDate.addFields(e.asField(jen.Op("*").Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
-				ExampleValue: "\"America/Los_Angeles\"",
 				Property:     "time_zone",
 				Type:         "string (optional, enum)",
+				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
+				ExampleValue: `"America/Los_Angeles"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyItemDate").addFields(e.asField(NullString))
+				propertyItemDate.addFields(e.asField(NullString))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -281,7 +285,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "formula", e.Text, jen.Op("*").Id("Formula"))
+				propertyItem.addAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("Formula"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The type of the formula result. Possible values are \"string\", \"number\", \"boolean\", and \"date\".",
@@ -343,7 +347,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Relation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "relation", e.Text, jen.Op("*").Id("PageReference")) // 単一
+				propertyItem.addAdaptiveFieldWithType("relation", e.Text, jen.Op("*").Id("PageReference")) // 単一
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -360,8 +364,8 @@ func init() {
 				// 比較的ドキュメントが充実しているこちらで作成を行う
 				// https://developers.notion.com/reference/property-value-object#rollup-property-values
 				// https://developers.notion.com/reference/property-item-object#rollup-property-values
-				b.addAdaptiveObject("Rollup", "type", "")
-				b.addAdaptiveFieldWithType("PropertyItem", "rollup", e.Text, jen.Op("*").Id("Rollup"))
+				rollup = b.addAdaptiveObject("Rollup", "type", "")
+				propertyItem.addAdaptiveFieldWithType("rollup", e.Text, jen.Op("*").Id("Rollup"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -399,7 +403,7 @@ func init() {
 				Property:     "function",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "Rollup").addFields(e.asField(jen.String()))
+				rollup.addFields(e.asField(jen.String()))
 			})
 		},
 		func(c *comparator, b *builder) /* Number rollup property values */ {
@@ -411,7 +415,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Number rollup property values contain a number within the number property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Rollup", "number", e.Text, NullFloat)
+				rollup.addAdaptiveFieldWithType("number", e.Text, NullFloat)
 			})
 		},
 		func(c *comparator, b *builder) /* Date rollup property values */ {
@@ -423,7 +427,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Date rollup property values contain a date property value within the date property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Rollup", "date", e.Text, jen.Op("*").Id("PropertyItemDate"))
+				rollup.addAdaptiveFieldWithType("date", e.Text, jen.Op("*").Id("PropertyItemDate"))
 			})
 		},
 		func(c *comparator, b *builder) /* Array rollup property values */ {
@@ -438,7 +442,7 @@ func init() {
 				// ドキュメントには array of property_item とあるが、
 				// type="rich_text"の場合に入る値などから
 				// array of property_value が正しいと判断している
-				b.addAdaptiveFieldWithType("Rollup", "array", e.Text, jen.Index().Id("PropertyValue"))
+				rollup.addAdaptiveFieldWithType("array", e.Text, jen.Index().Id("PropertyValue"))
 			})
 		},
 		func(c *comparator, b *builder) /* Incomplete rollup property values */ {
@@ -450,7 +454,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type \"incomplete\". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Rollup", "incomplete", e.Text, jen.Struct())
+				rollup.addAdaptiveFieldWithType("incomplete", e.Text, jen.Struct())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -469,7 +473,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "People property value objects contain an array of user objects within the people property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "people", e.Text, jen.Id("User")) // 単一では？
+				propertyItem.addAdaptiveFieldWithType("people", e.Text, jen.Id("User")) // 単一では？
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -487,7 +491,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "files", e.Text, jen.Index().Id("File"))
+				propertyItem.addAdaptiveFieldWithType("files", e.Text, jen.Index().Id("File"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -505,7 +509,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Checkbox property value objects contain a boolean within the checkbox property.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "checkbox", e.Text, jen.Bool())
+				propertyItem.addAdaptiveFieldWithType("checkbox", e.Text, jen.Bool())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -521,7 +525,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "url", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("url", e.Text, NullString)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -537,7 +541,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Email property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "email", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("email", e.Text, NullString)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -553,7 +557,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Phone number property value objects contain a string within the phone_number property. No structure is enforced.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "phone_number", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("phone_number", e.Text, NullString)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -569,7 +573,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "created_time", e.Text, jen.Id("ISO8601String"))
+				propertyItem.addAdaptiveFieldWithType("created_time", e.Text, jen.Id("ISO8601String"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -588,7 +592,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "created_by", e.Text, jen.Op("*").Id("User"))
+				propertyItem.addAdaptiveFieldWithType("created_by", e.Text, jen.Op("*").Id("User"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -612,7 +616,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "last_edited_time", e.Text, jen.Id("ISO8601String"))
+				propertyItem.addAdaptiveFieldWithType("last_edited_time", e.Text, jen.Id("ISO8601String"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -636,7 +640,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("PropertyItem", "last_edited_by", e.Text, jen.Op("*").Id("User"))
+				propertyItem.addAdaptiveFieldWithType("last_edited_by", e.Text, jen.Op("*").Id("User"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

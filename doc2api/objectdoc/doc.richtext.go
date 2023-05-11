@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var richText, mention *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/rich-text",
 		func(c *comparator, b *builder) /*  */ {
@@ -14,7 +16,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("RichText", "type", e.Text)
+				richText = b.addAdaptiveObject("RichText", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -136,7 +138,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Equation",
 			}, func(e blockElement) {
-				b.addAdaptiveField("RichText", "equation", e.Text)
+				richText.addAdaptiveFieldWithSpecificObject("equation", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -170,8 +172,8 @@ func init() {
 				Kind: "Heading",
 				Text: "Mention",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("Mention", "type", e.Text)
-				b.addAdaptiveFieldWithType("RichText", "mention", e.Text, jen.Op("*").Id("Mention"))
+				mention = b.addAdaptiveObject("Mention", "type", e.Text)
+				richText.addAdaptiveFieldWithType("mention", e.Text, jen.Op("*").Id("Mention"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -201,7 +203,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Database mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Mention", "database", e.Text, jen.Op("*").Id("PageReference"))
+				mention.addAdaptiveFieldWithType("database", e.Text, jen.Op("*").Id("PageReference"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -227,7 +229,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Date mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Mention", "date", e.Text, jen.Op("*").Id("PropertyValueDate"))
+				mention.addAdaptiveFieldWithType("date", e.Text, jen.Op("*").Id("PropertyValueDate"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -255,7 +257,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Link Preview mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveField("Mention", "link_preview", e.Text)
+				mention.addAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -281,7 +283,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Page mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Mention", "page", e.Text, jen.Op("*").Id("PageReference"))
+				mention.addAdaptiveFieldWithType("page", e.Text, jen.Op("*").Id("PageReference"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -303,12 +305,14 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Template mention type object */ {
+			var templateMention *adaptiveObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Template mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveObject("TemplateMention", "type", e.Text)
-				b.addAdaptiveFieldWithType("Mention", "template_mention", e.Text, jen.Op("*").Id("TemplateMention"))
+				templateMention = b.addAdaptiveObject("TemplateMention", "type", e.Text)
+				mention.addAdaptiveFieldWithType("template_mention", e.Text, jen.Op("*").Id("TemplateMention"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -332,7 +336,7 @@ func init() {
 				Description:  "The type of the date mention. Possible values include:\u00a0\"today\"\u00a0and\u00a0\"now\".",
 				ExampleValue: `"today"`,
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("TemplateMention", e.Property, e.Description, jen.String())
+				templateMention.addAdaptiveFieldWithType(e.Property, e.Description, jen.String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -354,7 +358,7 @@ func init() {
 				Description:  "The type of the user mention. The only possible value is\u00a0\"me\".",
 				ExampleValue: `"me"`,
 			}, func(e parameterElement) {
-				b.addAdaptiveFieldWithType("TemplateMention", e.Property, e.Description, jen.String())
+				templateMention.addAdaptiveFieldWithType(e.Property, e.Description, jen.String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -372,7 +376,7 @@ func init() {
 				Kind: "Heading",
 				Text: "User mention type object",
 			}, func(e blockElement) {
-				b.addAdaptiveFieldWithType("Mention", "user", e.Text, jen.Op("*").Id("User"))
+				mention.addAdaptiveFieldWithType("user", e.Text, jen.Op("*").Id("User"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -398,7 +402,7 @@ func init() {
 				Kind: "Heading",
 				Text: "Text",
 			}, func(e blockElement) {
-				b.addAdaptiveField("RichText", "text", e.Text)
+				richText.addAdaptiveFieldWithSpecificObject("text", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",

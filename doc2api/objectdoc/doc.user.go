@@ -5,6 +5,8 @@ import (
 )
 
 func init() {
+	var user *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/user",
 		func(c *comparator, b *builder) /*  */ {
@@ -12,8 +14,8 @@ func init() {
 				Kind: "Paragraph",
 				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.",
 			}, func(e blockElement) {
-				ao := b.addAdaptiveObject("User", "type", e.Text)
-				for _, f := range ao.fields { // TODO なんとかする？
+				user = b.addAdaptiveObject("User", "type", e.Text)
+				for _, f := range user.fields { // TODO なんとかする？
 					if f, ok := f.(*field); ok && f.name == "type" {
 						f.omitEmpty = true
 					}
@@ -111,7 +113,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "User objects that represent people have the type property set to \"person\". These objects also have the following properties:",
 			}, func(e blockElement) {
-				b.addAdaptiveField("User", "person", e.Text)
+				user.addAdaptiveFieldWithSpecificObject("person", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "person",
@@ -141,7 +143,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 			}, func(e blockElement) {
-				b.addAdaptiveField("User", "bot", e.Text)
+				user.addAdaptiveFieldWithSpecificObject("bot", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
