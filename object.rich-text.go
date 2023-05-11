@@ -11,8 +11,7 @@ import (
 /*
 Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.
 
-Rich text object limits
-Refer to the request limits documentation page for information about [limits on the size of rich text objects](https://developers.notion.com/reference/request-limits#limits-for-property-values).
+Refer to the request limits documentation page for information about limits on the size of rich text objects.
 */
 type RichText struct {
 	Type        string            `json:"type"`
@@ -55,6 +54,7 @@ type Annotations struct {
 
 /*
 Equation
+
 Notion supports inline LaTeX equations as rich text object’s with a type value of "equation". The corresponding equation type object contains the following:
 */
 type RichTextEquation struct {
@@ -63,9 +63,8 @@ type RichTextEquation struct {
 
 /*
 Mention
-Mention objects represent an inline mention of a database, date, link preview mention, page, template mention, or user. A mention is created in the Notion UI when a user types @ followed by the name of the reference.
 
-If a rich text object’s type value is "mention", then the corresponding mention object contains the following:
+Mention objects represent an inline mention of a database, date, link preview mention, page, template mention, or user. A mention is created in the Notion UI when a user types @ followed by the name of the reference.
 */
 type Mention struct {
 	Type            string              `json:"type"`
@@ -97,26 +96,24 @@ func (o Mention) MarshalJSON() ([]byte, error) {
 
 /*
 Link Preview mention type object
-If a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.
 
-Example rich text mention object for a link_preview mention
+If a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.
 */
 type MentionLinkPreview struct {
 	Url string `json:"url"`
 }
 
 /*
+Template mention type object
 
 The content inside a template button in the Notion UI can include placeholder date and user mentions that populate when a template is duplicated. Template mention type objects contain these populated values.
 
 Template mention rich text objects contain a template_mention object with a nested type key that is either "template_mention_date" or "template_mention_user".
-
-If the type key is "template_mention_date", then the rich text object contains the following template_mention_date field:
 */
 type TemplateMention struct {
 	Type                string `json:"type"`
-	TemplateMentionDate string `json:"template_mention_date"`
-	TemplateMentionUser string `json:"template_mention_user"`
+	TemplateMentionDate string `json:"template_mention_date"` // The type of the date mention. Possible values include: "today" and "now".
+	TemplateMentionUser string `json:"template_mention_user"` // The type of the user mention. The only possible value is "me".
 }
 
 func (o TemplateMention) MarshalJSON() ([]byte, error) {
@@ -135,6 +132,7 @@ func (o TemplateMention) MarshalJSON() ([]byte, error) {
 
 /*
 Text
+
 If a rich text object’s type value is "text", then the corresponding text field contains an object including the following:
 */
 type RichTextText struct {
