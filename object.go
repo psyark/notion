@@ -9,11 +9,9 @@ import (
 
 type UndefNullString any
 
-type FileWithCaption any    // TODO
-type CommentList any        // TODO
-type PageOrDatabaseList any // TODO
+type FileWithCaption any // TODO
 
-type PropertyMap map[string]Property
+type PropertyMap map[string]Property // TODO 消す
 
 func (m *PropertyMap) UnmarshalJSON(data []byte) error {
 	*m = PropertyMap{}
