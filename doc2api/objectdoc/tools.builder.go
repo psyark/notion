@@ -50,10 +50,12 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 	ao.name_ = name
 	ao.discriminatorKey = discriminatorKey
 	ao.comment = comment
-	ao.addFields(&field{
-		name:     discriminatorKey,
-		typeCode: jen.String(),
-	})
+	if discriminatorKey != "" {
+		ao.addFields(&field{
+			name:     discriminatorKey,
+			typeCode: jen.String(),
+		})
+	}
 	b.localSymbols = append(b.localSymbols, ao)
 	b.globalSymbols.Store(name, ao)
 	return ao

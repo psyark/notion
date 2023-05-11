@@ -92,9 +92,9 @@ func TestUpdatePage(t *testing.T) {
 
 func TestQueryDatabase(t *testing.T) {
 	filters := []Filter{
-		&RichTextFilter{
-			FilterCommon: FilterCommon{Property: "URL"},
-			RichText:     RichTextFilterData{Equals: "http://example.com"},
+		{
+			Property: "URL",
+			RichText: &FilterRichText{Equals: "http://example.com"},
 		},
 	}
 

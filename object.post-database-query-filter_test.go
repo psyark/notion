@@ -31,12 +31,12 @@ func TestFilter_unmarshal(t *testing.T) {
 		"{\n    \"or\": [\n      {\n        \"property\": \"Description\",\n        \"rich_text\": {\n          \"contains\": \"2023\"\n        }\n      },\n      {\n        \"and\": [\n          {\n            \"property\": \"Department\",\n            \"select\": {\n              \"equals\": \"Engineering\"\n            }\n          },\n          {\n            \"property\": \"Priority goal\",\n            \"checkbox\": {\n              \"equals\": true\n            }\n          }\n        ]\n      }\n    ]\n  }",
 	}
 	for _, wantStr := range tests {
-		target := &filterUnmarshaler{}
+		target := &Filter{}
 		want := []byte(wantStr)
 		if err := json.Unmarshal(want, target); err != nil {
 			t.Fatal(fmt.Errorf("%w : %s", err, wantStr))
 		}
-		got, _ := json.Marshal(target.value)
+		got, _ := json.Marshal(target)
 		if want, got, ok := compareJSON(want, got); !ok {
 			t.Fatal(fmt.Errorf("mismatch:\nwant: %s\ngot : %s", want, got))
 		}

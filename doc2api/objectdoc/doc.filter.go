@@ -19,6 +19,8 @@ func extractFilter(code string) string {
 }
 
 func init() {
+	var filter, rollupFilter *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/post-database-query-filter",
 		func(c *comparator, b *builder) /*  */ {
@@ -40,19 +42,19 @@ func init() {
 				Kind: "Heading",
 				Text: "The filter object",
 			}, func(e blockElement) {
-				b.addAbstractObject("Filter", "", e.Text, addList())
+				filter = b.addAdaptiveObject("Filter", "", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Each filter object contains the following fields:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The name of the property as it appears in the database, or the property ID.",
-				ExampleValue: "\"Task completed\"",
 				Property:     "property",
 				Type:         "string",
+				Description:  "The name of the property as it appears in the database, or the property ID.",
+				ExampleValue: `"Task completed"`,
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Filter").addFields(e.asField(jen.String(), omitEmpty))
+				filter.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The type-specific filter condition for the query. Only types listed in the Field column of this table are supported. \n\nRefer to type-specific filter conditions for details on corresponding object values.",
@@ -78,11 +80,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Checkbox */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Checkbox",
 			}, func(e blockElement) {
-				b.addDerived("checkbox", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("checkbox", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether a checkbox property value matches the provided value exactly.\n\nReturns or excludes all database entries with an exact value match.",
@@ -90,7 +94,7 @@ func init() {
 				Property:     "equals",
 				Type:         "boolean",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "CheckboxFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether a checkbox property value differs from the provided value. \n\nReturns or excludes all database entries with a difference in values.",
@@ -98,7 +102,7 @@ func init() {
 				Property:     "does_not_equal",
 				Type:         "boolean",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "CheckboxFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -108,23 +112,25 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Date */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Date",
 			}, func(e blockElement) {
-				b.addDerived("date", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("date", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
 				Text: "For the after, before, equals, on_or_before, and on_or_after fields, if a date string with a time is provided, then the comparison is done with millisecond precision.\n\nIf no timezone is provided, then the timezone defaults to UTC.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "DateFilter").addComment(e.Text)
+				specificObject.addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A date filter condition can be used to limit date property value types and the timestamp property types created_time and last_edited_time.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "DateFilter").addComment(e.Text)
+				specificObject.addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -136,7 +142,7 @@ func init() {
 				Property:     "after",
 				Type:         "string (ISO 8601 date)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is before the provided date.",
@@ -144,7 +150,7 @@ func init() {
 				Property:     "before",
 				Type:         "string (ISO 8601 date)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is the provided date.",
@@ -152,7 +158,7 @@ func init() {
 				Property:     "equals",
 				Type:         "string (ISO 8601 date)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value contains no data.",
@@ -160,7 +166,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is not empty.",
@@ -168,7 +174,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the next month.",
@@ -176,7 +182,7 @@ func init() {
 				Property:     "next_month",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the next week.",
@@ -184,7 +190,7 @@ func init() {
 				Property:     "next_week",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the next year.",
@@ -192,7 +198,7 @@ func init() {
 				Property:     "next_year",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against.\n\nReturns database entries where the date property value is on or after the provided date.",
@@ -200,7 +206,7 @@ func init() {
 				Property:     "on_or_after",
 				Type:         "string (ISO 8601 date)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the date property value against. \n\nReturns database entries where the date property value is on or before the provided date.",
@@ -208,7 +214,7 @@ func init() {
 				Property:     "on_or_before",
 				Type:         "string (ISO 8601 date)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the past month.",
@@ -216,7 +222,7 @@ func init() {
 				Property:     "past_month",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the past week.",
@@ -224,7 +230,7 @@ func init() {
 				Property:     "past_week",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is within the past year.",
@@ -232,7 +238,7 @@ func init() {
 				Property:     "past_year",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A filter that limits the results to database entries where the date property value is this week.",
@@ -240,7 +246,7 @@ func init() {
 				Property:     "this_week",
 				Type:         "object (empty)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Struct(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -250,11 +256,13 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Files */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Files",
 			}, func(e blockElement) {
-				b.addDerived("files", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("files", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the files property value does not contain any data.\n\nReturns all database entries with an empty files property value.",
@@ -262,7 +270,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FilesFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the files property value contains data. \n\nReturns all entries with a populated files property value.",
@@ -270,7 +278,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FilesFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -280,17 +288,20 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Formula */ {
+			var formulaFilter *adaptiveObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Formula",
 			}, func(e blockElement) {
-				b.addDerived("formula", "Filter", e.Text, addAbstractSpecificField(""))
+				formulaFilter = b.addAdaptiveObject("FormulaFilter", "", e.Text)
+				filter.addAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("FormulaFilter"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The primary field of the formula filter condition object matches the type of the formula’s result. For example, to filter a formula property that computes a checkbox, use a formula filter condition object with a checkbox field containing a checkbox filter condition as its value.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FormulaFilter").addComment(e.Text)
+				formulaFilter.addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A checkbox filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -298,7 +309,7 @@ func init() {
 				Property:     "checkbox",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("checkbox", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("CheckboxFilterData")))
+				formulaFilter.addAdaptiveFieldWithType("checkbox", e.Description, jen.Op("*").Id("FilterCheckbox"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A date filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -306,7 +317,7 @@ func init() {
 				Property:     "date",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("date", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("DateFilterData")))
+				formulaFilter.addAdaptiveFieldWithType("date", e.Description, jen.Op("*").Id("FilterDate"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A number filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -314,7 +325,7 @@ func init() {
 				Property:     "number",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("number", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("NumberFilterData")))
+				formulaFilter.addAdaptiveFieldWithType("number", e.Description, jen.Op("*").Id("FilterNumber"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A rich text filter condition to compare the formula result against. \n\nReturns database entries where the formula result matches the provided condition.",
@@ -322,7 +333,7 @@ func init() {
 				Property:     "string",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("string", "FormulaFilterData", e.Description).addFields(e.asField(jen.Id("RichTextFilterData")))
+				formulaFilter.addAdaptiveFieldWithType("string", e.Description, jen.Op("*").Id("FilterRichText"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -332,11 +343,13 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Multi-select */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Multi-select",
 			}, func(e blockElement) {
-				b.addDerived("multi_select", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("multi_select", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the multi-select property value against. \n\nReturns database entries where the multi-select value contains the provided string.",
@@ -344,7 +357,7 @@ func init() {
 				Property:     "contains",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "MultiSelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to the multi-select property value against. \n\nReturns database entries where the multi-select value does not contain the provided string.",
@@ -352,7 +365,7 @@ func init() {
 				Property:     "does_not_contain",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "MultiSelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the multi-select property value is empty.\n\nReturns database entries where the multi-select value does not contain any data.",
@@ -360,7 +373,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "MultiSelectFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the multi-select property value is not empty.\n\nReturns database entries where the multi-select value does contains data.",
@@ -368,7 +381,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "MultiSelectFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -378,11 +391,13 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Number */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Number",
 			}, func(e blockElement) {
-				b.addDerived("number", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("number", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value differs from the provided number.",
@@ -390,7 +405,7 @@ func init() {
 				Property:     "does_not_equal",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is the same as the provided number.",
@@ -398,7 +413,7 @@ func init() {
 				Property:     "equals",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value exceeds the provided number.",
@@ -406,7 +421,7 @@ func init() {
 				Property:     "greater_than",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the number property value is equal to or exceeds the provided number.",
@@ -414,7 +429,7 @@ func init() {
 				Property:     "greater_than_or_equal_to",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the number property value is empty. \n\nReturns database entries where the number property value does not contain any data.",
@@ -422,7 +437,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the number property value is not empty. \n\nReturns database entries where the number property value contains data.",
@@ -430,7 +445,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is less than the provided number.",
@@ -438,7 +453,7 @@ func init() {
 				Property:     "less_than",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The number to compare the number property value against. \n\nReturns database entries where the page property value is equal to or is less than the provided number.",
@@ -446,7 +461,7 @@ func init() {
 				Property:     "less_than_or_equal_to",
 				Type:         "number",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberFilter").typeSpecificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -456,17 +471,19 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* People */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "People",
 			}, func(e blockElement) {
-				b.addDerived("people", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("people", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "You can apply a people filter condition to people, created_by, and last_edited_by database property types.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PeopleFilter").addComment(e.Text)
+				specificObject.addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -478,7 +495,7 @@ func init() {
 				Property:     "contains",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PeopleFilter").typeSpecificObject.addFields(e.asField(NullUUID, omitEmpty))
+				specificObject.addFields(e.asField(NullUUID, omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare the people property value against.\n\nReturns database entries where the people property value does not contain the provided string.",
@@ -486,7 +503,7 @@ func init() {
 				Property:     "does_not_contain",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PeopleFilter").typeSpecificObject.addFields(e.asField(NullUUID, omitEmpty))
+				specificObject.addFields(e.asField(NullUUID, omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the people property value does not contain any data. \n\nReturns database entries where the people property value does not contain any data.",
@@ -494,7 +511,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PeopleFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the people property value contains data. \n\nReturns database entries where the people property value is not empty.",
@@ -502,7 +519,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PeopleFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -512,27 +529,29 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Relation */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Relation",
 			}, func(e blockElement) {
-				b.addDerived("relation", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("relation", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The value to compare the relation property value against. \n\nReturns database entries where the relation property value contains the provided string.",
-				ExampleValue: "\"6c574cee-ca68-41c8-86e0-1b9e992689fb\"",
 				Property:     "contains",
 				Type:         "string (UUIDv4)",
+				Description:  "The value to compare the relation property value against. \n\nReturns database entries where the relation property value contains the provided string.",
+				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RelationFilter").typeSpecificObject.addFields(e.asField(NullUUID, omitEmpty))
+				specificObject.addFields(e.asField(NullUUID, omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
-				ExampleValue: "\"6c574cee-ca68-41c8-86e0-1b9e992689fb\"",
 				Property:     "does_not_contain",
 				Type:         "string (UUIDv4)",
+				Description:  "The value to compare the relation property value against. \n\nReturns entries where the relation property value does not contain the provided string.",
+				ExampleValue: `"6c574cee-ca68-41c8-86e0-1b9e992689fb"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RelationFilter").typeSpecificObject.addFields(e.asField(NullUUID, omitEmpty))
+				specificObject.addFields(e.asField(NullUUID, omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the relation property value does not contain data. \n\nReturns database entries where the relation property value does not contain any data.",
@@ -540,7 +559,7 @@ func init() {
 				Property:     "is_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RelationFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the relation property value contains data. \n\nReturns database entries where the property value is not empty.",
@@ -548,7 +567,7 @@ func init() {
 				Property:     "is_not_empty",
 				Type:         "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RelationFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -561,75 +580,77 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Rich text */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Rich text",
 			}, func(e blockElement) {
-				b.addDerived("rich_text", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("rich_text", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Property:     "contains",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that includes the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Property:     "does_not_contain",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not include the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Property:     "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that does not match the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
-				ExampleValue: "\"Q2\"",
 				Property:     "ends_with",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that ends with the provided string.",
+				ExampleValue: `"Q2"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
-				ExampleValue: "\"Moved to Q2\"",
 				Property:     "equals",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that matches the provided string.",
+				ExampleValue: `"Moved to Q2"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the text property value does not contain any data. \n\nReturns database entries with a text property value that is empty.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the text property value contains any data. \n\nReturns database entries with a text property value that contains data.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
-				ExampleValue: "\"Moved\"",
 				Property:     "starts_with",
 				Type:         "string",
+				Description:  "The string to compare the text property value against.\n\nReturns database entries with a text property value that starts with the provided string.",
+				ExampleValue: `"Moved"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -643,13 +664,14 @@ func init() {
 				Kind: "Heading",
 				Text: "Rollup",
 			}, func(e blockElement) {
-				b.addDerived("rollup", "Filter", e.Text, addAbstractSpecificField(""))
+				rollupFilter = b.addAdaptiveObject("RollupFilter", "", e.Text)
+				filter.addAdaptiveFieldWithType("rollup", e.Text, jen.Op("*").Id("RollupFilter"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.",
 			}, func(e blockElement) {
-				getSymbol[abstractObject](b, "RollupFilterData").addComment(e.Text)
+				rollupFilter.addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Filter conditions for array rollup values */ {
@@ -663,7 +685,7 @@ func init() {
 				Property:     "any",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("any", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
+				rollupFilter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where every rollup property value matches the provided criteria.",
@@ -671,7 +693,7 @@ func init() {
 				Property:     "every",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("every", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
+				rollupFilter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type. \n\nReturns database entries where no rollup property value matches the provided criteria.",
@@ -679,7 +701,7 @@ func init() {
 				Property:     "none",
 				Type:         "object",
 			}, func(e parameterElement) {
-				b.addDerived("none", "RollupFilterData", e.Description).addFields(e.asInterfaceField("Filter"))
+				rollupFilter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -693,21 +715,18 @@ func init() {
 				Kind: "Heading",
 				Text: "Filter conditions for date rollup values",
 			}, func(e blockElement) {
-				b.addDerived("date", "RollupFilterData", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A rollup value is stored as a date only if the \"Earliest date\", \"Latest date\", or \"Date range\" computation is selected for the property in the Notion UI.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "DateRollupFilterData").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "A date filter condition to compare the rollup value against. \n\nReturns database entries where the rollup value matches the provided condition.",
 				ExampleValue: "Refer to the date filter condition.",
 				Property:     "date",
 				Type:         "object",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "DateRollupFilterData").addFields(e.asField(jen.Id("DateFilterData")))
+				rollupFilter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterDate"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -720,16 +739,14 @@ func init() {
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Filter conditions for number rollup values",
-			}, func(e blockElement) {
-				b.addDerived("number", "RollupFilterData", e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "A number filter condition to compare the rollup value against. \n\nReturns database entries where the rollup value matches the provided condition.",
 				ExampleValue: "Refer to the number filter condition.",
 				Property:     "number",
 				Type:         "object",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "NumberRollupFilterData").addFields(e.asField(jen.Id("NumberFilterData")))
+				rollupFilter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterNumber"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -739,43 +756,45 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Select */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Select",
 			}, func(e blockElement) {
-				b.addDerived("select", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("select", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value matches the provided string.",
-				ExampleValue: "\"This week\"",
 				Property:     "equals",
 				Type:         "string",
+				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value matches the provided string.",
+				ExampleValue: `"This week"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value does not match the provided string.",
-				ExampleValue: "\"Backlog\"",
 				Property:     "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the select property value against.\n\nReturns database entries where the select property value does not match the provided string.",
+				ExampleValue: `"Backlog"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the select property value does not contain data.\n\nReturns database entries where the select property value is empty.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the select property value does not contain data.\n\nReturns database entries where the select property value is empty.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the select property value contains data.\n\nReturns database entries where the select property value is not empty.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the select property value contains data.\n\nReturns database entries where the select property value is not empty.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "SelectFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -785,43 +804,45 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Status */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Status",
 			}, func(e blockElement) {
-				b.addDerived("status", "Filter", e.Text, addSpecificField())
+				specificObject = filter.addAdaptiveFieldWithSpecificObject("status", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value matches the provided string.",
-				ExampleValue: "\"This week\"",
 				Property:     "equals",
 				Type:         "string",
+				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value matches the provided string.",
+				ExampleValue: `"This week"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value does not match the provided string.",
-				ExampleValue: "\"Backlog\"",
 				Property:     "does_not_equal",
 				Type:         "string",
+				Description:  "The string to compare the status property value against.\n\nReturns database entries where the status property value does not match the provided string.",
+				ExampleValue: `"Backlog"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the status property value does not contain data.\n\nReturns database entries where the status property value is empty.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the status property value does not contain data.\n\nReturns database entries where the status property value is empty.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the status property value contains data.\n\nReturns database entries where the status property value is not empty.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the status property value contains data.\n\nReturns database entries where the status property value is not empty.",
+				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusFilter").typeSpecificObject.addFields(e.asField(jen.Bool(), omitEmpty))
+				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -834,22 +855,18 @@ func init() {
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Timestamp",
-			}, func(e blockElement) {
-				b.addDerived("timestamp", "Filter", e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Use a timestamp filter condition to filter results based on created_time or last_edited_time values.",
-			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "TimestampFilter").addComment(e.Text)
-			})
+			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "A constant string representing the type of timestamp to use as a filter.",
 				ExampleValue: "\"created_time\"",
 				Property:     "timestamp",
 				Type:         "created_time last_edited_time",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "TimestampFilter").addFields(e.asField(jen.String()))
+				filter.addAdaptiveFieldWithType("timestamp", e.Description, jen.String())
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A date filter condition used to filter the specified timestamp.",
@@ -857,9 +874,9 @@ func init() {
 				Property:     "created_time\nlast_edited_time",
 				Type:         "object",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "TimestampFilter").addFields(
-					&field{name: "created_time", typeCode: jen.Op("*").Id("DateFilterData"), comment: e.Description, omitEmpty: true},
-					&field{name: "last_edited_time", typeCode: jen.Op("*").Id("DateFilterData"), comment: e.Description, omitEmpty: true},
+				filter.addFields(
+					&field{name: "created_time", typeCode: jen.Op("*").Id("FilterDate"), comment: e.Description, omitEmpty: true},
+					&field{name: "last_edited_time", typeCode: jen.Op("*").Id("FilterDate"), comment: e.Description, omitEmpty: true},
 				)
 			})
 			c.nextMustBlock(blockElement{
@@ -872,7 +889,7 @@ func init() {
 				Kind: "Blockquote",
 				Text: "The timestamp filter condition does not require a property name. The API throws an error if you provide one.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "TimestampFilter").addComment(e.Text)
+				filter.addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Compound filter conditions */ {
@@ -892,7 +909,7 @@ func init() {
 				Kind: "FencedCodeBlock",
 				Text: "{\n  \"and\": [\n    {\n      \"property\": \"Done\",\n      \"checkbox\": {\n        \"equals\": true\n      }\n    }, \n    {\n      \"or\": [\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"A\"\n        },\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"B\"\n        }\n      ]\n    }\n  ]\n}",
 			}, func(e blockElement) {
-				// サンプルコードがめちゃくちゃ
+				// TODO サンプルコードがめちゃくちゃ
 				// b.addUnmarshalTest("Filter", e.Code)
 			})
 			c.nextMustBlock(blockElement{
@@ -905,7 +922,7 @@ func init() {
 				Property:     "and",
 				Type:         "array",
 			}, func(e parameterElement) {
-				b.addDerived("and", "Filter", e.Description).addFields(e.asField(jen.Id("FilterList")))
+				filter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An array of filter objects or compound filter conditions.\n\nReturns database entries that match any of the provided filter conditions",
@@ -913,7 +930,7 @@ func init() {
 				Property:     "or",
 				Type:         "array",
 			}, func(e parameterElement) {
-				b.addDerived("or", "Filter", e.Description).addFields(e.asField(jen.Id("FilterList")))
+				filter.addAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
 			})
 		},
 		func(c *comparator, b *builder) /* Example compound filter conditions */ {
