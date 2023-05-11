@@ -58,7 +58,7 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 	}
 	switch getObject(data) {
 	case "list":
-		u.value = &PropertyItemPagination{}
+		u.value = &Pagination{}
 	case "property_item":
 		u.value = &PropertyItem{}
 	default:
@@ -75,12 +75,6 @@ type alwaysBlock string
 
 func (s alwaysBlock) MarshalJSON() ([]byte, error) {
 	return []byte("\"block\""), nil
-}
-
-type alwaysComment string
-
-func (s alwaysComment) MarshalJSON() ([]byte, error) {
-	return []byte("\"comment\""), nil
 }
 
 type alwaysDatabase string
@@ -105,12 +99,6 @@ type alwaysPage string
 
 func (s alwaysPage) MarshalJSON() ([]byte, error) {
 	return []byte("\"page\""), nil
-}
-
-type alwaysPageOrDatabase string
-
-func (s alwaysPageOrDatabase) MarshalJSON() ([]byte, error) {
-	return []byte("\"page_or_database\""), nil
 }
 
 type alwaysPropertyItem string

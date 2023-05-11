@@ -5,7 +5,7 @@ import "github.com/dave/jennifer/jen"
 func init() {
 	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/post-database-query",
-		returnType: returnsStructRef("PagePagination"),
+		returnType: returnsStructRef("Pagination"),
 		localCopyOfPathParams: ssrPropsParams{
 			{
 				Desc:     "Identifier for a Notion database.",

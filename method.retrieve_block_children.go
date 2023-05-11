@@ -9,8 +9,8 @@ import (
 
 // Retrieve block children
 // https://developers.notion.com/reference/get-block-children
-func (c *Client) RetrieveBlockChildren(ctx context.Context, block_id uuid.UUID, options ...callOption) (*BlockPagination, error) {
-	result := &BlockPagination{}
+func (c *Client) RetrieveBlockChildren(ctx context.Context, block_id uuid.UUID, options ...callOption) (*Pagination, error) {
+	result := &Pagination{}
 	co := &callOptions{
 		method: http.MethodGet,
 		params: nil,

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"sync"
 
@@ -202,5 +203,11 @@ func translateAll() error {
 		}
 	}
 
-	return nil
+	// グローバルビルダーをソートし、冪等性を保ちます
+	sort.Slice(global.localSymbols, func(i, j int) bool {
+		return global.localSymbols[i].name() < global.localSymbols[j].name()
+	})
+
+	gt := translator{b: global}
+	return gt.output()
 }

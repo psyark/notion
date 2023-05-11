@@ -4,10 +4,11 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/stoewer/go-strcase"
 )
 
 func init() {
+	var pagination *adaptiveObject
+
 	registerTranslator(
 		"https://developers.notion.com/reference/intro",
 		func(c *comparator, b *builder) /*  */ {
@@ -67,13 +68,14 @@ func init() {
 				Kind: "Heading",
 				Text: "Pagination",
 			}, func(e blockElement) {
-				b.addAbstractObject("Pagination", "type", e.Text)
+				pagination = b.addAdaptiveObject("Pagination", "type", e.Text)
+				pagination.addToUnion(b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Endpoints that return lists of objects support cursor-based pagination requests. By default, Notion returns ten items per API call. If the number of items in a response from a support endpoint exceeds the default, then an integration can use pagination to request a specific set of the results and/or to limit the number of returned items.",
 			}, func(e blockElement) {
-				getSymbol[abstractObject](b, "Pagination").addComment(e.Text)
+				pagination.addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Supported endpoints */ {
@@ -115,14 +117,14 @@ func init() {
 				Kind: "Paragraph",
 				Text: "If an endpoint supports pagination, then the response object contains the below fields.",
 			}, func(e blockElement) {
-				getSymbol[abstractObject](b, "Pagination").addComment(e.Text)
+				pagination.addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "has_more",
 				Type:        "boolean",
 				Description: "Whether the response includes the end of the list. false if there are no more results. Otherwise, true.",
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Pagination").addFields(e.asField(jen.Bool()))
+				pagination.addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "next_cursor",
@@ -130,21 +132,23 @@ func init() {
 				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.\n\nOnly available when has_more is true.",
 			}, func(e parameterElement) {
 				// RetrievePagePropertyItemでnullを確認
-				getSymbol[abstractObject](b, "Pagination").addFields(e.asField(jen.Id("*").String()))
+				pagination.addFields(e.asField(jen.Id("*").String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "object",
 				Type:        `"list"`,
 				Description: "The constant string \"list\".",
 			}, func(e parameterElement) {
-				getSymbol[abstractObject](b, "Pagination").addFields(e.asFixedStringField(b))
+				pagination.addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
 				ExampleValue: "",
 				Property:     "results",
 				Type:         "array of objects",
-			}, func(e parameterElement) {})
+			}, func(e parameterElement) {
+				pagination.addFields(e.asField(jen.Index().Qual("encoding/json", "RawMessage")))
+			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A constant string that represents the type of the objects in results.",
 				ExampleValue: "",
@@ -153,25 +157,12 @@ func init() {
 			}, func(e parameterElement) {
 				for _, name := range strings.Split(e.Type, "\n\n") {
 					name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
-
-					typeSpecificField := &field{name: name, typeCode: jen.Struct()}
 					if name == "property_item" {
-						typeSpecificField.typeCode = jen.Id("PaginatedPropertyInfo")
+						pagination.addAdaptiveFieldWithType(name, "", jen.Id("PaginatedPropertyInfo"))
+					} else {
+						pagination.addAdaptiveFieldWithEmptyStruct(name, "")
 					}
-
-					var resultsField fieldCoder = &field{name: "results", typeCode: jen.Id(strcase.UpperCamelCase(name) + "List")}
-					switch name {
-					case "database", "page", "block", "user", "property_item":
-						resultsField = &field{name: "results", typeCode: jen.Index().Id(strcase.UpperCamelCase(name))}
-					}
-
-					b.addDerived(name, "Pagination", "").addFields(
-						typeSpecificField,
-						resultsField,
-					)
 				}
-				b.addUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-				getSymbol[concreteObject](b, "PropertyItemPagination").addToUnion(getSymbol[unionObject](b, "PropertyItemOrPropertyItemPagination"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "{type}",
