@@ -21,7 +21,19 @@ func (m *PropertyMap) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, (*Alias)(m))
 }
 
-type PropertyValueMap map[string]PropertyValue
+func (p *Page) GetProperty(id string) *PropertyValue {
+	for _, pv := range p.Properties {
+		if pv.Id == id {
+			return &pv
+		}
+	}
+	return nil
+}
+
+func (p *Pagination) Pages() ([]Page, error) {
+	pages := []Page{}
+	return pages, json.Unmarshal(p.Results, &pages)
+}
 
 type PropertyItemOrPropertyItemPaginationMap map[string]PropertyItemOrPropertyItemPagination
 

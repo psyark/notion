@@ -103,7 +103,7 @@ func TestQueryDatabase(t *testing.T) {
 	for _, filter := range filters {
 		filter := filter
 		t.Run(fmt.Sprintf("%T", filter), func(t *testing.T) {
-			params.Filter = filter
+			params.Filter = &filter
 			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
 				t.Fatal(err)
 			} else {

@@ -68,6 +68,7 @@ func (b *builder) addAlwaysStringIfNotExists(value string) {
 	b.localSymbols = append(b.localSymbols, as)
 }
 
+// TODO 第一引数は不要
 func getSymbol[T concreteObject | unionObject | adaptiveObject](b *builder, name string) *T {
 	if item, ok := b.globalSymbols.Load(name); ok {
 		if item, ok := item.(*T); ok {

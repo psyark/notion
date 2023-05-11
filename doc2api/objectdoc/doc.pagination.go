@@ -147,7 +147,7 @@ func init() {
 				Property:     "results",
 				Type:         "array of objects",
 			}, func(e parameterElement) {
-				pagination.addFields(e.asField(jen.Index().Qual("encoding/json", "RawMessage")))
+				pagination.addFields(e.asField(jen.Qual("encoding/json", "RawMessage")))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A constant string that represents the type of the objects in results.",
