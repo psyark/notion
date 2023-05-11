@@ -50,7 +50,7 @@ func (f *field) getTypeCode() jen.Code {
 }
 
 // インターフェイスが入るフィールド
-// TODO 自動判別するようにしたい
+// TODO Union専用にする
 type interfaceField struct {
 	name     string
 	typeName string

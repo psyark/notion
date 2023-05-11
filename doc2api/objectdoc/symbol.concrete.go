@@ -21,22 +21,6 @@ import (
 type concreteObject struct {
 	objectCommon
 	discriminatorValue string
-
-	// parent はこのオブジェクトの派生元です。派生元とは共通のフィールドを提供しているオブジェクトであり、
-	// 例えば ExternalFile に対する File を指します。一方、FileOrIcon は unionsとして表現します。
-	parent *abstractObject
-
-	// Deprecated:
-	typeSpecificObject *concreteObject
-	// Deprecated:
-	typeSpecificAbstract *abstractObject
-}
-
-func (c *concreteObject) setParent(parent *abstractObject) {
-	if c.parent != nil {
-		panic(fmt.Errorf("👪 %s has two parents: %s vs %s", c.name(), c.parent.name(), parent.name()))
-	}
-	c.parent = parent
 }
 
 // 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
@@ -47,9 +31,6 @@ func (c *concreteObject) getDiscriminatorValue(identifierKey string) string {
 		if f, ok := f.(*fixedStringField); ok && f.name == identifierKey {
 			return f.value
 		}
-	}
-	if c.parent != nil {
-		return c.parent.getDiscriminatorValue(identifierKey)
 	}
 	return ""
 }
@@ -81,9 +62,6 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	}
 
 	code.Type().Id(c.name_).StructFunc(func(g *jen.Group) {
-		if c.parent != nil && len(c.parent.fields) != 0 {
-			g.Id(c.parent.commonObjectName())
-		}
 		for _, f := range c.fields {
 			g.Add(f.fieldCode())
 		}
@@ -93,19 +71,7 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	for _, union := range c.unions {
 		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
 	}
-	if c.parent != nil {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + c.parent.name()).Params().Block().Line()
-		for _, union := range c.parent.unions {
-			code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
-		}
-	}
 
-	// 親のスペシャルメソッドを実装
-	if c.parent != nil {
-		for _, sm := range c.parent.specialMethods {
-			code.Add(sm.implementationCode(c))
-		}
-	}
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(c.fieldUnmarshalerCode(b))
 

@@ -17,9 +17,6 @@ type symbolCoder interface {
 var _ = []symbolCoder{
 	&objectCommon{},
 	&concreteObject{},
-	&abstractObject{},
-	&abstractList{},
-	&abstractMap{},
 	&adaptiveObject{},
 	&unionObject{},
 	&unmarshalTest{},
@@ -93,9 +90,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range interfaceFields {
-					if a := getSymbol[abstractObject](b, f.typeName); a != nil {
-						g.Id(strcase.UpperCamelCase(f.name)).Id(a.derivedUnmarshalerName()).Tag(map[string]string{"json": f.name})
-					} else if u := getSymbol[unionObject](b, f.typeName); u != nil {
+					if u := getSymbol[unionObject](b, f.typeName); u != nil {
 						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 					} else {
 						panic(fmt.Errorf("%s.%s may not interface", c.name(), f.typeName))
@@ -127,16 +122,6 @@ func (c *unmarshalTest) name() string {
 	return fmt.Sprintf("Test%s_unmarshal", c.targetName)
 }
 func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
-	var initCode, referCode jen.Code
-	switch symbol := b.getSymbol(c.targetName).(type) {
-	case *abstractObject:
-		initCode = jen.Id("target").Op(":=").Op("&").Id(symbol.derivedUnmarshalerName()).Values()
-		referCode = jen.Id("target").Dot("value")
-	default:
-		initCode = jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values()
-		referCode = jen.Id("target")
-	}
-
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
 		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
 			for _, t := range c.jsonCodes {
@@ -145,12 +130,12 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 			g.Line()
 		}),
 		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
-			initCode,
+			jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values(),
 			jen.Id("want").Op(":=").Index().Byte().Call(jen.Id("wantStr")),
 			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
 				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("%w : %s"), jen.Err(), jen.Id("wantStr"))),
 			),
-			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "Marshal").Call(referCode),
+			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("target")),
 			jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(
 				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("mismatch:\nwant: %s\ngot : %s"), jen.Id("want"), jen.Id("got"))),
 			),
@@ -170,4 +155,10 @@ func (c alwaysString) symbolCode(b *builder) jen.Code {
 
 func (c alwaysString) name() string {
 	return "always" + strcase.UpperCamelCase(string(c))
+}
+
+// specialMethodCoder はabstractObject（とその実装オブジェクト）に特別なメソッドを追加したい場合に使います
+type specialMethodCoder interface {
+	declarationCode() jen.Code
+	implementationCode(*concreteObject) jen.Code
 }

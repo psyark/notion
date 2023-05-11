@@ -4,6 +4,11 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
+var _ = []specialMethodCoder{
+	&getMethodCoder{},
+	&setMethodCoder{},
+}
+
 // PropertyValueに value()reflect.Value メソッドを追加し、bindingを行えるようにする
 type getMethodCoder struct{}
 

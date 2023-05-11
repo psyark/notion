@@ -15,8 +15,9 @@ type memberCoder interface {
 }
 
 var _ = []memberCoder{
+	&adaptiveObject{},
 	&concreteObject{},
-	&abstractObject{},
+	&unionObject{},
 }
 
 // unionObject は、共通の変数に格納される可能性のあるオブジェクトの集合です
@@ -60,15 +61,7 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 			})
 			for _, member := range canIdentify {
 				g.Case(jen.Lit(member.getDiscriminatorValue(u.identifierKey)))
-				switch member := member.(type) {
-				case *concreteObject, *adaptiveObject:
-					g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
-				case *abstractObject:
-					g.Id("t").Op(":=").Op("&").Id(member.derivedUnmarshalerName()).Values()
-					g.If(jen.Err().Op(":=").Id("t").Dot("UnmarshalJSON").Call(jen.Id("data"))).Op(";").Err().Op("!=").Nil().Block(jen.Return().Err())
-					g.Id("u").Dot("value").Op("=").Id("t").Dot("value")
-					g.Return().Nil()
-				}
+				g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
 			}
 			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.identifierKey)), jen.String().Call(jen.Id("data"))))
 		}),
@@ -80,23 +73,9 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 	return code
 }
 
+// TODO 消す
 func (u *unionObject) findCanIdentify(member memberCoder) []memberCoder {
-	result := []memberCoder{}
-	switch member := member.(type) {
-	case *concreteObject, *adaptiveObject: // TODO adaptiveはここでいいのか？
-		result = append(result, member)
-	case *abstractObject:
-		if member.discriminatorKey == u.identifierKey {
-			for _, member2 := range member.derivedObjects {
-				result = append(result, member2)
-			}
-		} else {
-			result = append(result, member)
-		}
-	default:
-		panic(member)
-	}
-	return result
+	return []memberCoder{member}
 }
 
 func (u *unionObject) memberUnmarshalerName() string {
