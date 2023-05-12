@@ -76,9 +76,9 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 	code := &jen.Statement{}
 
-	unionFields := []*unionField{}
+	unionFields := []*field{}
 	for _, f := range c.fields {
-		if f, ok := f.(*unionField); ok {
+		if f, ok := f.(*field); ok && f.getUnion() != nil {
 			unionFields = append(unionFields, f)
 		}
 	}
@@ -90,11 +90,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range unionFields {
-					if u := getSymbol[unionObject](f.unionName); u != nil {
-						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
-					} else {
-						panic(fmt.Errorf("%s.%s may not union", c.name(), f.unionName))
-					}
+					g.Id(strcase.UpperCamelCase(f.name)).Id(f.getUnion().memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 				}
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),

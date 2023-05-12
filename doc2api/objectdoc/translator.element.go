@@ -80,15 +80,6 @@ func (e *parameterElement) asField(typeCode jen.Code, options ...fieldOption) *f
 	return f
 }
 
-// asUnionField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (e *parameterElement) asUnionField(unionName string) *unionField {
-	return &unionField{
-		name:      e.Property,
-		unionName: unionName,
-		comment:   e.Description,
-	}
-}
-
 // asFixedStringField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
 func (e *parameterElement) asFixedStringField(b *builder) *fixedStringField {
 	for _, value := range []string{e.ExampleValue, e.Type} {

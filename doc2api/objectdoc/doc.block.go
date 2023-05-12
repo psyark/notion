@@ -263,7 +263,7 @@ func init() {
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asUnionField("FileOrEmoji")) // TODO omitempty
+				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",

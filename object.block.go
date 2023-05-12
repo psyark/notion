@@ -134,7 +134,7 @@ type BlockBulletedListItem struct {
 // Callout
 type BlockCallout struct {
 	RichText []RichText  `json:"rich_text"`       // The rich text in the callout block.
-	Icon     FileOrEmoji `json:"icon"`            // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Icon     FileOrEmoji `json:"icon,omitempty"`  // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
 	Color    string      `json:"color,omitempty"` // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 }
 

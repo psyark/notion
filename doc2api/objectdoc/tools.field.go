@@ -49,29 +49,10 @@ func (f *field) getTypeCode() jen.Code {
 	return f.typeCode
 }
 
-// Unionが入るフィールド
-type unionField struct {
-	name      string
-	unionName string
-	comment   string
-}
-
-func (f *unionField) fieldCode() jen.Code {
-	code := jen.Id(f.goName()).Id(f.unionName)
-	if f.name != "" {
-		code.Tag(map[string]string{"json": f.name})
-	}
-	if f.comment != "" {
-		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
-	}
-	return code
-}
-
-func (f *unionField) goName() string {
-	return strcase.UpperCamelCase(f.name)
-}
-func (f *unionField) getTypeCode() jen.Code {
-	return jen.Id(f.unionName)
+func (f *field) getUnion() *unionObject {
+	code := jen.Var().Id("_").Add(f.typeCode).GoString()
+	name := strings.TrimPrefix(code, "var _ ")
+	return getSymbol[unionObject](name)
 }
 
 // 固定文字列が入るフィールド
