@@ -49,17 +49,15 @@ func (f *field) getTypeCode() jen.Code {
 	return f.typeCode
 }
 
-// インターフェイスが入るフィールド
-// TODO Union専用にする
-type interfaceField struct {
-	name     string
-	typeName string
-	comment  string
+// Unionが入るフィールド
+type unionField struct {
+	name      string
+	unionName string
+	comment   string
 }
 
-func (f *interfaceField) fieldCode() jen.Code {
-	goName := strcase.UpperCamelCase(f.name)
-	code := jen.Id(goName).Id(f.typeName)
+func (f *unionField) fieldCode() jen.Code {
+	code := jen.Id(f.goName()).Id(f.unionName)
 	if f.name != "" {
 		code.Tag(map[string]string{"json": f.name})
 	}
@@ -69,11 +67,11 @@ func (f *interfaceField) fieldCode() jen.Code {
 	return code
 }
 
-func (f *interfaceField) goName() string {
+func (f *unionField) goName() string {
 	return strcase.UpperCamelCase(f.name)
 }
-func (f *interfaceField) getTypeCode() jen.Code {
-	return jen.Id(f.typeName)
+func (f *unionField) getTypeCode() jen.Code {
+	return jen.Id(f.unionName)
 }
 
 // 固定文字列が入るフィールド

@@ -96,7 +96,7 @@ func init() {
 				Type:        "File Object or Emoji object",
 				Description: "Page icon.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Database").addFields(e.asInterfaceField("FileOrEmoji"))
+				getSymbol[concreteObject](b, "Database").addFields(e.asUnionField("FileOrEmoji"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "cover",

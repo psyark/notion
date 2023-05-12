@@ -76,24 +76,24 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 	code := &jen.Statement{}
 
-	interfaceFields := []*interfaceField{}
+	unionFields := []*unionField{}
 	for _, f := range c.fields {
-		if f, ok := f.(*interfaceField); ok {
-			interfaceFields = append(interfaceFields, f)
+		if f, ok := f.(*unionField); ok {
+			unionFields = append(unionFields, f)
 		}
 	}
 
-	if len(interfaceFields) != 0 {
+	if len(unionFields) != 0 {
 		code.Comment("UnmarshalJSON assigns the appropriate implementation to interface field(s)").Line()
 		code.Func().Params(jen.Id("o").Op("*").Id(c.name())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().BlockFunc(func(g *jen.Group) {
 			g.Type().Id("Alias").Id(c.name())
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
-				for _, f := range interfaceFields {
-					if u := getSymbol[unionObject](b, f.typeName); u != nil {
+				for _, f := range unionFields {
+					if u := getSymbol[unionObject](b, f.unionName); u != nil {
 						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 					} else {
-						panic(fmt.Errorf("%s.%s may not interface", c.name(), f.typeName))
+						panic(fmt.Errorf("%s.%s may not union", c.name(), f.unionName))
 					}
 				}
 			}).Values(jen.Dict{
@@ -102,7 +102,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
 				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", c.name())), jen.Err()),
 			)
-			for _, f := range interfaceFields {
+			for _, f := range unionFields {
 				fieldName := strcase.UpperCamelCase(f.name)
 				g.Id("o").Dot(fieldName).Op("=").Id("t").Dot(fieldName).Dot("value")
 			}

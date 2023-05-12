@@ -80,12 +80,12 @@ func (e *parameterElement) asField(typeCode jen.Code, options ...fieldOption) *f
 	return f
 }
 
-// asInterfaceField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (e *parameterElement) asInterfaceField(typeName string, options ...fieldOption) *interfaceField {
-	return &interfaceField{
-		name:     e.Property,
-		typeName: typeName,
-		comment:  e.Description,
+// asUnionField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (e *parameterElement) asUnionField(unionName string) *unionField {
+	return &unionField{
+		name:      e.Property,
+		unionName: unionName,
+		comment:   e.Description,
 	}
 }
 
