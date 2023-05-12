@@ -126,16 +126,16 @@ type BlockBookmark struct {
 
 // Bulleted list item
 type BlockBulletedListItem struct {
-	RichText []RichText `json:"rich_text"` // The rich text in the bulleted_list_item block.
-	Color    string     `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children []Block    `json:"children"`  // The nested child blocks (if any) of the bulleted_list_item block.
+	RichText []RichText `json:"rich_text"`       // The rich text in the bulleted_list_item block.
+	Color    string     `json:"color,omitempty"` // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block    `json:"children"`        // The nested child blocks (if any) of the bulleted_list_item block.
 }
 
 // Callout
 type BlockCallout struct {
-	RichText []RichText  `json:"rich_text"` // The rich text in the callout block.
-	Icon     FileOrEmoji `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
-	Color    string      `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	RichText []RichText  `json:"rich_text"`       // The rich text in the callout block.
+	Icon     FileOrEmoji `json:"icon"`            // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Color    string      `json:"color,omitempty"` // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
@@ -194,6 +194,6 @@ type BlockLinkPreview struct {
 // Paragraph
 type BlockParagraph struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
-	Color    string     `json:"color"`              // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
 }

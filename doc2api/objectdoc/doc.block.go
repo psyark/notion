@@ -225,7 +225,7 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The nested child blocks (if any) of the bulleted_list_item block.",
@@ -263,14 +263,14 @@ func init() {
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asUnionField("FileOrEmoji"))
+				getSymbol[concreteObject]("BlockCallout").addFields(e.asUnionField("FileOrEmoji")) // TODO omitempty
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -728,7 +728,7 @@ func init() {
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "children",
