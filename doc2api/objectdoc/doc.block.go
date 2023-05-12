@@ -241,11 +241,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Callout */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Callout",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("callout", e.Text, b)
+				specificObject = block.addAdaptiveFieldWithSpecificObject("callout", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -256,26 +258,28 @@ func init() {
 				Type:        "array of rich text objects",
 				Description: "The rich text in the callout block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.Index().Id("RichText")))
+				specificObject.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "icon",
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji"), omitEmpty))
+				specificObject.addFields(e.asField(jen.Id("FileOrEmoji"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.String(), omitEmpty))
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
 			}, func(e blockElement) {})
+
+			specificObject.addFields(&field{name: "children", comment: "undocumented", typeCode: jen.Index().Id("Block"), omitEmpty: true})
 		},
 		func(c *comparator, b *builder) /* Child database */ {
 			c.nextMustBlock(blockElement{
@@ -835,102 +839,84 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Synced block */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Synced block",
 			}, func(e blockElement) {
-				// TODO
+				specificObject = block.addAdaptiveFieldWithSpecificObject("synced_block", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Similar to the Notion UI, there are two versions of a synced_block object: the original block that was created first and doesn't yet sync with anything else, and the duplicate block or blocks synced to the original.",
 			}, func(e blockElement) {
-				// TODO
+				specificObject.addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
 				Text: "An original synced block must be created before corresponding duplicate block or blocks can be made.",
 			}, func(e blockElement) {
-				// TODO
+				specificObject.addComment(e.Text)
 			})
-		},
-		func(c *comparator, b *builder) /* Original synced block */ {
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Original synced block",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Original synced block objects contain the following information within the synced_block property:",
 			}, func(e blockElement) {
-				// TODO
+				specificObject.addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The value is always null to signify that this is an original synced block that does not refer to another block.",
-				ExampleValue: "",
-				Property:     "synced_from",
-				Type:         "null",
+				Property:    "synced_from",
+				Type:        "null",
+				Description: "The value is always null to signify that this is an original synced block that does not refer to another block.",
 			}, func(e parameterElement) {
-				// TODO
+				specificObject.addFields(e.asField(jen.Op("*").Id("SyncedFrom")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
-				ExampleValue: "",
-				Property:     "children",
-				Type:         "array of block objects",
+				Property:    "children",
+				Type:        "array of block objects",
+				Description: "The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.",
 			}, func(e parameterElement) {
-				// TODO
+				specificObject.addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}",
-			}, func(e blockElement) {
-				// TODO
-			})
-		},
-		func(c *comparator, b *builder) /* Duplicate synced block */ {
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Duplicate synced block",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Duplicate synced block objects contain the following information within the synced_from object:",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
 				ExampleValue: "",
 				Property:     "type",
 				Type:         "string (enum)",
-			}, func(e parameterElement) {
-				// TODO
-			})
+			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the original synced_block.",
 				ExampleValue: "",
 				Property:     "block_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
-				// TODO
+				b.addConcreteObject("SyncedFrom", "").addFields(e.asField(UUID))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
 				Text: "The API does not supported updating synced block content.",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Table */ {
 			c.nextMustBlock(blockElement{
@@ -1105,56 +1091,50 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* To do */ {
+			var specificObject *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "To do",
 			}, func(e blockElement) {
-				// TODO
+				specificObject = block.addAdaptiveFieldWithSpecificObject("to_do", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "To do block objects contain the following information within the to_do property:",
-			}, func(e blockElement) {
-				// TODO
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:    "rich_text",
+				Type:        "array of rich text objects",
+				Description: "The rich text displayed in the To do block.",
+			}, func(e parameterElement) {
+				specificObject.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The rich text displayed in the To do block.",
-				ExampleValue: "",
-				Property:     "rich_text",
-				Type:         "array of rich text objects",
+				Property:    "checked",
+				Type:        "boolean (optional)",
+				Description: "Whether the To do is checked.",
 			}, func(e parameterElement) {
-				// TODO
+				specificObject.addFields(e.asField(jen.Op("*").Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Whether the To do is checked.",
-				ExampleValue: "",
-				Property:     "checked",
-				Type:         "boolean (optional)",
+				Property:    "color",
+				Type:        "string (enum)",
+				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				// TODO
+				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-				ExampleValue: "",
-				Property:     "color",
-				Type:         "string (enum)",
+				Property:    "children",
+				Type:        "array of block objects",
+				Description: "The nested child blocks, if any, of the To do block.",
 			}, func(e parameterElement) {
-				// TODO
-			})
-			c.nextMustParameter(parameterElement{
-				Description:  "The nested child blocks, if any, of the To do block.",
-				ExampleValue: "",
-				Property:     "children",
-				Type:         "array of block objects",
-			}, func(e parameterElement) {
-				// TODO
+				specificObject.addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
 				Text: "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
-			}, func(e blockElement) {
-				// TODO
-			})
+			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Toggle blocks */ {
 			c.nextMustBlock(blockElement{

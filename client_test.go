@@ -138,12 +138,19 @@ func TestRetrieveBlockChildren(t *testing.T) {
 			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
 			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
 			{Heading3: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 3"}}}}},
-			{Image: &File{External: &FileExternal{Url: "https://placehold.jp/640x640.png"}}},
-			{
-				Callout: &BlockCallout{
-					RichText: []RichText{{Text: &RichTextText{Content: "Callout"}}},
+			{ToDo: &BlockToDo{RichText: []RichText{{Text: &RichTextText{Content: "To Do"}}}}},
+			{Callout: &BlockCallout{
+				RichText: []RichText{{Text: &RichTextText{Content: "Callout"}}},
+				Icon:     &Emoji{Emoji: "🍣"},
+				Children: []Block{
+					{Image: &File{External: &FileExternal{Url: "https://placehold.jp/640x640.png"}}},
 				},
-			},
+			}},
+			{SyncedBlock: &BlockSyncedBlock{
+				Children: []Block{
+					{Paragraph: &BlockParagraph{RichText: []RichText{{Text: &RichTextText{Content: "synced"}}}}},
+				},
+			}},
 		}}
 		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, requestId(t.Name()), validateResult()); err != nil {
 			t.Fatal(err)

@@ -44,6 +44,8 @@ type Block struct {
 	Image            *File                  `json:"image"`        // Image block objects contain a file object detailing information about the image.
 	LinkPreview      *BlockLinkPreview      `json:"link_preview"` // Link Preview block objects contain the originally pasted url:
 	Paragraph        *BlockParagraph        `json:"paragraph"`    // Paragraph
+	SyncedBlock      *BlockSyncedBlock      `json:"synced_block"` // Synced block
+	ToDo             *BlockToDo             `json:"to_do"`        // To do
 }
 
 func (o Block) MarshalJSON() ([]byte, error) {
@@ -87,6 +89,10 @@ func (o Block) MarshalJSON() ([]byte, error) {
 			o.Type = "link_preview"
 		case defined(o.Paragraph):
 			o.Type = "paragraph"
+		case defined(o.SyncedBlock):
+			o.Type = "synced_block"
+		case defined(o.ToDo):
+			o.Type = "to_do"
 		}
 	}
 	type Alias Block
@@ -114,6 +120,8 @@ func (o Block) MarshalJSON() ([]byte, error) {
 		"image":              o.Type == "image",
 		"link_preview":       o.Type == "link_preview",
 		"paragraph":          o.Type == "paragraph",
+		"synced_block":       o.Type == "synced_block",
+		"to_do":              o.Type == "to_do",
 	}
 	return omitFields(data, visibility)
 }
@@ -133,9 +141,10 @@ type BlockBulletedListItem struct {
 
 // Callout
 type BlockCallout struct {
-	RichText []RichText  `json:"rich_text"`       // The rich text in the callout block.
-	Icon     FileOrEmoji `json:"icon,omitempty"`  // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
-	Color    string      `json:"color,omitempty"` // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	RichText []RichText  `json:"rich_text"`          // The rich text in the callout block.
+	Icon     FileOrEmoji `json:"icon,omitempty"`     // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Color    string      `json:"color,omitempty"`    // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block     `json:"children,omitempty"` // undocumented
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
@@ -196,4 +205,30 @@ type BlockParagraph struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
 	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
+}
+
+/*
+Synced block
+
+Similar to the Notion UI, there are two versions of a synced_block object: the original block that was created first and doesn't yet sync with anything else, and the duplicate block or blocks synced to the original.
+
+An original synced block must be created before corresponding duplicate block or blocks can be made.
+
+Original synced block objects contain the following information within the synced_block property:
+*/
+type BlockSyncedBlock struct {
+	SyncedFrom *SyncedFrom `json:"synced_from"`        // The value is always null to signify that this is an original synced block that does not refer to another block.
+	Children   []Block     `json:"children,omitempty"` // The nested child blocks, if any, of the synced_block block. These blocks will be mirrored in the duplicate synced_block.
+}
+
+type SyncedFrom struct {
+	BlockId uuid.UUID `json:"block_id"` // An identifier for the original synced_block.
+}
+
+// To do
+type BlockToDo struct {
+	RichText []RichText `json:"rich_text"`          // The rich text displayed in the To do block.
+	Checked  *bool      `json:"checked,omitempty"`  // Whether the To do is checked.
+	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block    `json:"children,omitempty"` // The nested child blocks, if any, of the To do block.
 }
