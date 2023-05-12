@@ -539,7 +539,7 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
@@ -547,7 +547,7 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for select values.",
@@ -555,7 +555,7 @@ func init() {
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

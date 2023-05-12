@@ -196,9 +196,9 @@ type PropertySelect struct {
 
 // The select type object contains an array of objects representing the available options. Each option object includes the following fields:
 type Option struct {
-	Color string `json:"color"` // The color of the option as rendered in the Notion UI. Possible values include:      - blue   - brown   - default   - gray   - green   - orange   - pink   - purple   - red   - yellow
-	Id    string `json:"id"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
-	Name  string `json:"name"`  // The name of the option as it appears in the Notion UI.      Note: Commas (",") are not valid for select values.
+	Color string `json:"color,omitempty"` // The color of the option as rendered in the Notion UI. Possible values include:      - blue   - brown   - default   - gray   - green   - orange   - pink   - purple   - red   - yellow
+	Id    string `json:"id,omitempty"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
+	Name  string `json:"name,omitempty"`  // The name of the option as it appears in the Notion UI.      Note: Commas (",") are not valid for select values.
 }
 
 // Status
