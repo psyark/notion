@@ -86,7 +86,10 @@ func defined(fieldValue any) bool {
 		return !v.IsZero()
 	case reflect.Bool:
 		return !v.IsZero()
+	case reflect.String:
+		return !v.IsZero()
 	default:
-		panic(v.Kind())
+		return !v.IsZero()
+		// panic(v.Kind())
 	}
 }
