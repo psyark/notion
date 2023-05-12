@@ -83,7 +83,7 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, erro
 		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
 	}
 
-	var params *UpdatePagePropertiesParams
+	delta := map[string]PropertyValue{}
 	for i := 0; i < t.NumField(); i++ {
 		sf := t.Field(i)
 		if sf.Tag.Get("notion") != "" {
@@ -96,14 +96,17 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, erro
 			json1, _ := json.Marshal(prop.get().Interface())
 			json2, _ := json.Marshal(v.Field(i).Interface())
 			if string(json1) != string(json2) {
-				if params == nil {
-					params = &UpdatePagePropertiesParams{Properties: map[string]PropertyValue{}}
-				}
 				pv := PropertyValue{Type: prop.Type}
 				pv.set(v.Field(i))
-				params.Properties[propId] = pv
+				delta[propId] = pv
 			}
 		}
+	}
+
+	var params *UpdatePagePropertiesParams
+	if len(delta) != 0 {
+		params = &UpdatePagePropertiesParams{}
+		params.Properties(delta)
 	}
 
 	return params, nil

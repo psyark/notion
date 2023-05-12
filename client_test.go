@@ -60,27 +60,31 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 func TestUpdatePage(t *testing.T) {
 	ctx := context.Background()
 
-	cases := []*UpdatePagePropertiesParams{
-		{},
-		{
-			Properties: map[string]PropertyValue{
+	// TODO params.SetParent みたいにする（nullとundefinedのため）
+
+	configs := []func(p *UpdatePagePropertiesParams){
+		func(p *UpdatePagePropertiesParams) {},
+		func(p *UpdatePagePropertiesParams) {
+			p.Properties(map[string]PropertyValue{
 				"Number":   {Type: "number", Number: null.FloatFromPtr(nil)},
 				"Date":     {Type: "date"},
 				"Checkbox": {Type: "checkbox", Checkbox: false},
-			},
+			})
 		},
-		{
-			Properties: map[string]PropertyValue{
+		func(p *UpdatePagePropertiesParams) {
+			p.Properties(map[string]PropertyValue{
 				"Number":   {Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
 				"Date":     {Type: "date", Date: &PropertyValueDate{Start: time.Now().Format(time.RFC3339)}},
 				"Checkbox": {Type: "checkbox", Checkbox: true},
-			},
+			})
 		},
 	}
 
-	for i, params := range cases {
-		params := params
+	for i, config := range configs {
+		config := config
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
+			params := &UpdatePagePropertiesParams{}
+			config(params)
 			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
@@ -100,10 +104,10 @@ func TestQueryDatabase(t *testing.T) {
 
 	ctx := context.Background()
 	params := &QueryDatabaseParams{}
-	for _, filter := range filters {
+	for i, filter := range filters {
 		filter := filter
-		t.Run(fmt.Sprintf("%T", filter), func(t *testing.T) {
-			params.Filter = &filter
+		t.Run(fmt.Sprintf("%s_%d", filter.Property, i), func(t *testing.T) {
+			params.Filter(&filter)
 			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
 				t.Fatal(err)
 			} else {
@@ -133,7 +137,8 @@ func TestRetrieveBlockChildren(t *testing.T) {
 		}
 	}
 	t.Run("AppendBlockChildren", func(t *testing.T) {
-		params := &AppendBlockChildrenParams{Children: []Block{
+		params := &AppendBlockChildrenParams{}
+		params.Children([]Block{
 			{Type: "breadcrumb"},
 			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
 			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
@@ -151,7 +156,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 					{Paragraph: &BlockParagraph{RichText: []RichText{{Text: &RichTextText{Content: "synced"}}}}},
 				},
 			}},
-		}}
+		})
 		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, requestId(t.Name()), validateResult()); err != nil {
 			t.Fatal(err)
 		}

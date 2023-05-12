@@ -125,18 +125,19 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	).Line()
 
 	if hasBodyParams {
-		fields := []jen.Code{}
+		paramsName := methodName + "Params"
+		file.Type().Id(paramsName).Map(jen.String()).Any()
+
 		for _, param := range c.localCopyOfBodyParams {
 			if param.typeCode == nil {
 				return fmt.Errorf("no typeCode for %s", param.Name)
 			}
-			jsonTag := param.Name
-			if param.omitEmpty {
-				jsonTag += ",omitempty"
-			}
-			fields = append(fields, jen.Id(strcase.UpperCamelCase(param.Name)).Add(param.typeCode).Tag(map[string]string{"json": jsonTag}).Comment(param.Desc))
+			file.Comment(param.Desc)
+			file.Func().Params(jen.Id("p").Op("*").Id(paramsName)).Id(strcase.UpperCamelCase(param.Name)).Params(jen.Id(param.Name).Add(param.typeCode)).Op("*").Id(paramsName).Block(
+				jen.Parens(jen.Op("*").Id("p")).Index(jen.Lit(param.Name)).Op("=").Id(param.Name),
+				jen.Return().Id("p"),
+			)
 		}
-		file.Type().Id(methodName + "Params").Struct(fields...).Line()
 	}
 
 	return nil

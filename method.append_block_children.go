@@ -23,6 +23,10 @@ func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, pa
 	return result, c.call(ctx, co)
 }
 
-type AppendBlockChildrenParams struct {
-	Children []Block `json:"children"` // Child content to append to a container block as an array of [block objects](ref:block)
+type AppendBlockChildrenParams map[string]any
+
+// Child content to append to a container block as an array of [block objects](ref:block)
+func (p *AppendBlockChildrenParams) Children(children []Block) *AppendBlockChildrenParams {
+	(*p)["children"] = children
+	return p
 }

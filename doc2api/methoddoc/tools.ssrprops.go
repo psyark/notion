@@ -88,7 +88,6 @@ type ssrPropsParam struct {
 	Required   bool   `json:"required"`   // false
 	Type       string `json:"type"`       // json
 	typeCode   jen.Code
-	omitEmpty  bool
 	// ID         string `json:"_id"`        // 609176570b6bf20019821ce8
 }
 
