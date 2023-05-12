@@ -24,22 +24,24 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Properties marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. For more information on integration capabilities, see the capabilities guide.",
+				Text: "📘Properties marked with an \\* are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. For more information on integration capabilities, see the capabilities guide.",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Property:     "object",
+				Property:     `object\`,
 				Type:         "string",
 				Description:  `Always "database".`,
 				ExampleValue: `"database"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, `\`)
 				getSymbol[concreteObject](b, "Database").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
-				Property:     "id",
+				Property:     `id\`,
 				Type:         "string (UUID)",
 				Description:  "Unique identifier for the database.",
 				ExampleValue: `"2f26ee68-df30-4251-aad4-8ddc420cba3d"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, `\`)
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
@@ -77,7 +79,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "title",
 				Type:         "array of rich text objects",
-				Description:  "Name of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
+				Description:  "Name of the database as it appears in Notion.  \nSee rich text object) for a breakdown of the properties.",
 				ExampleValue: "\"title\": [\n        {\n            \"type\": \"text\",\n            \"text\": {\n                \"content\": \"Can I create a URL property\",\n                \"link\": null\n            },\n            \"annotations\": {\n                \"bold\": false,\n                \"italic\": false,\n                \"strikethrough\": false,\n                \"underline\": false,\n                \"code\": false,\n                \"color\": \"default\"\n            },\n            \"plain_text\": \"Can I create a URL property\",\n            \"href\": null\n        }\n    ]",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Index().Id("RichText")))
@@ -85,7 +87,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "description",
 				Type:        "array of rich text objects",
-				Description: "Description of the database as it appears in Notion.\nSee rich text object) for a breakdown of the properties.",
+				Description: "Description of the database as it appears in Notion.  \nSee rich text object) for a breakdown of the properties.",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Index().Id("RichText")))
 			})
@@ -104,11 +106,11 @@ func init() {
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Op("*").Id("File")))
 			})
 			c.nextMustParameter(parameterElement{
-				Property:    "properties*",
+				Property:    `properties\*`,
 				Type:        "object",
-				Description: "Schema of properties for the database as they appear in Notion.\n\nkey string\nThe name of the property as it appears in Notion.\n\nvalue object\nA Property object.",
+				Description: "Schema of properties for the database as they appear in Notion.  \n  \nkey string  \nThe name of the property as it appears in Notion.  \n  \nvalue object  \nA Property object.",
 			}, func(e parameterElement) {
-				e.Property = strings.TrimSuffix(e.Property, "*")
+				e.Property = strings.TrimSuffix(e.Property, `\*`)
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("PropertyMap")))
 			})
 			c.nextMustParameter(parameterElement{
@@ -143,6 +145,12 @@ func init() {
 			}, func(e parameterElement) {
 				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Bool()))
 			})
+		},
+		func(c *comparator, b *builder) /*  */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "🚧 Maximum schema size recommendationNotion recommends a maximum schema size of 50KB. Updates to database schemas that are too large will be blocked to help maintain database performance.",
+			}, func(e blockElement) {})
 		},
 	)
 }

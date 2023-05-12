@@ -132,6 +132,8 @@ func (t *translator) fetchAndBuild() error {
 		return fmt.Errorf("%d element(s) remains", len(c.elements)-c.index)
 	}
 
+	_ = os.Remove("tmp/" + fileName)
+
 	return nil // OK
 }
 

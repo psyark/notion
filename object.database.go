@@ -17,11 +17,11 @@ type Database struct {
 	CreatedBy      User           `json:"created_by"`       // User who created the database.
 	LastEditedTime ISO8601String  `json:"last_edited_time"` // Date and time when this database was updated. Formatted as an ISO 8601 date time string.
 	LastEditedBy   User           `json:"last_edited_by"`   // User who last edited the database.
-	Title          []RichText     `json:"title"`            // Name of the database as it appears in Notion. See rich text object) for a breakdown of the properties.
-	Description    []RichText     `json:"description"`      // Description of the database as it appears in Notion. See rich text object) for a breakdown of the properties.
+	Title          []RichText     `json:"title"`            // Name of the database as it appears in Notion.   See rich text object) for a breakdown of the properties.
+	Description    []RichText     `json:"description"`      // Description of the database as it appears in Notion.   See rich text object) for a breakdown of the properties.
 	Icon           FileOrEmoji    `json:"icon"`             // Page icon.
 	Cover          *File          `json:"cover"`            // Page cover image.
-	Properties     PropertyMap    `json:"properties"`       // Schema of properties for the database as they appear in Notion.  key string The name of the property as it appears in Notion.  value object A Property object.
+	Properties     PropertyMap    `json:"properties"`       // Schema of properties for the database as they appear in Notion.      key string   The name of the property as it appears in Notion.      value object   A Property object.
 	Parent         Parent         `json:"parent"`           // Information about the database's parent. See Parent object.
 	Url            string         `json:"url"`              // The URL of the Notion database.
 	Archived       bool           `json:"archived"`         // The archived status of the  database.
