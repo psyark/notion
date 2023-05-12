@@ -2,6 +2,7 @@ package notion
 
 import (
 	"encoding/json"
+	"fmt"
 	uuid "github.com/google/uuid"
 )
 
@@ -15,63 +16,104 @@ Use the Retrieve block children endpoint to list all of the blocks on a page.
 */
 type Block struct {
 	Type             string                 `json:"type"`
-	Object           alwaysBlock            `json:"object"`             // Always "block".
-	Id               uuid.UUID              `json:"id"`                 // Identifier for the block.
-	Parent           Parent                 `json:"parent"`             // Information about the block's parent. See Parent object.
-	CreatedTime      ISO8601String          `json:"created_time"`       // Date and time when this block was created. Formatted as an ISO 8601 date time string.
-	CreatedBy        User                   `json:"created_by"`         // User who created the block.
-	LastEditedTime   ISO8601String          `json:"last_edited_time"`   // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
-	LastEditedBy     User                   `json:"last_edited_by"`     // User who last edited the block.
-	Archived         bool                   `json:"archived"`           // The archived status of the block.
-	HasChildren      bool                   `json:"has_children"`       // Whether or not the block has children blocks nested within it.
-	Bookmark         *BlockBookmark         `json:"bookmark"`           // Bookmark
-	Breadcrumb       struct{}               `json:"breadcrumb"`         // Breadcrumb block objects do not contain any information within the breadcrumb property.
-	BulletedListItem *BlockBulletedListItem `json:"bulleted_list_item"` // Bulleted list item
-	Callout          *BlockCallout          `json:"callout"`            // Callout
-	ChildDatabase    *BlockChildDatabase    `json:"child_database"`     // Child database
-	ChildPage        *BlockChildPage        `json:"child_page"`         // Child page
-	Code             *BlockCode             `json:"code"`               // Code
-	ColumnList       struct{}               `json:"column_list"`        // Column lists are parent blocks for columns. They do not contain any information within the column_list property.
-	Column           struct{}               `json:"column"`             // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
-	Divider          struct{}               `json:"divider"`            // Divider block objects do not contain any information within the divider property.
-	Embed            *BlockEmbed            `json:"embed"`              // Embed
-	Equation         *BlockEquation         `json:"equation"`           // Equation
-	File             FileWithCaption        `json:"file"`               // File
+	Object           alwaysBlock            `json:"object"`                     // Always "block".
+	Id               uuid.UUID              `json:"id"`                         // Identifier for the block.
+	Parent           *Parent                `json:"parent,omitempty"`           // Information about the block's parent. See Parent object.
+	CreatedTime      ISO8601String          `json:"created_time,omitempty"`     // Date and time when this block was created. Formatted as an ISO 8601 date time string.
+	CreatedBy        User                   `json:"created_by"`                 // User who created the block.
+	LastEditedTime   ISO8601String          `json:"last_edited_time,omitempty"` // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
+	LastEditedBy     User                   `json:"last_edited_by"`             // User who last edited the block.
+	Archived         bool                   `json:"archived"`                   // The archived status of the block.
+	HasChildren      bool                   `json:"has_children"`               // Whether or not the block has children blocks nested within it.
+	Bookmark         *BlockBookmark         `json:"bookmark"`                   // Bookmark
+	Breadcrumb       struct{}               `json:"breadcrumb"`                 // Breadcrumb block objects do not contain any information within the breadcrumb property.
+	BulletedListItem *BlockBulletedListItem `json:"bulleted_list_item"`         // Bulleted list item
+	Callout          *BlockCallout          `json:"callout"`                    // Callout
+	ChildDatabase    *BlockChildDatabase    `json:"child_database"`             // Child database
+	ChildPage        *BlockChildPage        `json:"child_page"`                 // Child page
+	Code             *BlockCode             `json:"code"`                       // Code
+	ColumnList       struct{}               `json:"column_list"`                // Column lists are parent blocks for columns. They do not contain any information within the column_list property.
+	Column           struct{}               `json:"column"`                     // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
+	Divider          struct{}               `json:"divider"`                    // Divider block objects do not contain any information within the divider property.
+	Embed            *BlockEmbed            `json:"embed"`                      // Embed
+	Equation         *BlockEquation         `json:"equation"`                   // Equation
+	File             *File                  `json:"file"`                       // File
 	Heading1         *BlockHeading          `json:"heading_1"`
 	Heading2         *BlockHeading          `json:"heading_2"`
 	Heading3         *BlockHeading          `json:"heading_3"`
-	Image            File                   `json:"image"`        // Image block objects contain a file object detailing information about the image.
+	Image            *File                  `json:"image"`        // Image block objects contain a file object detailing information about the image.
 	LinkPreview      *BlockLinkPreview      `json:"link_preview"` // Link Preview block objects contain the originally pasted url:
 	Paragraph        *BlockParagraph        `json:"paragraph"`    // Paragraph
 }
 
 func (o Block) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.Bookmark):
+			o.Type = "bookmark"
+		case defined(o.Breadcrumb):
+			o.Type = "breadcrumb"
+		case defined(o.BulletedListItem):
+			o.Type = "bulleted_list_item"
+		case defined(o.Callout):
+			o.Type = "callout"
+		case defined(o.ChildDatabase):
+			o.Type = "child_database"
+		case defined(o.ChildPage):
+			o.Type = "child_page"
+		case defined(o.Code):
+			o.Type = "code"
+		case defined(o.ColumnList):
+			o.Type = "column_list"
+		case defined(o.Column):
+			o.Type = "column"
+		case defined(o.Divider):
+			o.Type = "divider"
+		case defined(o.Embed):
+			o.Type = "embed"
+		case defined(o.Equation):
+			o.Type = "equation"
+		case defined(o.File):
+			o.Type = "file"
+		case defined(o.Heading1):
+			o.Type = "heading_1"
+		case defined(o.Heading2):
+			o.Type = "heading_2"
+		case defined(o.Heading3):
+			o.Type = "heading_3"
+		case defined(o.Image):
+			o.Type = "image"
+		case defined(o.LinkPreview):
+			o.Type = "link_preview"
+		case defined(o.Paragraph):
+			o.Type = "paragraph"
+		}
+	}
 	type Alias Block
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"bookmark":           t == "bookmark",
-		"breadcrumb":         t == "breadcrumb",
-		"bulleted_list_item": t == "bulleted_list_item",
-		"callout":            t == "callout",
-		"child_database":     t == "child_database",
-		"child_page":         t == "child_page",
-		"code":               t == "code",
-		"column":             t == "column",
-		"column_list":        t == "column_list",
-		"divider":            t == "divider",
-		"embed":              t == "embed",
-		"equation":           t == "equation",
-		"file":               t == "file",
-		"heading_1":          t == "heading_1",
-		"heading_2":          t == "heading_2",
-		"heading_3":          t == "heading_3",
-		"image":              t == "image",
-		"link_preview":       t == "link_preview",
-		"paragraph":          t == "paragraph",
+		"bookmark":           o.Type == "bookmark",
+		"breadcrumb":         o.Type == "breadcrumb",
+		"bulleted_list_item": o.Type == "bulleted_list_item",
+		"callout":            o.Type == "callout",
+		"child_database":     o.Type == "child_database",
+		"child_page":         o.Type == "child_page",
+		"code":               o.Type == "code",
+		"column":             o.Type == "column",
+		"column_list":        o.Type == "column_list",
+		"divider":            o.Type == "divider",
+		"embed":              o.Type == "embed",
+		"equation":           o.Type == "equation",
+		"file":               o.Type == "file",
+		"heading_1":          o.Type == "heading_1",
+		"heading_2":          o.Type == "heading_2",
+		"heading_3":          o.Type == "heading_3",
+		"image":              o.Type == "image",
+		"link_preview":       o.Type == "link_preview",
+		"paragraph":          o.Type == "paragraph",
 	}
 	return omitFields(data, visibility)
 }
@@ -94,6 +136,20 @@ type BlockCallout struct {
 	RichText []RichText  `json:"rich_text"` // The rich text in the callout block.
 	Icon     FileOrEmoji `json:"icon"`      // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
 	Color    string      `json:"color"`     // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+}
+
+// UnmarshalJSON assigns the appropriate implementation to interface field(s)
+func (o *BlockCallout) UnmarshalJSON(data []byte) error {
+	type Alias BlockCallout
+	t := &struct {
+		*Alias
+		Icon fileOrEmojiUnmarshaler `json:"icon"`
+	}{Alias: (*Alias)(o)}
+	if err := json.Unmarshal(data, t); err != nil {
+		return fmt.Errorf("unmarshaling BlockCallout: %w", err)
+	}
+	o.Icon = t.Icon.value
+	return nil
 }
 
 // Child database
@@ -125,9 +181,9 @@ type BlockEquation struct {
 
 // All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
 type BlockHeading struct {
-	RichText     []RichText `json:"rich_text"`     // The rich text of the heading.
-	Color        string     `json:"color"`         // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	IsToggleable bool       `json:"is_toggleable"` // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
+	RichText     []RichText `json:"rich_text"`       // The rich text of the heading.
+	Color        string     `json:"color,omitempty"` // The color of the block. Possible values are:   - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	IsToggleable bool       `json:"is_toggleable"`   // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
 }
 
 // Link Preview block objects contain the originally pasted url:

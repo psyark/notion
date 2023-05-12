@@ -3,6 +3,7 @@ package notion
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/google/uuid"
 )
@@ -23,6 +24,11 @@ func (p *Page) GetProperty(id string) *PropertyValue {
 func (p *Pagination) Pages() ([]Page, error) {
 	pages := []Page{}
 	return pages, json.Unmarshal(p.Results, &pages)
+}
+
+func (p *Pagination) Blocks() ([]Block, error) {
+	blocks := []Block{}
+	return blocks, json.Unmarshal(p.Results, &blocks)
 }
 
 type PropertyItemOrPropertyItemPaginationMap map[string]PropertyItemOrPropertyItemPagination
@@ -67,4 +73,20 @@ func String(rta []RichText) string {
 		str += rt.PlainText
 	}
 	return str
+}
+
+func defined(fieldValue any) bool {
+	v := reflect.ValueOf(fieldValue)
+	switch v.Kind() {
+	case reflect.Ptr, reflect.Slice:
+		return !v.IsNil()
+	case reflect.Struct:
+		return false
+	case reflect.Array: // UUID
+		return !v.IsZero()
+	case reflect.Bool:
+		return !v.IsZero()
+	default:
+		panic(v.Kind())
+	}
 }

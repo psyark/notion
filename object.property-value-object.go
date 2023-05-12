@@ -42,34 +42,79 @@ type PropertyValue struct {
 }
 
 func (o PropertyValue) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.Title):
+			o.Type = "title"
+		case defined(o.RichText):
+			o.Type = "rich_text"
+		case defined(o.Number):
+			o.Type = "number"
+		case defined(o.Select):
+			o.Type = "select"
+		case defined(o.Status):
+			o.Type = "status"
+		case defined(o.MultiSelect):
+			o.Type = "multi_select"
+		case defined(o.Date):
+			o.Type = "date"
+		case defined(o.Formula):
+			o.Type = "formula"
+		case defined(o.Relation):
+			o.Type = "relation"
+		case defined(o.HasMore):
+			o.Type = "relation"
+		case defined(o.Rollup):
+			o.Type = "rollup"
+		case defined(o.People):
+			o.Type = "people"
+		case defined(o.Files):
+			o.Type = "files"
+		case defined(o.Checkbox):
+			o.Type = "checkbox"
+		case defined(o.Url):
+			o.Type = "url"
+		case defined(o.Email):
+			o.Type = "email"
+		case defined(o.PhoneNumber):
+			o.Type = "phone_number"
+		case defined(o.CreatedTime):
+			o.Type = "created_time"
+		case defined(o.CreatedBy):
+			o.Type = "created_by"
+		case defined(o.LastEditedTime):
+			o.Type = "last_edited_time"
+		case defined(o.LastEditedBy):
+			o.Type = "last_edited_by"
+		}
+	}
 	type Alias PropertyValue
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"checkbox":         t == "checkbox",
-		"created_by":       t == "created_by",
-		"created_time":     t == "created_time",
-		"date":             t == "date",
-		"email":            t == "email",
-		"files":            t == "files",
-		"formula":          t == "formula",
-		"has_more":         t == "relation",
-		"last_edited_by":   t == "last_edited_by",
-		"last_edited_time": t == "last_edited_time",
-		"multi_select":     t == "multi_select",
-		"number":           t == "number",
-		"people":           t == "people",
-		"phone_number":     t == "phone_number",
-		"relation":         t == "relation",
-		"rich_text":        t == "rich_text",
-		"rollup":           t == "rollup",
-		"select":           t == "select",
-		"status":           t == "status",
-		"title":            t == "title",
-		"url":              t == "url",
+		"checkbox":         o.Type == "checkbox",
+		"created_by":       o.Type == "created_by",
+		"created_time":     o.Type == "created_time",
+		"date":             o.Type == "date",
+		"email":            o.Type == "email",
+		"files":            o.Type == "files",
+		"formula":          o.Type == "formula",
+		"has_more":         o.Type == "relation",
+		"last_edited_by":   o.Type == "last_edited_by",
+		"last_edited_time": o.Type == "last_edited_time",
+		"multi_select":     o.Type == "multi_select",
+		"number":           o.Type == "number",
+		"people":           o.Type == "people",
+		"phone_number":     o.Type == "phone_number",
+		"relation":         o.Type == "relation",
+		"rich_text":        o.Type == "rich_text",
+		"rollup":           o.Type == "rollup",
+		"select":           o.Type == "select",
+		"status":           o.Type == "status",
+		"title":            o.Type == "title",
+		"url":              o.Type == "url",
 	}
 	return omitFields(data, visibility)
 }
@@ -91,17 +136,28 @@ type Formula struct {
 }
 
 func (o Formula) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.String):
+			o.Type = "string"
+		case defined(o.Number):
+			o.Type = "number"
+		case defined(o.Boolean):
+			o.Type = "boolean"
+		case defined(o.Date):
+			o.Type = "date"
+		}
+	}
 	type Alias Formula
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"boolean": t == "boolean",
-		"date":    t == "date",
-		"number":  t == "number",
-		"string":  t == "string",
+		"boolean": o.Type == "boolean",
+		"date":    o.Type == "date",
+		"number":  o.Type == "number",
+		"string":  o.Type == "string",
 	}
 	return omitFields(data, visibility)
 }

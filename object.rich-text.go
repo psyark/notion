@@ -24,16 +24,25 @@ type RichText struct {
 }
 
 func (o RichText) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.Equation):
+			o.Type = "equation"
+		case defined(o.Mention):
+			o.Type = "mention"
+		case defined(o.Text):
+			o.Type = "text"
+		}
+	}
 	type Alias RichText
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"equation": t == "equation",
-		"mention":  t == "mention",
-		"text":     t == "text",
+		"equation": o.Type == "equation",
+		"mention":  o.Type == "mention",
+		"text":     o.Type == "text",
 	}
 	return omitFields(data, visibility)
 }
@@ -77,19 +86,34 @@ type Mention struct {
 }
 
 func (o Mention) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.Database):
+			o.Type = "database"
+		case defined(o.Date):
+			o.Type = "date"
+		case defined(o.LinkPreview):
+			o.Type = "link_preview"
+		case defined(o.Page):
+			o.Type = "page"
+		case defined(o.TemplateMention):
+			o.Type = "template_mention"
+		case defined(o.User):
+			o.Type = "user"
+		}
+	}
 	type Alias Mention
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"database":         t == "database",
-		"date":             t == "date",
-		"link_preview":     t == "link_preview",
-		"page":             t == "page",
-		"template_mention": t == "template_mention",
-		"user":             t == "user",
+		"database":         o.Type == "database",
+		"date":             o.Type == "date",
+		"link_preview":     o.Type == "link_preview",
+		"page":             o.Type == "page",
+		"template_mention": o.Type == "template_mention",
+		"user":             o.Type == "user",
 	}
 	return omitFields(data, visibility)
 }
@@ -117,15 +141,22 @@ type TemplateMention struct {
 }
 
 func (o TemplateMention) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.TemplateMentionDate):
+			o.Type = "template_mention_date"
+		case defined(o.TemplateMentionUser):
+			o.Type = "template_mention_user"
+		}
+	}
 	type Alias TemplateMention
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"template_mention_date": t == "template_mention_date",
-		"template_mention_user": t == "template_mention_user",
+		"template_mention_date": o.Type == "template_mention_date",
+		"template_mention_user": o.Type == "template_mention_user",
 	}
 	return omitFields(data, visibility)
 }

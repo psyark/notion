@@ -115,7 +115,32 @@ func TestQueryDatabase(t *testing.T) {
 
 func TestRetrieveBlockChildren(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, requestId(t.Name()), useCache(), validateResult()); err != nil {
+	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, requestId(t.Name()), validateResult()); err != nil {
 		t.Fatal(err)
+	} else {
+		blocks, err := pagi.Blocks()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, block := range blocks {
+			block := block
+			t.Run(block.Id.String(), func(t *testing.T) {
+				if _, err := cli.DeleteBlock(ctx, block.Id, requestId(t.Name()), validateResult()); err != nil {
+					t.Fatal(err)
+				}
+			})
+		}
 	}
+	t.Run("AppendBlockChildren", func(t *testing.T) {
+		params := &AppendBlockChildrenParams{Children: []Block{
+			{Type: "breadcrumb"},
+			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
+			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
+			{Heading3: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 3"}}}}},
+		}}
+		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, requestId(t.Name()), validateResult()); err != nil {
+			t.Fatal(err)
+		}
+	})
 }

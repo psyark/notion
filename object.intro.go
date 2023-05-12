@@ -29,20 +29,37 @@ type Pagination struct {
 
 func (o Pagination) isPropertyItemOrPropertyItemPagination() {}
 func (o Pagination) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.Block):
+			o.Type = "block"
+		case defined(o.Comment):
+			o.Type = "comment"
+		case defined(o.Database):
+			o.Type = "database"
+		case defined(o.Page):
+			o.Type = "page"
+		case defined(o.PageOrDatabase):
+			o.Type = "page_or_database"
+		case defined(o.PropertyItem):
+			o.Type = "property_item"
+		case defined(o.User):
+			o.Type = "user"
+		}
+	}
 	type Alias Pagination
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"block":            t == "block",
-		"comment":          t == "comment",
-		"database":         t == "database",
-		"page":             t == "page",
-		"page_or_database": t == "page_or_database",
-		"property_item":    t == "property_item",
-		"user":             t == "user",
+		"block":            o.Type == "block",
+		"comment":          o.Type == "comment",
+		"database":         o.Type == "database",
+		"page":             o.Type == "page",
+		"page_or_database": o.Type == "page_or_database",
+		"property_item":    o.Type == "property_item",
+		"user":             o.Type == "user",
 	}
 	return omitFields(data, visibility)
 }

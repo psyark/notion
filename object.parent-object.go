@@ -18,17 +18,28 @@ type Parent struct {
 }
 
 func (o Parent) MarshalJSON() ([]byte, error) {
-	t := o.Type
+	if o.Type == "" {
+		switch {
+		case defined(o.DatabaseId):
+			o.Type = "database_id"
+		case defined(o.PageId):
+			o.Type = "page_id"
+		case defined(o.Workspace):
+			o.Type = "workspace"
+		case defined(o.BlockId):
+			o.Type = "block_id"
+		}
+	}
 	type Alias Parent
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err
 	}
 	visibility := map[string]bool{
-		"block_id":    t == "block_id",
-		"database_id": t == "database_id",
-		"page_id":     t == "page_id",
-		"workspace":   t == "workspace",
+		"block_id":    o.Type == "block_id",
+		"database_id": o.Type == "database_id",
+		"page_id":     o.Type == "page_id",
+		"workspace":   o.Type == "workspace",
 	}
 	return omitFields(data, visibility)
 }

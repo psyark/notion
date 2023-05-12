@@ -72,21 +72,20 @@ func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
 	}
 
 	if o.discriminatorKey != "" {
+		discriminatorProp := strcase.UpperCamelCase(o.discriminatorKey)
 		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-			jen.Id("t").Op(":=").Id("o").Dot(strcase.UpperCamelCase(o.discriminatorKey)),
-
-			// TODO type 未設定の場合の自動推定
-			// jen.If(jen.Id("t").Op("==").Lit("")).Block(
-			// 	jen.Switch().BlockFunc(func(g *jen.Group) {
-			// 		for _, f := range o.fields {
-			// 			if f, ok := f.(*field); ok {
-			// 				if f.discriminatorValue != "" {
-			// 					g.Case(jen.Op("!").Qual("reflect", "ValueOf").Call(jen.Id("o").Dot(strcase.UpperCamelCase(f.name))).Dot("IsZero").Call()).Id("t").Op("=").Lit(f.discriminatorValue)
-			// 				}
-			// 			}
-			// 		}
-			// 	}),
-			// ),
+			// type 未設定の場合の自動推定
+			jen.If(jen.Id("o").Dot(discriminatorProp).Op("==").Lit("")).Block(
+				jen.Switch().BlockFunc(func(g *jen.Group) {
+					for _, f := range o.fields {
+						if f, ok := f.(*field); ok {
+							if f.discriminatorValue != "" {
+								g.Case(jen.Id("defined").Call(jen.Id("o").Dot(strcase.UpperCamelCase(f.name)))).Id("o").Dot(discriminatorProp).Op("=").Lit(f.discriminatorValue)
+							}
+						}
+					}
+				}),
+			),
 
 			jen.Type().Id("Alias").Id(o.name()),
 			jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
@@ -95,9 +94,9 @@ func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
 				for _, f := range o.fields {
 					if f, ok := f.(*field); ok {
 						if f.discriminatorNotEmpty {
-							d[jen.Lit(f.name)] = jen.Id("t").Op("!=").Lit("")
+							d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("!=").Lit("")
 						} else if f.discriminatorValue != "" {
-							d[jen.Lit(f.name)] = jen.Id("t").Op("==").Lit(f.discriminatorValue)
+							d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("==").Lit(f.discriminatorValue)
 						}
 					}
 				}

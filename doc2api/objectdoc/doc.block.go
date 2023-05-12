@@ -63,7 +63,7 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: `{ "type": "block_id", "block_id": "7d50a184-5bbe-4d90-8f29-6bec57ed817b" }`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("Parent")))
+				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Op("*").Id("Parent"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
@@ -77,7 +77,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "created_by",
@@ -93,7 +93,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "last_edited_by",
@@ -263,7 +263,7 @@ func init() {
 				Type:        "object",
 				Description: "An emoji or file object that represents the callout's icon. If the callout does not have an icon.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCallout").addFields(e.asField(jen.Id("FileOrEmoji")))
+				getSymbol[concreteObject]("BlockCallout").addFields(e.asUnionField("FileOrEmoji"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
@@ -483,7 +483,7 @@ func init() {
 				Kind: "Heading",
 				Text: "File",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithType("file", e.Text, jen.Id("FileWithCaption"))
+				block.addAdaptiveFieldWithType("file", e.Text, jen.Op("*").Id("File")) // TODO FileWithCaption
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -540,7 +540,7 @@ func init() {
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "is_toggleable",
@@ -571,7 +571,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Image block objects contain a file object detailing information about the image.",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithType("image", e.Text, jen.Id("File"))
+				block.addAdaptiveFieldWithType("image", e.Text, jen.Op("*").Id("File"))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
