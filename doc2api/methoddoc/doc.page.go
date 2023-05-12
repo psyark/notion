@@ -24,11 +24,12 @@ func init() {
 				typeCode: jen.Map(jen.String()).Id("PropertyValue"),
 			},
 			{
-				Desc:     "The content to be rendered on the new page, represented as an array of [block objects](https://developers.notion.com/reference/block).",
-				In:       "body",
-				Name:     "children",
-				Type:     "array_string",
-				typeCode: jen.Index().Id("Block"),
+				Desc:      "The content to be rendered on the new page, represented as an array of [block objects](https://developers.notion.com/reference/block).",
+				In:        "body",
+				Name:      "children",
+				Type:      "array_string",
+				typeCode:  jen.Index().Id("Block"),
+				omitEmpty: true,
 			},
 			{
 				Desc:     "The icon of the new page. Either an [emoji object](https://developers.notion.com/reference/emoji-object) or an [external file object](https://developers.notion.com/reference/file-object)..",
