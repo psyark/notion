@@ -12,6 +12,22 @@ type adaptiveObject struct {
 	discriminatorKey string // "type", "object" など、派生を識別するためのプロパティ名
 }
 
+// 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
+// abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
+// unionがmemberを見分ける際には依然としてこの方法しかない
+func (o *adaptiveObject) getDiscriminatorValues(discriminatorKey string) []string {
+	if o.discriminatorKey == discriminatorKey {
+		values := []string{}
+		for _, f := range o.fields {
+			if f, ok := f.(*field); ok && f.name == f.discriminatorValue {
+				values = append(values, f.discriminatorValue)
+			}
+		}
+		return values
+	}
+	return o.objectCommon.getDiscriminatorValues(discriminatorKey)
+}
+
 func (o *adaptiveObject) addFields(fields ...fieldCoder) *adaptiveObject {
 	o.fields = append(o.fields, fields...)
 	return o

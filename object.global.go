@@ -25,10 +25,10 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	switch getType(data) {
-	case "":
-		u.value = &File{}
 	case "emoji":
 		u.value = &Emoji{}
+	case "file", "external":
+		u.value = &File{}
 	default:
 		return fmt.Errorf("unmarshaling FileOrEmoji: data has unknown type field: %s", string(data))
 	}

@@ -11,13 +11,12 @@ import (
 // memberCoder はunionObjectのメンバーとして存在できるオブジェクトを作成するためのCoderです
 type memberCoder interface {
 	symbolCoder
-	getDiscriminatorValue(identifierKey string) string
+	getDiscriminatorValues(identifierKey string) []string
 }
 
 var _ = []memberCoder{
 	&adaptiveObject{},
 	&concreteObject{},
-	&unionObject{},
 }
 
 // unionObject は、共通の変数に格納される可能性のあるオブジェクトの集合です
@@ -50,17 +49,15 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 			jen.Return().Nil(),
 		),
 		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.identifierKey))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
-			// 識別可能なもの
-			canIdentify := []memberCoder{}
-			for _, member := range u.members {
-				canIdentify = append(canIdentify, u.findCanIdentify(member)...)
-			}
-
-			sort.Slice(canIdentify, func(i, j int) bool {
-				return canIdentify[i].getDiscriminatorValue(u.identifierKey) < canIdentify[j].getDiscriminatorValue(u.identifierKey)
+			sort.Slice(u.members, func(i, j int) bool {
+				return u.members[i].name() < u.members[j].name()
 			})
-			for _, member := range canIdentify {
-				g.Case(jen.Lit(member.getDiscriminatorValue(u.identifierKey)))
+			for _, member := range u.members {
+				g.CaseFunc(func(g *jen.Group) {
+					for _, v := range member.getDiscriminatorValues(u.identifierKey) {
+						g.Lit(v)
+					}
+				})
 				g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
 			}
 			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.identifierKey)), jen.String().Call(jen.Id("data"))))
@@ -71,11 +68,6 @@ func (u *unionObject) symbolCode(b *builder) jen.Code {
 		jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
 	).Line()
 	return code
-}
-
-// TODO 消す
-func (u *unionObject) findCanIdentify(member memberCoder) []memberCoder {
-	return []memberCoder{member}
 }
 
 func (u *unionObject) memberUnmarshalerName() string {
