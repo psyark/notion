@@ -111,7 +111,7 @@ func init() {
 				Description: "Schema of properties for the database as they appear in Notion.  \n  \nkey string  \nThe name of the property as it appears in Notion.  \n  \nvalue object  \nA Property object.",
 			}, func(e parameterElement) {
 				e.Property = strings.TrimSuffix(e.Property, `\*`)
-				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Id("PropertyMap")))
+				getSymbol[concreteObject](b, "Database").addFields(e.asField(jen.Map(jen.String()).Id("Property")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "parent",

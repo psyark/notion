@@ -7,17 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type UndefNullString any
-
 type FileWithCaption any // TODO
 
-type PropertyMap map[string]Property // TODO 消す
-
-func (m *PropertyMap) UnmarshalJSON(data []byte) error {
-	*m = PropertyMap{}
-	type Alias PropertyMap
-	return json.Unmarshal(data, (*Alias)(m))
-}
+type PropertyMap map[string]Property // for test
 
 func (p *Page) GetProperty(id string) *PropertyValue {
 	for _, pv := range p.Properties {
