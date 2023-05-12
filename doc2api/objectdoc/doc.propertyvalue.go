@@ -27,8 +27,6 @@ func init() {
 						f.omitEmpty = true // TODO きれいに
 					}
 				}
-				// pv.specialMethods = append(pv.specialMethods, &getMethodCoder{}, &setMethodCoder{})
-				// TODO
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
