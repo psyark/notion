@@ -21,7 +21,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "File objects contain data about a file that is uploaded to Notion, or data about an external file that is linked to in Notion.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "File").addComment(e.Text)
+				getSymbol[adaptiveObject]("File").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -39,7 +39,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Page, embed, image, video, file, pdf, and bookmark block types all contain file objects. Icon and cover page object values also contain file objects.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "File").addComment(e.Text)
+				getSymbol[adaptiveObject]("File").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -69,7 +69,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All Notion-hosted files have a\u00a0type\u00a0of\u00a0\"file\". The corresponding file specific object contains the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FileFile").addComment(e.Text)
+				getSymbol[concreteObject]("FileFile").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "url",
@@ -77,7 +77,7 @@ func init() {
 				Description:  "An authenticated S3 URL to the file. \n\nThe URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.",
 				ExampleValue: `"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/9bc6c6e0-32b8-4d55-8c12-3ae931f43a01/brocolli.jpeg?..."`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FileFile").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("FileFile").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "expiry_time",
@@ -85,13 +85,13 @@ func init() {
 				Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FileFile").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[concreteObject]("FileFile").addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FileFile").addComment(e.Text)
+				getSymbol[concreteObject]("FileFile").addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Example: Retrieve a URL to a Notion-hosted file using GET /children */ {
@@ -138,7 +138,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "An external file is any URL linked to in Notion that isn’t hosted by Notion. All external files have a type of \"external\". The corresponding file specific object contains the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FileExternal").addComment(e.Text)
+				getSymbol[concreteObject]("FileExternal").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "url",
@@ -146,13 +146,13 @@ func init() {
 				Description:  "A link to the externally hosted content.",
 				ExampleValue: `"https://website.domain/files/doc.txt"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "FileExternal").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("FileExternal").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The Notion API supports adding, retrieving, and updating links to external files.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "FileExternal").addComment(e.Text)
+				getSymbol[concreteObject]("FileExternal").addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Example: Add a URL to an external file using PATCH /children */ {

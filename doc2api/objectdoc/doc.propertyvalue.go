@@ -34,7 +34,7 @@ func init() {
 				Kind: "Blockquote",
 				Text: "Any property value that has other pages in its value will only use the first 25 page references. Use the Retrieve a page property endpoint to paginate through the full value.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "PropertyValue").addComment(e.Text)
+				getSymbol[adaptiveObject]("PropertyValue").addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* All property values */ {
@@ -46,7 +46,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Each page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "PropertyValue").addComment(e.Text)
+				getSymbol[adaptiveObject]("PropertyValue").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
@@ -54,7 +54,7 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PropertyValue").addFields(e.asField(jen.String(), omitEmpty)) // Rollup内でIDが無い場合がある
+				getSymbol[adaptiveObject]("PropertyValue").addFields(e.asField(jen.String(), omitEmpty)) // Rollup内でIDが無い場合がある
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Type of the property. Possible values are \"rich_text\", \"number\", \"select\", \"multi_select\", \"status\", \"date\", \"formula\", \"relation\", \"rollup\", \"title\", \"people\", \"files\", \"checkbox\", \"url\", \"email\", \"phone_number\", \"created_time\", \"created_by\", \"last_edited_time\", and \"last_edited_by\".",
@@ -292,7 +292,7 @@ func init() {
 				Property:     "start",
 				Type:         "string (ISO 8601 date and time)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyValueDate").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
@@ -300,7 +300,7 @@ func init() {
 				Property:     "end",
 				Type:         "string (optional, ISO 8601 date and time)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyValueDate").addFields(e.asField(jen.Op("*").Id("ISO8601String"))) // APIでnullがあるのでomitemptyしない
+				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Op("*").Id("ISO8601String"))) // APIでnullがあるのでomitemptyしない
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
@@ -308,7 +308,7 @@ func init() {
 				Property:     "time_zone",
 				Type:         "string (optional, enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyValueDate").addFields(e.asField(jen.Op("*").String())) // APIでnullがあるのでomitemptyしない
+				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Op("*").String())) // APIでnullがあるのでomitemptyしない
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -441,7 +441,7 @@ func init() {
 				Text: "A relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.",
 			}, func(e blockElement) {
 				// TODO 他と似たようにする
-				getSymbol[adaptiveObject](b, "PropertyValue").addFields(&field{
+				getSymbol[adaptiveObject]("PropertyValue").addFields(&field{
 					name:               "has_more",
 					typeCode:           jen.Bool(),
 					comment:            e.Text,

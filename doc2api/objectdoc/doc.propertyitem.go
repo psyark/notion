@@ -41,7 +41,7 @@ func init() {
 				Property:     "object",
 				Type:         "\"property_item\"",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PropertyItem").addFields(e.asFixedStringField(b))
+				getSymbol[adaptiveObject]("PropertyItem").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
@@ -49,7 +49,7 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PropertyItem").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject]("PropertyItem").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Type of the property. Possible values are \"rich_text\", \"number\", \"select\", \"multi_select\", \"date\", \"formula\", \"relation\", \"rollup\", \"title\", \"people\", \"files\", \"checkbox\", \"url\", \"email\", \"phone_number\", \"created_time\", \"created_by\", \"last_edited_time\", and \"last_edited_by\".",
@@ -106,7 +106,7 @@ func init() {
 				Description:  "The URL the user can request to get the next page of results.",
 				ExampleValue: `"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/vYdV?start_cursor=LYxaUO&page_size=25"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
+				getSymbol[adaptiveObject]("PaginatedPropertyInfo").addFields(e.asField(jen.Id("*").String()))
 			})
 		},
 		func(c *comparator, b *builder) /* Title property values */ {

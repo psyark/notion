@@ -90,7 +90,7 @@ func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range unionFields {
-					if u := getSymbol[unionObject](b, f.unionName); u != nil {
+					if u := getSymbol[unionObject](f.unionName); u != nil {
 						g.Id(strcase.UpperCamelCase(f.name)).Id(u.memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 					} else {
 						panic(fmt.Errorf("%s.%s may not union", c.name(), f.unionName))

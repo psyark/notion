@@ -35,25 +35,25 @@ func init() {
 				Kind: "Heading",
 				Text: "Where user objects appear in the API",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "User").addComment(e.Text)
+				getSymbol[adaptiveObject]("User").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "User objects appear in the API in nearly all objects returned by the API, including:",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "User").addComment(e.Text)
+				getSymbol[adaptiveObject]("User").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "List",
 				Text: "Block object under created_by and last_edited_by.Page object under created_by and last_edited_by and in people property items.Database object under created_by and last_edited_by.Rich text object, as user mentions.Property object when the property is a people property.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "User").addComment(e.Text)
+				getSymbol[adaptiveObject]("User").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "User objects will always contain object and id keys, as described below. The remaining properties may appear if the user is being rendered in a rich text or page property context, and the bot has the correct capabilities to access those properties. For more about capabilities, see the Capabilities guide and the Authorization guide.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "User").addComment(e.Text)
+				getSymbol[adaptiveObject]("User").addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* All users */ {
@@ -71,7 +71,7 @@ func init() {
 				Description:  `Always "user"`,
 				ExampleValue: `"user"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "User").addFields(e.asFixedStringField(b))
+				getSymbol[adaptiveObject]("User").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "id",
@@ -79,7 +79,7 @@ func init() {
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "User").addFields(e.asField(UUID))
+				getSymbol[adaptiveObject]("User").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
@@ -93,7 +93,7 @@ func init() {
 				Property:     "name",
 				Type:         "string (optional)",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "User").addFields(e.asField(jen.String(), discriminatorNotEmpty))
+				getSymbol[adaptiveObject]("User").addFields(e.asField(jen.String(), discriminatorNotEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "avatar_url",
@@ -101,7 +101,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "User").addFields(e.asField(NullString, discriminatorNotEmpty))
+				getSymbol[adaptiveObject]("User").addFields(e.asField(NullString, discriminatorNotEmpty))
 			})
 		},
 		func(c *comparator, b *builder) /* People */ {
@@ -126,7 +126,7 @@ func init() {
 				Description:  "Email address of person. This is only present if an integration has user capabilities that allow access to email addresses.",
 				ExampleValue: `"avo@example.org"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "UserPerson").addFields(&field{
+				getSymbol[concreteObject]("UserPerson").addFields(&field{
 					name:     "email",
 					typeCode: jen.String(),
 					comment:  e.Description,
@@ -159,7 +159,7 @@ func init() {
 				Description:  "Information about who owns this bot.",
 				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "UserBot").addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
+				getSymbol[concreteObject]("UserBot").addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
 				b.addConcreteObject("BotUserDataOwner", e.Description)
 				b.addUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 			})
@@ -169,7 +169,7 @@ func init() {
 				Description:  `The type of owner, either "workspace" or "user".`,
 				ExampleValue: `"workspace"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "BotUserDataOwner").addFields(
+				getSymbol[concreteObject]("BotUserDataOwner").addFields(
 					&field{name: "type", typeCode: jen.String(), comment: e.Description},
 					&field{name: "workspace", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
 					&field{name: "user", typeCode: jen.Bool(), comment: "undocumented", omitEmpty: true},
@@ -181,7 +181,7 @@ func init() {
 				Description:  `If the owner.type is "workspace", then workspace.name identifies the name of the workspace that owns the bot. If the owner.type is "user", then workspace.name is null.`,
 				ExampleValue: `"Ada Lovelace’s Notion"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "UserBot").addFields(e.asField(jen.String(), omitEmpty))
+				getSymbol[concreteObject]("UserBot").addFields(e.asField(jen.String(), omitEmpty))
 			})
 		},
 	)

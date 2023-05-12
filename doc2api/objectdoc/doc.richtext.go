@@ -46,7 +46,7 @@ func init() {
 				Property:     "annotations",
 				Type:         "object",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "RichText").addFields(e.asField(jen.Id("Annotations")))
+				getSymbol[adaptiveObject]("RichText").addFields(e.asField(jen.Id("Annotations")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "plain_text",
@@ -54,7 +54,7 @@ func init() {
 				Description:  "The plain text without annotations.",
 				ExampleValue: `"Some words "`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "RichText").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject]("RichText").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "href",
@@ -62,7 +62,7 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "RichText").addFields(e.asField(NullString)) // RetrivePageでnullを確認
+				getSymbol[adaptiveObject]("RichText").addFields(e.asField(NullString)) // RetrivePageでnullを確認
 			})
 		},
 		func(c *comparator, b *builder) /* The annotation object */ {
@@ -76,7 +76,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All rich text objects contain an annotations object that sets the styling for the rich text. annotations includes the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "Annotations").addComment(e.Text)
+				getSymbol[concreteObject]("Annotations").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "bold",
@@ -84,7 +84,7 @@ func init() {
 				Description:  "Whether the text is bolded.",
 				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "italic",
@@ -92,7 +92,7 @@ func init() {
 				Description:  "Whether the text is italicized.",
 				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the text is struck through.",
@@ -100,7 +100,7 @@ func init() {
 				Property:     "strikethrough",
 				Type:         "boolean",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Whether the text is underlined.",
@@ -108,7 +108,7 @@ func init() {
 				Property:     "underline",
 				Type:         "boolean",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "code",
@@ -116,7 +116,7 @@ func init() {
 				Description:  "Whether the text is code style.",
 				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "color",
@@ -124,7 +124,7 @@ func init() {
 				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Annotations").addFields(e.asField(jen.String(), omitEmpty))
+				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.String(), omitEmpty))
 			})
 		},
 		func(c *comparator, b *builder) /* Rich text type objects */ {
@@ -144,7 +144,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Notion supports inline LaTeX equations as rich text object’s with a type value of \"equation\". The corresponding equation type object contains the following:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "RichTextEquation").addComment(e.Text)
+				getSymbol[concreteObject]("RichTextEquation").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "expression",
@@ -152,7 +152,7 @@ func init() {
 				Description:  "The LaTeX string representing the inline equation.",
 				ExampleValue: `"\frac{{ - b \pm \sqrt {b^2 - 4ac} }}{{2a}}"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextEquation").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("RichTextEquation").addFields(e.asField(jen.String()))
 			})
 		},
 		func(c *comparator, b *builder) /* Example rich text equation object */ {
@@ -179,7 +179,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Mention objects represent an inline mention of a database, date, link preview mention, page, template mention, or user. A mention is created in the Notion UI when a user types\u00a0@\u00a0followed by the name of the reference.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "Mention").addComment(e.Text)
+				getSymbol[adaptiveObject]("Mention").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -263,7 +263,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "If a user opts to share a Link Preview as a mention, then the API handles the Link Preview mention as a rich text object with a type value of link_preview. Link preview rich text mentions contain a corresponding link_preview object that includes the url that is used to create the Link Preview mention.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "MentionLinkPreview").addFields(
+				getSymbol[concreteObject]("MentionLinkPreview").addFields(
 					&field{name: "url", typeCode: jen.String()},
 				).addComment(e.Text)
 			})
@@ -318,13 +318,13 @@ func init() {
 				Kind: "Paragraph",
 				Text: "The content inside a template button in the Notion UI can include placeholder date and user mentions that populate when a template is duplicated. Template mention type objects contain these populated values.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "TemplateMention").addComment(e.Text)
+				getSymbol[adaptiveObject]("TemplateMention").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Template mention rich text objects contain a\u00a0template_mention\u00a0object with a nested\u00a0type\u00a0key that is either\u00a0\"template_mention_date\"\u00a0or\u00a0\"template_mention_user\".",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "TemplateMention").addComment(e.Text)
+				getSymbol[adaptiveObject]("TemplateMention").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -408,7 +408,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "If a rich text object’s type value is \"text\", then the corresponding text field contains an object including the following:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "RichTextText").addComment(e.Text)
+				getSymbol[concreteObject]("RichTextText").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "content",
@@ -416,7 +416,7 @@ func init() {
 				Description:  "The actual text content of the text.",
 				ExampleValue: `"Some words "`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextText").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("RichTextText").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "link",
@@ -424,7 +424,7 @@ func init() {
 				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "RichTextText").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
+				getSymbol[concreteObject]("RichTextText").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
 			})
 		},
 		func(c *comparator, b *builder) /* Example rich text text object without link */ {
@@ -454,7 +454,7 @@ func init() {
 				Kind: "Blockquote",
 				Text: "Refer to the request limits documentation page for information about limits on the size of rich text objects.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject](b, "RichText").addComment(e.Text)
+				getSymbol[adaptiveObject]("RichText").addComment(e.Text)
 			})
 		},
 	)

@@ -24,13 +24,13 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All pages have a Parent. If the parent is a database, the property values conform to the schema laid out database's properties. Otherwise, the only property value is the title.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "Page").addComment(e.Text)
+				getSymbol[concreteObject]("Page").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Page content is available as blocks. The content can be read using retrieve block children and appended using append block children.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "Page").addComment(e.Text)
+				getSymbol[concreteObject]("Page").addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Page object properties */ {
@@ -48,7 +48,7 @@ func init() {
 				Description:  `Always "page".`,
 				ExampleValue: `"page"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asFixedStringField(b))
+				getSymbol[concreteObject]("Page").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "id",
@@ -56,7 +56,7 @@ func init() {
 				Description:  "Unique identifier of the page.",
 				ExampleValue: `"45ee8d13-687b-47ce-a5ca-6e2e45548c4b"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(UUID))
+				getSymbol[concreteObject]("Page").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "created_time",
@@ -64,7 +64,7 @@ func init() {
 				Description:  "Date and time when this page was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "created_by",
@@ -72,7 +72,7 @@ func init() {
 				Description:  "User who created the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("User")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Id("User")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "last_edited_time",
@@ -80,7 +80,7 @@ func init() {
 				Description:  "Date and time when this page was updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("ISO8601String")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "last_edited_by",
@@ -88,7 +88,7 @@ func init() {
 				Description:  "User who last edited the page.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("User")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Id("User")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "archived",
@@ -96,7 +96,7 @@ func init() {
 				Description:  "The archived status of the page.",
 				ExampleValue: "false",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Bool()))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "icon",
@@ -104,7 +104,7 @@ func init() {
 				Description:  "Page icon.",
 				ExampleValue: "",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asUnionField("FileOrEmoji"))
+				getSymbol[concreteObject]("Page").addFields(e.asUnionField("FileOrEmoji"))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "cover",
@@ -112,7 +112,7 @@ func init() {
 				Description:  "Page cover image.",
 				ExampleValue: "",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Op("*").Id("File")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Op("*").Id("File")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "properties",
@@ -120,7 +120,7 @@ func init() {
 				Description:  "Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well.\n\nIf parent.type is \"page_id\" or \"workspace\", then the only valid key is title.\n\nIf parent.type is \"database_id\", then the keys and values of this field are determined by the properties  of the database this page belongs to.\n\nkey string\nName of a property as it appears in Notion.\n\nvalue object\nSee Property value object.",
 				ExampleValue: `{ "id": "A%40Hk" }`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Map(jen.String()).Id("PropertyValue")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Map(jen.String()).Id("PropertyValue")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "parent",
@@ -128,7 +128,7 @@ func init() {
 				Description:  "Information about the page's parent. See Parent object.",
 				ExampleValue: `{ "type": "database_id", "database_id": "d9824bdc-8445-4327-be8b-5b47500af6ce" }`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.Id("Parent")))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.Id("Parent")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "url",
@@ -136,7 +136,7 @@ func init() {
 				Description:  "The URL of the Notion page.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Page").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Page").addFields(e.asField(jen.String()))
 			})
 		},
 	)

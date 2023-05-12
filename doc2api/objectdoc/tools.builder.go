@@ -46,7 +46,7 @@ func (b *builder) addAdaptiveObject(name string, discriminatorKey string, commen
 }
 
 func (b *builder) addUnionToGlobalIfNotExists(name string, identifierKey string) *unionObject {
-	if u := getSymbol[unionObject](b, name); u != nil {
+	if u := getSymbol[unionObject](name); u != nil {
 		return u
 	}
 
@@ -69,8 +69,8 @@ func (b *builder) addAlwaysStringIfNotExists(value string) {
 }
 
 // TODO 第一引数は不要
-func getSymbol[T concreteObject | unionObject | adaptiveObject](b *builder, name string) *T {
-	if item, ok := b.globalSymbols.Load(name); ok {
+func getSymbol[T concreteObject | unionObject | adaptiveObject](name string) *T {
+	if item, ok := global.globalSymbols.Load(name); ok {
 		if item, ok := item.(*T); ok {
 			return item
 		}

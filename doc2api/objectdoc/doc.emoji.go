@@ -31,7 +31,7 @@ func init() {
 				Description:  `The constant string "emoji" that represents the object type.`,
 				ExampleValue: `"emoji"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Emoji").addFields(e.asFixedStringField(b))
+				getSymbol[concreteObject]("Emoji").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "emoji",
@@ -39,7 +39,7 @@ func init() {
 				Description:  "The emoji character.",
 				ExampleValue: `"😻"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Emoji").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Emoji").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",

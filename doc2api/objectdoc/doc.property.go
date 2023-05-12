@@ -33,14 +33,14 @@ func init() {
 				Description:  "An identifier for the property, usually a short string of random letters and symbols.  \n  \nSome automatically generated property types have special human-readable IDs. For example, all Title properties have an id of \"title\".",
 				ExampleValue: `"fy:{"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "Property").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject]("Property").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "name",
 				Type:        "string",
 				Description: "The name of the property as it appears in Notion.",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "Property").addFields(e.asField(jen.String()))
+				getSymbol[adaptiveObject]("Property").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
@@ -193,7 +193,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A formula database property is rendered in the Notion UI as a column that contains values derived from a provided expression.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyFormula").addComment(e.Text)
+				getSymbol[concreteObject]("PropertyFormula").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -205,7 +205,7 @@ func init() {
 				Property:     "expression",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyFormula").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyFormula").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -263,13 +263,13 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyMultiSelect").addComment(e.Text)
+				getSymbol[concreteObject]("PropertyMultiSelect").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyMultiSelect").addFields(
+				getSymbol[concreteObject]("PropertyMultiSelect").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 				)
 			})
@@ -309,7 +309,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyNumber").addComment(e.Text)
+				getSymbol[concreteObject]("PropertyNumber").addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "format",
@@ -317,7 +317,7 @@ func init() {
 				Description:  "The way that the number is displayed in Notion. Potential values include:  \n  \n- argentine_peso  \n- baht  \n- canadian_dollar  \n- chilean_peso  \n- colombian_peso  \n- danish_krone  \n- dirham  \n- dollar  \n- euro  \n- forint  \n- franc  \n- hong_kong_dollar  \n- koruna  \n- krona  \n- leu  \n- lira  \n-  mexican_peso  \n- new_taiwan_dollar  \n- new_zealand_dollar  \n- norwegian_krone  \n- number  \n- number_with_commas  \n- percent  \n- philippine_peso  \n- pound  \n- peruvian_sol  \n- rand  \n- real  \n- ringgit  \n- riyal  \n- ruble  \n- rupee  \n- rupiah  \n- shekel  \n- singapore_dollar  \n- uruguayan_peso  \n- yen,  \n- yuan  \n- won  \n- zloty",
 				ExampleValue: `"percent"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyNumber").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyNumber").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -379,7 +379,7 @@ func init() {
 				Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 			}, func(e blockElement) {
 				pr := b.addAdaptiveObject("PropertyRelation", "type", e.Text)
-				// getSymbol[concreteObject](b, "PropertyRelation").addFields(
+				// getSymbol[concreteObject]("PropertyRelation").addFields(
 				// 	&interfaceField{name: "relation", typeName: "Relation"},
 				// ).addComment(e.Text)
 				// b.addAbstractObject("Relation", "type", e.Text)
@@ -396,7 +396,7 @@ func init() {
 				Property:     "database_id",
 				Type:         "string (UUID)",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject](b, "PropertyRelation").addFields(e.asField(UUID))
+				getSymbol[adaptiveObject]("PropertyRelation").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
@@ -404,7 +404,7 @@ func init() {
 				Property:     "synced_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRelationDualProperty").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRelationDualProperty").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
@@ -412,7 +412,7 @@ func init() {
 				Property:     "synced_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRelationDualProperty").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRelationDualProperty").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -456,7 +456,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addComment(e.Text)
+				getSymbol[concreteObject]("PropertyRollup").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -468,7 +468,7 @@ func init() {
 				Property:     "function",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the related database property that is rolled up.",
@@ -476,7 +476,7 @@ func init() {
 				Property:     "relation_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the related database property that is rolled up.",
@@ -484,7 +484,7 @@ func init() {
 				Property:     "relation_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the rollup property.",
@@ -492,7 +492,7 @@ func init() {
 				Property:     "rollup_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the rollup property.",
@@ -500,7 +500,7 @@ func init() {
 				Property:     "rollup_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "PropertyRollup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("PropertyRollup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -520,13 +520,13 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertySelect").addComment(e.Text)
+				getSymbol[concreteObject]("PropertySelect").addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "The select type object contains an array of objects representing the available options. Each option object includes the following fields:",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertySelect").addFields(
+				getSymbol[concreteObject]("PropertySelect").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 				)
 				// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
@@ -539,7 +539,7 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
@@ -547,7 +547,7 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for select values.",
@@ -555,7 +555,7 @@ func init() {
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "Option").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -575,7 +575,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "A status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects.",
 			}, func(e blockElement) {
-				getSymbol[concreteObject](b, "PropertyStatus").addFields(
+				getSymbol[concreteObject]("PropertyStatus").addFields(
 					&field{name: "options", typeCode: jen.Index().Id("Option")},
 					&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 				)
@@ -614,7 +614,7 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("StatusGroup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
@@ -622,7 +622,7 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("StatusGroup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for status values.",
@@ -630,7 +630,7 @@ func init() {
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.String()))
+				getSymbol[concreteObject]("StatusGroup").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "A sorted list of ids of all of the options that belong to a group.",
@@ -638,7 +638,7 @@ func init() {
 				Property:     "option_ids",
 				Type:         "an array of strings (UUID)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject](b, "StatusGroup").addFields(e.asField(jen.Index().String()))
+				getSymbol[concreteObject]("StatusGroup").addFields(e.asField(jen.Index().String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
