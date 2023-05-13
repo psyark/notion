@@ -60,18 +60,16 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 func TestUpdatePage(t *testing.T) {
 	ctx := context.Background()
 
-	// TODO params.SetParent みたいにする（nullとundefinedのため）
-
-	configs := []func(p *UpdatePagePropertiesParams){
-		func(p *UpdatePagePropertiesParams) {},
-		func(p *UpdatePagePropertiesParams) {
+	configs := []func(p UpdatePagePropertiesParams){
+		func(p UpdatePagePropertiesParams) {},
+		func(p UpdatePagePropertiesParams) {
 			p.Properties(map[string]PropertyValue{
 				"Number":   {Type: "number", Number: null.FloatFromPtr(nil)},
 				"Date":     {Type: "date"},
 				"Checkbox": {Type: "checkbox", Checkbox: false},
 			})
 		},
-		func(p *UpdatePagePropertiesParams) {
+		func(p UpdatePagePropertiesParams) {
 			p.Properties(map[string]PropertyValue{
 				"Number":   {Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
 				"Date":     {Type: "date", Date: &PropertyValueDate{Start: time.Now().Format(time.RFC3339)}},
@@ -83,7 +81,7 @@ func TestUpdatePage(t *testing.T) {
 	for i, config := range configs {
 		config := config
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
-			params := &UpdatePagePropertiesParams{}
+			params := UpdatePagePropertiesParams{}
 			config(params)
 			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, requestId(t.Name()), useCache(), validateResult()); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
@@ -103,7 +101,7 @@ func TestQueryDatabase(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	params := &QueryDatabaseParams{}
+	params := QueryDatabaseParams{}
 	for i, filter := range filters {
 		filter := filter
 		t.Run(fmt.Sprintf("%s_%d", filter.Property, i), func(t *testing.T) {
@@ -137,7 +135,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 		}
 	}
 	t.Run("AppendBlockChildren", func(t *testing.T) {
-		params := &AppendBlockChildrenParams{}
+		params := AppendBlockChildrenParams{}
 		params.Children([]Block{
 			{Type: "breadcrumb"},
 			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},

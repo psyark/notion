@@ -9,7 +9,7 @@ import (
 
 // Append block children
 // https://developers.notion.com/reference/patch-block-children
-func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, params *AppendBlockChildrenParams, options ...callOption) (*Pagination, error) {
+func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, params AppendBlockChildrenParams, options ...callOption) (*Pagination, error) {
 	result := &Pagination{}
 	co := &callOptions{
 		method: http.MethodPatch,
@@ -26,7 +26,7 @@ func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, pa
 type AppendBlockChildrenParams map[string]any
 
 // Child content to append to a container block as an array of [block objects](ref:block)
-func (p *AppendBlockChildrenParams) Children(children []Block) *AppendBlockChildrenParams {
-	(*p)["children"] = children
+func (p AppendBlockChildrenParams) Children(children []Block) AppendBlockChildrenParams {
+	p["children"] = children
 	return p
 }

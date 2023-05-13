@@ -102,7 +102,7 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	params := jen.Nil()
 	if hasBodyParams {
 		params = jen.Id("params")
-		methodParams = append(methodParams, jen.Id("params").Op("*").Id(methodName+"Params"))
+		methodParams = append(methodParams, jen.Id("params").Id(methodName+"Params"))
 	}
 
 	methodParams = append(methodParams, jen.Id("options").Op("...").Id("callOption"))
@@ -133,8 +133,8 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 				return fmt.Errorf("no typeCode for %s", param.Name)
 			}
 			file.Comment(param.Desc)
-			file.Func().Params(jen.Id("p").Op("*").Id(paramsName)).Id(strcase.UpperCamelCase(param.Name)).Params(jen.Id(param.Name).Add(param.typeCode)).Op("*").Id(paramsName).Block(
-				jen.Parens(jen.Op("*").Id("p")).Index(jen.Lit(param.Name)).Op("=").Id(param.Name),
+			file.Func().Params(jen.Id("p").Id(paramsName)).Id(strcase.UpperCamelCase(param.Name)).Params(jen.Id(param.Name).Add(param.typeCode)).Id(paramsName).Block(
+				jen.Id("p").Index(jen.Lit(param.Name)).Op("=").Id(param.Name),
 				jen.Return().Id("p"),
 			)
 		}

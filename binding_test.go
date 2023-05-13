@@ -44,7 +44,7 @@ func Example_binding() {
 	ts := ToTaggedStruct(db)
 	fmt.Println(ts)
 
-	pagi, err := cli.QueryDatabase(ctx, DATABASE, &QueryDatabaseParams{}, requestId("ExampleBinding_Query"), useCache())
+	pagi, err := cli.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, requestId("ExampleBinding_Query"), useCache())
 	if err != nil {
 		panic(err)
 	}
