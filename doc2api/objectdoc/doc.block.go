@@ -1,6 +1,8 @@
 package objectdoc
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 )
 
@@ -21,7 +23,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}",
+				Text: "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("Block", e.Text)
 			})
@@ -39,22 +41,24 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Fields marked with an * are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the integration capabilities reference for details.",
+				Text: "📘Fields marked with an \\* are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. Consult the integration capabilities reference for details.",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Property:     "object",
+				Property:     "object\\",
 				Type:         "string",
 				Description:  `Always "block".`,
 				ExampleValue: `"block"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, "\\")
 				getSymbol[adaptiveObject]("Block").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
-				Property:     "id",
+				Property:     "id\\",
 				Type:         "string (UUIDv4)",
 				Description:  "Identifier for the block.",
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, "\\")
 				getSymbol[adaptiveObject]("Block").addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
@@ -68,7 +72,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
 				Type:         "string (enum)",
-				Description:  "Type of block. Possible values are:\n\n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n-  \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n-  \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
+				Description:  "Type of block. Possible values are:  \n  \n- \"bookmark\"  \n- \"breadcrumb\"  \n- \"bulleted_list_item\"  \n- \"callout\"  \n- \"child_database\"  \n- \"child_page\"  \n- \"column\"  \n- \"column_list\"  \n- \"divider\"  \n- \"embed\"  \n- \"equation\"  \n- \"file\"  \n-  \"heading_1\"  \n- \"heading_2\"  \n- \"heading_3\"  \n- \"image\"  \n- \"link_preview\"  \n- \"link_to_page\"  \n-  \"numbered_list_item\"  \n- \"paragraph\"  \n- \"pdf\"  \n- \"quote\"  \n- \"synced_block\"  \n- \"table\"  \n- \"table_of_contents\"  \n- \"table_row\"  \n- \"template\"  \n- \"to_do\"  \n- \"toggle\"  \n- \"unsupported\"  \n- \"video\"",
 				ExampleValue: `"paragraph"`,
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
@@ -141,7 +145,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a type set to \"unsupported\".",
+				Text: "📘 The API does not support all block types.Only the block type objects listed in the reference below are supported. Any unsupported block types appear in the structure, but contain a type set to \"unsupported\".",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Block type objects */ {
@@ -181,7 +185,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"bookmark\",\n  //...other keys excluded\n  \"bookmark\": {\n    \"caption\": [],\n    \"url\": \"https://companywebsite.com\"\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Breadcrumb */ {
@@ -197,7 +201,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Bulleted list item */ {
@@ -220,7 +224,7 @@ func init() {
 				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -237,7 +241,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Callout */ {
@@ -270,13 +274,13 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"callout\",\n   // ..other keys excluded\n   \"callout\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n     \"icon\": {\n       \"emoji\": \"⭐\"\n     },\n     \"color\": \"default\"\n   }\n}\n",
 			}, func(e blockElement) {})
 
 			specificObject.addFields(&field{name: "children", comment: "undocumented", typeCode: jen.Index().Id("Block"), omitEmpty: true})
@@ -301,11 +305,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"child_database\",\n  //...other keys excluded\n  \"child_database\": {\n    \"title\": \"My database\"\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "To create or update child_database type blocks, use the Create a database and the Update a database endpoints, specifying the ID of the parent page in the parent body param.",
+				Text: "📘 Creating and updating child_database blocksTo create or update child_database type blocks, use the Create a database and the Update a database endpoints, specifying the ID of the parent page in the parent body param.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Child page */ {
@@ -328,11 +332,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"child_page\",\n  //...other keys excluded\n  \"child_page\": {\n    \"title\": \"Lacinato kale\"\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "To create or update child_page type blocks, use the Create a page and the Update page endpoints, specifying the ID of the parent page in the parent body param.",
+				Text: "📘 Creating and updating child_page blocksTo create or update child_page type blocks, use the Create a page and the Update page endpoints, specifying the ID of the parent page in the parent body param.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Code */ {
@@ -362,14 +366,14 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "language",
-				Type:        "- \"abap\"\n- \"arduino\"\n- \"bash\"\n- \"basic\"\n- \"c\"\n- \"clojure\"\n- \"coffeescript\"\n- \"c++\"\n- \"c#\"\n- \"css\"\n- \"dart\"\n- \"diff\"\n- \"docker\"\n- \"elixir\"\n- \"elm\"\n- \"erlang\"\n- \"flow\"\n- \"fortran\"\n- \"f#\"\n- \"gherkin\"\n- \"glsl\"\n- \"go\"\n- \"graphql\"\n- \"groovy\"\n- \"haskell\"\n- \"html\"\n- \"java\"\n- \"javascript\"\n- \"json\"\n- \"julia\"\n- \"kotlin\"\n- \"latex\"\n- \"less\"\n- \"lisp\"\n- \"livescript\"\n- \"lua\"\n- \"makefile\"\n- \"markdown\"\n- \"markup\"\n- \"matlab\"\n- \"mermaid\"\n- \"nix\"\n- \"objective-c\"\n- \"ocaml\"\n- \"pascal\"\n- \"perl\"\n- \"php\"\n- \"plain text\"\n- \"powershell\"\n- \"prolog\"\n- \"protobuf\"\n- \"python\"\n- \"r\"\n- \"reason\"\n- \"ruby\"\n- \"rust\"\n- \"sass\"\n- \"scala\"\n- \"scheme\"\n- \"scss\"\n- \"shell\"\n- \"sql\"\n- \"swift\"\n- \"typescript\"\n- \"vb.net\"\n- \"verilog\"\n- \"vhdl\"\n- \"visual basic\"\n- \"webassembly\"\n- \"xml\"\n- \"yaml\"\n- \"java/c/c++/c#\"",
+				Type:        "- \"abap\"  \n- \"arduino\"  \n- \"bash\"  \n- \"basic\"  \n- \"c\"  \n- \"clojure\"  \n- \"coffeescript\"  \n- \"c++\"  \n- \"c#\"  \n- \"css\"  \n- \"dart\"  \n- \"diff\"  \n- \"docker\"  \n- \"elixir\"  \n- \"elm\"  \n- \"erlang\"  \n- \"flow\"  \n- \"fortran\"  \n- \"f#\"  \n- \"gherkin\"  \n- \"glsl\"  \n- \"go\"  \n- \"graphql\"  \n- \"groovy\"  \n- \"haskell\"  \n- \"html\"  \n- \"java\"  \n- \"javascript\"  \n- \"json\"  \n- \"julia\"  \n- \"kotlin\"  \n- \"latex\"  \n- \"less\"  \n- \"lisp\"  \n- \"livescript\"  \n- \"lua\"  \n- \"makefile\"  \n- \"markdown\"  \n- \"markup\"  \n- \"matlab\"  \n- \"mermaid\"  \n- \"nix\"  \n- \"objective-c\"  \n- \"ocaml\"  \n- \"pascal\"  \n- \"perl\"  \n- \"php\"  \n- \"plain text\"  \n- \"powershell\"  \n- \"prolog\"  \n- \"protobuf\"  \n- \"python\"  \n- \"r\"  \n- \"reason\"  \n- \"ruby\"  \n- \"rust\"  \n- \"sass\"  \n- \"scala\"  \n- \"scheme\"  \n- \"scss\"  \n- \"shell\"  \n- \"sql\"  \n- \"swift\"  \n- \"typescript\"  \n- \"vb.net\"  \n- \"verilog\"  \n- \"vhdl\"  \n- \"visual basic\"  \n- \"webassembly\"  \n- \"xml\"  \n- \"yaml\"  \n- \"java/c/c++/c#\"",
 				Description: "The language of the code contained in the code block.",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("BlockCode").addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"code\",\n  //...other keys excluded\n  \"code\": {\n   \t\"caption\": [],\n \t\t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"const a = 3\"\n      }\n    }],\n    \"language\": \"javascript\"\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Column list and column */ {
@@ -385,7 +389,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"column_list\",\n  //...other keys excluded\n  \"column_list\": {}\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"column_list\",\n  //...other keys excluded\n  \"column_list\": {}\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -395,7 +399,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"column\",\n  //...other keys excluded\n  \"column\": {}\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"column\",\n  //...other keys excluded\n  \"column\": {}\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -429,7 +433,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"divider\",\n  //...other keys excluded\n  \"divider\": {}\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"divider\",\n  //...other keys excluded\n  \"divider\": {}\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Embed */ {
@@ -452,11 +456,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"embed\",\n  //...other keys excluded\n  \"embed\": {\n    \"url\": \"https://companywebsite.com\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"embed\",\n  //...other keys excluded\n  \"embed\": {\n    \"url\": \"https://companywebsite.com\"\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "The Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.\n\nWe chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.\n\nThe result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
+				Text: "🚧 Differences in embed blocks between the Notion app and the APIThe Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.We chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.The result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Equation */ {
@@ -479,7 +483,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"equation\",\n  //...other keys excluded\n  \"equation\": {\n    \"expression\": \"e=mc^2\"\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"equation\",\n  //...other keys excluded\n  \"equation\": {\n    \"expression\": \"e=mc^2\"\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* File */ {
@@ -503,7 +507,7 @@ func init() {
 				Description:  "A constant string.",
 				ExampleValue: "",
 				Property:     "type",
-				Type:         "\"file\"\n\n\"external\"",
+				Type:         "\"file\"  \n  \n\"external\"",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "A file object that details information about the file contained in the block.",
@@ -513,7 +517,7 @@ func init() {
 			}, func(e parameterElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -542,7 +546,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -555,15 +559,15 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_1\",\n  //...other keys excluded\n  \"heading_1\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_1\",\n  //...other keys excluded\n  \"heading_1\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_2\",\n  //...other keys excluded\n  \"heading_2\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_2\",\n  //...other keys excluded\n  \"heading_2\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_3\",\n  //...other keys excluded\n  \"heading_3\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"heading_3\",\n  //...other keys excluded\n  \"heading_3\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\",\n    \"is_toggleable\": false\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Image */ {
@@ -579,7 +583,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Supported image types */ {
@@ -616,11 +620,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"link_preview\",\n  //...other keys excluded\n  \"link_preview\": {\n    \"url\": \"https://github.com/example/example-repo/pull/1234\"\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"link_preview\",\n  //...other keys excluded\n  \"link_preview\": {\n    \"url\": \"https://github.com/example/example-repo/pull/1234\"\n  }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "The link_preview block can only be returned as part of a response. The API does not support creating or appending link_preview blocks.",
+				Text: "🚧The link_preview block can only be returned as part of a response. The API does not support creating or appending link_preview blocks.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Mention */ {
@@ -646,21 +650,21 @@ func init() {
 				Description:  "A constant string representing the type of the mention.",
 				ExampleValue: "",
 				Property:     "type",
-				Type:         "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+				Type:         "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
 			}, func(e parameterElement) {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An object with type-specific information about the mention.",
 				ExampleValue: "",
-				Property:     "\"database\"\n\n\"date\" \n\n\"link_preview\" \n\n\"page\" \n\n\"user\"",
+				Property:     "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
 				Type:         "object",
 			}, func(e parameterElement) {
 				// TODO
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"page\",\n  \"page\": {\n    \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"page\",\n  \"page\": {\n    \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -687,7 +691,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -704,7 +708,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"numbered_list_item\",\n  \"numbered_list_item\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Finish reading the docs\",\n          \"link\": null\n        }\n      }\n    ],\n    \"color\": \"default\"\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"numbered_list_item\",\n  \"numbered_list_item\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Finish reading the docs\",\n          \"link\": null\n        }\n      }\n    ],\n    \"color\": \"default\"\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -730,7 +734,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -743,11 +747,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"paragraph\",\n  //...other keys excluded\n  \"paragraph\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n    }],\n    \"color\": \"default\"\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}",
+				Text: "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* PDF */ {
@@ -775,21 +779,21 @@ func init() {
 				Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
 				ExampleValue: "",
 				Property:     "type",
-				Type:         "\"external\"\n\n\"file\"",
+				Type:         "\"external\"  \n  \n\"file\"",
 			}, func(e parameterElement) {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An object containing type-specific information about the PDF.",
 				ExampleValue: "",
-				Property:     "external \n\nfile",
+				Property:     "external  \n  \nfile",
 				Type:         "file object",
 			}, func(e parameterElement) {
 				// TODO
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n\t\"type\": \"pdf\",\n  //...other keys excluded\n  \"pdf\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/files/doc.pdf\"\n    }\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"pdf\",\n  //...other keys excluded\n  \"pdf\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/files/doc.pdf\"\n    }\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -816,7 +820,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -833,7 +837,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n\t//...other keys excluded\n\t\"type\": \"quote\",\n   //...other keys excluded\n   \"quote\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"To be or not to be...\",\n        \"link\": null\n      },\n    \t//...other keys excluded\n    }],\n    //...other keys excluded\n    \"color\": \"default\"\n   }\n}",
+				Text: "{\n\t//...other keys excluded\n\t\"type\": \"quote\",\n   //...other keys excluded\n   \"quote\": {\n   \t\"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"To be or not to be...\",\n        \"link\": null\n      },\n    \t//...other keys excluded\n    }],\n    //...other keys excluded\n    \"color\": \"default\"\n   }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -855,7 +859,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "An original synced block must be created before corresponding duplicate block or blocks can be made.",
+				Text: "📘An original synced block must be created before corresponding duplicate block or blocks can be made.",
 			}, func(e blockElement) {
 				specificObject.addComment(e.Text)
 			})
@@ -885,7 +889,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}",
+				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": null,\n        \"children\": [\n            {\n                \"callout\": {\n                    \"rich_text\": [\n                        {\n                            \"type\": \"text\",\n                            \"text\": {\n                                \"content\": \"Callout in synced block\"\n                            }\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
@@ -896,7 +900,7 @@ func init() {
 				Text: "Duplicate synced block objects contain the following information within the synced_from object:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The type of the synced from object. \n\nPossible values are: \n- \"block_id\"",
+				Description:  "The type of the synced from object.  \n  \nPossible values are:  \n- \"block_id\"",
 				ExampleValue: "",
 				Property:     "type",
 				Type:         "string (enum)",
@@ -911,11 +915,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}",
+				Text: "{\n    //...other keys excluded\n  \t\"type\": \"synced_block\",\n    \"synced_block\": {\n        \"synced_from\": {\n            \"block_id\": \"original_synced_block_id\"\n        }\n    }\n}\n",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "The API does not supported updating synced block content.",
+				Text: "🚧The API does not supported updating synced block content.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Table */ {
@@ -932,7 +936,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The number of columns in the table. \n\nNote that this cannot be changed via the public API once a table is created.",
+				Description:  "The number of columns in the table.  \n  \nNote that this cannot be changed via the public API once a table is created.",
 				ExampleValue: "",
 				Property:     "table_width",
 				Type:         "integer",
@@ -957,13 +961,13 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"table\",\n  \"table\": {\n    \"table_width\": 2,\n    \"has_column_header\": false,\n    \"has_row_header\": false\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"table\",\n  \"table\": {\n    \"table_width\": 2,\n    \"has_column_header\": false,\n    \"has_row_header\": false\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Note that the number of columns in a table can only be set when the table is first created. Calls to the Update block endpoint to update table_width fail.",
+				Text: "🚧 table_width can only be set when the table is first created.Note that the number of columns in a table can only be set when the table is first created. Calls to the Update block endpoint to update table_width fail.",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1003,13 +1007,13 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"table_row\",\n  \"table_row\": {\n    \"cells\": [\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 1 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 1 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 2 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 2 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 3 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 3 content\",\n          \"href\": null\n        }\n      ]\n    ]\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"table_row\",\n  \"table_row\": {\n    \"cells\": [\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 1 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 1 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 2 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 2 content\",\n          \"href\": null\n        }\n      ],\n      [\n        {\n          \"type\": \"text\",\n          \"text\": {\n            \"content\": \"column 3 content\",\n            \"link\": null\n          },\n          \"annotations\": {\n            \"bold\": false,\n            \"italic\": false,\n            \"strikethrough\": false,\n            \"underline\": false,\n            \"code\": false,\n            \"color\": \"default\"\n          },\n          \"plain_text\": \"column 3 content\",\n          \"href\": null\n        }\n      ]\n    ]\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "When creating a table block via the Append block children endpoint, the table must have at least one table_row whose cells array has the same length as the table_width.",
+				Text: "📘When creating a table block via the Append block children endpoint, the table must have at least one table_row whose cells array has the same length as the table_width.",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1028,7 +1032,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -1037,7 +1041,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n\t\"type\": \"table_of_contents\",\n  \"table_of_contents\": {\n  \t\"color\": \"default\"\n  }\n}",
+				Text: "{\n  //...other keys excluded\n\t\"type\": \"table_of_contents\",\n  \"table_of_contents\": {\n  \t\"color\": \"default\"\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1051,7 +1055,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "As of March 27, 2023 creation of template blocks will no longer be supported.",
+				Text: "❗️ Deprecation NoticeAs of March 27, 2023 creation of template blocks will no longer be supported.",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1085,7 +1089,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"template\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Add a new to-do\",\n          \"link\": null\n        },\n        \"annotations\": {\n          //...other keys excluded\n        },\n        \"plain_text\": \"Add a new to-do\",\n        \"href\": null\n      }\n    ]\n  }\n}",
+				Text: "{\n  //...other keys excluded\n  \"template\": {\n    \"rich_text\": [\n      {\n        \"type\": \"text\",\n        \"text\": {\n          \"content\": \"Add a new to-do\",\n          \"link\": null\n        },\n        \"annotations\": {\n          //...other keys excluded\n        },\n        \"plain_text\": \"Add a new to-do\",\n        \"href\": null\n      }\n    ]\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1120,7 +1124,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -1133,7 +1137,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"to_do\",\n  \"to_do\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Finish Q3 goals\",\n        \"link\": null\n      }\n    }],\n    \"checked\": false,\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n}\n",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Toggle blocks */ {
@@ -1158,7 +1162,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n-  \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -1175,7 +1179,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"toggle\",\n  \"toggle\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Additional project details\",\n        \"link\": null\n      }\n      //...other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n} ",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"toggle\",\n  \"toggle\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Additional project details\",\n        \"link\": null\n      }\n      //...other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1195,7 +1199,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"video\",\n  //...other keys excluded\n  \"video\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/video.mp4\"\n    }\n  }\n} ",
+				Text: "{\n  \"type\": \"video\",\n  //...other keys excluded\n  \"video\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/video.mp4\"\n    }\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -1209,7 +1213,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "List",
-				Text: ".amv.asf.avi.f4v.flv.gifv.mkv.mov.mpg.mpeg.mpv.mp4.m4v.qt.wmv",
+				Text: ".amv.asf.avi.f4v.flv.gifv.mkv.mov.mpg.mpeg.mpv.mp4.m4v.qt.wmvYouTube video links that include embed or watch.E.g. https://www.youtube.com/watch?v=[id], https://www.youtube.com/embed/[id]",
 			}, func(e blockElement) {
 				// TODO
 			})
