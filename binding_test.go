@@ -19,18 +19,18 @@ type TheDatabase struct {
 	LastEditedBy           User               `notion:"CA~Q"`
 	Formula                *Formula           `notion:"kutj"`
 	Number                 nullv4.Float       `notion:"wSuU"`
-	Phone                  nullv4.String      `notion:"%7Cb%60H"`
+	Phone                  *string            `notion:"%7Cb%60H"`
 	Status                 *Option            `notion:"~_pB"`
 	CreatedTime            ISO8601String      `notion:"Ldgn"`
 	NumberRollup           *Rollup            `notion:"QdI%3C"`
 	CreatedBy              User               `notion:"TB%5Dl"`
 	Text                   []RichText         `notion:"Vl%40o"`
-	URL                    nullv4.String      `notion:"nKu_"`
+	URL                    *string            `notion:"nKu_"`
 	MultiSelect            []Option           `notion:"qe%60%5E"`
 	File                   []File             `notion:"%7Dlj%7B"`
 	User                   []User             `notion:"Ui%5B%3A"`
 	Date                   *PropertyValueDate `notion:"gegF"`
-	Mail                   nullv4.String      `notion:"l_GI"`
+	Mail                   *string            `notion:"l_GI"`
 	Title                  []RichText         `notion:"title"`
 }
 
@@ -75,7 +75,8 @@ func Example_binding() {
 
 		// hoge.Title = append(hoge.Title, &TextRichText{Text: Text{Content: "HOGE"}})
 		hoge.Number = nullv4.FloatFrom(hoge.Number.Float64 + 100)
-		hoge.URL = nullv4.StringFrom(hoge.URL.String + "/hoge")
+		newUrl := *hoge.URL + "/hoge"
+		hoge.URL = &newUrl
 		if params, err := GetUpdatePageParams(hoge, page); err != nil {
 			panic(err)
 		} else {
@@ -97,17 +98,17 @@ func Example_binding() {
 	// 	Formula                *Formula           `notion:"kutj"`
 	// 	LastEditedBy           User               `notion:"CA~Q"`
 	// 	LastEditedTime         ISO8601String      `notion:"%7B%7Cmj"`
-	// 	Mail                   nullv4.String      `notion:"l_GI"`
+	// 	Mail                   *string            `notion:"l_GI"`
 	// 	MultiSelect            []Option           `notion:"qe%60%5E"`
 	// 	Number                 nullv4.Float       `notion:"wSuU"`
 	// 	NumberRollup           *Rollup            `notion:"QdI%3C"`
-	// 	Phone                  nullv4.String      `notion:"%7Cb%60H"`
+	// 	Phone                  *string            `notion:"%7Cb%60H"`
 	// 	Select                 *Option            `notion:"DaP%40"`
 	// 	SingleRelation         []PageReference    `notion:"kOoD"`
 	// 	Status                 *Option            `notion:"~_pB"`
 	// 	Text                   []RichText         `notion:"Vl%40o"`
 	// 	Title                  []RichText         `notion:"title"`
-	// 	URL                    nullv4.String      `notion:"nKu_"`
+	// 	URL                    *string            `notion:"nKu_"`
 	// 	User                   []User             `notion:"Ui%5B%3A"`
 	// }
 	// {

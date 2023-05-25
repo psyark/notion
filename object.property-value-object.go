@@ -32,9 +32,9 @@ type PropertyValue struct {
 	People         []User             `json:"people"`           // People property value objects contain an array of user objects within the people property.
 	Files          []File             `json:"files"`            // File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 	Checkbox       bool               `json:"checkbox"`         // Checkbox property value objects contain a boolean within the checkbox property.
-	Url            nullv4.String      `json:"url"`              // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
-	Email          nullv4.String      `json:"email"`            // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
-	PhoneNumber    nullv4.String      `json:"phone_number"`     // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+	Url            *string            `json:"url"`              // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
+	Email          *string            `json:"email"`            // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
+	PhoneNumber    *string            `json:"phone_number"`     // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 	CreatedTime    ISO8601String      `json:"created_time"`     // Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.
 	CreatedBy      User               `json:"created_by"`       // Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.
 	LastEditedTime ISO8601String      `json:"last_edited_time"` // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
@@ -129,7 +129,7 @@ type PropertyValueDate struct {
 // Formula property values
 type Formula struct {
 	Type    string            `json:"type"`
-	String  nullv4.String     `json:"string"`  // String formula property values contain an optional string within the string property.
+	String  *string           `json:"string"`  // String formula property values contain an optional string within the string property.
 	Number  float64           `json:"number"`  // Number formula property values contain an optional number within the number property.
 	Boolean bool              `json:"boolean"` // Boolean formula property values contain a boolean within the boolean property.
 	Date    PropertyValueDate `json:"date"`    // Date formula property values contain an optional date property value within the date property.

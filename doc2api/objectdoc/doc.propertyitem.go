@@ -269,7 +269,7 @@ func init() {
 				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
 				ExampleValue: `"America/Los_Angeles"`,
 			}, func(e parameterElement) {
-				propertyItemDate.addFields(e.asField(NullString))
+				propertyItemDate.addFields(e.asField(jen.Op("*").String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -525,7 +525,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 			}, func(e blockElement) {
-				propertyItem.addAdaptiveFieldWithType("url", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("url", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -541,7 +541,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Email property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 			}, func(e blockElement) {
-				propertyItem.addAdaptiveFieldWithType("email", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("email", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -557,7 +557,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Phone number property value objects contain a string within the phone_number property. No structure is enforced.",
 			}, func(e blockElement) {
-				propertyItem.addAdaptiveFieldWithType("phone_number", e.Text, NullString)
+				propertyItem.addAdaptiveFieldWithType("phone_number", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

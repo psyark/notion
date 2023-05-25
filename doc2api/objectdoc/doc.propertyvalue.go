@@ -384,7 +384,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "String formula property values contain an optional string within the string property.",
 			}, func(e blockElement) {
-				formula.addAdaptiveFieldWithType("string", e.Text, NullString)
+				formula.addAdaptiveFieldWithType("string", e.Text, jen.Op("*").String())
 			})
 		},
 		func(c *comparator, b *builder) /* Number formula property values */ {
@@ -610,7 +610,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 			}, func(e blockElement) {
-				propertyValue.addAdaptiveFieldWithType("url", e.Text, NullString)
+				propertyValue.addAdaptiveFieldWithType("url", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -634,7 +634,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Email property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 			}, func(e blockElement) {
-				propertyValue.addAdaptiveFieldWithType("email", e.Text, NullString)
+				propertyValue.addAdaptiveFieldWithType("email", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -658,7 +658,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Phone number property value objects contain a string within the phone_number property. No structure is enforced.",
 			}, func(e blockElement) {
-				propertyValue.addAdaptiveFieldWithType("phone_number", e.Text, NullString)
+				propertyValue.addAdaptiveFieldWithType("phone_number", e.Text, jen.Op("*").String())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

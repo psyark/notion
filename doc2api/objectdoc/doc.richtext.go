@@ -62,7 +62,7 @@ func init() {
 				Description:  "The URL of any link or Notion mention in this text, if any.",
 				ExampleValue: `"https://www.notion.so/Avocado-d093f1d200464ce78b36e58a3f0d8043"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("RichText").addFields(e.asField(NullString)) // RetrivePageでnullを確認
+				getSymbol[adaptiveObject]("RichText").addFields(e.asField(jen.Op("*").String())) // RetrivePageでnullを確認
 			})
 		},
 		func(c *comparator, b *builder) /* The annotation object */ {

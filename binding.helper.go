@@ -32,11 +32,11 @@ func getTypeForBinding(p Property) string {
 	case "checkbox":
 		return "bool"
 	case "url":
-		return "nullv4.String"
+		return "*string"
 	case "email":
-		return "nullv4.String"
+		return "*string"
 	case "phone_number":
-		return "nullv4.String"
+		return "*string"
 	case "created_time":
 		return "ISO8601String"
 	case "created_by":

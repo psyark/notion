@@ -26,9 +26,9 @@ type PropertyItem struct {
 	People         User               `json:"people"`           // People property value objects contain an array of user objects within the people property.
 	Files          []File             `json:"files"`            // File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
 	Checkbox       bool               `json:"checkbox"`         // Checkbox property value objects contain a boolean within the checkbox property.
-	Url            nullv4.String      `json:"url"`              // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
-	Email          nullv4.String      `json:"email"`            // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
-	PhoneNumber    nullv4.String      `json:"phone_number"`     // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+	Url            *string            `json:"url"`              // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
+	Email          *string            `json:"email"`            // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
+	PhoneNumber    *string            `json:"phone_number"`     // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
 	CreatedTime    ISO8601String      `json:"created_time"`     // Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
 	CreatedBy      *User              `json:"created_by"`       // Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.
 	LastEditedTime ISO8601String      `json:"last_edited_time"` // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
@@ -157,7 +157,7 @@ func (o PaginatedPropertyInfo) MarshalJSON() ([]byte, error) {
 type PropertyItemDate struct {
 	Start    ISO8601String  `json:"start"`     // An ISO 8601 format date, with optional time.
 	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.
-	TimeZone nullv4.String  `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
+	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
 }
 
 type Rollup struct {

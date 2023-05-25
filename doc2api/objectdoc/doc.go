@@ -8,6 +8,5 @@ var (
 	UUID     = jen.Qual("github.com/google/uuid", "UUID")
 	NullUUID = jen.Op("*").Qual("github.com/google/uuid", "UUID")
 	// TODO: omitemptyと相性悪いので代替するか検討
-	NullString = jen.Qual("gopkg.in/guregu/null.v4", "String")
-	NullFloat  = jen.Qual("gopkg.in/guregu/null.v4", "Float")
+	NullFloat = jen.Qual("gopkg.in/guregu/null.v4", "Float")
 )

@@ -101,7 +101,7 @@ func init() {
 				Description:  "Chosen avatar image.",
 				ExampleValue: `"https://secure.notion-static.com/e6a352a8-8381-44d0-a1dc-9ed80e62b53d.jpg"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("User").addFields(e.asField(NullString, discriminatorNotEmpty))
+				getSymbol[adaptiveObject]("User").addFields(e.asField(jen.Op("*").String(), discriminatorNotEmpty))
 			})
 		},
 		func(c *comparator, b *builder) /* People */ {
