@@ -11,7 +11,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
-	"gopkg.in/guregu/null.v4"
 )
 
 var cli *Client
@@ -64,14 +63,15 @@ func TestUpdatePage(t *testing.T) {
 		func(p UpdatePagePropertiesParams) {},
 		func(p UpdatePagePropertiesParams) {
 			p.Properties(map[string]PropertyValue{
-				"Number":   {Type: "number", Number: null.FloatFromPtr(nil)},
+				"Number":   {Type: "number", Number: nil},
 				"Date":     {Type: "date"},
 				"Checkbox": {Type: "checkbox", Checkbox: false},
 			})
 		},
 		func(p UpdatePagePropertiesParams) {
+			num := rand.Float64() * 1000
 			p.Properties(map[string]PropertyValue{
-				"Number":   {Type: "number", Number: null.FloatFrom(rand.Float64() * 1000)},
+				"Number":   {Type: "number", Number: &num},
 				"Date":     {Type: "date", Date: &PropertyValueDate{Start: time.Now().Format(time.RFC3339)}},
 				"Checkbox": {Type: "checkbox", Checkbox: true},
 			})

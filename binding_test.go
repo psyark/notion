@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
-	nullv4 "gopkg.in/guregu/null.v4"
 )
 
 type TheDatabase struct {
@@ -18,7 +16,7 @@ type TheDatabase struct {
 	Checkbox               bool               `notion:"%3Dh%3AT"`
 	LastEditedBy           User               `notion:"CA~Q"`
 	Formula                *Formula           `notion:"kutj"`
-	Number                 nullv4.Float       `notion:"wSuU"`
+	Number                 *float64           `notion:"wSuU"`
 	Phone                  *string            `notion:"%7Cb%60H"`
 	Status                 *Option            `notion:"~_pB"`
 	CreatedTime            ISO8601String      `notion:"Ldgn"`
@@ -74,7 +72,8 @@ func Example_binding() {
 		}
 
 		// hoge.Title = append(hoge.Title, &TextRichText{Text: Text{Content: "HOGE"}})
-		hoge.Number = nullv4.FloatFrom(hoge.Number.Float64 + 100)
+		newFloat := *hoge.Number + 100
+		hoge.Number = &newFloat
 		newUrl := *hoge.URL + "/hoge"
 		hoge.URL = &newUrl
 		if params, err := GetUpdatePageParams(hoge, page); err != nil {
@@ -100,7 +99,7 @@ func Example_binding() {
 	// 	LastEditedTime         ISO8601String      `notion:"%7B%7Cmj"`
 	// 	Mail                   *string            `notion:"l_GI"`
 	// 	MultiSelect            []Option           `notion:"qe%60%5E"`
-	// 	Number                 nullv4.Float       `notion:"wSuU"`
+	// 	Number                 *float64           `notion:"wSuU"`
 	// 	NumberRollup           *Rollup            `notion:"QdI%3C"`
 	// 	Phone                  *string            `notion:"%7Cb%60H"`
 	// 	Select                 *Option            `notion:"DaP%40"`

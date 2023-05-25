@@ -126,7 +126,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Number property value objects contain a number within the number property.",
 			}, func(e blockElement) {
-				propertyValue.addAdaptiveFieldWithType("number", e.Text, NullFloat)
+				propertyValue.addAdaptiveFieldWithType("number", e.Text, jen.Op("*").Float64())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

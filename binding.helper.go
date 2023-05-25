@@ -10,7 +10,7 @@ func getTypeForBinding(p Property) string {
 	case "rich_text":
 		return "[]RichText"
 	case "number":
-		return "nullv4.Float"
+		return "*float64"
 	case "select":
 		return "*Option"
 	case "status":

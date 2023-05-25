@@ -6,7 +6,6 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
-	"gopkg.in/guregu/null.v4"
 )
 
 type FileWithCaption any // TODO
@@ -83,12 +82,6 @@ func defined(fieldValue any) bool {
 	case reflect.Ptr, reflect.Slice:
 		return !v.IsNil()
 	case reflect.Struct:
-		switch v := v.Interface().(type) {
-		case null.String:
-			return v.Valid
-		case null.Float:
-			return v.Valid
-		}
 		return false
 	case reflect.Array: // UUID
 		return !v.IsZero()

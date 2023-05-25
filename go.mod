@@ -14,7 +14,6 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/yuin/goldmark v1.5.4
 	golang.org/x/sync v0.1.0
-	gopkg.in/guregu/null.v4 v4.0.0
 )
 
 require (

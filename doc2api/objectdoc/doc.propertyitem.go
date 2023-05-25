@@ -152,7 +152,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Number property value objects contain a number within the number property.",
 			}, func(e blockElement) {
-				propertyItem.addAdaptiveFieldWithType("number", e.Text, NullFloat)
+				propertyItem.addAdaptiveFieldWithType("number", e.Text, jen.Op("*").Float64())
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -415,7 +415,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Number rollup property values contain a number within the number property.",
 			}, func(e blockElement) {
-				rollup.addAdaptiveFieldWithType("number", e.Text, NullFloat)
+				rollup.addAdaptiveFieldWithType("number", e.Text, jen.Op("*").Float64())
 			})
 		},
 		func(c *comparator, b *builder) /* Date rollup property values */ {
