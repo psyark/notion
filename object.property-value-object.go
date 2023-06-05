@@ -14,7 +14,7 @@ Each page property value object contains the following keys. In addition, it con
 */
 type PropertyValue struct {
 	Type           string             `json:"type,omitempty"`
-	Id             string             `json:"id,omitempty"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+	Id             string             `json:"id,omitempty"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string. The id may be used in place of name when creating or updating pages.
 	Title          []RichText         `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
 	RichText       []RichText         `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
 	Number         *float64           `json:"number"`           // Number property value objects contain a number within the number property.
@@ -119,8 +119,8 @@ func (o PropertyValue) MarshalJSON() ([]byte, error) {
 // Date property value objects contain the following data within the date property:
 type PropertyValueDate struct {
 	Start    ISO8601String  `json:"start"`     // An ISO 8601 format date, with optional time.
-	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.
-	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
+	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range. If null, this property's date value is not a range.
+	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js. When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information. If null, time zone information will be contained in UTC offsets in start and end.
 }
 
 // Formula property values

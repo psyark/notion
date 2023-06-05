@@ -49,7 +49,7 @@ All Notion-hosted files have a type of "file". The corresponding file specifi
 You can retrieve links to Notion-hosted files via the Retrieve block children endpoint.
 */
 type FileFile struct {
-	Url        string        `json:"url"`         // An authenticated S3 URL to the file.   The URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.
+	Url        string        `json:"url"`         // An authenticated S3 URL to the file. The URL is valid for one hour. If the link expires, then you can send an API request to get an updated URL.
 	ExpiryTime ISO8601String `json:"expiry_time"` // The date and time when the link expires, formatted as an ISO 8601 date time string.
 }
 

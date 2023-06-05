@@ -9,7 +9,7 @@ import "encoding/json"
 type PropertyItem struct {
 	Type           string             `json:"type"`
 	Object         alwaysPropertyItem `json:"object"`           // Always "property_item".
-	Id             string             `json:"id"`               // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.  The id may be used in place of name when creating or updating pages.
+	Id             string             `json:"id"`               // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string. The id may be used in place of name when creating or updating pages.
 	Title          RichText           `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
 	RichText       RichText           `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
 	Number         *float64           `json:"number"`           // Number property value objects contain a number within the number property.
@@ -153,13 +153,13 @@ func (o PaginatedPropertyInfo) MarshalJSON() ([]byte, error) {
 // Date property values
 type PropertyItemDate struct {
 	Start    ISO8601String  `json:"start"`     // An ISO 8601 format date, with optional time.
-	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range.  If null, this property's date value is not a range.
-	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.  When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.  If null, time zone information will be contained in UTC offsets in start and end.
+	End      *ISO8601String `json:"end"`       // An ISO 8601 formatted date, with optional time. Represents the end of a date range. If null, this property's date value is not a range.
+	TimeZone *string        `json:"time_zone"` // Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js. When time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information. If null, time zone information will be contained in UTC offsets in start and end.
 }
 
 type Rollup struct {
 	Type       string            `json:"type"`
-	Function   string            `json:"function"`   // Describes the aggregation used.  Possible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original
+	Function   string            `json:"function"`   // Describes the aggregation used. Possible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original
 	Number     *float64          `json:"number"`     // Number rollup property values contain a number within the number property.
 	Date       *PropertyItemDate `json:"date"`       // Date rollup property values contain a date property value within the date property.
 	Array      []PropertyValue   `json:"array"`      // Array rollup property values contain an array of property_item objects within the results property.

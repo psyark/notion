@@ -55,7 +55,7 @@ type Annotations struct {
 	Strikethrough bool   `json:"strikethrough"`   // Whether the text is struck through.
 	Underline     bool   `json:"underline"`       // Whether the text is underlined.
 	Code          bool   `json:"code"`            // Whether the text is code style.
-	Color         string `json:"color,omitempty"` // Color of the text. Possible values include:   - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" -"orange_background" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background” - "yellow" - "yellow_background"
+	Color         string `json:"color,omitempty"` // Color of the text. Possible values include: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" -"orange_background" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background” - "yellow" - "yellow_background"
 }
 
 /*
@@ -165,5 +165,5 @@ If a rich text object’s type value is "text", then the corresponding text fiel
 */
 type RichTextText struct {
 	Content string        `json:"content"` // The actual text content of the text.
-	Link    *URLReference `json:"link"`    // An object with information about any inline link in this text, if included.   If the text contains an inline link, then the object key is url and the value is the URL’s string web address.   If the text doesn’t have any inline links, then the value is null.
+	Link    *URLReference `json:"link"`    // An object with information about any inline link in this text, if included. If the text contains an inline link, then the object key is url and the value is the URL’s string web address. If the text doesn’t have any inline links, then the value is null.
 }

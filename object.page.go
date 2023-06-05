@@ -26,7 +26,7 @@ type Page struct {
 	Archived       bool                     `json:"archived"`         // The archived status of the page.
 	Icon           FileOrEmoji              `json:"icon"`             // Page icon.
 	Cover          *File                    `json:"cover"`            // Page cover image.
-	Properties     map[string]PropertyValue `json:"properties"`       // Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well.  If parent.type is "page_id" or "workspace", then the only valid key is title.  If parent.type is "database_id", then the keys and values of this field are determined by the properties  of the database this page belongs to.  key string Name of a property as it appears in Notion.  value object See Property value object.
+	Properties     map[string]PropertyValue `json:"properties"`       // Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well. If parent.type is "page_id" or "workspace", then the only valid key is title. If parent.type is "database_id", then the keys and values of this field are determined by the properties  of the database this page belongs to. key string Name of a property as it appears in Notion. value object See Property value object.
 	Parent         Parent                   `json:"parent"`           // Information about the page's parent. See Parent object.
 	Url            string                   `json:"url"`              // The URL of the Notion page.
 }

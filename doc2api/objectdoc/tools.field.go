@@ -1,11 +1,14 @@
 package objectdoc
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
 )
+
+var lineBreak = regexp.MustCompile(`\s*\n\s*`)
 
 // fieldCoderはstructフィールドのコード生成器です
 type fieldCoder interface {
@@ -37,7 +40,7 @@ func (f *field) fieldCode() jen.Code {
 	}
 
 	if f.comment != "" {
-		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
+		code.Comment(lineBreak.ReplaceAllString(f.comment, " "))
 	}
 	return code
 }
@@ -66,7 +69,7 @@ func (f *fixedStringField) fieldCode() jen.Code {
 	goName := strcase.UpperCamelCase(f.name)
 	code := jen.Id(goName).Id("always" + strcase.UpperCamelCase(f.value)).Tag(map[string]string{"json": f.name})
 	if f.comment != "" {
-		code.Comment(strings.ReplaceAll(f.comment, "\n", " "))
+		code.Comment(lineBreak.ReplaceAllString(f.comment, " "))
 	}
 	return code
 }
