@@ -31,7 +31,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Use the Retrieve block children endpoint to list all of the blocks on a page.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject]("Block").addComment(e.Text)
+				block.addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* Keys */ {
@@ -50,7 +50,7 @@ func init() {
 				ExampleValue: `"block"`,
 			}, func(e parameterElement) {
 				e.Property = strings.TrimSuffix(e.Property, "\\")
-				getSymbol[adaptiveObject]("Block").addFields(e.asFixedStringField(b))
+				block.addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "id\\",
@@ -59,7 +59,7 @@ func init() {
 				ExampleValue: `"7af38973-3787-41b3-bd75-0ed3a1edfac9"`,
 			}, func(e parameterElement) {
 				e.Property = strings.TrimSuffix(e.Property, "\\")
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(UUID))
+				block.addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "parent",
@@ -67,7 +67,7 @@ func init() {
 				Description:  "Information about the block's parent. See Parent object.",
 				ExampleValue: `{ "type": "block_id", "block_id": "7d50a184-5bbe-4d90-8f29-6bec57ed817b" }`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Op("*").Id("Parent"), omitEmpty))
+				block.addFields(e.asField(jen.Op("*").Id("Parent"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
@@ -81,7 +81,7 @@ func init() {
 				Description:  "Date and time when this block was created. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				block.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "created_by",
@@ -89,7 +89,7 @@ func init() {
 				Description:  "User who created the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("User")))
+				block.addFields(e.asField(jen.Id("User")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "last_edited_time",
@@ -97,7 +97,7 @@ func init() {
 				Description:  "Date and time when this block was last updated. Formatted as an ISO 8601 date time string.",
 				ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
+				block.addFields(e.asField(jen.Id("ISO8601String"), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "last_edited_by",
@@ -105,7 +105,7 @@ func init() {
 				Description:  "User who last edited the block.",
 				ExampleValue: `{"object": "user","id": "45ee8d13-687b-47ce-a5ca-6e2e45548c4b"}`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Id("User")))
+				block.addFields(e.asField(jen.Id("User")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "archived",
@@ -113,7 +113,7 @@ func init() {
 				Description:  "The archived status of the block.",
 				ExampleValue: "false",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Bool()))
+				block.addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:     "has_children",
@@ -121,7 +121,7 @@ func init() {
 				Description:  "Whether or not the block has children blocks nested within it.",
 				ExampleValue: "true",
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("Block").addFields(e.asField(jen.Bool()))
+				block.addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An object containing type-specific block information.",
@@ -159,11 +159,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Bookmark */ {
+			var bookmark *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Bookmark",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("bookmark", e.Text, b)
+				bookmark = block.addAdaptiveFieldWithSpecificObject("bookmark", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -174,14 +176,14 @@ func init() {
 				Type:        "array of rich text objects text",
 				Description: "The caption for the bookmark.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBookmark").addFields(e.asField(jen.Index().Id("RichText")))
+				bookmark.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "url",
 				Type:        "string",
 				Description: "The link for the bookmark.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBookmark").addFields(e.asField(jen.String()))
+				bookmark.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -205,11 +207,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Bulleted list item */ {
+			var bulletedListItem *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Bulleted list item",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("bulleted_list_item", e.Text, b)
+				bulletedListItem = block.addAdaptiveFieldWithSpecificObject("bulleted_list_item", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -221,7 +225,7 @@ func init() {
 				Property:     "rich_text",
 				Type:         "array of rich text objects",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.Index().Id("RichText")))
+				bulletedListItem.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
@@ -229,7 +233,7 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.String(), omitEmpty))
+				bulletedListItem.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The nested child blocks (if any) of the bulleted_list_item block.",
@@ -237,7 +241,7 @@ func init() {
 				Property:     "children",
 				Type:         "array of block objects",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockBulletedListItem").addFields(e.asField(jen.Index().Id("Block")))
+				bulletedListItem.addFields(e.asField(jen.Index().Id("Block")))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -286,11 +290,13 @@ func init() {
 			specificObject.addFields(&field{name: "children", comment: "undocumented", typeCode: jen.Index().Id("Block"), omitEmpty: true})
 		},
 		func(c *comparator, b *builder) /* Child database */ {
+			var childDatabase *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Child database",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("child_database", e.Text, b)
+				childDatabase = block.addAdaptiveFieldWithSpecificObject("child_database", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -301,7 +307,7 @@ func init() {
 				Type:        "string",
 				Description: "The plain text title of the database.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockChildDatabase").addFields(e.asField(jen.String()))
+				childDatabase.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -313,11 +319,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Child page */ {
+			var childPage *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Child page",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("child_page", e.Text, b)
+				childPage = block.addAdaptiveFieldWithSpecificObject("child_page", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -328,7 +336,7 @@ func init() {
 				Type:        "string",
 				Description: "The plain text title of the page.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockChildPage").addFields(e.asField(jen.String()))
+				childPage.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -340,11 +348,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Code */ {
+			var code *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Code",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("code", e.Text, b)
+				code = block.addAdaptiveFieldWithSpecificObject("code", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -355,21 +365,21 @@ func init() {
 				Type:        "array of Rich text object text objects",
 				Description: "The rich text in the caption of the code block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
+				code.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "rich_text",
 				Type:        "array of Rich text object text objects",
 				Description: "The rich text in the code block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCode").addFields(e.asField(jen.Index().Id("RichText")))
+				code.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "language",
 				Type:        "- \"abap\"  \n- \"arduino\"  \n- \"bash\"  \n- \"basic\"  \n- \"c\"  \n- \"clojure\"  \n- \"coffeescript\"  \n- \"c++\"  \n- \"c#\"  \n- \"css\"  \n- \"dart\"  \n- \"diff\"  \n- \"docker\"  \n- \"elixir\"  \n- \"elm\"  \n- \"erlang\"  \n- \"flow\"  \n- \"fortran\"  \n- \"f#\"  \n- \"gherkin\"  \n- \"glsl\"  \n- \"go\"  \n- \"graphql\"  \n- \"groovy\"  \n- \"haskell\"  \n- \"html\"  \n- \"java\"  \n- \"javascript\"  \n- \"json\"  \n- \"julia\"  \n- \"kotlin\"  \n- \"latex\"  \n- \"less\"  \n- \"lisp\"  \n- \"livescript\"  \n- \"lua\"  \n- \"makefile\"  \n- \"markdown\"  \n- \"markup\"  \n- \"matlab\"  \n- \"mermaid\"  \n- \"nix\"  \n- \"objective-c\"  \n- \"ocaml\"  \n- \"pascal\"  \n- \"perl\"  \n- \"php\"  \n- \"plain text\"  \n- \"powershell\"  \n- \"prolog\"  \n- \"protobuf\"  \n- \"python\"  \n- \"r\"  \n- \"reason\"  \n- \"ruby\"  \n- \"rust\"  \n- \"sass\"  \n- \"scala\"  \n- \"scheme\"  \n- \"scss\"  \n- \"shell\"  \n- \"sql\"  \n- \"swift\"  \n- \"typescript\"  \n- \"vb.net\"  \n- \"verilog\"  \n- \"vhdl\"  \n- \"visual basic\"  \n- \"webassembly\"  \n- \"xml\"  \n- \"yaml\"  \n- \"java/c/c++/c#\"",
 				Description: "The language of the code contained in the code block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockCode").addFields(e.asField(jen.String()))
+				code.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -437,11 +447,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Embed */ {
+			var embed *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Embed",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("embed", e.Text, b)
+				embed = block.addAdaptiveFieldWithSpecificObject("embed", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -452,7 +464,7 @@ func init() {
 				Type:        "string",
 				Description: "The link to the website that the embed block displays.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockEmbed").addFields(e.asField(jen.String()))
+				embed.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -464,11 +476,13 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Equation */ {
+			var equation *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Equation",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("equation", e.Text, b)
+				equation = block.addAdaptiveFieldWithSpecificObject("equation", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -479,7 +493,7 @@ func init() {
 				Type:        "string",
 				Description: "A KaTeX compatible string.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockEquation").addFields(e.asField(jen.String()))
+				equation.addFields(e.asField(jen.String()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -523,6 +537,8 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Headings */ {
+			var heading *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Headings",
@@ -531,7 +547,7 @@ func init() {
 				Kind: "Paragraph",
 				Text: "All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 			}, func(e blockElement) {
-				b.addConcreteObject("BlockHeading", e.Text)
+				heading = b.addConcreteObject("BlockHeading", e.Text)
 				block.addAdaptiveFieldWithType("heading_1", "", jen.Op("*").Id("BlockHeading"))
 				block.addAdaptiveFieldWithType("heading_2", "", jen.Op("*").Id("BlockHeading"))
 				block.addAdaptiveFieldWithType("heading_3", "", jen.Op("*").Id("BlockHeading"))
@@ -541,21 +557,21 @@ func init() {
 				Type:        "array of rich text objects",
 				Description: "The rich text of the heading.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.Index().Id("RichText")))
+				heading.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.String(), omitEmpty))
+				heading.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "is_toggleable",
 				Type:        "boolean",
 				Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockHeading").addFields(e.asField(jen.Bool()))
+				heading.addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -615,8 +631,8 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Link Preview block objects contain the originally pasted url:",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
-				getSymbol[concreteObject]("BlockLinkPreview").addFields(&field{name: "url", typeCode: jen.String()})
+				linkPreview := block.addAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
+				linkPreview.addFields(&field{name: "url", typeCode: jen.String()})
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -714,11 +730,12 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Paragraph */ {
+			var paragraph *concreteObject
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Paragraph",
 			}, func(e blockElement) {
-				block.addAdaptiveFieldWithSpecificObject("paragraph", e.Text, b)
+				paragraph = block.addAdaptiveFieldWithSpecificObject("paragraph", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -729,21 +746,21 @@ func init() {
 				Type:        "array of rich text objects",
 				Description: "The rich text displayed in the paragraph block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.Index().Id("RichText")))
+				paragraph.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
 				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.String(), omitEmpty))
+				paragraph.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "children",
 				Type:        "array of block objects",
 				Description: "The nested child blocks (if any) of the paragraph block.",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("BlockParagraph").addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
+				paragraph.addFields(e.asField(jen.Index().Id("Block"), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
