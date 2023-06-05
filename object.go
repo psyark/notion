@@ -92,3 +92,16 @@ func defined(fieldValue any) bool {
 		// panic(v.Kind())
 	}
 }
+
+func checkUnmarshal[T any](wantStr string) error {
+	var target T
+	want := []byte(wantStr)
+	if err := json.Unmarshal(want, &target); err != nil {
+		return fmt.Errorf("%w : %s", err, wantStr)
+	}
+	got, _ := json.Marshal(&target)
+	if want, got, ok := compareJSON(want, got); !ok {
+		return fmt.Errorf("mismatch:\nwant: %s\ngot : %s", want, got)
+	}
+	return nil
+}

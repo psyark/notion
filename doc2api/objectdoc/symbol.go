@@ -126,14 +126,8 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 			g.Line()
 		}),
 		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
-			jen.Id("target").Op(":=").Op("&").Id(c.targetName).Values(),
-			jen.Id("want").Op(":=").Index().Byte().Call(jen.Id("wantStr")),
-			jen.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("want"), jen.Id("target"))).Op(";").Err().Op("!=").Nil().Block(
-				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("%w : %s"), jen.Err(), jen.Id("wantStr"))),
-			),
-			jen.List(jen.Id("got"), jen.Id("_")).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("target")),
-			jen.If(jen.List(jen.Id("want"), jen.Id("got"), jen.Id("ok")).Op(":=").Id("compareJSON").Call(jen.Id("want"), jen.Id("got")).Op(";").Op("!").Id("ok")).Block(
-				jen.Id("t").Dot("Fatal").Call(jen.Qual("fmt", "Errorf").Call(jen.Lit("mismatch:\nwant: %s\ngot : %s"), jen.Id("want"), jen.Id("got"))),
+			jen.If(jen.Err().Op(":=").Id("checkUnmarshal").Index(jen.Id(c.targetName)).Call(jen.Id("wantStr")).Op(";").Id("err").Op("!=").Nil()).Block(
+				jen.Id("t").Dot("Error").Call(jen.Err()),
 			),
 		),
 	)
