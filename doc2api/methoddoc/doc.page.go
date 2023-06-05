@@ -107,7 +107,7 @@ func init() {
 				In:       "body",
 				Name:     "archived",
 				Type:     "boolean",
-				typeCode: jen.Op("*").Bool(),
+				typeCode: jen.Bool(),
 			},
 			{
 				Desc:     "A page icon for the page. Supported types are [external file object](https://developers.notion.com/reference/file-object) or [emoji object](https://developers.notion.com/reference/emoji-object).",
@@ -121,7 +121,7 @@ func init() {
 				In:       "body",
 				Name:     "cover",
 				Type:     "json",
-				typeCode: jen.Op("*").Id("File"),
+				typeCode: jen.Id("File"),
 			},
 		},
 	})

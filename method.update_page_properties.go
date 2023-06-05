@@ -32,7 +32,7 @@ func (p UpdatePagePropertiesParams) Properties(properties map[string]PropertyVal
 }
 
 // Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.
-func (p UpdatePagePropertiesParams) Archived(archived *bool) UpdatePagePropertiesParams {
+func (p UpdatePagePropertiesParams) Archived(archived bool) UpdatePagePropertiesParams {
 	p["archived"] = archived
 	return p
 }
@@ -44,7 +44,7 @@ func (p UpdatePagePropertiesParams) Icon(icon FileOrEmoji) UpdatePagePropertiesP
 }
 
 // A cover image for the page. Only [external file objects](https://developers.notion.com/reference/file-object) are supported.
-func (p UpdatePagePropertiesParams) Cover(cover *File) UpdatePagePropertiesParams {
+func (p UpdatePagePropertiesParams) Cover(cover File) UpdatePagePropertiesParams {
 	p["cover"] = cover
 	return p
 }

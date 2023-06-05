@@ -8,8 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type FileWithCaption any // TODO
-
 type PropertyMap map[string]Property // for test
 
 func (p *Page) GetProperty(id string) *PropertyValue {
