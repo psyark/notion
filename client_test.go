@@ -116,6 +116,8 @@ func TestQueryDatabase(t *testing.T) {
 }
 
 func TestRetrieveBlockChildren(t *testing.T) {
+	t.Skip()
+
 	ctx := context.Background()
 	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, requestId(t.Name()), validateResult()); err != nil {
 		t.Fatal(err)

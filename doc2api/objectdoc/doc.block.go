@@ -731,6 +731,7 @@ func init() {
 		},
 		func(c *comparator, b *builder) /* Paragraph */ {
 			var paragraph *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Paragraph",
@@ -772,41 +773,45 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* PDF */ {
+			var pdf *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "PDF",
 			}, func(e blockElement) {
-				// TODO
+				pdf = block.addAdaptiveFieldWithSpecificObject("pdf", e.Text, b)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "A PDF block object represents a PDF that has been embedded within a Notion page. It contains the following fields:",
 			}, func(e blockElement) {
-				// TODO
+				pdf.addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "A caption, if provided, for the PDF block.",
-				ExampleValue: "",
 				Property:     "caption",
 				Type:         "array of rich text objects",
+				Description:  "A caption, if provided, for the PDF block.",
+				ExampleValue: "",
 			}, func(e parameterElement) {
-				// TODO
+				pdf.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
-				ExampleValue: "",
 				Property:     "type",
 				Type:         "\"external\"  \n  \n\"file\"",
+				Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
+				ExampleValue: "",
 			}, func(e parameterElement) {
-				// TODO
+				pdf.addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "An object containing type-specific information about the PDF.",
-				ExampleValue: "",
-				Property:     "external  \n  \nfile",
-				Type:         "file object",
+				Property:    "external  \n  \nfile",
+				Type:        "file object",
+				Description: "An object containing type-specific information about the PDF.",
 			}, func(e parameterElement) {
-				// TODO
+				pdf.addFields(
+					&field{name: "external", typeCode: jen.Op("*").Id("FileExternal"), comment: e.Description, omitEmpty: true},
+					&field{name: "file", typeCode: jen.Op("*").Id("FileFile"), comment: e.Description, omitEmpty: true},
+				)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

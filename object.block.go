@@ -44,6 +44,7 @@ type Block struct {
 	Image            *File                  `json:"image"`        // Image block objects contain a file object detailing information about the image.
 	LinkPreview      *BlockLinkPreview      `json:"link_preview"` // Link Preview block objects contain the originally pasted url:
 	Paragraph        *BlockParagraph        `json:"paragraph"`    // Paragraph
+	Pdf              *BlockPdf              `json:"pdf"`          // PDF
 	SyncedBlock      *BlockSyncedBlock      `json:"synced_block"` // Synced block
 	ToDo             *BlockToDo             `json:"to_do"`        // To do
 }
@@ -89,6 +90,8 @@ func (o Block) MarshalJSON() ([]byte, error) {
 			o.Type = "link_preview"
 		case defined(o.Paragraph):
 			o.Type = "paragraph"
+		case defined(o.Pdf):
+			o.Type = "pdf"
 		case defined(o.SyncedBlock):
 			o.Type = "synced_block"
 		case defined(o.ToDo):
@@ -120,6 +123,7 @@ func (o Block) MarshalJSON() ([]byte, error) {
 		"image":              o.Type == "image",
 		"link_preview":       o.Type == "link_preview",
 		"paragraph":          o.Type == "paragraph",
+		"pdf":                o.Type == "pdf",
 		"synced_block":       o.Type == "synced_block",
 		"to_do":              o.Type == "to_do",
 	}
@@ -205,6 +209,18 @@ type BlockParagraph struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
 	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
+}
+
+/*
+PDF
+
+A PDF block object represents a PDF that has been embedded within a Notion page. It contains the following fields:
+*/
+type BlockPdf struct {
+	Caption  []RichText    `json:"caption"`            // A caption, if provided, for the PDF block.
+	Type     string        `json:"type"`               // A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.
+	External *FileExternal `json:"external,omitempty"` // An object containing type-specific information about the PDF.
+	File     *FileFile     `json:"file,omitempty"`     // An object containing type-specific information about the PDF.
 }
 
 /*
