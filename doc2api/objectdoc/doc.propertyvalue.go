@@ -32,7 +32,7 @@ func init() {
 				Kind: "Blockquote",
 				Text: "Any property value that has other pages in its value will only use the first 25 page references. Use the Retrieve a page property endpoint to paginate through the full value.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject]("PropertyValue").addComment(e.Text)
+				propertyValue.addComment(e.Text)
 			})
 		},
 		func(c *comparator, b *builder) /* All property values */ {
@@ -44,21 +44,21 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Each page property value object contains the following keys. In addition, it contains a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 			}, func(e blockElement) {
-				getSymbol[adaptiveObject]("PropertyValue").addComment(e.Text)
+				propertyValue.addComment(e.Text)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
-				ExampleValue: "\"f%5C%5C%3Ap\"",
 				Property:     "id",
 				Type:         "string",
+				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
+				ExampleValue: `"f%5C%5C%3Ap"`,
 			}, func(e parameterElement) {
-				getSymbol[adaptiveObject]("PropertyValue").addFields(e.asField(jen.String(), omitEmpty)) // Rollup内でIDが無い場合がある
+				propertyValue.addFields(e.asField(jen.String(), omitEmpty)) // Rollup内でIDが無い場合がある
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Type of the property. Possible values are \"rich_text\", \"number\", \"select\", \"multi_select\", \"status\", \"date\", \"formula\", \"relation\", \"rollup\", \"title\", \"people\", \"files\", \"checkbox\", \"url\", \"email\", \"phone_number\", \"created_time\", \"created_by\", \"last_edited_time\", and \"last_edited_by\".",
-				ExampleValue: "\"rich_text\"",
 				Property:     "type (optional)",
 				Type:         "string (enum)",
+				Description:  "Type of the property. Possible values are \"rich_text\", \"number\", \"select\", \"multi_select\", \"status\", \"date\", \"formula\", \"relation\", \"rollup\", \"title\", \"people\", \"files\", \"checkbox\", \"url\", \"email\", \"phone_number\", \"created_time\", \"created_by\", \"last_edited_time\", and \"last_edited_by\".",
+				ExampleValue: `"rich_text"`,
 			}, func(e parameterElement) {})
 		},
 		func(c *comparator, b *builder) /* Title property values */ {
@@ -153,22 +153,22 @@ func init() {
 				propertyValue.addAdaptiveFieldWithType("select", e.Text, jen.Op("*").Id("Option")) // may null
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
 				Property:     "id",
 				Type:         "string (UUIDv4)",
+				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
-				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
 				Property:     "name",
 				Type:         "string",
+				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
+				ExampleValue: `"Fruit"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
-				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
 				Property:     "color",
 				Type:         "string (enum)",
+				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
+				ExampleValue: `"red"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -243,22 +243,22 @@ func init() {
 				Text: "Multi-select option values",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
 				Property:     "id",
 				Type:         "string (UUIDv4)",
+				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
-				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
 				Property:     "name",
 				Type:         "string",
+				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
+				ExampleValue: `"Fruit"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
-				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
 				Property:     "color",
 				Type:         "string (enum)",
+				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
+				ExampleValue: `"red"`,
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -274,6 +274,8 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) /* Date property values */ {
+			var date *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Date property values",
@@ -282,31 +284,31 @@ func init() {
 				Kind: "Paragraph",
 				Text: "Date property value objects contain the following data within the date property:",
 			}, func(e blockElement) {
-				propertyValue.addAdaptiveFieldWithSpecificObject("date", e.Text, b)
+				date = propertyValue.addAdaptiveFieldWithSpecificObject("date", e.Text, b)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "An ISO 8601 format date, with optional time.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "start",
 				Type:         "string (ISO 8601 date and time)",
+				Description:  "An ISO 8601 format date, with optional time.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Id("ISO8601String")))
+				date.addFields(e.asField(jen.Id("ISO8601String")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
-				ExampleValue: "\"2020-12-08T12:00:00Z\"",
 				Property:     "end",
 				Type:         "string (optional, ISO 8601 date and time)",
+				Description:  "An ISO 8601 formatted date, with optional time. Represents the end of a date range.\n\nIf null, this property's date value is not a range.",
+				ExampleValue: `"2020-12-08T12:00:00Z"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Op("*").Id("ISO8601String"))) // APIでnullがあるのでomitemptyしない
+				date.addFields(e.asField(jen.Op("*").Id("ISO8601String"))) // APIでnullがあるのでomitemptyしない
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
-				ExampleValue: "\"America/Los_Angeles\"",
 				Property:     "time_zone",
 				Type:         "string (optional, enum)",
+				Description:  "Time zone information for start and end. Possible values are extracted from the IANA database and they are based on the time zones from Moment.js.\n\nWhen time zone is provided, start and end should not have any UTC offset. In addition, when time zone  is provided, start and end cannot be dates without time information.\n\nIf null, time zone information will be contained in UTC offsets in start and end.",
+				ExampleValue: `"America/Los_Angeles"`,
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("PropertyValueDate").addFields(e.asField(jen.Op("*").String())) // APIでnullがあるのでomitemptyしない
+				date.addFields(e.asField(jen.Op("*").String())) // APIでnullがあるのでomitemptyしない
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -439,7 +441,7 @@ func init() {
 				Text: "A relation includes a has_more property in the Retrieve a page endpoint response object. The endpoint returns a maximum of 25 page references for a relation. If a relation has more than 25 references, then the has_more value for the relation in the response object is true. If a relation doesn’t exceed the limit, then has_more is false.",
 			}, func(e blockElement) {
 				// TODO 他と似たようにする
-				getSymbol[adaptiveObject]("PropertyValue").addFields(&field{
+				propertyValue.addFields(&field{
 					name:               "has_more",
 					typeCode:           jen.Bool(),
 					comment:            e.Text,
