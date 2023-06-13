@@ -6,9 +6,9 @@ import "encoding/json"
 // https://developers.notion.com/reference/rich-text
 
 /*
-Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.
+Rich text objects contain the data that Notion uses to display Notion blocks, such as formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.
 
-Refer to the request limits documentation page for information about limits on the size of rich text objects.
+📘 Rich text object limitsRefer to the request limits documentation page for information about limits on the size of rich text objects.
 */
 type RichText struct {
 	Type        string            `json:"type"`

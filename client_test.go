@@ -30,6 +30,20 @@ func init() {
 	cli = NewClient(os.Getenv("API_ACCESS_TOKEN"))
 }
 
+func TestCreatePage(t *testing.T) {
+	ctx := context.Background()
+
+	params := CreatePageParams{}
+	params.Parent(Parent{Type: "database_id", DatabaseId: DATABASE})
+	params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "test"}}}}})
+	params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
+
+	_, err := cli.CreatePage(ctx, params, requestId(t.Name()), useCache(), validateResult())
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
 	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, requestId("RetrievePage"), useCache(), validateResult()); err != nil {

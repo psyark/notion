@@ -53,6 +53,11 @@ type PageReference struct {
 	Id uuid.UUID `json:"id"`
 }
 
+type PageWithPublicURL struct {
+	Page
+	PublicURL *string `json:"public_url"` // undocumented
+}
+
 // https://developers.notion.com/reference/errors
 type Error struct {
 	Object  string `json:"object"`

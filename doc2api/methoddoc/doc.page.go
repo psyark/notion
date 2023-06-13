@@ -5,7 +5,7 @@ import "github.com/dave/jennifer/jen"
 func init() {
 	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/post-page",
-		returnType: returnsStructRef("Page"),
+		returnType: returnsStructRef("PageWithPublicURL"),
 		localCopyOfBodyParams: ssrPropsParams{
 			{
 				Desc:     "The parent page or database where the new page is inserted, represented as a JSON object with a `page_id` or `database_id` key, and the corresponding ID.",

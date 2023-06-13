@@ -7,8 +7,8 @@ import (
 
 // Create a page
 // https://developers.notion.com/reference/post-page
-func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*Page, error) {
-	result := &Page{}
+func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*PageWithPublicURL, error) {
+	result := &PageWithPublicURL{}
 	co := &callOptions{
 		method: http.MethodPost,
 		params: params,
