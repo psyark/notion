@@ -162,6 +162,10 @@ func init() {
 			var bookmark *concreteObject
 
 			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "📘Many block types support rich text. In cases where it is supported, a rich_text object will be included in the block type object. All rich_text objects will include a plain_text property, which provides a convenient way for developers to access unformatted text from the Notion block.",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Bookmark",
 			}, func(e blockElement) {

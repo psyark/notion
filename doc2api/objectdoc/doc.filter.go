@@ -38,6 +38,14 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
+				Text: "Here is the same query using the Notion SDK for JavaScript:",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "const { Client } = require('@notionhq/client');\n\nconst notion = new Client({ auth: process.env.NOTION_API_KEY });\n// replace with your own database ID\nconst databaseId = 'd9824bdc-8445-4327-be8b-5b47500af6ce';\n\nconst filteredRows = async () => {\n\tconst response = await notion.databases.query({\n\t  database_id: databaseId,\n\t  filter: {\n\t    property: \"Task completed\",\n\t    checkbox: {\n\t      equals: true\n\t    }\n\t  },\n\t});\n  return response;\n}\n\n",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
 				Text: "Filters can be chained with the and and or keys so that multiple filters are applied at the same time. (See Query a database for additional examples.)",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{

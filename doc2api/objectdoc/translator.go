@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -90,7 +91,20 @@ func (t *translator) fetchAndBuild() error {
 		func() {
 			defer func() {
 				if err := recover(); err != nil {
-					scopeErr = fmt.Errorf("scope[%d]: %s", i, err)
+					stack := ""
+					for skip := 0; ; skip++ {
+						pc, _, _, ok := runtime.Caller(skip)
+						if !ok {
+							break
+						}
+						if strings.Contains(runtime.FuncForPC(pc).Name(), "(*comparator)") {
+							if _, file, line, ok := runtime.Caller(skip + 1); ok {
+								stack += fmt.Sprintf("\nat %s line %d", file, line)
+							}
+							break
+						}
+					}
+					scopeErr = fmt.Errorf("scope[%d]: %s%s", i, err, stack)
 				}
 			}()
 			scope(c, t.b)

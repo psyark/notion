@@ -14,16 +14,20 @@ func init() {
 		func(c *comparator, b *builder) /*  */ {
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
-				Text: "Rich text objects contain the data that Notion uses to display formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
+				Text: "Rich text objects contain the data that Notion uses to display Notion blocks, such as formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
 			}, func(e blockElement) {
 				richText = b.addAdaptiveObject("RichText", "type", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"Some words \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Some words \",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"Some words \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Some words \",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "📘Many block types support rich text. In cases where it is supported, a rich_text object will be included in the block type object. All rich_text objects will include a plain_text property, which provides a convenient way for developers to access unformatted text from the Notion block.",
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Each rich text object contains the following fields.",
@@ -35,10 +39,10 @@ func init() {
 				ExampleValue: `"text"`,
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "An object containing type-specific configuration. \n\nRefer to the rich text type objects section below for details on type-specific values.",
-				ExampleValue: "Refer to the rich text type objects section below for examples.",
-				Property:     "text | mention | equation",
+				Property:     "text \\| mention \\| equation",
 				Type:         "object",
+				Description:  "An object containing type-specific configuration.  \n  \nRefer to the rich text type objects section below for details on type-specific values.",
+				ExampleValue: "Refer to the rich text type objects section below for examples.",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The information used to style the rich text object. Refer to the annotation object section below for details.",
@@ -121,7 +125,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "color",
 				Type:         "string (enum)",
-				Description:  "Color of the text. Possible values include: \n\n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n-\"orange_background\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background”\n- \"yellow\"\n- \"yellow_background\"",
+				Description:  "Color of the text. Possible values include:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n- \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n-\"orange_background\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background”  \n- \"yellow\"  \n- \"yellow_background\"",
 				ExampleValue: `"green"`,
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("Annotations").addFields(e.asField(jen.String(), omitEmpty))
@@ -162,7 +166,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"equation\",\n  \"equation\": {\n    \"expression\": \"E = mc^2\"\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"E = mc^2\",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"equation\",\n  \"equation\": {\n    \"expression\": \"E = mc^2\"\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"E = mc^2\",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -188,11 +192,11 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
 				Type:         "string\u00a0(enum)",
-				Description:  "The type of the inline mention. Possible values include:\n\n- \"database\"\n- \"date\"\n- \"link_preview\"\n- \"page\"\n- \"template_mention\"\n- \"user\"",
+				Description:  "The type of the inline mention. Possible values include:  \n  \n- \"database\"  \n- \"date\"  \n- \"link_preview\"  \n- \"page\"  \n- \"template_mention\"  \n- \"user\"",
 				ExampleValue: `"user"`,
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
-				Property:     "database | date | link_preview | page | template_mention | user",
+				Property:     "database \\| date \\| link_preview \\| page \\| template_mention \\| user",
 				Type:         "object",
 				Description:  "An object containing type-specific configuration. Refer to the mention type object sections below for details.",
 				ExampleValue: "Refer to the mention type object sections below for example values.",
@@ -219,7 +223,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"database\",\n    \"database\": {\n      \"id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Database with test things\",\n  \"href\": \"https://www.notion.so/a1d8501e1ac143e9a6bdea9fe6c8822b\"\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"database\",\n    \"database\": {\n      \"id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Database with test things\",\n  \"href\": \"https://www.notion.so/a1d8501e1ac143e9a6bdea9fe6c8822b\"\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -241,7 +245,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"date\",\n    \"date\": {\n      \"start\": \"2022-12-16\",\n      \"end\": null\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"2022-12-16\",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"date\",\n    \"date\": {\n      \"start\": \"2022-12-16\",\n      \"end\": null\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"2022-12-16\",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				// TODO これでいいか確認
 				// おそらくドキュメントの不具合。time_zoneはomitemptyではなさそう
@@ -273,7 +277,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"link_preview\",\n    \"link_preview\": {\n      \"url\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\",\n  \"href\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"link_preview\",\n    \"link_preview\": {\n      \"url\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\",\n  \"href\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -299,7 +303,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"page\",\n    \"page\": {\n      \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is a test page\",\n  \"href\": \"https://www.notion.so/3c612f56fdd04a30a4d6bda7d7426309\"\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"page\",\n    \"page\": {\n      \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is a test page\",\n  \"href\": \"https://www.notion.so/3c612f56fdd04a30a4d6bda7d7426309\"\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -344,7 +348,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_date\",\n      \"template_mention_date\": \"today\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Today\",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_date\",\n      \"template_mention_date\": \"today\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Today\",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -366,7 +370,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_user\",\n      \"template_mention_user\": \"me\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Me\",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_user\",\n      \"template_mention_user\": \"me\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Me\",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -384,7 +388,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "If your integration doesn’t yet have access to the mentioned user, then the plain_text that would include a user’s name reads as \"@Anonymous\". To update the integration to get access to the user, update the integration capabilities on the integration settings page.",
+				Text: "📘If your integration doesn’t yet have access to the mentioned user, then the plain_text that would include a user’s name reads as \"@Anonymous\". To update the integration to get access to the user, update the integration capabilities on the integration settings page.",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
@@ -392,7 +396,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"user\",\n    \"user\": {\n      \"object\": \"user\",\n      \"id\": \"b2e19928-b427-4aad-9a9d-fde65479b1d9\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Anonymous\",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"user\",\n    \"user\": {\n      \"object\": \"user\",\n      \"id\": \"b2e19928-b427-4aad-9a9d-fde65479b1d9\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Anonymous\",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -421,7 +425,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "link",
 				Type:         "object\u00a0(optional)",
-				Description:  "An object with information about any inline link in this text, if included. \n\nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address. \n\nIf the text doesn’t have any inline links, then the value is null.",
+				Description:  "An object with information about any inline link in this text, if included.  \n  \nIf the text contains an inline link, then the object key is url and the value is the URL’s string web address.  \n  \nIf the text doesn’t have any inline links, then the value is null.",
 				ExampleValue: "{\n  \"url\": \"https://developers.notion.com/\"\n}",
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("RichTextText").addFields(e.asField(jen.Op("*").Id("URLReference"))) // RetrivePageでnullを確認
@@ -434,7 +438,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"This is an \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is an \",\n  \"href\": null\n}",
+				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"This is an \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is an \",\n  \"href\": null\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
@@ -446,13 +450,13 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"inline link\",\n    \"link\": {\n      \"url\": \"https://developers.notion.com/\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"inline link\",\n  \"href\": \"https://developers.notion.com/\"\n}",
+				Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"inline link\",\n    \"link\": {\n      \"url\": \"https://developers.notion.com/\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"inline link\",\n  \"href\": \"https://developers.notion.com/\"\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("RichText", e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Refer to the request limits documentation page for information about limits on the size of rich text objects.",
+				Text: "📘 Rich text object limitsRefer to the request limits documentation page for information about limits on the size of rich text objects.",
 			}, func(e blockElement) {
 				getSymbol[adaptiveObject]("RichText").addComment(e.Text)
 			})

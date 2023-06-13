@@ -46,8 +46,16 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n    \"sorts\": [\n        {\n            \"property\": \"Name\",\n            \"direction\": \"ascending\"\n        }\n    ]\n}",
+				Text: "{\n    \"sorts\": [\n        {\n            \"property\": \"Name\",\n            \"direction\": \"ascending\"\n        }\n    ]\n}\n",
 			}, createTest(b))
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "If you’re using the Notion SDK for JavaScript, you can apply this sorting property to your query like so:",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "const { Client } = require('@notionhq/client');\n\nconst notion = new Client({ auth: process.env.NOTION_API_KEY });\n// replace with your own database ID\nconst databaseId = 'd9824bdc-8445-4327-be8b-5b47500af6ce';\n\nconst sortedRows = async () => {\n\tconst response = await notion.databases.query({\n\t  database_id: databaseId,\n\t  sorts: [\n\t    {\n\t      property: \"Name\",\n\t      direction: \"ascending\"\n\t\t  }\n\t  ],\n\t});\n  return response;\n}\n",
+			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
 				Text: "Database queries can also be sorted by two or more properties, which is formally called a nested sort. The sort object listed first in the nested sort list takes precedence.",
@@ -58,7 +66,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n    \"sorts\": [\n                {\n            \"property\": \"Food group\",\n            \"direction\": \"descending\"\n        },\n        {\n            \"property\": \"Name\",\n            \"direction\": \"ascending\"\n        }\n    ]\n}",
+				Text: "{\n    \"sorts\": [\n                {\n            \"property\": \"Food group\",\n            \"direction\": \"descending\"\n        },\n        {\n            \"property\": \"Name\",\n            \"direction\": \"ascending\"\n        }\n    ]\n}\n",
 			}, createTest(b))
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
