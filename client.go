@@ -91,7 +91,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	}
 
 	if options.useCache {
-		if cache, err := os.Open(fmt.Sprintf("testout/cache/%s", fileName)); err == nil {
+		if cache, err := os.Open(fmt.Sprintf("testdata/cache/%s", fileName)); err == nil {
 			defer func() {
 				_ = cache.Close()
 			}()
@@ -120,7 +120,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		if options.useCache {
 			if dump, err := httputil.DumpResponse(res, true); err != nil {
 				return err
-			} else if err := os.WriteFile(fmt.Sprintf("testout/cache/%s", fileName), dump, 0666); err != nil {
+			} else if err := os.WriteFile(fmt.Sprintf("testdata/cache/%s", fileName), dump, 0666); err != nil {
 				return err
 			}
 		}
@@ -142,10 +142,10 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 
 	if err := json.Unmarshal(resBody, options.result); err != nil {
 		if options.validateResult {
-			_ = os.Remove(fmt.Sprintf("testout/pass/%s.json", fileName))
-			_ = os.Remove(fmt.Sprintf("testout/fail/%s.got.json", fileName))
+			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
+			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
 			want := normalizeJSON(resBody)
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.want.json", fileName), want, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
 				return err
 			}
 		}
@@ -159,15 +159,15 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		}
 
 		if want, got, ok := compareJSON(resBody, got); ok {
-			_ = os.Remove(fmt.Sprintf("testout/fail/%s.want.json", fileName))
-			_ = os.Remove(fmt.Sprintf("testout/fail/%s.got.json", fileName))
-			return os.WriteFile(fmt.Sprintf("testout/pass/%s.json", fileName), want, 0666)
+			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.want.json", fileName))
+			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
+			return os.WriteFile(fmt.Sprintf("testdata/pass/%s.json", fileName), want, 0666)
 		} else {
-			_ = os.Remove(fmt.Sprintf("testout/pass/%s.json", fileName))
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.want.json", fileName), want, 0666); err != nil {
+			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
+			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
 				return err
 			}
-			if err := os.WriteFile(fmt.Sprintf("testout/fail/%s.got.json", fileName), got, 0666); err != nil {
+			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.got.json", fileName), got, 0666); err != nil {
 				return err
 			}
 			return fmt.Errorf("validation failed: %s", options.requestId)
