@@ -7,7 +7,7 @@ func init() {
 		url:        "https://developers.notion.com/reference/patch-block-children",
 		returnType: returnsStructRef("Pagination"),
 		localCopyOfPathParams: ssrPropsParams{
-			ssrPropsParam{
+			{
 				Desc:     "Identifier for a [block](ref:block). Also accepts a [page](ref:page) ID.",
 				In:       "path",
 				Name:     "block_id",
@@ -16,7 +16,7 @@ func init() {
 			},
 		},
 		localCopyOfBodyParams: ssrPropsParams{
-			ssrPropsParam{
+			{
 				Desc:     "Child content to append to a container block as an array of [block objects](ref:block)",
 				In:       "body",
 				Name:     "children",
@@ -24,7 +24,7 @@ func init() {
 				Type:     "array_object",
 				typeCode: jen.Index().Id("Block"),
 			},
-			ssrPropsParam{
+			{
 				Desc:     "The ID of the existing block that the new block should be appended after.",
 				In:       "body",
 				Name:     "after",
@@ -37,7 +37,7 @@ func init() {
 		url:        "https://developers.notion.com/reference/get-block-children",
 		returnType: returnsStructRef("Pagination"),
 		localCopyOfPathParams: ssrPropsParams{
-			ssrPropsParam{
+			{
 				Desc:     "Identifier for a [block](ref:block)",
 				In:       "path",
 				Name:     "block_id",
@@ -50,7 +50,7 @@ func init() {
 		url:        "https://developers.notion.com/reference/delete-a-block",
 		returnType: returnsStructRef("Block"),
 		localCopyOfPathParams: ssrPropsParams{
-			ssrPropsParam{
+			{
 				Desc:     "Identifier for a Notion block",
 				In:       "path",
 				Name:     "block_id",
