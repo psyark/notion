@@ -152,6 +152,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 		return err
 	}
 
+	// TODO ここにファイルシステムのパスを含む処理を書かず、オプションとして渡すようにする
 	if options.validateResult {
 		got, err := json.Marshal(options.result)
 		if err != nil {
