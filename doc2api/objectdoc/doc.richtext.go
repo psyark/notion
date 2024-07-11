@@ -14,9 +14,15 @@ func init() {
 		func(c *comparator, b *builder) /*  */ {
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
-				Text: "Rich text objects contain the data that Notion uses to display Notion blocks, such as formatted text, mentions, and inline equations. Arrays of rich text objects within database property objects and page property value objects are used to create what a user experiences as a single text value in Notion.",
+				Text: "Notion uses rich text to allow users to customize their content. Rich text refers to a type of document where content can be styled and formatted in a variety of customizable ways. This includes styling decisions, such as the use of italics, font size, and font color, as well as formatting, such as the use of hyperlinks or code blocks.",
 			}, func(e blockElement) {
 				richText = b.addAdaptiveObject("RichText", "type", e.Text)
+			})
+			c.nextMustBlock(blockElement{Kind: "Paragraph", Text: "Notion includes rich text objects in block objects to indicate how blocks in a page are represented. Blocks that support rich text will include a rich text object; however, not all block types offer rich text."}, func(e blockElement) {
+				richText.addComment(e.Text)
+			})
+			c.nextMustBlock(blockElement{Kind: "Paragraph", Text: "When blocks are retrieved from a page using the Retrieve a block or Retrieve block children endpoints, an array of rich text objects will be included in the block object (when available). Developers can use this array to retrieve the plain text (plain_text) for the block or get all the rich text styling and formatting options applied to the block."}, func(e blockElement) {
+				richText.addComment(e.Text)
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",

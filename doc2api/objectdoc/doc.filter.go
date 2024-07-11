@@ -79,7 +79,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Description:  "The type-specific filter condition for the query. Only types listed in the Field column of this table are supported.  \n  \nRefer to type-specific filter conditions for details on corresponding object values.",
 				ExampleValue: "\"checkbox\": {\n  \"equals\": true\n}",
-				Property:     "checkbox  \ndate  \nfiles  \nformula  \nmulti_select  \nnumber  \npeople  \nphone_number  \nrelation  \nrich_text  \nselect  \nstatus  \ntimestamp",
+				Property:     "checkbox  \ndate  \nfiles  \nformula  \nmulti_select  \nnumber  \npeople  \nphone_number  \nrelation  \nrich_text  \nselect  \nstatus  \ntimestamp  \nID",
 				Type:         "object",
 			}, func(e parameterElement) {})
 			c.nextMustBlock(blockElement{
@@ -374,7 +374,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "contains",
 				Type:         "string",
-				Description:  "The value to compare the multi-select property value against.  \n  \nReturns database entries where the multi-select value contains the provided string.",
+				Description:  "The value to compare the multi-select property value against.  \n  \nReturns database entries where the multi-select value matches the provided string.",
 				ExampleValue: `"Marketing"`,
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
@@ -382,7 +382,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "does_not_contain",
 				Type:         "string",
-				Description:  "The value to the multi-select property value against.  \n  \nReturns database entries where the multi-select value does not contain the provided string.",
+				Description:  "The value to compare the multi-select property value against.  \n  \nReturns database entries where the multi-select value does not match the provided string.",
 				ExampleValue: `"Engineering"`,
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
@@ -468,7 +468,7 @@ func init() {
 				specificObject.addFields(e.asField(jen.Bool(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the page property value is less than the provided number.",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is less than the provided number.",
 				ExampleValue: "42",
 				Property:     "less_than",
 				Type:         "number",
@@ -476,7 +476,7 @@ func init() {
 				specificObject.addFields(e.asField(jen.Op("*").Float64(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the page property value is equal to or is less than the provided number.",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is equal to or is less than the provided number.",
 				ExampleValue: "42",
 				Property:     "less_than_or_equal_to",
 				Type:         "number",
@@ -911,6 +911,56 @@ func init() {
 			}, func(e blockElement) {
 				filter.addComment(e.Text)
 			})
+		},
+		func(c *comparator, b *builder) /* ID */ {
+			c.nextMustBlock(blockElement{
+				Kind: "Heading",
+				Text: "ID",
+			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Paragraph",
+				Text: "Use a timestamp filter condition to filter results based on the unique_id value.",
+			}, func(e blockElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "does_not_equal",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value differs from the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "equals",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value is the same as the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "greater_than",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value exceeds the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "greater_than_or_equal_to",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value is equal to or exceeds the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "less_than",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value is less than the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Property:     "less_than_or_equal_to",
+				Type:         "number",
+				Description:  "The value to compare the unique_id property value against.  \n  \nReturns database entries where the unique_id property value is equal to or is less than the provided value.",
+				ExampleValue: "42",
+			}, func(e parameterElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "FencedCodeBlock",
+				Text: "{\n  \"filter\": {\n    \"and\": [\n      {\n        \"property\": \"ID\",\n        \"unique_id\": {\n          \"greater_than\": 1\n        }\n      },\n      {\n        \"property\": \"ID\",\n        \"unique_id\": {\n          \"less_than\": 3\n        }\n      }\n    ]\n  }\n}\n",
+			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Compound filter conditions */ {
 			c.nextMustBlock(blockElement{

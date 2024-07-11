@@ -36,13 +36,13 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Always \"database_id\".",
-				ExampleValue: "\"database_id\"",
+				ExampleValue: `"database_id"`,
 				Property:     "type",
 				Type:         "string",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The ID of the database that this page belongs to.",
-				ExampleValue: "\"b8595b75-abd1-4cad-8dfe-f935a8ef57cb\"",
+				ExampleValue: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 				Property:     "database_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
@@ -62,13 +62,13 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Always \"page_id\".",
-				ExampleValue: "\"page_id\"",
+				ExampleValue: `"page_id"`,
 				Property:     "type",
 				Type:         "string",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The ID of the page that this page belongs to.",
-				ExampleValue: "\"59833787-2cf9-4fdf-8782-e53db20768a5\"",
+				ExampleValue: `"59833787-2cf9-4fdf-8782-e53db20768a5"`,
 				Property:     "page_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {
@@ -93,7 +93,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Always \"workspace\".",
-				ExampleValue: "\"workspace\"",
+				ExampleValue: `"workspace"`,
 				Property:     "type",
 				Type:         "type",
 			}, func(e parameterElement) {})
@@ -123,13 +123,13 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Always \"block_id\".",
-				ExampleValue: "\"block_id\"",
+				ExampleValue: `"block_id"`,
 				Property:     "type",
 				Type:         "type",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The ID of the page that this page belongs to.",
-				ExampleValue: "\"ea29285f-7282-4b00-b80c-32bdbab50261\"",
+				ExampleValue: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 				Property:     "block_id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {

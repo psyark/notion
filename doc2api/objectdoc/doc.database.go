@@ -140,6 +140,14 @@ func init() {
 				database.addFields(e.asField(jen.Bool()))
 			})
 			c.nextMustParameter(parameterElement{
+				Property:     "in_trash",
+				Type:         "boolean",
+				Description:  "Whether the database has been deleted.",
+				ExampleValue: "false",
+			}, func(e parameterElement) {
+				database.addFields(e.asField(jen.Bool()))
+			})
+			c.nextMustParameter(parameterElement{
 				Property:     "is_inline",
 				Type:         "boolean",
 				Description:  "Has the value true if the database appears in the page as an inline block. Otherwise has the value false if the database appears as a child page.",
@@ -147,12 +155,23 @@ func init() {
 			}, func(e parameterElement) {
 				database.addFields(e.asField(jen.Bool()))
 			})
+			c.nextMustParameter(parameterElement{
+				Property:     "public_url",
+				Type:         "string",
+				Description:  "The public page URL if the page has been published to the web. Otherwise, null.",
+				ExampleValue: `"https://jm-testing.notion.site/p1-6df2c07bfc6b4c46815ad205d132e22d"1`,
+			}, func(e parameterElement) {
+				database.addFields(e.asField(jen.Op("*").String()))
+			})
 		},
 		func(c *comparator, b *builder) /*  */ {
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
 				Text: "🚧 Maximum schema size recommendationNotion recommends a maximum schema size of 50KB. Updates to database schemas that are too large will be blocked to help maintain database performance.",
 			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) {
+			database.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
 		},
 	)
 }

@@ -6,7 +6,7 @@ import "encoding/json"
 // https://developers.notion.com/reference/file-object
 
 /*
-The Notion API does not yet support uploading files to Notion.
+📘The Notion API does not yet support uploading files to Notion.
 
 File objects contain data about a file that is uploaded to Notion, or data about an external file that is linked to in Notion.
 

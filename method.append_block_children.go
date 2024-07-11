@@ -3,8 +3,9 @@ package notion
 import (
 	"context"
 	"fmt"
-	uuid "github.com/google/uuid"
 	"net/http"
+
+	uuid "github.com/google/uuid"
 )
 
 // Append block children
@@ -28,5 +29,11 @@ type AppendBlockChildrenParams map[string]any
 // Child content to append to a container block as an array of [block objects](ref:block)
 func (p AppendBlockChildrenParams) Children(children []Block) AppendBlockChildrenParams {
 	p["children"] = children
+	return p
+}
+
+// The ID of the existing block that the new block should be appended after.
+func (p AppendBlockChildrenParams) After(after string) AppendBlockChildrenParams {
+	p["after"] = after
 	return p
 }

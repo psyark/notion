@@ -25,6 +25,7 @@ type Pagination struct {
 	PageOrDatabase struct{}              `json:"page_or_database"`
 	PropertyItem   PaginatedPropertyInfo `json:"property_item"`
 	User           struct{}              `json:"user"`
+	RequestId      string                `json:"request_id"` // undocumented
 }
 
 func (o Pagination) isPropertyItemOrPropertyItemPagination() {}

@@ -1,6 +1,8 @@
 package objectdoc
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 )
 
@@ -12,7 +14,7 @@ func init() {
 		func(c *comparator, b *builder) /*  */ {
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
-				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.",
+				Text: "The User object represents a user in a Notion workspace. Users include full workspace members, guests, and integrations. You can find more information about members and guests in this guide.",
 			}, func(e blockElement) {
 				user = b.addAdaptiveObject("User", "type", e.Text)
 				for _, f := range user.fields { // TODO なんとかする？
@@ -23,11 +25,11 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "The SCIM API is available for workspaces in Notion's Enterprise Plan. Learn more about using SCIM with Notion.",
+				Text: "📘 Provisioning users and groups using SCIMThe SCIM API is available for workspaces in Notion's Enterprise Plan. Learn more about using SCIM with Notion.",
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "Single sign-on (SSO) can be configured for workspaces in Notion's Enterprise Plan. Learn more about SSO with Notion.",
+				Text: "📘 Setting up single sign-on (SSO) with NotionSingle sign-on (SSO) can be configured for workspaces in Notion's Enterprise Plan. Learn more about SSO with Notion.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Where user objects appear in the API */ {
@@ -63,22 +65,24 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Paragraph",
-				Text: "These fields are shared by all users, including people and bots. Fields marked with * are always present.",
+				Text: "These fields are shared by all users, including people and bots. Fields marked with \\* are always present.",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Property:     "object",
+				Property:     `object\*`,
 				Type:         `"user"`,
 				Description:  `Always "user"`,
 				ExampleValue: `"user"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, `\*`)
 				user.addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
-				Property:     "id",
+				Property:     `id\*`,
 				Type:         "string (UUID)",
 				Description:  "Unique identifier for this user.",
 				ExampleValue: `"e79a0b74-3aba-4149-9f74-0bb5791a6ee6"`,
 			}, func(e parameterElement) {
+				e.Property = strings.TrimSuffix(e.Property, `\*`)
 				user.addFields(e.asField(UUID))
 			})
 			c.nextMustParameter(parameterElement{
@@ -89,7 +93,7 @@ func init() {
 			}, func(e parameterElement) {}) // PersonとBotで定義
 			c.nextMustParameter(parameterElement{
 				Description:  "User's name, as displayed in Notion.",
-				ExampleValue: "\"Avocado Lovelace\"",
+				ExampleValue: `"Avocado Lovelace"`,
 				Property:     "name",
 				Type:         "string (optional)",
 			}, func(e parameterElement) {
@@ -148,7 +152,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
-				ExampleValue: "{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
+				ExampleValue: "{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 				Property:     "bot",
 				Type:         "object",
 			}, func(e parameterElement) {
@@ -158,7 +162,7 @@ func init() {
 				Property:     "owner",
 				Type:         "object",
 				Description:  "Information about who owns this bot.",
-				ExampleValue: "{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
+				ExampleValue: "{     \"type\": \"workspace\",     \"workspace\": true }",
 			}, func(e parameterElement) {
 				bot.addFields(e.asField(jen.Op("*").Id("BotUserDataOwner"), omitEmpty))
 				botOwner = b.addConcreteObject("BotUserDataOwner", e.Description)

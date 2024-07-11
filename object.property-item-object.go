@@ -30,6 +30,7 @@ type PropertyItem struct {
 	CreatedBy      *User              `json:"created_by"`       // Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.
 	LastEditedTime ISO8601String      `json:"last_edited_time"` // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
 	LastEditedBy   *User              `json:"last_edited_by"`   // Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.
+	RequestId      string             `json:"request_id"`       // undocumented
 }
 
 func (o PropertyItem) isPropertyItemOrPropertyItemPagination() {}

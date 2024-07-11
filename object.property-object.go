@@ -11,28 +11,29 @@ import (
 // All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.
 type Property struct {
 	Type           string               `json:"type"`
-	Id             string               `json:"id"`               // An identifier for the property, usually a short string of random letters and symbols. Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
-	Name           string               `json:"name"`             // The name of the property as it appears in Notion.
-	Checkbox       struct{}             `json:"checkbox"`         // Checkbox
-	CreatedBy      struct{}             `json:"created_by"`       // Created by
-	CreatedTime    struct{}             `json:"created_time"`     // Created time
-	Date           struct{}             `json:"date"`             // Date
-	Email          struct{}             `json:"email"`            // Email
-	Files          struct{}             `json:"files"`            // Files
-	Formula        *PropertyFormula     `json:"formula"`          // Formula
-	LastEditedBy   struct{}             `json:"last_edited_by"`   // Last edited by
-	LastEditedTime struct{}             `json:"last_edited_time"` // Last edited time
-	MultiSelect    *PropertyMultiSelect `json:"multi_select"`     // Multi-select
-	Number         *PropertyNumber      `json:"number"`           // Number
-	People         struct{}             `json:"people"`           // People
-	PhoneNumber    struct{}             `json:"phone_number"`     // Phone number
-	Relation       *PropertyRelation    `json:"relation"`         // Relation
-	RichText       struct{}             `json:"rich_text"`        // Rich text
-	Rollup         *PropertyRollup      `json:"rollup"`           // Rollup
-	Select         *PropertySelect      `json:"select"`           // Select
-	Status         *PropertyStatus      `json:"status"`           // Status
-	Title          struct{}             `json:"title"`            // Title
-	Url            struct{}             `json:"url"`              // URL
+	Id             string               `json:"id"`                    // An identifier for the property, usually a short string of random letters and symbols. Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
+	Name           string               `json:"name"`                  // The name of the property as it appears in Notion.
+	Description    *string              `json:"description,omitempty"` // The description of a property as it appear in Notion.
+	Checkbox       struct{}             `json:"checkbox"`              // Checkbox
+	CreatedBy      struct{}             `json:"created_by"`            // Created by
+	CreatedTime    struct{}             `json:"created_time"`          // Created time
+	Date           struct{}             `json:"date"`                  // Date
+	Email          struct{}             `json:"email"`                 // Email
+	Files          struct{}             `json:"files"`                 // Files
+	Formula        *PropertyFormula     `json:"formula"`               // Formula
+	LastEditedBy   struct{}             `json:"last_edited_by"`        // Last edited by
+	LastEditedTime struct{}             `json:"last_edited_time"`      // Last edited time
+	MultiSelect    *PropertyMultiSelect `json:"multi_select"`          // Multi-select
+	Number         *PropertyNumber      `json:"number"`                // Number
+	People         struct{}             `json:"people"`                // People
+	PhoneNumber    struct{}             `json:"phone_number"`          // Phone number
+	Relation       *PropertyRelation    `json:"relation"`              // Relation
+	RichText       struct{}             `json:"rich_text"`             // Rich text
+	Rollup         *PropertyRollup      `json:"rollup"`                // Rollup
+	Select         *PropertySelect      `json:"select"`                // Select
+	Status         *PropertyStatus      `json:"status"`                // Status
+	Title          struct{}             `json:"title"`                 // Title
+	Url            struct{}             `json:"url"`                   // URL
 }
 
 func (o Property) MarshalJSON() ([]byte, error) {
@@ -134,7 +135,7 @@ Number
 A number database property is rendered in the Notion UI as a column that contains numeric values. The number type object contains the following fields:
 */
 type PropertyNumber struct {
-	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include: - argentine_peso - baht - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound - peruvian_sol - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
+	Format string `json:"format"` // The way that the number is displayed in Notion. Potential values include: \- argentine_peso - baht - australian_dollar - canadian_dollar - chilean_peso - colombian_peso - danish_krone - dirham - dollar - euro - forint - franc - hong_kong_dollar - koruna - krona - leu - lira -  mexican_peso - new_taiwan_dollar - new_zealand_dollar - norwegian_krone - number - number_with_commas - percent - philippine_peso - pound - peruvian_sol - rand - real - ringgit - riyal - ruble - rupee - rupiah - shekel - singapore_dollar - uruguayan_peso - yen, - yuan - won - zloty
 }
 
 // A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
@@ -178,7 +179,7 @@ Rollup
 A rollup database property is rendered in the Notion UI as a column with values that are rollups, specific properties that are pulled from a related database.
 */
 type PropertyRollup struct {
-	Function             string `json:"function"`               // The function that computes the rollup value from the related pages. Possible values include: - average - checked - count_per_group - count - count_values - date_range - earliest_date - empty - latest_date - max - median - min - not_empty - percent_checked - percent_empty - percent_not_empty - percent_per_group - percent_unchecked - range - unchecked - unique - show_original - show_unique - sum
+	Function             string `json:"function"`               // The function that computes the rollup value from the related pages. Possible values include: \- average - checked - count_per_group - count - count_values - date_range - earliest_date - empty - latest_date - max - median - min - not_empty - percent_checked - percent_empty - percent_not_empty - percent_per_group - percent_unchecked - range - unchecked - unique - show_original - show_unique - sum
 	RelationPropertyId   string `json:"relation_property_id"`   // The id of the related database property that is rolled up.
 	RelationPropertyName string `json:"relation_property_name"` // The name of the related database property that is rolled up.
 	RollupPropertyId     string `json:"rollup_property_id"`     // The id of the rollup property.
@@ -196,7 +197,7 @@ type PropertySelect struct {
 
 // The select type object contains an array of objects representing the available options. Each option object includes the following fields:
 type Option struct {
-	Color string `json:"color,omitempty"` // The color of the option as rendered in the Notion UI. Possible values include: - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Color string `json:"color,omitempty"` // The color of the option as rendered in the Notion UI. Possible values include: \- blue - brown - default - gray - green - orange - pink - purple - red - yellow
 	Id    string `json:"id,omitempty"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
 	Name  string `json:"name,omitempty"`  // The name of the option as it appears in the Notion UI. Note: Commas (",") are not valid for select values.
 }
@@ -209,7 +210,7 @@ type PropertyStatus struct {
 
 // A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields:
 type StatusGroup struct {
-	Color     string   `json:"color"`      // The color of the option as rendered in the Notion UI. Possible values include: - blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Color     string   `json:"color"`      // The color of the option as rendered in the Notion UI. Possible values include: \- blue - brown - default - gray - green - orange - pink - purple - red - yellow
 	Id        string   `json:"id"`         // An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.
 	Name      string   `json:"name"`       // The name of the option as it appears in the Notion UI. Note: Commas (",") are not valid for status values.
 	OptionIds []string `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.

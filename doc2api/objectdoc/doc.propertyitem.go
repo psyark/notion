@@ -37,15 +37,15 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Always \"property_item\".",
-				ExampleValue: "\"property_item\"",
+				ExampleValue: `"property_item"`,
 				Property:     "object",
-				Type:         "\"property_item\"",
+				Type:         `"property_item"`,
 			}, func(e parameterElement) {
 				getSymbol[adaptiveObject]("PropertyItem").addFields(e.asFixedStringField(b))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string.\n\nThe id may be used in place of name when creating or updating pages.",
-				ExampleValue: "\"f%5C%5C%3Ap\"",
+				ExampleValue: `"f%5C%5C%3Ap"`,
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -53,7 +53,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "Type of the property. Possible values are \"rich_text\", \"number\", \"select\", \"multi_select\", \"date\", \"formula\", \"relation\", \"rollup\", \"title\", \"people\", \"files\", \"checkbox\", \"url\", \"email\", \"phone_number\", \"created_time\", \"created_by\", \"last_edited_time\", and \"last_edited_by\".",
-				ExampleValue: "\"rich_text\"",
+				ExampleValue: `"rich_text"`,
 				Property:     "type",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {})
@@ -173,19 +173,19 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				Property:     "id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
+				ExampleValue: `"Fruit"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
+				ExampleValue: `"red"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {}) // Optionで共通化
@@ -213,19 +213,19 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				Property:     "id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
+				ExampleValue: `"Fruit"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
+				ExampleValue: `"red"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {})
@@ -654,6 +654,9 @@ func init() {
 			}, func(e blockElement) {
 				// TODO テスト通す
 			})
+		},
+		func(c *comparator, b *builder) {
+			propertyItem.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
 		},
 	)
 }

@@ -196,19 +196,19 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "ID of the option.",
-				ExampleValue: "\"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb\"",
+				ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 				Property:     "id",
 				Type:         "string (UUIDv4)",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "Name of the option as it appears in Notion.",
-				ExampleValue: "\"In progress\"",
+				ExampleValue: `"In progress"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-				ExampleValue: "\"red\"",
+				ExampleValue: `"red"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {}) // Optionで共通化

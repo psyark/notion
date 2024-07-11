@@ -22,7 +22,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "You need an integration token to interact with the Notion API. You can find an integration token after you create an integration on the integration settings page. If this is your first look at the Notion API, we recommend beginning with the Getting started guide to learn how to create an integration. \n\nIf you want to work on a specific integration, but can't access the token, confirm that you are an admin in the associated workspace. You can check inside the Notion UI via Settings & Members in the left sidebar. If you're not an admin in any of your workspaces, you can create a personal workspace for free.",
+				Text: "📘You need an integration token to interact with the Notion API. You can find an integration token after you create an integration on the integration settings page. If this is your first look at the Notion API, we recommend beginning with the Getting started guide to learn how to create an integration.If you want to work on a specific integration, but can't access the token, confirm that you are an admin in the associated workspace. You can check inside the Notion UI via Settings & Members in the left sidebar. If you're not an admin in any of your workspaces, you can create a personal workspace for free.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Conventions */ {
@@ -129,7 +129,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "next_cursor",
 				Type:        "string",
-				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.\n\nOnly available when has_more is true.",
+				Description: "A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint.  \n  \nOnly available when has_more is true.",
 			}, func(e parameterElement) {
 				// RetrievePagePropertyItemでnullを確認
 				pagination.addFields(e.asField(jen.Id("*").String()))
@@ -153,9 +153,9 @@ func init() {
 				Description:  "A constant string that represents the type of the objects in results.",
 				ExampleValue: "",
 				Property:     "type",
-				Type:         "\"block\"\n\n\"comment\"\n\n\"database\"\n\n\"page\"\n\n\"page_or_database\"\n\n\"property_item\"\n\n\"user\"",
+				Type:         "\"block\"  \n  \n\"comment\"  \n  \n\"database\"  \n  \n\"page\"  \n  \n\"page_or_database\"  \n  \n\"property_item\"  \n  \n\"user\"",
 			}, func(e parameterElement) {
-				for _, name := range strings.Split(e.Type, "\n\n") {
+				for _, name := range strings.Split(e.Type, "  \n  \n") {
 					name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
 					if name == "property_item" {
 						pagination.addAdaptiveFieldWithType(name, "", jen.Id("PaginatedPropertyInfo"))
@@ -177,16 +177,16 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "GET requests accept parameters in the query string. \n\nPOST requests receive parameters in the request body.",
+				Text: "🚧 Parameter location varies by endpointGET requests accept parameters in the query string.POST requests receive parameters in the request body.",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The number of items from the full list to include in the response.\n\nDefault: 100\nMaximum: 100\n\nThe response may contain fewer than the default number of results.",
+				Description:  "The number of items from the full list to include in the response.  \n  \nDefault: 100  \nMaximum: 100  \n  \nThe response may contain fewer than the default number of results.",
 				ExampleValue: "",
 				Property:     "page_size",
 				Type:         "number",
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "A next_cursor value returned in a previous response. Treat this as an opaque value.\n\nDefaults to undefined, which returns results from the beginning of the list.",
+				Description:  "A next_cursor value returned in a previous response. Treat this as an opaque value.  \n  \nDefaults to undefined, which returns results from the beginning of the list.",
 				ExampleValue: "",
 				Property:     "start_cursor",
 				Type:         "string",
@@ -209,8 +209,11 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "curl --location --request POST 'https://api.notion.com/v1/databases/<database_id>/query' \\\n--header 'Authorization: Bearer <secret_bot>' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"start_cursor\": \"33e19cb9-751f-4993-b74d-234d67d0d534\"\n}'",
+				Text: "curl --location --request POST 'https://api.notion.com/v1/databases/<database_id>/query' \\\n--header 'Authorization: Bearer <secret_bot>' \\\n--header 'Content-Type: application/json' \\\n--data '{\n    \"start_cursor\": \"33e19cb9-751f-4993-b74d-234d67d0d534\"\n}'\n",
 			}, func(e blockElement) {})
+		},
+		func(c *comparator, b *builder) {
+			pagination.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
 		},
 	)
 }

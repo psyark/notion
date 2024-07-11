@@ -9,7 +9,7 @@ import (
 // https://developers.notion.com/reference/user
 
 /*
-The User object represents a user in a Notion workspace. Users include full workspace members, and integrations. Guests are not included. You can find more information about members and guests in this guide.
+The User object represents a user in a Notion workspace. Users include full workspace members, guests, and integrations. You can find more information about members and guests in this guide.
 
 Where user objects appear in the API
 

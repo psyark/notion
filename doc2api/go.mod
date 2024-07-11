@@ -1,6 +1,6 @@
 module github.com/psyark/notion/doc2api
 
-go 1.21
+go 1.22
 
 require (
 	github.com/PuerkitoBio/goquery v1.9.1

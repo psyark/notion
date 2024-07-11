@@ -25,7 +25,10 @@ type Database struct {
 	Parent         Parent              `json:"parent"`           // Information about the database's parent. See Parent object.
 	Url            string              `json:"url"`              // The URL of the Notion database.
 	Archived       bool                `json:"archived"`         // The archived status of the  database.
+	InTrash        bool                `json:"in_trash"`         // Whether the database has been deleted.
 	IsInline       bool                `json:"is_inline"`        // Has the value true if the database appears in the page as an inline block. Otherwise has the value false if the database appears as a child page.
+	PublicUrl      *string             `json:"public_url"`       // The public page URL if the page has been published to the web. Otherwise, null.
+	RequestId      string              `json:"request_id"`       // undocumented
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)

@@ -24,6 +24,7 @@ type Block struct {
 	LastEditedTime   ISO8601String          `json:"last_edited_time,omitempty"` // Date and time when this block was last updated. Formatted as an ISO 8601 date time string.
 	LastEditedBy     User                   `json:"last_edited_by"`             // User who last edited the block.
 	Archived         bool                   `json:"archived"`                   // The archived status of the block.
+	InTrash          bool                   `json:"in_trash"`                   // Whether the block has been deleted.
 	HasChildren      bool                   `json:"has_children"`               // Whether or not the block has children blocks nested within it.
 	Bookmark         *BlockBookmark         `json:"bookmark"`                   // Bookmark
 	Breadcrumb       struct{}               `json:"breadcrumb"`                 // Breadcrumb block objects do not contain any information within the breadcrumb property.
@@ -139,7 +140,7 @@ type BlockBookmark struct {
 // Bulleted list item
 type BlockBulletedListItem struct {
 	RichText []RichText `json:"rich_text"`       // The rich text in the bulleted_list_item block.
-	Color    string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color    string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children"`        // The nested child blocks (if any) of the bulleted_list_item block.
 }
 
@@ -147,7 +148,7 @@ type BlockBulletedListItem struct {
 type BlockCallout struct {
 	RichText []RichText  `json:"rich_text"`          // The rich text in the callout block.
 	Icon     FileOrEmoji `json:"icon,omitempty"`     // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
-	Color    string      `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color    string      `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block     `json:"children,omitempty"` // undocumented
 }
 
@@ -195,7 +196,7 @@ type BlockEquation struct {
 // All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
 type BlockHeading struct {
 	RichText     []RichText `json:"rich_text"`       // The rich text of the heading.
-	Color        string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color        string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	IsToggleable bool       `json:"is_toggleable"`   // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
 }
 
@@ -207,7 +208,7 @@ type BlockLinkPreview struct {
 // Paragraph
 type BlockParagraph struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
-	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
 }
 
@@ -245,6 +246,6 @@ type SyncedFrom struct {
 type BlockToDo struct {
 	RichText []RichText `json:"rich_text"`          // The rich text displayed in the To do block.
 	Checked  *bool      `json:"checked,omitempty"`  // Whether the To do is checked.
-	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" -  "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
 	Children []Block    `json:"children,omitempty"` // The nested child blocks, if any, of the To do block.
 }

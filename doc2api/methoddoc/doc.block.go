@@ -8,7 +8,7 @@ func init() {
 		returnType: returnsStructRef("Pagination"),
 		localCopyOfPathParams: ssrPropsParams{
 			ssrPropsParam{
-				Desc:     "Identifier for a [block](ref:block)",
+				Desc:     "Identifier for a [block](ref:block). Also accepts a [page](ref:page) ID.",
 				In:       "path",
 				Name:     "block_id",
 				Type:     "string",
@@ -23,6 +23,13 @@ func init() {
 				Required: true,
 				Type:     "array_object",
 				typeCode: jen.Index().Id("Block"),
+			},
+			ssrPropsParam{
+				Desc:     "The ID of the existing block that the new block should be appended after.",
+				In:       "body",
+				Name:     "after",
+				Type:     "string",
+				typeCode: jen.String(),
 			},
 		},
 	})

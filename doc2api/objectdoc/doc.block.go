@@ -23,7 +23,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}\n",
+				Text: "{\n\t\"object\": \"block\",\n\t\"id\": \"c02fc1d3-db8b-45c5-a222-27595b15aea7\",\n\t\"parent\": {\n\t\t\"type\": \"page_id\",\n\t\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n\t},\n\t\"created_time\": \"2022-03-01T19:05:00.000Z\",\n\t\"last_edited_time\": \"2022-07-06T19:41:00.000Z\",\n\t\"created_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"last_edited_by\": {\n\t\t\"object\": \"user\",\n\t\t\"id\": \"ee5f0f84-409a-440f-983a-a5315961c6e4\"\n\t},\n\t\"has_children\": false,\n\t\"archived\": false,\n  \"in_trash\": false,\n\t\"type\": \"heading_2\",\n\t\"heading_2\": {\n\t\t\"rich_text\": [\n\t\t\t{\n\t\t\t\t\"type\": \"text\",\n\t\t\t\t\"text\": {\n\t\t\t\t\t\"content\": \"Lacinato kale\",\n\t\t\t\t\t\"link\": null\n\t\t\t\t},\n\t\t\t\t\"annotations\": {\n\t\t\t\t\t\"bold\": false,\n\t\t\t\t\t\"italic\": false,\n\t\t\t\t\t\"strikethrough\": false,\n\t\t\t\t\t\"underline\": false,\n\t\t\t\t\t\"code\": false,\n\t\t\t\t\t\"color\": \"green\"\n\t\t\t\t},\n\t\t\t\t\"plain_text\": \"Lacinato kale\",\n\t\t\t\t\"href\": null\n\t\t\t}\n\t\t],\n\t\t\"color\": \"default\",\n    \"is_toggleable\": false\n\t}\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("Block", e.Text)
 			})
@@ -72,7 +72,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "type",
 				Type:         "string (enum)",
-				Description:  "Type of block. Possible values are:  \n  \n- \"bookmark\"  \n- \"breadcrumb\"  \n- \"bulleted_list_item\"  \n- \"callout\"  \n- \"child_database\"  \n- \"child_page\"  \n- \"column\"  \n- \"column_list\"  \n- \"divider\"  \n- \"embed\"  \n- \"equation\"  \n- \"file\"  \n-  \"heading_1\"  \n- \"heading_2\"  \n- \"heading_3\"  \n- \"image\"  \n- \"link_preview\"  \n- \"link_to_page\"  \n-  \"numbered_list_item\"  \n- \"paragraph\"  \n- \"pdf\"  \n- \"quote\"  \n- \"synced_block\"  \n- \"table\"  \n- \"table_of_contents\"  \n- \"table_row\"  \n- \"template\"  \n- \"to_do\"  \n- \"toggle\"  \n- \"unsupported\"  \n- \"video\"",
+				Description:  "Type of block. Possible values are:  \n  \n- \"bookmark\"\n- \"breadcrumb\"\n- \"bulleted_list_item\"\n- \"callout\"\n- \"child_database\"\n- \"child_page\"\n- \"column\"\n- \"column_list\"\n- \"divider\"\n- \"embed\"\n- \"equation\"\n- \"file\"\n- \"heading_1\"\n- \"heading_2\"\n- \"heading_3\"\n- \"image\"\n- \"link_preview\"\n- \"link_to_page\"\n- \"numbered_list_item\"\n- \"paragraph\"\n- \"pdf\"\n- \"quote\"\n- \"synced_block\"\n- \"table\"\n- \"table_of_contents\"\n- \"table_row\"\n- \"template\"\n- \"to_do\"\n- \"toggle\"\n- \"unsupported\"\n- \"video\"",
 				ExampleValue: `"paragraph"`,
 			}, func(e parameterElement) {})
 			c.nextMustParameter(parameterElement{
@@ -111,6 +111,14 @@ func init() {
 				Property:     "archived",
 				Type:         "boolean",
 				Description:  "The archived status of the block.",
+				ExampleValue: "false",
+			}, func(e parameterElement) {
+				block.addFields(e.asField(jen.Bool()))
+			})
+			c.nextMustParameter(parameterElement{
+				Property:     "in_trash",
+				Type:         "boolean",
+				Description:  "Whether the block has been deleted. ",
 				ExampleValue: "false",
 			}, func(e parameterElement) {
 				block.addFields(e.asField(jen.Bool()))
@@ -232,7 +240,7 @@ func init() {
 				bulletedListItem.addFields(e.asField(jen.Index().Id("RichText")))
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -282,7 +290,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -380,7 +388,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Property:    "language",
-				Type:        "- \"abap\"  \n- \"arduino\"  \n- \"bash\"  \n- \"basic\"  \n- \"c\"  \n- \"clojure\"  \n- \"coffeescript\"  \n- \"c++\"  \n- \"c#\"  \n- \"css\"  \n- \"dart\"  \n- \"diff\"  \n- \"docker\"  \n- \"elixir\"  \n- \"elm\"  \n- \"erlang\"  \n- \"flow\"  \n- \"fortran\"  \n- \"f#\"  \n- \"gherkin\"  \n- \"glsl\"  \n- \"go\"  \n- \"graphql\"  \n- \"groovy\"  \n- \"haskell\"  \n- \"html\"  \n- \"java\"  \n- \"javascript\"  \n- \"json\"  \n- \"julia\"  \n- \"kotlin\"  \n- \"latex\"  \n- \"less\"  \n- \"lisp\"  \n- \"livescript\"  \n- \"lua\"  \n- \"makefile\"  \n- \"markdown\"  \n- \"markup\"  \n- \"matlab\"  \n- \"mermaid\"  \n- \"nix\"  \n- \"objective-c\"  \n- \"ocaml\"  \n- \"pascal\"  \n- \"perl\"  \n- \"php\"  \n- \"plain text\"  \n- \"powershell\"  \n- \"prolog\"  \n- \"protobuf\"  \n- \"python\"  \n- \"r\"  \n- \"reason\"  \n- \"ruby\"  \n- \"rust\"  \n- \"sass\"  \n- \"scala\"  \n- \"scheme\"  \n- \"scss\"  \n- \"shell\"  \n- \"sql\"  \n- \"swift\"  \n- \"typescript\"  \n- \"vb.net\"  \n- \"verilog\"  \n- \"vhdl\"  \n- \"visual basic\"  \n- \"webassembly\"  \n- \"xml\"  \n- \"yaml\"  \n- \"java/c/c++/c#\"",
+				Type:        "- \"abap\" - \"arduino\" - \"bash\" - \"basic\" - \"c\" - \"clojure\" - \"coffeescript\" - \"c++\" - \"c#\" - \"css\" - \"dart\" - \"diff\" - \"docker\" - \"elixir\" - \"elm\" - \"erlang\" - \"flow\" - \"fortran\" - \"f#\" - \"gherkin\" - \"glsl\" - \"go\" - \"graphql\" - \"groovy\" - \"haskell\" - \"html\" - \"java\" - \"javascript\" - \"json\" - \"julia\" - \"kotlin\" - \"latex\" - \"less\" - \"lisp\" - \"livescript\" - \"lua\" - \"makefile\" - \"markdown\" - \"markup\" - \"matlab\" - \"mermaid\" - \"nix\" - \"objective-c\" - \"ocaml\" - \"pascal\" - \"perl\" - \"php\" - \"plain text\" - \"powershell\" - \"prolog\" - \"protobuf\" - \"python\" - \"r\" - \"reason\" - \"ruby\" - \"rust\" - \"sass\" - \"scala\" - \"scheme\" - \"scss\" - \"shell\" - \"sql\" - \"swift\" - \"typescript\" - \"vb.net\" - \"verilog\" - \"vhdl\" - \"visual basic\" - \"webassembly\" - \"xml\" - \"yaml\" - \"java/c/c++/c#\"",
 				Description: "The language of the code contained in the code block.",
 			}, func(e parameterElement) {
 				code.addFields(e.asField(jen.String()))
@@ -478,6 +486,10 @@ func init() {
 				Kind: "Blockquote",
 				Text: "🚧 Differences in embed blocks between the Notion app and the APIThe Notion app uses a 3rd-party service, iFramely, to validate and request metadata for embeds given a URL. This works well in a web app because Notion can kick off an asynchronous request for URL information, which might take seconds or longer to complete, and then update the block with the metadata in the UI after receiving a response from iFramely.We chose not to call iFramely when creating embed blocks in the API because the API needs to be able to return faster than the UI, and because the response from iFramely could actually cause us to change the block type. This would result in a slow and potentially confusing experience as the block in the response would not match the block sent in the request.The result is that embed blocks created via the API may not look exactly like their counterparts created in the Notion app.",
 			}, func(e blockElement) {})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "👍Vimeo video links can be embedded in a Notion page via the public API using the embed block type.For example, the following object can be passed to the Append block children endpoint:For other video sources, see Supported video types.",
+			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) /* Equation */ {
 			var equation *concreteObject
@@ -533,9 +545,15 @@ func init() {
 				Property:     "file",
 				Type:         "file object",
 			}, func(e parameterElement) {})
+			c.nextMustParameter(parameterElement{
+				Description:  "The name of the file block, as shown in the Notion UI. Note that the UI may auto-append .pdf or other extensions.",
+				ExampleValue: "",
+				Property:     "name",
+				Type:         "string",
+			}, func(e parameterElement) {})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    }\n  }\n}\n",
+				Text: "{\n  //...other keys excluded\n  \"type\": \"file\",\n  //...other keys excluded\n  \"file\": {\n\t\t\"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://companywebsite.com/files/doc.txt\"\n    },\n    \"name\": \"doc.txt\"\n  }\n}\n",
 			}, func(e blockElement) {
 				// TODO
 			})
@@ -566,7 +584,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				heading.addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -711,7 +729,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -756,7 +774,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				paragraph.addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -846,7 +864,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -926,7 +944,7 @@ func init() {
 				Text: "Duplicate synced block objects contain the following information within the synced_from object:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The type of the synced from object.  \n  \nPossible values are:  \n- \"block_id\"",
+				Description:  "The type of the synced from object.  \n  \nPossible values are:  \n  \n- \"block_id\"",
 				ExampleValue: "",
 				Property:     "type",
 				Type:         "string (enum)",
@@ -1058,7 +1076,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -1150,7 +1168,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:    "color",
 				Type:        "string (enum)",
-				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 			}, func(e parameterElement) {
 				specificObject.addFields(e.asField(jen.String(), omitEmpty))
 			})
@@ -1188,7 +1206,7 @@ func init() {
 				// TODO
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"  \n- \"blue_background\"  \n- \"brown\"  \n-  \"brown_background\"  \n- \"default\"  \n- \"gray\"  \n- \"gray_background\"  \n- \"green\"  \n- \"green_background\"  \n- \"orange\"  \n- \"orange_background\"  \n- \"yellow\"  \n- \"green\"  \n- \"pink\"  \n- \"pink_background\"  \n- \"purple\"  \n- \"purple_background\"  \n- \"red\"  \n- \"red_background\"  \n- \"yellow_background\"",
+				Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 				ExampleValue: "",
 				Property:     "color",
 				Type:         "string (enum)",
@@ -1240,6 +1258,12 @@ func init() {
 			c.nextMustBlock(blockElement{
 				Kind: "List",
 				Text: ".amv.asf.avi.f4v.flv.gifv.mkv.mov.mpg.mpeg.mpv.mp4.m4v.qt.wmvYouTube video links that include embed or watch.E.g. https://www.youtube.com/watch?v=[id], https://www.youtube.com/embed/[id]",
+			}, func(e blockElement) {
+				// TODO
+			})
+			c.nextMustBlock(blockElement{
+				Kind: "Blockquote",
+				Text: "📘Vimeo video links are not currently supported by the video block type. However, they can be embedded in Notion pages using the embed block type. See Embed for more information.",
 			}, func(e blockElement) {
 				// TODO
 			})

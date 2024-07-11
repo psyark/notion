@@ -31,9 +31,9 @@ func (p UpdatePagePropertiesParams) Properties(properties map[string]PropertyVal
 	return p
 }
 
-// Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.
-func (p UpdatePagePropertiesParams) Archived(archived bool) UpdatePagePropertiesParams {
-	p["archived"] = archived
+// Set to true to delete a block. Set to false to restore a block.
+func (p UpdatePagePropertiesParams) InTrash(in_trash bool) UpdatePagePropertiesParams {
+	p["in_trash"] = in_trash
 	return p
 }
 

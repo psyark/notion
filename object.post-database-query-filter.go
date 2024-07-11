@@ -81,8 +81,8 @@ type FormulaFilter struct {
 
 // Multi-select
 type FilterMultiSelect struct {
-	Contains       string `json:"contains,omitempty"`         // The value to compare the multi-select property value against. Returns database entries where the multi-select value contains the provided string.
-	DoesNotContain string `json:"does_not_contain,omitempty"` // The value to the multi-select property value against. Returns database entries where the multi-select value does not contain the provided string.
+	Contains       string `json:"contains,omitempty"`         // The value to compare the multi-select property value against. Returns database entries where the multi-select value matches the provided string.
+	DoesNotContain string `json:"does_not_contain,omitempty"` // The value to compare the multi-select property value against. Returns database entries where the multi-select value does not match the provided string.
 	IsEmpty        bool   `json:"is_empty,omitempty"`         // Whether the multi-select property value is empty. Returns database entries where the multi-select value does not contain any data.
 	IsNotEmpty     bool   `json:"is_not_empty,omitempty"`     // Whether the multi-select property value is not empty. Returns database entries where the multi-select value does contains data.
 }
@@ -95,8 +95,8 @@ type FilterNumber struct {
 	GreaterThanOrEqualTo *float64 `json:"greater_than_or_equal_to,omitempty"` // The number to compare the number property value against. Returns database entries where the number property value is equal to or exceeds the provided number.
 	IsEmpty              bool     `json:"is_empty,omitempty"`                 // Whether the number property value is empty. Returns database entries where the number property value does not contain any data.
 	IsNotEmpty           bool     `json:"is_not_empty,omitempty"`             // Whether the number property value is not empty. Returns database entries where the number property value contains data.
-	LessThan             *float64 `json:"less_than,omitempty"`                // The number to compare the number property value against. Returns database entries where the page property value is less than the provided number.
-	LessThanOrEqualTo    *float64 `json:"less_than_or_equal_to,omitempty"`    // The number to compare the number property value against. Returns database entries where the page property value is equal to or is less than the provided number.
+	LessThan             *float64 `json:"less_than,omitempty"`                // The number to compare the number property value against. Returns database entries where the number property value is less than the provided number.
+	LessThanOrEqualTo    *float64 `json:"less_than_or_equal_to,omitempty"`    // The number to compare the number property value against. Returns database entries where the number property value is equal to or is less than the provided number.
 }
 
 /*

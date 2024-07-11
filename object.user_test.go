@@ -7,7 +7,7 @@ import "testing"
 
 func TestUser_unmarshal(t *testing.T) {
 	tests := []string{
-		"{\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",\n    \"name\": \"Test Integration\",\n    \"avatar_url\": null,\n    \"type\": \"bot\",\n    \"bot\": {\n        \"owner\": {\n        \"type\": \"workspace\",\n        \"workspace\": true\n        },\n \"workspace_name\": \"Ada Lovelace’s Notion\"\n    }\n}",
+		"{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 	}
 	for _, wantStr := range tests {
 		if err := checkUnmarshal[User](wantStr); err != nil {
@@ -18,7 +18,7 @@ func TestUser_unmarshal(t *testing.T) {
 
 func TestBotUserDataOwner_unmarshal(t *testing.T) {
 	tests := []string{
-		"{\n    \"type\": \"workspace\",\n    \"workspace\": true\n}",
+		"{     \"type\": \"workspace\",     \"workspace\": true }",
 	}
 	for _, wantStr := range tests {
 		if err := checkUnmarshal[BotUserDataOwner](wantStr); err != nil {

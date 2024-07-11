@@ -103,9 +103,10 @@ func init() {
 				typeCode: jen.Map(jen.String()).Id("PropertyValue"),
 			},
 			{
-				Desc:     "Whether the page is archived (deleted). Set to true to archive a page. Set to false to un-archive (restore) a page.",
+				Default:  "false",
+				Desc:     "Set to true to delete a block. Set to false to restore a block.",
 				In:       "body",
-				Name:     "archived",
+				Name:     "in_trash",
 				Type:     "boolean",
 				typeCode: jen.Bool(),
 			},

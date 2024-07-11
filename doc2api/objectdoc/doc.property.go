@@ -43,9 +43,17 @@ func init() {
 				getSymbol[adaptiveObject]("Property").addFields(e.asField(jen.String()))
 			})
 			c.nextMustParameter(parameterElement{
+				Property:     "description",
+				Type:         "string",
+				Description:  "The description of a property as it appear in Notion. ",
+				ExampleValue: "",
+			}, func(e parameterElement) {
+				getSymbol[adaptiveObject]("Property").addFields(e.asField(jen.Op("*").String(), omitEmpty))
+			})
+			c.nextMustParameter(parameterElement{
 				Property:     "type",
 				Type:         "string (enum)",
-				Description:  "The type that controls the behavior of the property. Possible values are:  \n  \n- \"checkbox\"  \n- \"created_by\"  \n- \"created_time\"  \n- \"date\"  \n- \"email\"  \n- \"files\"  \n- \"formula\"  \n- \"last_edited_by\"  \n- \"last_edited_time\"  \n- \"multi_select\"  \n- \"number\"  \n- \"people\"  \n- \"phone_number\"  \n- \"relation\"  \n- \"rich_text\"  \n- \"rollup\"  \n- \"select\"  \n- \"status\"  \n- \"title\"  \n- \"url\"",
+				Description:  "The type that controls the behavior of the property. Possible values are:  \n  \n\\- \"checkbox\"  \n- \"created_by\"  \n- \"created_time\"  \n- \"date\"  \n- \"email\"  \n- \"files\"  \n- \"formula\"  \n- \"last_edited_by\"  \n- \"last_edited_time\"  \n- \"multi_select\"  \n- \"number\"  \n- \"people\"  \n- \"phone_number\"  \n- \"relation\"  \n- \"rich_text\"  \n- \"rollup\"  \n- \"select\"  \n- \"status\"  \n- \"title\"  \n- \"url\"",
 				ExampleValue: `"rich_text"`,
 			}, func(e parameterElement) {})
 			c.nextMustBlock(blockElement{
@@ -201,7 +209,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The formula that is used to compute the values for this property.  \n  \nRefer to the Notion help center for information about formula syntax.",
-				ExampleValue: "\"prop(\\\"Price\\\") * 2\"",
+				ExampleValue: "{{notion:block_property:BtVS:00000000-0000-0000-0000-000000000000:8994905a-074a-415f-9bcf-d1f8b4fa38e4}}/2",
 				Property:     "expression",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -209,7 +217,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
-				Text: "\"Updated price\": {\n  \"id\": \"YU%7C%40\",\n  \"name\": \"Updated price\",\n  \"type\": \"formula\",\n  \"formula\": {\n    \"expression\": \"prop(\\\"Price\\\") * 2\"\n  }\n}\n",
+				Text: "\"Updated price\": {\n  \"id\": \"YU%7C%40\",\n  \"name\": \"Updated price\",\n  \"type\": \"formula\",\n  \"formula\": {\n    \"expression\": \"{{notion:block_property:BtVS:00000000-0000-0000-0000-000000000000:8994905a-074a-415f-9bcf-d1f8b4fa38e4}}/2\"\n  }\n}\n",
 			}, func(e blockElement) {
 				b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
 			})
@@ -274,20 +282,20 @@ func init() {
 				)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
-				ExampleValue: "\"blue\"",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n\\- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
+				ExampleValue: `"blue"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option, which does not change if the name is changed. An id is sometimes, but not always, a UUID.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in Notion.  \n  \nNote: Commas (\",\") are not valid for multi-select properties.",
-				ExampleValue: "\"Fruit\"",
+				ExampleValue: `"Fruit"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
@@ -314,7 +322,7 @@ func init() {
 			c.nextMustParameter(parameterElement{
 				Property:     "format",
 				Type:         "string (enum)",
-				Description:  "The way that the number is displayed in Notion. Potential values include:  \n  \n- argentine_peso  \n- baht  \n- canadian_dollar  \n- chilean_peso  \n- colombian_peso  \n- danish_krone  \n- dirham  \n- dollar  \n- euro  \n- forint  \n- franc  \n- hong_kong_dollar  \n- koruna  \n- krona  \n- leu  \n- lira  \n-  mexican_peso  \n- new_taiwan_dollar  \n- new_zealand_dollar  \n- norwegian_krone  \n- number  \n- number_with_commas  \n- percent  \n- philippine_peso  \n- pound  \n- peruvian_sol  \n- rand  \n- real  \n- ringgit  \n- riyal  \n- ruble  \n- rupee  \n- rupiah  \n- shekel  \n- singapore_dollar  \n- uruguayan_peso  \n- yen,  \n- yuan  \n- won  \n- zloty",
+				Description:  "The way that the number is displayed in Notion. Potential values include:  \n  \n\\- argentine_peso  \n- baht  \n- australian_dollar  \n- canadian_dollar  \n- chilean_peso  \n- colombian_peso  \n- danish_krone  \n- dirham  \n- dollar  \n- euro  \n- forint  \n- franc  \n- hong_kong_dollar  \n- koruna  \n- krona  \n- leu  \n- lira  \n-  mexican_peso  \n- new_taiwan_dollar  \n- new_zealand_dollar  \n- norwegian_krone  \n- number  \n- number_with_commas  \n- percent  \n- philippine_peso  \n- pound  \n- peruvian_sol  \n- rand  \n- real  \n- ringgit  \n- riyal  \n- ruble  \n- rupee  \n- rupiah  \n- shekel  \n- singapore_dollar  \n- uruguayan_peso  \n- yen,  \n- yuan  \n- won  \n- zloty",
 				ExampleValue: `"percent"`,
 			}, func(e parameterElement) {
 				getSymbol[concreteObject]("PropertyNumber").addFields(e.asField(jen.String()))
@@ -392,7 +400,7 @@ func init() {
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
 				Description:  "The database that the relation property refers to.  \n  \nThe corresponding linked page values must belong to the database in order to be valid.",
-				ExampleValue: "\"668d797c-76fa-4934-9b05-ad288df2d136\"",
+				ExampleValue: `"668d797c-76fa-4934-9b05-ad288df2d136"`,
 				Property:     "database_id",
 				Type:         "string (UUID)",
 			}, func(e parameterElement) {
@@ -400,7 +408,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the corresponding property that is updated in the related database when this property is changed.",
-				ExampleValue: "\"fy:{\"",
+				ExampleValue: `"fy:{"`,
 				Property:     "synced_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -408,7 +416,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the corresponding property that is updated in the related database when this property is changed.",
-				ExampleValue: "\"Ingredients\"",
+				ExampleValue: `"Ingredients"`,
 				Property:     "synced_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -424,7 +432,7 @@ func init() {
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "Blockquote",
-				Text: "📘 To update a database relation property via the API, share the related parent database with the integration.",
+				Text: "📘 Database relations must be shared with your integrationTo retrieve properties from database relations, the related database must be shared with your integration in addition to the database being retrieved. If the related database is not shared, properties based on relations will not be included in the API response.Similarly, to update a database relation property via the API, share the related database with the integration.",
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) { // Rich text
@@ -463,8 +471,8 @@ func init() {
 				Text: "The rollup type object contains the following fields:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The function that computes the rollup value from the related pages.  \n  \nPossible values include:  \n  \n- average  \n- checked  \n- count_per_group  \n- count  \n- count_values  \n- date_range  \n- earliest_date  \n- empty  \n- latest_date  \n- max  \n- median  \n- min  \n- not_empty  \n- percent_checked  \n- percent_empty  \n- percent_not_empty  \n- percent_per_group  \n- percent_unchecked  \n- range  \n- unchecked  \n- unique  \n- show_original  \n- show_unique  \n- sum",
-				ExampleValue: "\"sum\"",
+				Description:  "The function that computes the rollup value from the related pages.  \n  \nPossible values include:  \n  \n\\- average  \n- checked  \n- count_per_group  \n- count  \n- count_values  \n- date_range  \n- earliest_date  \n- empty  \n- latest_date  \n- max  \n- median  \n- min  \n- not_empty  \n- percent_checked  \n- percent_empty  \n- percent_not_empty  \n- percent_per_group  \n- percent_unchecked  \n- range  \n- unchecked  \n- unique  \n- show_original  \n- show_unique  \n- sum",
+				ExampleValue: `"sum"`,
 				Property:     "function",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
@@ -472,7 +480,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the related database property that is rolled up.",
-				ExampleValue: "\"fy:{\"",
+				ExampleValue: `"fy:{"`,
 				Property:     "relation_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -480,7 +488,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the related database property that is rolled up.",
-				ExampleValue: "Tasks\"",
+				ExampleValue: `Tasks"`,
 				Property:     "relation_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -488,7 +496,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The id of the rollup property.",
-				ExampleValue: "\"fy:{\"",
+				ExampleValue: `"fy:{"`,
 				Property:     "rollup_property_id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -496,7 +504,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the rollup property.",
-				ExampleValue: "\"Days to complete\"",
+				ExampleValue: `"Days to complete"`,
 				Property:     "rollup_property_name",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -532,10 +540,11 @@ func init() {
 				// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
 				// 以下の共通の構造体を使います
 				b.addConcreteObject("Option", e.Text)
+				// TODO Optionにdescriptionが入る場合と入らない場合があるので切り分ける
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
-				ExampleValue: "- \"red\"",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n\\- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
+				ExampleValue: `\- "red"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
@@ -543,7 +552,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -551,7 +560,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for select values.",
-				ExampleValue: "\"Fruit\"",
+				ExampleValue: `"Fruit"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -585,20 +594,20 @@ func init() {
 				Text: "The options array is a sorted list of list of the available status options for the property. Each option object in the array has the following fields:",
 			}, func(e blockElement) {})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
-				ExampleValue: "\"green\"",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n\\- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
+				ExampleValue: `"green"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for status values.",
-				ExampleValue: "\"In progress\"",
+				ExampleValue: `"In progress"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {}) // Optionで共通化
@@ -609,8 +618,8 @@ func init() {
 				b.addConcreteObject("StatusGroup", e.Text)
 			})
 			c.nextMustParameter(parameterElement{
-				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
-				ExampleValue: "\"purple\"",
+				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n\\- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
+				ExampleValue: `"purple"`,
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
@@ -618,7 +627,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.",
-				ExampleValue: "\"ff8e9269-9579-47f7-8f6e-83a84716863c\"",
+				ExampleValue: `"ff8e9269-9579-47f7-8f6e-83a84716863c"`,
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
@@ -626,7 +635,7 @@ func init() {
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for status values.",
-				ExampleValue: "\"To do\"",
+				ExampleValue: `"To do"`,
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
