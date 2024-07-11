@@ -165,6 +165,7 @@ var registeredConverters []converter
 
 // registerConverter は後で実行するためにconverterを登録します
 func registerConverter(c converter) {
+	fmt.Println("registerConverterは非推奨です")
 	registeredConverters = append(registeredConverters, c)
 }
 
