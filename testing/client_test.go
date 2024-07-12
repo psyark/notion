@@ -1,4 +1,4 @@
-package notion
+package testing
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	. "github.com/psyark/notion"
 )
 
 var cli *Client
@@ -38,7 +39,7 @@ func TestCreatePage(t *testing.T) {
 	params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "test"}}}}})
 	params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
 
-	_, err := cli.CreatePage(ctx, params, requestId(t.Name()), useCacheDeprecated(), validateResult())
+	_, err := cli.CreatePage(ctx, params, RequestId(t.Name()), WithRoundTripper(useCache(t.Name())), ValidateResult())
 	if err != nil {
 		t.Error(err)
 	}
@@ -46,14 +47,14 @@ func TestCreatePage(t *testing.T) {
 
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, requestId("RetrievePage"), useCacheDeprecated(), validateResult()); err != nil {
+	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, RequestId("RetrievePage"), WithRoundTripper(useCache(t.Name())), ValidateResult()); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestRetrievePagePropertyItem(t *testing.T) {
 	ctx := context.Background()
-	if db, err := cli.RetrieveDatabase(ctx, DATABASE, requestId("RetrieveDatabase"), useCacheDeprecated(), validateResult()); err != nil {
+	if db, err := cli.RetrieveDatabase(ctx, DATABASE, RequestId("RetrieveDatabase"), WithRoundTripper(useCache(t.Name())), ValidateResult()); err != nil {
 		t.Fatal(err)
 	} else {
 		for name, prop := range db.Properties {
@@ -61,7 +62,7 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 			for i, pageId := range []uuid.UUID{DATABASE_PAGE_FOR_READ1, DATABASE_PAGE_FOR_READ2} {
 				testName := fmt.Sprintf("%s_%d", name, i+1)
 				t.Run(testName, func(t *testing.T) {
-					if _, err := cli.RetrievePagePropertyItem(ctx, pageId, prop.Id, requestId("RetrievePagePropertyItem_"+testName), useCacheDeprecated(), validateResult()); err != nil {
+					if _, err := cli.RetrievePagePropertyItem(ctx, pageId, prop.Id, RequestId("RetrievePagePropertyItem_"+testName), WithRoundTripper(useCache(t.Name())), ValidateResult()); err != nil {
 						t.Fatal(err)
 					}
 				})
@@ -97,7 +98,7 @@ func TestUpdatePage(t *testing.T) {
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
 			params := UpdatePagePropertiesParams{}
 			config(params)
-			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, requestId(t.Name()), useCacheDeprecated(), validateResult()); err != nil {
+			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, RequestId(t.Name()), WithRoundTripper(useCache(t.Name())), ValidateResult()); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
 				t.Fatal(err)
@@ -120,7 +121,7 @@ func TestQueryDatabase(t *testing.T) {
 		filter := filter
 		t.Run(fmt.Sprintf("%s_%d", filter.Property, i), func(t *testing.T) {
 			params.Filter(filter)
-			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, requestId(t.Name()), useCacheDeprecated(), validateResult()); err != nil {
+			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, RequestId(t.Name()), WithRoundTripper(useCache(t.Name())), ValidateResult()); err != nil {
 				t.Fatal(err)
 			} else {
 				fmt.Println(len(pagi.Results))
@@ -133,7 +134,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 	t.Skip()
 
 	ctx := context.Background()
-	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, requestId(t.Name()), validateResult()); err != nil {
+	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, RequestId(t.Name()), ValidateResult()); err != nil {
 		t.Fatal(err)
 	} else {
 		blocks, err := pagi.Blocks()
@@ -144,7 +145,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 		for _, block := range blocks {
 			block := block
 			t.Run(block.Id.String(), func(t *testing.T) {
-				if _, err := cli.DeleteBlock(ctx, block.Id, requestId(t.Name()), validateResult()); err != nil {
+				if _, err := cli.DeleteBlock(ctx, block.Id, RequestId(t.Name()), ValidateResult()); err != nil {
 					t.Fatal(err)
 				}
 			})
@@ -171,7 +172,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 				},
 			}},
 		})
-		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, requestId(t.Name()), validateResult()); err != nil {
+		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, RequestId(t.Name()), ValidateResult()); err != nil {
 			t.Fatal(err)
 		}
 	})

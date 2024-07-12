@@ -3,3 +3,5 @@ go 1.22
 use .
 
 use ./doc2api
+
+use ./testing

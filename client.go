@@ -1,14 +1,12 @@
 package notion
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/httputil"
 	"os"
 
 	"github.com/flytam/filenamify"
@@ -28,26 +26,18 @@ type callOptions struct {
 	roundTripper http.RoundTripper
 
 	requestId      string
-	useCache       bool
 	validateResult bool
 }
 
 type callOption func(*callOptions)
 
-func requestId(requestId string) callOption {
+func RequestId(requestId string) callOption {
 	return func(co *callOptions) {
 		co.requestId = requestId
 	}
 }
 
-func useCacheDeprecated() callOption {
-	fmt.Println("useCacheDeprecated")
-	return func(co *callOptions) {
-		co.useCache = true
-	}
-}
-
-func validateResult() callOption {
+func ValidateResult() callOption {
 	return func(co *callOptions) {
 		co.validateResult = true
 	}
@@ -64,14 +54,13 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	var unmarshaller U
 	var zero R
 
-	co := &callOptions{}
+	co := &callOptions{
+		roundTripper: http.DefaultTransport,
+	}
 	for _, o := range options {
 		o(co)
 	}
 
-	if co.useCache && co.requestId == "" {
-		return zero, fmt.Errorf("useCache requires requestId")
-	}
 	if co.validateResult && co.requestId == "" {
 		return zero, fmt.Errorf("validateResult requires requestId")
 	}
@@ -94,8 +83,6 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 		req.Header.Add("Content-Type", "application/json")
 	}
 
-	var res *http.Response
-
 	var fileName string
 	if co.requestId != "" {
 		fileName, err = filenamify.FilenamifyV2(co.requestId)
@@ -104,41 +91,12 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 		}
 	}
 
-	if co.useCache {
-		if cache, err := os.Open(fmt.Sprintf("testdata/cache/%s", fileName)); err == nil {
-			defer func() {
-				_ = cache.Close()
-			}()
-
-			res, err = http.ReadResponse(bufio.NewReader(cache), req)
-			if err != nil {
-				return zero, err
-			}
-
-			defer func() {
-				_ = res.Body.Close()
-			}()
-		}
+	res, err := co.roundTripper.RoundTrip(req)
+	if err != nil {
+		return zero, err
 	}
 
-	if res == nil {
-		res, err = http.DefaultClient.Do(req)
-		if err != nil {
-			return zero, err
-		}
-
-		defer func() {
-			_ = res.Body.Close()
-		}()
-
-		if co.useCache {
-			if dump, err := httputil.DumpResponse(res, true); err != nil {
-				return zero, err
-			} else if err := os.WriteFile(fmt.Sprintf("testdata/cache/%s", fileName), dump, 0666); err != nil {
-				return zero, err
-			}
-		}
-	}
+	defer res.Body.Close()
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
