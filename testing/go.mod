@@ -10,6 +10,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/psyark/notion v0.0.0-00010101000000-000000000000
 	github.com/samber/lo v1.44.0
+	github.com/wI2L/jsondiff v0.6.0
 )
 
 require (
@@ -19,6 +20,5 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
-	github.com/wI2L/jsondiff v0.6.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 )
