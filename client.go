@@ -25,10 +25,7 @@ type Client struct {
 }
 
 type callOptions struct {
-	accessToken string
-	path        string
-	method      string
-	params      map[string]any
+	roundTripper http.RoundTripper
 
 	requestId      string
 	useCache       bool
@@ -43,7 +40,8 @@ func requestId(requestId string) callOption {
 	}
 }
 
-func useCache() callOption {
+func useCacheDeprecated() callOption {
+	fmt.Println("useCacheDeprecated")
 	return func(co *callOptions) {
 		co.useCache = true
 	}
@@ -55,32 +53,43 @@ func validateResult() callOption {
 	}
 }
 
+func WithRoundTripper(roundTripper http.RoundTripper) callOption {
+	return func(co *callOptions) {
+		co.roundTripper = roundTripper
+	}
+}
+
 // Deprecated: use request
-func call[U any, R any](ctx context.Context, options *callOptions, getResult func(unmarshaller *U) R) (R, error) {
+func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, getResult func(unmarshaller *U) R, options ...callOption) (R, error) {
 	var unmarshaller U
 	var zero R
 
-	if options.useCache && options.requestId == "" {
+	co := &callOptions{}
+	for _, o := range options {
+		o(co)
+	}
+
+	if co.useCache && co.requestId == "" {
 		return zero, fmt.Errorf("useCache requires requestId")
 	}
-	if options.validateResult && options.requestId == "" {
+	if co.validateResult && co.requestId == "" {
 		return zero, fmt.Errorf("validateResult requires requestId")
 	}
 
-	payload, err := json.Marshal(options.params)
+	payload, err := json.Marshal(params)
 	if err != nil {
 		return zero, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, options.method, "https://api.notion.com"+options.path, bytes.NewBuffer(payload))
+	req, err := http.NewRequestWithContext(ctx, method, "https://api.notion.com"+path, bytes.NewBuffer(payload))
 	if err != nil {
 		return zero, err
 	}
 
-	req.Header.Add("Authorization", "Bearer "+options.accessToken)
+	req.Header.Add("Authorization", "Bearer "+accessToken)
 	req.Header.Add("Notion-Version", APIVersion)
 
-	switch options.method {
+	switch method {
 	case http.MethodPost, http.MethodPatch:
 		req.Header.Add("Content-Type", "application/json")
 	}
@@ -88,14 +97,14 @@ func call[U any, R any](ctx context.Context, options *callOptions, getResult fun
 	var res *http.Response
 
 	var fileName string
-	if options.requestId != "" {
-		fileName, err = filenamify.FilenamifyV2(options.requestId)
+	if co.requestId != "" {
+		fileName, err = filenamify.FilenamifyV2(co.requestId)
 		if err != nil {
 			return zero, err
 		}
 	}
 
-	if options.useCache {
+	if co.useCache {
 		if cache, err := os.Open(fmt.Sprintf("testdata/cache/%s", fileName)); err == nil {
 			defer func() {
 				_ = cache.Close()
@@ -122,7 +131,7 @@ func call[U any, R any](ctx context.Context, options *callOptions, getResult fun
 			_ = res.Body.Close()
 		}()
 
-		if options.useCache {
+		if co.useCache {
 			if dump, err := httputil.DumpResponse(res, true); err != nil {
 				return zero, err
 			} else if err := os.WriteFile(fmt.Sprintf("testdata/cache/%s", fileName), dump, 0666); err != nil {
@@ -146,7 +155,7 @@ func call[U any, R any](ctx context.Context, options *callOptions, getResult fun
 	}
 
 	if err := json.Unmarshal(resBody, &unmarshaller); err != nil {
-		if options.validateResult {
+		if co.validateResult {
 			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
 			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
 			want := normalizeJSON(resBody)
@@ -158,7 +167,7 @@ func call[U any, R any](ctx context.Context, options *callOptions, getResult fun
 	}
 
 	// TODO ここにファイルシステムのパスを含む処理を書かず、オプションとして渡すようにする
-	if options.validateResult {
+	if co.validateResult {
 		got, err := json.Marshal(unmarshaller)
 		if err != nil {
 			return zero, err
@@ -178,7 +187,7 @@ func call[U any, R any](ctx context.Context, options *callOptions, getResult fun
 			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.got.json", fileName), got, 0666); err != nil {
 				return zero, err
 			}
-			return zero, fmt.Errorf("validation failed: %s", options.requestId)
+			return zero, fmt.Errorf("validation failed: %s", co.requestId)
 		}
 	}
 

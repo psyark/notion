@@ -34,7 +34,7 @@ type TheDatabase struct {
 
 func Example_binding() {
 	ctx := context.Background()
-	db, err := cli.RetrieveDatabase(ctx, DATABASE, requestId("ExampleBinding"), useCache())
+	db, err := cli.RetrieveDatabase(ctx, DATABASE, requestId("ExampleBinding"), useCacheDeprecated())
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +42,7 @@ func Example_binding() {
 	ts := ToTaggedStruct(db)
 	fmt.Println(ts)
 
-	pagi, err := cli.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, requestId("ExampleBinding_Query"), useCache())
+	pagi, err := cli.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, requestId("ExampleBinding_Query"), useCacheDeprecated())
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +61,7 @@ func Example_binding() {
 	}
 
 	{
-		page, err := cli.RetrievePage(ctx, DATABASE_PAGE_FOR_READ1, requestId("ExampleBinding_Page"), useCache())
+		page, err := cli.RetrievePage(ctx, DATABASE_PAGE_FOR_READ1, requestId("ExampleBinding_Page"), useCacheDeprecated())
 		if err != nil {
 			panic(err)
 		}

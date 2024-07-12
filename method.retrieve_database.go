@@ -12,16 +12,15 @@ import (
 // Retrieve a database
 // https://developers.notion.com/reference/retrieve-a-database
 func (c *Client) RetrieveDatabase(ctx context.Context, database_id uuid.UUID, options ...callOption) (*Database, error) {
-	co := &callOptions{
-		accessToken: c.accessToken,
-		method:      http.MethodGet,
-		params:      nil,
-		path:        fmt.Sprintf("/v1/databases/%v", database_id),
-	}
-	for _, o := range options {
-		o(co)
-	}
-	return call(ctx, co, func(u *Database) *Database {
-		return u
-	})
+	return call(
+		ctx,
+		c.accessToken,
+		http.MethodGet,
+		fmt.Sprintf("/v1/databases/%v", database_id),
+		nil,
+		func(u *Database) *Database {
+			return u
+		},
+		options...,
+	)
 }

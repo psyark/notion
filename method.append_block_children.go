@@ -12,18 +12,17 @@ import (
 // Append block children
 // https://developers.notion.com/reference/patch-block-children
 func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, params AppendBlockChildrenParams, options ...callOption) (*Pagination, error) {
-	co := &callOptions{
-		accessToken: c.accessToken,
-		method:      http.MethodPatch,
-		params:      params,
-		path:        fmt.Sprintf("/v1/blocks/%v/children", block_id),
-	}
-	for _, o := range options {
-		o(co)
-	}
-	return call(ctx, co, func(u *Pagination) *Pagination {
-		return u
-	})
+	return call(
+		ctx,
+		c.accessToken,
+		http.MethodPatch,
+		fmt.Sprintf("/v1/blocks/%v/children", block_id),
+		params,
+		func(u *Pagination) *Pagination {
+			return u
+		},
+		options...,
+	)
 }
 
 type AppendBlockChildrenParams map[string]any

@@ -109,19 +109,15 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	methodParams = append(methodParams, jen.Id("options").Op("...").Id("callOption"))
 
 	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.returnType(), jen.Error()).Block(
-		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
-			jen.Id("accessToken"): jen.Id("c").Dot("accessToken"),
-			jen.Id("method"):      jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
-			jen.Id("path"):        c.pathCode(doc),
-			jen.Id("params"):      params,
-		}),
-		jen.For(jen.List(jen.Id("_"), jen.Id("o")).Op(":=").Range().Id("options")).Block(
-			jen.Id("o").Call(jen.Id("co")),
-		),
 		jen.Return().Id("call").Call(
-			jen.Id("ctx"),
-			jen.Id("co"),
-			jen.Func().Params(jen.Id("u").Op("*").Add(c.returnType.unmarshaller())).Add(c.returnType.returnType()).Block(jen.Return().Add(c.returnType.returnValue("u"))),
+			jen.Line().Id("ctx"),
+			jen.Line().Id("c").Dot("accessToken"),
+			jen.Line().Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
+			jen.Line().Add(c.pathCode(doc)),
+			jen.Line().Add(params),
+			jen.Line().Func().Params(jen.Id("u").Op("*").Add(c.returnType.unmarshaller())).Add(c.returnType.returnType()).Block(jen.Return().Add(c.returnType.returnValue("u"))),
+			jen.Line().Id("options").Op("..."),
+			jen.Line(),
 		),
 	).Line()
 
