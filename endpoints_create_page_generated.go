@@ -9,14 +9,14 @@ import (
 
 // Create a page
 // https://developers.notion.com/reference/post-page
-func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*PageWithPublicURL, error) {
+func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*Page, error) {
 	return call(
 		ctx,
 		c.accessToken,
 		http.MethodPost,
 		"/v1/pages",
 		params,
-		func(u *PageWithPublicURL) *PageWithPublicURL {
+		func(u *Page) *Page {
 			return u
 		},
 		options...,
