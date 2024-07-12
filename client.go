@@ -7,9 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-
-	"github.com/flytam/filenamify"
 )
 
 const APIVersion = "2022-06-28"
@@ -24,28 +21,20 @@ type Client struct {
 
 type callOptions struct {
 	roundTripper http.RoundTripper
-
-	requestId      string
-	validateResult bool
+	validator    func(data []byte, unmarshaller any) error
 }
 
 type callOption func(*callOptions)
 
-func RequestId(requestId string) callOption {
-	return func(co *callOptions) {
-		co.requestId = requestId
-	}
-}
-
-func ValidateResult() callOption {
-	return func(co *callOptions) {
-		co.validateResult = true
-	}
-}
-
 func WithRoundTripper(roundTripper http.RoundTripper) callOption {
 	return func(co *callOptions) {
 		co.roundTripper = roundTripper
+	}
+}
+
+func WithValidator(validator func(data []byte, unmarshaller any) error) callOption {
+	return func(co *callOptions) {
+		co.validator = validator
 	}
 }
 
@@ -54,15 +43,9 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	var unmarshaller U
 	var zero R
 
-	co := &callOptions{
-		roundTripper: http.DefaultTransport,
-	}
+	co := &callOptions{roundTripper: http.DefaultTransport}
 	for _, o := range options {
 		o(co)
-	}
-
-	if co.validateResult && co.requestId == "" {
-		return zero, fmt.Errorf("validateResult requires requestId")
 	}
 
 	payload, err := json.Marshal(params)
@@ -81,14 +64,6 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	switch method {
 	case http.MethodPost, http.MethodPatch:
 		req.Header.Add("Content-Type", "application/json")
-	}
-
-	var fileName string
-	if co.requestId != "" {
-		fileName, err = filenamify.FilenamifyV2(co.requestId)
-		if err != nil {
-			return zero, err
-		}
 	}
 
 	res, err := co.roundTripper.RoundTrip(req)
@@ -113,39 +88,20 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	}
 
 	if err := json.Unmarshal(resBody, &unmarshaller); err != nil {
-		if co.validateResult {
-			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
-			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
-			want := normalizeJSON(resBody)
-			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
-				return zero, err
-			}
-		}
+		// if co.validateResult {
+		// 	_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
+		// 	_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
+		// 	want := normalizeJSON(resBody)
+		// 	if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
+		// 		return zero, err
+		// 	}
+		// }
 		return zero, err
 	}
 
-	// TODO ここにファイルシステムのパスを含む処理を書かず、オプションとして渡すようにする
-	if co.validateResult {
-		got, err := json.Marshal(unmarshaller)
-		if err != nil {
+	if co.validator != nil {
+		if err := co.validator(resBody, unmarshaller); err != nil {
 			return zero, err
-		}
-
-		if want, got, ok := compareJSON(resBody, got); ok {
-			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.want.json", fileName))
-			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
-			if err := os.WriteFile(fmt.Sprintf("testdata/pass/%s.json", fileName), want, 0666); err != nil {
-				return zero, err
-			}
-		} else {
-			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
-			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
-				return zero, err
-			}
-			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.got.json", fileName), got, 0666); err != nil {
-				return zero, err
-			}
-			return zero, fmt.Errorf("validation failed: %s", co.requestId)
 		}
 	}
 

@@ -15,8 +15,9 @@ type cache struct {
 	filePath string
 }
 
-func useCache(requestId string) *cache {
-	fileName := lo.Must(filenamify.FilenamifyV2(requestId))
+// TODO 引数を *testing.T にする
+func useCache(requestID string) *cache {
+	fileName := lo.Must(filenamify.FilenamifyV2(requestID))
 	return &cache{filePath: fmt.Sprintf("testdata/cache/%s", fileName)}
 }
 
