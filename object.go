@@ -112,7 +112,7 @@ func checkUnmarshal[T any](wantStr string) error {
 		return err
 	}
 	if diff != nil {
-		return fmt.Errorf("mismatch: %s", diff.String())
+		return fmt.Errorf("mismatch:\n%s", diff.String())
 	}
 
 	return nil

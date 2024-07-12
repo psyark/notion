@@ -1,7 +1,6 @@
 package objectdoc
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -34,6 +33,11 @@ type translator struct {
 	scopes []translationScope
 }
 
+// Notion API Reference のうち、Objects のページはMarkdownで書かれています。
+// https://developers.notion.com/reference/block
+// この関数は、そのMarkdown構造を取り出してcomparatorに格納し、
+// translator.scopesを順に実行することで、リファレンスに更新がないか確認したうえで
+// コードを出力しようとします。
 func (t *translator) fetchAndBuild() error {
 	// URLの取得
 	res, err := http.Get(t.url)
@@ -70,7 +74,7 @@ func (t *translator) fetchAndBuild() error {
 		goldmark.WithParserOptions(parser.WithBlockParsers(util.Prioritized(&specialBlockParser{}, 0))),
 		goldmark.WithRenderer(ren),
 	)
-	if err := md.Convert([]byte(ssrProps.Doc.Body), bytes.NewBuffer(nil)); err != nil {
+	if err := md.Convert([]byte(ssrProps.Doc.Body), io.Discard); err != nil {
 		return errors.Wrap(err, "markdown")
 	}
 
