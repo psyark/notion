@@ -23,7 +23,7 @@ import (
 
 var global = &builder{
 	globalSymbols: &sync.Map{},
-	fileName:      "../../object.global.go",
+	fileName:      "../../objects_global_generated.go",
 }
 
 var registeredTranslators []*translator
