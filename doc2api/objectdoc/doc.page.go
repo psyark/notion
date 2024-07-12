@@ -161,7 +161,9 @@ func init() {
 				page.addFields(e.asField(jen.Op("*").String()))
 			})
 
-			page.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
+		},
+		func(c *comparator, b *builder) {
+			page.addFields(undocumentedRequestID)
 		},
 	)
 }

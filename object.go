@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
+	"github.com/wI2L/jsondiff"
 )
 
 type PropertyMap map[string]Property // for test
@@ -105,8 +106,14 @@ func checkUnmarshal[T any](wantStr string) error {
 		return fmt.Errorf("%w : %s", err, wantStr)
 	}
 	got, _ := json.Marshal(&target)
-	if want, got, ok := compareJSON(want, got); !ok {
-		return fmt.Errorf("mismatch:\nwant: %s\ngot : %s", want, got)
+
+	diff, err := jsondiff.CompareJSON(want, got)
+	if err != nil {
+		return err
 	}
+	if diff != nil {
+		return fmt.Errorf("mismatch: %s", diff.String())
+	}
+
 	return nil
 }

@@ -9,29 +9,29 @@ import "encoding/json"
 // A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item
 type PropertyItem struct {
 	Type           string             `json:"type"`
-	Object         alwaysPropertyItem `json:"object"`           // Always "property_item".
-	Id             string             `json:"id"`               // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string. The id may be used in place of name when creating or updating pages.
-	Title          RichText           `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
-	RichText       RichText           `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
-	Number         *float64           `json:"number"`           // Number property value objects contain a number within the number property.
-	Select         *Option            `json:"select"`           // Select property value objects contain the following data within the select property:
-	Status         *Option            `json:"status"`           // undocumented
-	MultiSelect    []Option           `json:"multi_select"`     // Multi-select property value objects contain an array of multi-select option values within the multi_select property.
-	Date           *PropertyItemDate  `json:"date"`             // Date property values
-	Formula        *Formula           `json:"formula"`          // Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
-	Relation       *PageReference     `json:"relation"`         // Relation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.
-	Rollup         *Rollup            `json:"rollup"`           // Rollup property values
-	People         User               `json:"people"`           // People property value objects contain an array of user objects within the people property.
-	Files          []File             `json:"files"`            // File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
-	Checkbox       bool               `json:"checkbox"`         // Checkbox property value objects contain a boolean within the checkbox property.
-	Url            *string            `json:"url"`              // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
-	Email          *string            `json:"email"`            // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
-	PhoneNumber    *string            `json:"phone_number"`     // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
-	CreatedTime    ISO8601String      `json:"created_time"`     // Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
-	CreatedBy      *User              `json:"created_by"`       // Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.
-	LastEditedTime ISO8601String      `json:"last_edited_time"` // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
-	LastEditedBy   *User              `json:"last_edited_by"`   // Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.
-	RequestId      string             `json:"request_id"`       // undocumented
+	Object         alwaysPropertyItem `json:"object"`               // Always "property_item".
+	Id             string             `json:"id"`                   // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string. The id may be used in place of name when creating or updating pages.
+	Title          RichText           `json:"title"`                // Title property value objects contain an array of rich text objects within the title property.
+	RichText       RichText           `json:"rich_text"`            // Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	Number         *float64           `json:"number"`               // Number property value objects contain a number within the number property.
+	Select         *Option            `json:"select"`               // Select property value objects contain the following data within the select property:
+	Status         *Option            `json:"status"`               // undocumented
+	MultiSelect    []Option           `json:"multi_select"`         // Multi-select property value objects contain an array of multi-select option values within the multi_select property.
+	Date           *PropertyItemDate  `json:"date"`                 // Date property values
+	Formula        *Formula           `json:"formula"`              // Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.
+	Relation       *PageReference     `json:"relation"`             // Relation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.
+	Rollup         *Rollup            `json:"rollup"`               // Rollup property values
+	People         User               `json:"people"`               // People property value objects contain an array of user objects within the people property.
+	Files          []File             `json:"files"`                // File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. "Whole_Earth_Catalog.jpg").
+	Checkbox       bool               `json:"checkbox"`             // Checkbox property value objects contain a boolean within the checkbox property.
+	Url            *string            `json:"url"`                  // URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. "http://worrydream.com/EarlyHistoryOfSmalltalk/").
+	Email          *string            `json:"email"`                // Email property value objects contain a string within the email property. The string describes an email address (i.e. "hello@example.org").
+	PhoneNumber    *string            `json:"phone_number"`         // Phone number property value objects contain a string within the phone_number property. No structure is enforced.
+	CreatedTime    ISO8601String      `json:"created_time"`         // Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
+	CreatedBy      *User              `json:"created_by"`           // Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.
+	LastEditedTime ISO8601String      `json:"last_edited_time"`     // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z").
+	LastEditedBy   *User              `json:"last_edited_by"`       // Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.
+	RequestId      string             `json:"request_id,omitempty"` // UNDOCUMENTED
 }
 
 func (o PropertyItem) isPropertyItemOrPropertyItemPagination() {}

@@ -171,7 +171,7 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) {
-			database.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
+			database.addFields(undocumentedRequestID)
 		},
 	)
 }

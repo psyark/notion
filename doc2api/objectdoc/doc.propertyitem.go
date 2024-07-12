@@ -656,7 +656,7 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) {
-			propertyItem.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
+			propertyItem.addFields(undocumentedRequestID)
 		},
 	)
 }

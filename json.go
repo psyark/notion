@@ -1,7 +1,6 @@
 package notion
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -41,18 +40,4 @@ func getObject(msg json.RawMessage) string {
 		panic(fmt.Errorf("%w: %v", err, string(msg)))
 	}
 	return t.Object
-}
-
-func normalizeJSON(src []byte) []byte {
-	tmp := map[string]any{}
-	json.Unmarshal(src, &tmp)
-	out, _ := json.MarshalIndent(tmp, "", "  ")
-	return out
-}
-
-func compareJSON(data1 []byte, data2 []byte) (data1N []byte, data2N []byte, ok bool) {
-	data1N = normalizeJSON(data1)
-	data2N = normalizeJSON(data2)
-	ok = bytes.Equal(data1N, data2N)
-	return
 }

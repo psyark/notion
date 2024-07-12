@@ -213,7 +213,7 @@ func init() {
 			}, func(e blockElement) {})
 		},
 		func(c *comparator, b *builder) {
-			pagination.addFields(&field{name: "request_id", typeCode: jen.String(), comment: "undocumented"})
+			pagination.addFields(undocumentedRequestID)
 		},
 	)
 }
