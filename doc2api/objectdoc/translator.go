@@ -76,7 +76,7 @@ func (t *translator) fetchAndBuild() error {
 
 	// スコープ実行
 	c := &comparator{elements: ren.elements}
-	fileName := "object." + strings.TrimPrefix(t.url, "https://developers.notion.com/reference/") + ".go"
+	fileName := "objects_" + strings.TrimPrefix(t.url, "https://developers.notion.com/reference/") + "_generated.go"
 	t.b = &builder{
 		global:        global,
 		globalSymbols: global.globalSymbols,
