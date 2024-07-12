@@ -278,7 +278,7 @@ func init() {
 				Text: "The multi_select type object includes an array of options objects. Each option object details settings for the option, indicating the following fields:",
 			}, func(e blockElement) {
 				getSymbol[concreteObject]("PropertyMultiSelect").addFields(
-					&field{name: "options", typeCode: jen.Index().Id("Option")},
+					&field{name: "options", typeCode: jen.Index().Id("OptionDescription")},
 				)
 			})
 			c.nextMustParameter(parameterElement{
@@ -518,6 +518,9 @@ func init() {
 			})
 		},
 		func(c *comparator, b *builder) { // Select
+			var option *concreteObject
+			var optionDescription *concreteObject
+
 			c.nextMustBlock(blockElement{
 				Kind: "Heading",
 				Text: "Select",
@@ -535,12 +538,12 @@ func init() {
 				Text: "The select type object contains an array of objects representing the available options. Each option object includes the following fields:",
 			}, func(e blockElement) {
 				getSymbol[concreteObject]("PropertySelect").addFields(
-					&field{name: "options", typeCode: jen.Index().Id("Option")},
+					&field{name: "options", typeCode: jen.Index().Id("OptionDescription")},
 				)
 				// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
 				// 以下の共通の構造体を使います
-				b.addConcreteObject("Option", e.Text)
-				// TODO Optionにdescriptionが入る場合と入らない場合があるので切り分ける
+				option = b.addConcreteObject("Option", e.Text)
+				optionDescription = b.addConcreteObject("OptionDescription", e.Text) // TODO Optionにdescriptionが入る場合と入らない場合があるので切り分ける
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The color of the option as rendered in the Notion UI. Possible values include:  \n  \n\\- blue  \n- brown  \n- default  \n- gray  \n- green  \n- orange  \n- pink  \n- purple  \n- red  \n- yellow",
@@ -548,7 +551,8 @@ func init() {
 				Property:     "color",
 				Type:         "string (enum)",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
+				option.addFields(e.asField(jen.String(), omitEmpty))
+				optionDescription.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.",
@@ -556,7 +560,8 @@ func init() {
 				Property:     "id",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
+				option.addFields(e.asField(jen.String(), omitEmpty))
+				optionDescription.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustParameter(parameterElement{
 				Description:  "The name of the option as it appears in the Notion UI.  \n  \nNote: Commas (\",\") are not valid for select values.",
@@ -564,7 +569,8 @@ func init() {
 				Property:     "name",
 				Type:         "string",
 			}, func(e parameterElement) {
-				getSymbol[concreteObject]("Option").addFields(e.asField(jen.String(), omitEmpty))
+				option.addFields(e.asField(jen.String(), omitEmpty))
+				optionDescription.addFields(e.asField(jen.String(), omitEmpty))
 			})
 			c.nextMustBlock(blockElement{
 				Kind: "FencedCodeBlock",
@@ -572,6 +578,8 @@ func init() {
 			}, func(e blockElement) {
 				b.addUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
 			})
+
+			optionDescription.addFields(&field{name: "description", typeCode: jen.Op("*").String(), comment: "UNDOCUMENTED"})
 		},
 		func(c *comparator, b *builder) { // Status
 			c.nextMustBlock(blockElement{
@@ -585,7 +593,7 @@ func init() {
 				Text: "A status database property is rendered in the Notion UI as a column that contains values from a list of status options. The status type object includes an array of options objects and an array of groups objects.",
 			}, func(e blockElement) {
 				getSymbol[concreteObject]("PropertyStatus").addFields(
-					&field{name: "options", typeCode: jen.Index().Id("Option")},
+					&field{name: "options", typeCode: jen.Index().Id("OptionDescription")},
 					&field{name: "groups", typeCode: jen.Index().Id("StatusGroup")},
 				)
 			})

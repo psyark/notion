@@ -21,7 +21,7 @@ type Client struct {
 
 type callOptions struct {
 	roundTripper http.RoundTripper
-	validator    func(data []byte, unmarshaller any) error
+	validator    func(wantBytes []byte, got any) error
 }
 
 type callOption func(*callOptions)
@@ -100,7 +100,7 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	}
 
 	if co.validator != nil {
-		if err := co.validator(resBody, unmarshaller); err != nil {
+		if err := co.validator(resBody, getResult(&unmarshaller)); err != nil {
 			return zero, err
 		}
 	}

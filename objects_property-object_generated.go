@@ -127,7 +127,7 @@ Multi-select
 A multi-select database property is rendered in the Notion UI as a column that contains values from a range of options. Each row can contain one or multiple options.
 */
 type PropertyMultiSelect struct {
-	Options []Option `json:"options"`
+	Options []OptionDescription `json:"options"`
 }
 
 /*
@@ -193,7 +193,7 @@ Select
 A select database property is rendered in the Notion UI as a column that contains values from a selection of options. Only one option is allowed per row.
 */
 type PropertySelect struct {
-	Options []Option `json:"options"`
+	Options []OptionDescription `json:"options"`
 }
 
 // The select type object contains an array of objects representing the available options. Each option object includes the following fields:
@@ -203,10 +203,18 @@ type Option struct {
 	Name  string `json:"name,omitempty"`  // The name of the option as it appears in the Notion UI. Note: Commas (",") are not valid for select values.
 }
 
+// The select type object contains an array of objects representing the available options. Each option object includes the following fields:
+type OptionDescription struct {
+	Color       string  `json:"color,omitempty"` // The color of the option as rendered in the Notion UI. Possible values include: \- blue - brown - default - gray - green - orange - pink - purple - red - yellow
+	Id          string  `json:"id,omitempty"`    // An identifier for the option. It doesn't change if the name is changed. These are sometimes, but not always, UUIDs.
+	Name        string  `json:"name,omitempty"`  // The name of the option as it appears in the Notion UI. Note: Commas (",") are not valid for select values.
+	Description *string `json:"description"`     // UNDOCUMENTED
+}
+
 // Status
 type PropertyStatus struct {
-	Options []Option      `json:"options"`
-	Groups  []StatusGroup `json:"groups"`
+	Options []OptionDescription `json:"options"`
+	Groups  []StatusGroup       `json:"groups"`
 }
 
 // A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields:

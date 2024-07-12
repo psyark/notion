@@ -39,7 +39,7 @@ func TestCreatePage(t *testing.T) {
 	params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "test"}}}}})
 	params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
 
-	_, err := cli.CreatePage(ctx, params, WithRoundTripper(useCache(t.Name())), WithValidator(checkRoundTrip(t)))
+	_, err := cli.CreatePage(ctx, params, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t)))
 	if err != nil {
 		t.Error(err)
 	}
@@ -47,14 +47,14 @@ func TestCreatePage(t *testing.T) {
 
 func TestRetrievePage(t *testing.T) {
 	ctx := context.Background()
-	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, WithRoundTripper(useCache(t.Name())), WithValidator(checkRoundTrip(t))); err != nil {
+	if _, err := cli.RetrievePage(ctx, STANDALONE_PAGE, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestRetrievePagePropertyItem(t *testing.T) {
 	ctx := context.Background()
-	if db, err := cli.RetrieveDatabase(ctx, DATABASE, WithRoundTripper(useCache(t.Name())), WithValidator(checkRoundTrip(t))); err != nil {
+	if db, err := cli.RetrieveDatabase(ctx, DATABASE, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))); err != nil {
 		t.Fatal(err)
 	} else {
 		for name, prop := range db.Properties {
@@ -62,7 +62,7 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 			for i, pageId := range []uuid.UUID{DATABASE_PAGE_FOR_READ1, DATABASE_PAGE_FOR_READ2} {
 				testName := fmt.Sprintf("%s_%d", name, i+1)
 				t.Run(testName, func(t *testing.T) {
-					if _, err := cli.RetrievePagePropertyItem(ctx, pageId, prop.Id, WithRoundTripper(useCache(t.Name())), WithValidator(checkRoundTrip(t))); err != nil {
+					if _, err := cli.RetrievePagePropertyItem(ctx, pageId, prop.Id, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))); err != nil {
 						t.Fatal(err)
 					}
 				})
@@ -98,7 +98,7 @@ func TestUpdatePage(t *testing.T) {
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
 			params := UpdatePagePropertiesParams{}
 			config(params)
-			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, WithValidator(checkRoundTrip(t)), WithRoundTripper(useCache(t.Name()))); err != nil {
+			if _, err := cli.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, WithValidator(compareJSON(t)), WithRoundTripper(useCache(t.Name()))); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
 				t.Fatal(err)
@@ -121,7 +121,7 @@ func TestQueryDatabase(t *testing.T) {
 		filter := filter
 		t.Run(fmt.Sprintf("%s_%d", filter.Property, i), func(t *testing.T) {
 			params.Filter(filter)
-			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, WithRoundTripper(useCache(t.Name())), WithValidator(checkRoundTrip(t))); err != nil {
+			if pagi, err := cli.QueryDatabase(ctx, DATABASE, params, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))); err != nil {
 				t.Fatal(err)
 			} else {
 				fmt.Println(len(pagi.Results))
@@ -134,7 +134,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 	t.Skip()
 
 	ctx := context.Background()
-	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(checkRoundTrip(t))); err != nil {
+	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(compareJSON(t))); err != nil {
 		t.Fatal(err)
 	} else {
 		blocks, err := pagi.Blocks()
@@ -145,7 +145,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 		for _, block := range blocks {
 			block := block
 			t.Run(block.Id.String(), func(t *testing.T) {
-				if _, err := cli.DeleteBlock(ctx, block.Id, WithValidator(checkRoundTrip(t))); err != nil {
+				if _, err := cli.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))); err != nil {
 					t.Fatal(err)
 				}
 			})
@@ -172,7 +172,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 				},
 			}},
 		})
-		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, WithValidator(checkRoundTrip(t))); err != nil {
+		if _, err := cli.AppendBlockChildren(ctx, STANDALONE_PAGE, params, WithValidator(compareJSON(t))); err != nil {
 			t.Fatal(err)
 		}
 	})
