@@ -109,20 +109,20 @@ func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
 	methodParams = append(methodParams, jen.Id("options").Op("...").Id("callOption"))
 
 	file.Func().Params(jen.Id("c").Op("*").Id("Client")).Id(methodName).Params(methodParams...).Params(c.returnType.returnType(), jen.Error()).Block(
-		jen.Id("result").Op(":=").Add(c.returnType.unmarshaller()).Values(),
 		jen.Id("co").Op(":=").Op("&").Id("callOptions").Values(jen.Dict{
-			jen.Id("method"): jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
-			jen.Id("path"):   c.pathCode(doc),
-			jen.Id("params"): params,
-			jen.Id("result"): jen.Id("result"),
+			jen.Id("accessToken"): jen.Id("c").Dot("accessToken"),
+			jen.Id("method"):      jen.Qual("net/http", "Method"+strcase.UpperCamelCase(doc.API.Method)),
+			jen.Id("path"):        c.pathCode(doc),
+			jen.Id("params"):      params,
 		}),
 		jen.For(jen.List(jen.Id("_"), jen.Id("o")).Op(":=").Range().Id("options")).Block(
 			jen.Id("o").Call(jen.Id("co")),
 		),
-		jen.List(jen.Return().Add(c.returnType.returnValue("result")), jen.Id("c").Dot("call").Call(
+		jen.Return().Id("call").Call(
 			jen.Id("ctx"),
 			jen.Id("co"),
-		)),
+			jen.Func().Params(jen.Id("u").Op("*").Add(c.returnType.unmarshaller())).Add(c.returnType.returnType()).Block(jen.Return().Add(c.returnType.returnValue("u"))),
+		),
 	).Line()
 
 	if hasBodyParams {

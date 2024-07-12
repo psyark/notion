@@ -12,17 +12,18 @@ import (
 // Query a database
 // https://developers.notion.com/reference/post-database-query
 func (c *Client) QueryDatabase(ctx context.Context, database_id uuid.UUID, params QueryDatabaseParams, options ...callOption) (*Pagination, error) {
-	result := &Pagination{}
 	co := &callOptions{
-		method: http.MethodPost,
-		params: params,
-		path:   fmt.Sprintf("/v1/databases/%v/query", database_id),
-		result: result,
+		accessToken: c.accessToken,
+		method:      http.MethodPost,
+		params:      params,
+		path:        fmt.Sprintf("/v1/databases/%v/query", database_id),
 	}
 	for _, o := range options {
 		o(co)
 	}
-	return result, c.call(ctx, co)
+	return call(ctx, co, func(u *Pagination) *Pagination {
+		return u
+	})
 }
 
 type QueryDatabaseParams map[string]any

@@ -10,17 +10,18 @@ import (
 // Create a page
 // https://developers.notion.com/reference/post-page
 func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*PageWithPublicURL, error) {
-	result := &PageWithPublicURL{}
 	co := &callOptions{
-		method: http.MethodPost,
-		params: params,
-		path:   "/v1/pages",
-		result: result,
+		accessToken: c.accessToken,
+		method:      http.MethodPost,
+		params:      params,
+		path:        "/v1/pages",
 	}
 	for _, o := range options {
 		o(co)
 	}
-	return result, c.call(ctx, co)
+	return call(ctx, co, func(u *PageWithPublicURL) *PageWithPublicURL {
+		return u
+	})
 }
 
 type CreatePageParams map[string]any

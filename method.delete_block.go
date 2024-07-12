@@ -12,15 +12,16 @@ import (
 // Delete a block
 // https://developers.notion.com/reference/delete-a-block
 func (c *Client) DeleteBlock(ctx context.Context, block_id uuid.UUID, options ...callOption) (*Block, error) {
-	result := &Block{}
 	co := &callOptions{
-		method: http.MethodDelete,
-		params: nil,
-		path:   fmt.Sprintf("/v1/blocks/%v", block_id),
-		result: result,
+		accessToken: c.accessToken,
+		method:      http.MethodDelete,
+		params:      nil,
+		path:        fmt.Sprintf("/v1/blocks/%v", block_id),
 	}
 	for _, o := range options {
 		o(co)
 	}
-	return result, c.call(ctx, co)
+	return call(ctx, co, func(u *Block) *Block {
+		return u
+	})
 }

@@ -22,7 +22,7 @@ var _ = []returnTypeCoder{
 type returnsStructRef string
 
 func (r returnsStructRef) unmarshaller() jen.Code {
-	return jen.Op("&").Id(string(r))
+	return jen.Id(string(r))
 }
 func (r returnsStructRef) returnType() jen.Code {
 	return jen.Op("*").Id(string(r))
@@ -34,7 +34,7 @@ func (r returnsStructRef) returnValue(name string) jen.Code {
 type returnsInterface string
 
 func (r returnsInterface) unmarshaller() jen.Code {
-	return jen.Op("&").Id(fmt.Sprintf("%vUnmarshaler", strcase.LowerCamelCase(string(r))))
+	return jen.Id(fmt.Sprintf("%vUnmarshaler", strcase.LowerCamelCase(string(r))))
 }
 func (r returnsInterface) returnType() jen.Code {
 	return jen.Id(string(r))

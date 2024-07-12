@@ -25,13 +25,14 @@ type Client struct {
 }
 
 type callOptions struct {
-	path           string
-	method         string
+	accessToken string
+	path        string
+	method      string
+	params      map[string]any
+
 	requestId      string
 	useCache       bool
 	validateResult bool
-	params         any
-	result         any
 }
 
 type callOption func(*callOptions)
@@ -54,25 +55,29 @@ func validateResult() callOption {
 	}
 }
 
-func (c *Client) call(ctx context.Context, options *callOptions) error {
+// Deprecated: use request
+func call[U any, R any](ctx context.Context, options *callOptions, getResult func(unmarshaller *U) R) (R, error) {
+	var unmarshaller U
+	var zero R
+
 	if options.useCache && options.requestId == "" {
-		return fmt.Errorf("useCache requires requestId")
+		return zero, fmt.Errorf("useCache requires requestId")
 	}
 	if options.validateResult && options.requestId == "" {
-		return fmt.Errorf("validateResult requires requestId")
+		return zero, fmt.Errorf("validateResult requires requestId")
 	}
 
 	payload, err := json.Marshal(options.params)
 	if err != nil {
-		return err
+		return zero, err
 	}
 
 	req, err := http.NewRequestWithContext(ctx, options.method, "https://api.notion.com"+options.path, bytes.NewBuffer(payload))
 	if err != nil {
-		return err
+		return zero, err
 	}
 
-	req.Header.Add("Authorization", "Bearer "+c.accessToken)
+	req.Header.Add("Authorization", "Bearer "+options.accessToken)
 	req.Header.Add("Notion-Version", APIVersion)
 
 	switch options.method {
@@ -86,7 +91,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	if options.requestId != "" {
 		fileName, err = filenamify.FilenamifyV2(options.requestId)
 		if err != nil {
-			return err
+			return zero, err
 		}
 	}
 
@@ -98,7 +103,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 
 			res, err = http.ReadResponse(bufio.NewReader(cache), req)
 			if err != nil {
-				return err
+				return zero, err
 			}
 
 			defer func() {
@@ -110,7 +115,7 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 	if res == nil {
 		res, err = http.DefaultClient.Do(req)
 		if err != nil {
-			return err
+			return zero, err
 		}
 
 		defer func() {
@@ -119,61 +124,63 @@ func (c *Client) call(ctx context.Context, options *callOptions) error {
 
 		if options.useCache {
 			if dump, err := httputil.DumpResponse(res, true); err != nil {
-				return err
+				return zero, err
 			} else if err := os.WriteFile(fmt.Sprintf("testdata/cache/%s", fileName), dump, 0666); err != nil {
-				return err
+				return zero, err
 			}
 		}
 	}
 
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return zero, err
 	}
 
 	if res.StatusCode != http.StatusOK {
 		errBody := Error{}
 		if err := json.Unmarshal(resBody, &errBody); err != nil {
-			return fmt.Errorf("bad status: %v, %v", res.Status, string(resBody))
+			return zero, fmt.Errorf("bad status: %v, %v", res.Status, string(resBody))
 		} else {
-			return errBody
+			return zero, errBody
 		}
 	}
 
-	if err := json.Unmarshal(resBody, options.result); err != nil {
+	if err := json.Unmarshal(resBody, &unmarshaller); err != nil {
 		if options.validateResult {
 			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
 			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
 			want := normalizeJSON(resBody)
 			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
-				return err
+				return zero, err
 			}
 		}
-		return err
+		return zero, err
 	}
 
 	// TODO ここにファイルシステムのパスを含む処理を書かず、オプションとして渡すようにする
 	if options.validateResult {
-		got, err := json.Marshal(options.result)
+		got, err := json.Marshal(unmarshaller)
 		if err != nil {
-			return err
+			return zero, err
 		}
 
 		if want, got, ok := compareJSON(resBody, got); ok {
 			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.want.json", fileName))
 			_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
-			return os.WriteFile(fmt.Sprintf("testdata/pass/%s.json", fileName), want, 0666)
+			if err := os.WriteFile(fmt.Sprintf("testdata/pass/%s.json", fileName), want, 0666); err != nil {
+				return zero, err
+			}
 		} else {
 			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
 			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
-				return err
+				return zero, err
 			}
 			if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.got.json", fileName), got, 0666); err != nil {
-				return err
+				return zero, err
 			}
-			return fmt.Errorf("validation failed: %s", options.requestId)
+			return zero, fmt.Errorf("validation failed: %s", options.requestId)
 		}
 	}
 
-	return nil
+	return getResult(&unmarshaller), nil
 }

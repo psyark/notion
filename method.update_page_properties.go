@@ -12,17 +12,18 @@ import (
 // Update page properties
 // https://developers.notion.com/reference/patch-page
 func (c *Client) UpdatePageProperties(ctx context.Context, page_id uuid.UUID, params UpdatePagePropertiesParams, options ...callOption) (*Page, error) {
-	result := &Page{}
 	co := &callOptions{
-		method: http.MethodPatch,
-		params: params,
-		path:   fmt.Sprintf("/v1/pages/%v", page_id),
-		result: result,
+		accessToken: c.accessToken,
+		method:      http.MethodPatch,
+		params:      params,
+		path:        fmt.Sprintf("/v1/pages/%v", page_id),
 	}
 	for _, o := range options {
 		o(co)
 	}
-	return result, c.call(ctx, co)
+	return call(ctx, co, func(u *Page) *Page {
+		return u
+	})
 }
 
 type UpdatePagePropertiesParams map[string]any
