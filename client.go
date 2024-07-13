@@ -88,14 +88,6 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	}
 
 	if err := json.Unmarshal(resBody, &unmarshaller); err != nil {
-		// if co.validateResult {
-		// 	_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))
-		// 	_ = os.Remove(fmt.Sprintf("testdata/fail/%s.got.json", fileName))
-		// 	want := normalizeJSON(resBody)
-		// 	if err := os.WriteFile(fmt.Sprintf("testdata/fail/%s.want.json", fileName), want, 0666); err != nil {
-		// 		return zero, err
-		// 	}
-		// }
 		return zero, err
 	}
 
