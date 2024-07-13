@@ -1,6 +1,7 @@
 package methoddoc
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -42,7 +43,9 @@ func (c *converter) convert() error {
 
 	ssrPropsBytes := []byte(doc.Find(`#ssr-props`).AttrOr("data-initial-props", ""))
 	sp := ssrProps{}
-	if err := json.Unmarshal(ssrPropsBytes, &sp); err != nil {
+	d := json.NewDecoder(bytes.NewReader(ssrPropsBytes))
+	d.DisallowUnknownFields()
+	if err := d.Decode(&sp); err != nil {
 		return err
 	}
 
@@ -82,7 +85,9 @@ func (c *converter) convert() error {
 }
 
 func (c *converter) output(file *jen.File, doc ssrPropsDoc) error {
-	file.Comment(doc.Title).Line().Comment(c.url)
+	file.HeaderComment(c.url)
+	file.Comment(doc.Body)
+
 	hasBodyParams := len(c.localCopyOfBodyParams) != 0
 
 	methodName := strcase.UpperCamelCase(strings.ReplaceAll(doc.Title, " a ", " "))

@@ -3,6 +3,7 @@ package methoddoc
 import "github.com/dave/jennifer/jen"
 
 func init() {
+	// TODO パラメータと戻り値だけではなく、その他のパラグラフも取得・比較・検証して生成コードのコメントに反映する
 	registerConverter(converter{
 		url:        "https://developers.notion.com/reference/post-page",
 		returnType: returnsStructRef("Page"),
