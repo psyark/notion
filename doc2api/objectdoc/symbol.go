@@ -10,7 +10,7 @@ import (
 
 // symbolCoder はソースコードのトップレベルに置かれる、名前を持つシンボルの生成器です。
 type symbolCoder interface {
-	symbolCode(*builder) jen.Code
+	symbolCode() jen.Code
 	name() string
 }
 
@@ -55,7 +55,7 @@ func (c *objectCommon) getDiscriminatorValues(discriminatorKey string) []string 
 	return nil
 }
 
-func (c *objectCommon) symbolCode(b *builder) jen.Code {
+func (c *objectCommon) symbolCode() jen.Code {
 	code := &jen.Statement{}
 	if c.comment != "" {
 		code.Comment(c.comment).Line()
@@ -68,12 +68,12 @@ func (c *objectCommon) symbolCode(b *builder) jen.Code {
 	}).Line()
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
-	code.Add(c.fieldUnmarshalerCode(b))
+	code.Add(c.fieldUnmarshalerCode())
 
 	return code
 }
 
-func (c *objectCommon) fieldUnmarshalerCode(b *builder) jen.Code {
+func (c *objectCommon) fieldUnmarshalerCode() jen.Code {
 	code := &jen.Statement{}
 
 	unionFields := []*field{}
@@ -117,7 +117,7 @@ type unmarshalTest struct {
 func (c *unmarshalTest) name() string {
 	return fmt.Sprintf("Test%s_unmarshal", c.targetName)
 }
-func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
+func (c *unmarshalTest) symbolCode() jen.Code {
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
 		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
 			for _, t := range c.jsonCodes {
@@ -135,7 +135,7 @@ func (c *unmarshalTest) symbolCode(b *builder) jen.Code {
 
 type alwaysString string
 
-func (c alwaysString) symbolCode(b *builder) jen.Code {
+func (c alwaysString) symbolCode() jen.Code {
 	code := jen.Type().Id(c.name()).String().Line()
 	code.Func().Params(jen.Id("s").Id(c.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),

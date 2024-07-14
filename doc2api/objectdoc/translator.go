@@ -165,7 +165,7 @@ func (t *translator) output() error {
 			file.Comment(b.url)
 		}
 		for _, s := range b.localSymbols {
-			file.Line().Line().Add(s.symbolCode(b))
+			file.Line().Line().Add(s.symbolCode())
 		}
 		if err := file.Save(b.fileName); err != nil {
 			return err
@@ -182,7 +182,7 @@ func (t *translator) output() error {
 			file.Comment(b.url)
 		}
 		for _, s := range b.testSymbols {
-			file.Line().Line().Add(s.symbolCode(b))
+			file.Line().Line().Add(s.symbolCode())
 		}
 		if err := file.Save(strings.Replace(b.fileName, ".go", "_test.go", 1)); err != nil {
 			return err

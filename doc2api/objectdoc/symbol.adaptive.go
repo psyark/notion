@@ -62,9 +62,9 @@ func (c *adaptiveObject) addToUnion(union *unionObject) {
 	union.members = append(union.members, c)
 }
 
-func (o *adaptiveObject) symbolCode(b *builder) jen.Code {
+func (o *adaptiveObject) symbolCode() jen.Code {
 	code := &jen.Statement{
-		o.objectCommon.symbolCode(b),
+		o.objectCommon.symbolCode(),
 	}
 
 	for _, u := range o.unions {

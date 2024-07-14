@@ -42,7 +42,7 @@ func (c *concreteObject) addFields(fields ...fieldCoder) *concreteObject {
 	return c
 }
 
-func (c *concreteObject) symbolCode(b *builder) jen.Code {
+func (c *concreteObject) symbolCode() jen.Code {
 	// struct本体
 	code := &jen.Statement{}
 	if c.comment != "" {
@@ -61,7 +61,7 @@ func (c *concreteObject) symbolCode(b *builder) jen.Code {
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
-	code.Add(c.fieldUnmarshalerCode(b))
+	code.Add(c.fieldUnmarshalerCode())
 
 	return code
 }
