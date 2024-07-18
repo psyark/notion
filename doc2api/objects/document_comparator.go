@@ -12,13 +12,6 @@ type DocumentComparator struct {
 	builder  *CodeBuilder
 }
 
-// TODO この関数作る意味ないかも
-func (c *DocumentComparator) WithScope(scopes ...func(c *DocumentComparator)) {
-	for _, scope := range scopes {
-		scope(c)
-	}
-}
-
 func (c *DocumentComparator) ExpectBlock(block *Block) *Match[*Block] {
 	if reflect.DeepEqual(c.elements[c.index], block) {
 		c.index++
