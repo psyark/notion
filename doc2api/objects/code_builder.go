@@ -139,7 +139,7 @@ func (b *CodeBuilder) output(sortSymbols bool) {
 }
 
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (_ *CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOption) *VariableField {
+func (*CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOption) *VariableField {
 	f := &VariableField{
 		name:     p.Property,
 		typeCode: typeCode,
