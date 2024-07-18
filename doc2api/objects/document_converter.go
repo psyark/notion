@@ -17,7 +17,7 @@ import (
 
 // Converter はObjectsの多数のドキュメントから一連のコードを生成する機能を提供します
 type Converter struct {
-	symbols       *SyncMap[string, CodeSymbol]
+	symbols       *SyncMap[string, CodeSymbol] // TODO sync.Mapでもいいかもしれない 検討
 	globalBuilder *CodeBuilder
 	comparators   []*DocumentComparator
 }
@@ -79,4 +79,27 @@ func (c *Converter) OutputAllBuilders() {
 		c.builder.output()
 	}
 	c.globalBuilder.output()
+}
+
+func getSymbol[T CodeSymbol](name string, c *Converter) T {
+	if item, ok := c.symbols.Load(name); ok {
+		if item, ok := item.(T); ok {
+			return item
+		}
+	}
+
+	var zero T
+	return zero
+}
+func (c *Converter) GetConcreteObject(name string) *ConcreteObject {
+	return getSymbol[*ConcreteObject](name, c)
+}
+func (c *Converter) GetAdaptiveObject(name string) *AdaptiveObject {
+	return getSymbol[*AdaptiveObject](name, c)
+}
+func (c *Converter) GetUnionObject(name string) *UnionObject {
+	return getSymbol[*UnionObject](name, c)
+}
+func (c *Converter) GetUnmarshalTest(name string) *UnmarshalTest {
+	return getSymbol[*UnmarshalTest](name, c)
 }

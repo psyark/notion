@@ -26,45 +26,45 @@ type ConcreteObject struct {
 	discriminatorValue string
 }
 
-func (c *ConcreteObject) AddToUnion(union *UnionObject) {
-	c.unions = append(c.unions, union)
-	union.members = append(union.members, c)
+func (o *ConcreteObject) AddToUnion(union *UnionObject) {
+	o.unions = append(o.unions, union)
+	union.members = append(union.members, o)
 }
 
-func (c *ConcreteObject) AddFields(fields ...fieldCoder) *ConcreteObject {
-	if c.discriminatorValue != "" {
+func (o *ConcreteObject) AddFields(fields ...fieldCoder) *ConcreteObject {
+	if o.discriminatorValue != "" {
 		for _, f := range fields {
 			if f, ok := f.(*fixedStringField); ok {
-				if f.value == c.discriminatorValue {
-					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", c.name(), f.value))
+				if f.value == o.discriminatorValue {
+					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", o.name(), f.value))
 				}
 			}
 		}
 	}
-	c.fields = append(c.fields, fields...)
-	return c
+	o.fields = append(o.fields, fields...)
+	return o
 }
 
-func (c *ConcreteObject) code() jen.Code {
+func (o *ConcreteObject) code(c *Converter) jen.Code {
 	// struct本体
 	code := &jen.Statement{}
-	if c.comment != "" {
-		code.Comment(c.comment).Line()
+	if o.comment != "" {
+		code.Comment(o.comment).Line()
 	}
 
-	code.Type().Id(c.name_).StructFunc(func(g *jen.Group) {
-		for _, f := range c.fields {
+	code.Type().Id(o.name_).StructFunc(func(g *jen.Group) {
+		for _, f := range o.fields {
 			g.Add(f.fieldCode())
 		}
 	}).Line()
 
 	// 先祖インターフェイスを実装
-	for _, union := range c.unions {
-		code.Func().Params(jen.Id("_").Op("*").Id(c.name())).Id("is" + union.name()).Params().Block().Line()
+	for _, union := range o.unions {
+		code.Func().Params(jen.Id("_").Op("*").Id(o.name())).Id("is" + union.name()).Params().Block().Line()
 	}
 
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
-	code.Add(c.fieldUnmarshalerCode())
+	code.Add(o.fieldUnmarshalerCode(c))
 
 	return code
 }

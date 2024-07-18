@@ -16,7 +16,7 @@ type CodeBuilder struct {
 	converter    *Converter
 	url          string
 	fileName     string
-	localSymbols []CodeSymbol
+	localSymbols []CodeSymbol // TODO globalに対するlocalではなく、testに対する名前にする
 	testSymbols  []CodeSymbol
 }
 
@@ -29,13 +29,13 @@ func (b *CodeBuilder) AddConcreteObject(name string, comment string) *ConcreteOb
 	return obj
 }
 
-func (b *CodeBuilder) addAdaptiveObject(name string, discriminatorKey string, comment string) *AdaptiveObject {
+func (b *CodeBuilder) AddAdaptiveObject(name string, discriminatorKey string, comment string) *AdaptiveObject {
 	ao := &AdaptiveObject{}
 	ao.name_ = name
 	ao.discriminatorKey = discriminatorKey
 	ao.comment = comment
 	if discriminatorKey != "" {
-		ao.addFields(&VariableField{
+		ao.AddFields(&VariableField{
 			name:     discriminatorKey,
 			typeCode: jen.String(),
 		})
@@ -49,7 +49,7 @@ func (b *CodeBuilder) addAdaptiveObject(name string, discriminatorKey string, co
 // 二回目以降の呼び出しでは定義をスキップし、初回に定義されたものを返します。
 // TODO identifierKey -> discriminatorKey
 func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, identifierKey string) *UnionObject {
-	if u := b.GetUnionObject(name); u != nil {
+	if u := b.converter.GetUnionObject(name); u != nil {
 		return u
 	}
 
@@ -71,34 +71,10 @@ func (b *CodeBuilder) addAlwaysStringIfNotExists(value string) {
 	b.localSymbols = append(b.localSymbols, as)
 }
 
-func getSymbol[T CodeSymbol](name string, b *CodeBuilder) T {
-	if item, ok := b.converter.symbols.Load(name); ok {
-		if item, ok := item.(T); ok {
-			return item
-		}
-	}
-
-	var zero T
-	return zero
-}
-
-func (b *CodeBuilder) GetConcreteObject(name string) *ConcreteObject {
-	return getSymbol[*ConcreteObject](name, b)
-}
-func (b *CodeBuilder) GetAdaptiveObject(name string) *AdaptiveObject {
-	return getSymbol[*AdaptiveObject](name, b)
-}
-func (b *CodeBuilder) GetUnionObject(name string) *UnionObject {
-	return getSymbol[*UnionObject](name, b)
-}
-func (b *CodeBuilder) GetUnmarshalTest(name string) *UnmarshalTest {
-	return getSymbol[*UnmarshalTest](name, b)
-}
-
 func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string) {
 	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
 
-	if exists := b.GetUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
+	if exists := b.converter.GetUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
 		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
 	} else { // 無ければ追加
 		ut.jsonCodes = append(ut.jsonCodes, jsonCode)
@@ -119,7 +95,7 @@ func (b *CodeBuilder) output() {
 			file.Comment(b.url)
 		}
 		for _, s := range b.localSymbols {
-			file.Line().Line().Add(s.code())
+			file.Line().Line().Add(s.code(b.converter))
 		}
 		lo.Must0(file.Save(filePath))
 	}
@@ -134,19 +110,18 @@ func (b *CodeBuilder) output() {
 			file.Comment(b.url)
 		}
 		for _, s := range b.testSymbols {
-			file.Line().Line().Add(s.code())
+			file.Line().Line().Add(s.code(b.converter))
 		}
 		lo.Must0(file.Save(strings.Replace(filePath, ".go", "_test.go", 1)))
 	}
 }
 
 // asField は、このドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (b *CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOption) *VariableField {
+func (_ *CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOption) *VariableField {
 	f := &VariableField{
 		name:     p.Property,
 		typeCode: typeCode,
 		comment:  p.Description,
-		builder:  b,
 	}
 	for _, o := range options {
 		o(f)
@@ -154,8 +129,8 @@ func (b *CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...field
 	return f
 }
 
-// NewFieldStringField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (b *CodeBuilder) NewFieldStringField(p *Parameter) *fixedStringField {
+// NewFixedStringField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (_ *CodeBuilder) NewFixedStringField(p *Parameter) *fixedStringField {
 	for _, value := range []string{p.ExampleValue, p.Type} {
 		if value != "" {
 			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {

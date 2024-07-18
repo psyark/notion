@@ -33,7 +33,7 @@ func TestDatabase(t *testing.T) {
 				ExampleValue: `"database"`,
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				e.Property = strings.TrimSuffix(e.Property, `\`)
-				database.AddFields(b.NewFieldStringField(e))
+				database.AddFields(b.NewFixedStringField(e))
 			})
 
 			c.ExpectParameter(&Parameter{

@@ -15,7 +15,7 @@ func (c *UnmarshalTest) name() string {
 	return fmt.Sprintf("Test%s_unmarshal", c.targetName)
 }
 
-func (c *UnmarshalTest) code() jen.Code {
+func (c *UnmarshalTest) code(_ *Converter) jen.Code {
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
 		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
 			for _, t := range c.jsonCodes {

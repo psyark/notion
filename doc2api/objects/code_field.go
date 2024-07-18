@@ -30,7 +30,6 @@ type VariableField struct {
 	omitEmpty             bool
 	discriminatorValue    string
 	discriminatorNotEmpty bool // Userに使う
-	builder               *CodeBuilder
 }
 
 func (f *VariableField) fieldCode() jen.Code {
@@ -58,10 +57,10 @@ func (f *VariableField) getTypeCode() jen.Code {
 	return f.typeCode
 }
 
-func (f *VariableField) getUnion() *UnionObject {
+func (f *VariableField) getUnion(c *Converter) *UnionObject {
 	code := jen.Var().Id("_").Add(f.typeCode).GoString()
 	name := strings.TrimPrefix(code, "var _ ")
-	return f.builder.GetUnionObject(name)
+	return c.GetUnionObject(name)
 }
 
 // 固定文字列が入るフィールド

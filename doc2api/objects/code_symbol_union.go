@@ -39,7 +39,7 @@ type UnionObject struct {
 	members       []memberCoder // このUnionのメンバー
 }
 
-func (u *UnionObject) code() jen.Code {
+func (u *UnionObject) code(_ *Converter) jen.Code {
 	// インターフェイス本体
 	code := jen.Type().Id(u.name()).Interface(jen.Id("is" + u.name()).Params()).Line().Line()
 	// Unmarshaler

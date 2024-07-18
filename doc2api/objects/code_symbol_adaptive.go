@@ -30,14 +30,14 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminatorKey string) []strin
 	return o.ObjectCommon.getDiscriminatorValues(discriminatorKey)
 }
 
-func (o *AdaptiveObject) addFields(fields ...fieldCoder) *AdaptiveObject {
+func (o *AdaptiveObject) AddFields(fields ...fieldCoder) *AdaptiveObject {
 	o.fields = append(o.fields, fields...)
 	return o
 }
 
-// addAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
-func (o *AdaptiveObject) addAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
-	o.addFields(&VariableField{
+// AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
+func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
+	o.AddFields(&VariableField{
 		name:               discriminatorValue,
 		typeCode:           typeCode,
 		comment:            comment,
@@ -46,27 +46,27 @@ func (o *AdaptiveObject) addAdaptiveFieldWithType(discriminatorValue string, com
 	})
 }
 
-// addAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
-func (o *AdaptiveObject) addAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
-	o.addAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
+// AddAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
+func (o *AdaptiveObject) AddAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
+	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
 }
 
-// addAdaptiveFieldWithSpecificObject は専用のConcreteObjectを作成し、その型のAdaptiveFieldを追加します
-func (o *AdaptiveObject) addAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *ConcreteObject {
+// AddAdaptiveFieldWithSpecificObject は専用のConcreteObjectを作成し、その型のAdaptiveFieldを追加します
+func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *ConcreteObject {
 	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
 	co := b.AddConcreteObject(dataName, comment)
-	o.addAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
+	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
 	return co
 }
 
-func (c *AdaptiveObject) addToUnion(union *UnionObject) {
+func (c *AdaptiveObject) AddToUnion(union *UnionObject) {
 	c.unions = append(c.unions, union)
 	union.members = append(union.members, c)
 }
 
-func (o *AdaptiveObject) code() jen.Code {
+func (o *AdaptiveObject) code(c *Converter) jen.Code {
 	code := &jen.Statement{
-		o.ObjectCommon.code(),
+		o.ObjectCommon.code(c),
 	}
 
 	for _, u := range o.unions {
