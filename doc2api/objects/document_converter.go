@@ -17,16 +17,17 @@ import (
 
 // Converter はObjectsの多数のドキュメントから一連のコードを生成する機能を提供します
 type Converter struct {
-	symbols       *SyncMap[string, CodeSymbol] // TODO sync.Mapでもいいかもしれない 検討
-	globalBuilder *CodeBuilder
-	comparators   []*DocumentComparator
+	symbols           *SyncMap[string, CodeSymbol] // TODO sync.Mapでもいいかもしれない 検討
+	globalBuilder     *CodeBuilder
+	globalTestBuilder *CodeBuilder
+	comparators       []*DocumentComparator
 }
 
 func NewConverter() *Converter {
-	global := &CodeBuilder{fileName: "objects_global_generated.go"}
 	return &Converter{
-		symbols:       &SyncMap[string, CodeSymbol]{},
-		globalBuilder: global,
+		symbols:           &SyncMap[string, CodeSymbol]{},
+		globalBuilder:     &CodeBuilder{fileName: "objects_global_generated.go"},
+		globalTestBuilder: &CodeBuilder{fileName: "objects_global_generated_test.go"},
 	}
 }
 
@@ -79,6 +80,7 @@ func (c *Converter) OutputAllBuilders() {
 		c.builder.output(false)
 	}
 	c.globalBuilder.output(true)
+	c.globalTestBuilder.output(true)
 }
 
 func getSymbol[T CodeSymbol](name string, c *Converter) T {
