@@ -13,6 +13,7 @@ func TestUser(t *testing.T) {
 
 	converter.FetchDocument("https://developers.notion.com/reference/user").WithScope(func(c *DocumentComparator) {
 		var user *AdaptiveObject
+
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "The User object represents a user in a Notion workspace. Users include full workspace members, guests, and integrations. You can find more information about members and guests in this guide.",
