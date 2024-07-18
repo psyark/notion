@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/samber/lo"
@@ -17,7 +18,7 @@ import (
 
 // Converter はObjectsの多数のドキュメントから一連のコードを生成する機能を提供します
 type Converter struct {
-	symbols           *SyncMap[string, CodeSymbol] // TODO sync.Mapでもいいかもしれない 検討
+	symbols           *sync.Map
 	globalBuilder     *CodeBuilder
 	globalTestBuilder *CodeBuilder
 	comparators       []*DocumentComparator
@@ -25,7 +26,7 @@ type Converter struct {
 
 func NewConverter() *Converter {
 	return &Converter{
-		symbols:           &SyncMap[string, CodeSymbol]{},
+		symbols:           &sync.Map{},
 		globalBuilder:     &CodeBuilder{fileName: "objects_global_generated.go"},
 		globalTestBuilder: &CodeBuilder{fileName: "objects_global_generated_test.go"},
 	}
@@ -93,15 +94,9 @@ func getSymbol[T CodeSymbol](name string, c *Converter) T {
 	var zero T
 	return zero
 }
-func (c *Converter) GetConcreteObject(name string) *ConcreteObject {
-	return getSymbol[*ConcreteObject](name, c)
-}
-func (c *Converter) GetAdaptiveObject(name string) *AdaptiveObject {
-	return getSymbol[*AdaptiveObject](name, c)
-}
-func (c *Converter) GetUnionObject(name string) *UnionObject {
+func (c *Converter) getUnionObject(name string) *UnionObject {
 	return getSymbol[*UnionObject](name, c)
 }
-func (c *Converter) GetUnmarshalTest(name string) *UnmarshalTest {
+func (c *Converter) getUnmarshalTest(name string) *UnmarshalTest {
 	return getSymbol[*UnmarshalTest](name, c)
 }

@@ -64,7 +64,7 @@ func (b *CodeBuilder) AddAdaptiveObject(name string, discriminatorKey string, co
 // 二回目以降の呼び出しでは定義をスキップし、初回に定義されたものを返します。
 // TODO identifierKey -> discriminatorKey
 func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, identifierKey string) *UnionObject {
-	if u := b.converter.GetUnionObject(name); u != nil {
+	if u := b.converter.getUnionObject(name); u != nil {
 		return u
 	}
 
@@ -89,7 +89,7 @@ func (b *CodeBuilder) addAlwaysStringIfNotExists(value string) {
 func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string) {
 	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
 
-	if exists := b.converter.GetUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
+	if exists := b.converter.getUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
 		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
 	} else { // 無ければ追加
 		ut.jsonCodes = append(ut.jsonCodes, jsonCode)

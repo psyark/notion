@@ -60,7 +60,7 @@ func (f *VariableField) getTypeCode() jen.Code {
 func (f *VariableField) getUnion(c *Converter) *UnionObject {
 	code := jen.Var().Id("_").Add(f.typeCode).GoString()
 	name := strings.TrimPrefix(code, "var _ ")
-	return c.GetUnionObject(name)
+	return c.getUnionObject(name)
 }
 
 // 固定文字列が入るフィールド
