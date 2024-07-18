@@ -12,6 +12,7 @@ type DocumentComparator struct {
 	builder  *CodeBuilder
 }
 
+// TODO この関数作る意味ないかも
 func (c *DocumentComparator) WithScope(scopes ...func(c *DocumentComparator)) {
 	for _, scope := range scopes {
 		scope(c)

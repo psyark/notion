@@ -76,9 +76,9 @@ func (c *Converter) FetchDocument(url string) *DocumentComparator {
 func (c *Converter) OutputAllBuilders() {
 	for _, c := range c.comparators {
 		c.finish()
-		c.builder.output()
+		c.builder.output(false)
 	}
-	c.globalBuilder.output()
+	c.globalBuilder.output(true)
 }
 
 func getSymbol[T CodeSymbol](name string, c *Converter) T {
