@@ -15,7 +15,7 @@ Page, embed, image, video, file, pdf, and bookmark block types all contain file 
 */
 type File struct {
 	Type     string        `json:"type"`
-	Name     string        `json:"name,omitempty"` // undocumented
+	Name     string        `json:"name,omitempty"` // UNDOCUMENTED
 	File     *FileFile     `json:"file"`           // Notion-hosted files
 	External *FileExternal `json:"external"`       // External files
 }

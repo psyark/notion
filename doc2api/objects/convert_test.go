@@ -8,8 +8,7 @@ import (
 )
 
 const (
-	UNDOCUMENTED    = "undocumented" // TODO 移行が済んだら統一する
-	UNDOCUMENTED_UC = "UNDOCUMENTED"
+	UNDOCUMENTED = "UNDOCUMENTED"
 )
 
 var (
@@ -25,5 +24,5 @@ func TestMain(m *testing.M) {
 }
 
 func UndocumentedRequestID(b *CodeBuilder) *VariableField {
-	return b.NewField(&Parameter{Property: "request_id", Description: UNDOCUMENTED_UC}, jen.String(), OmitEmpty)
+	return b.NewField(&Parameter{Property: "request_id", Description: UNDOCUMENTED}, jen.String(), OmitEmpty)
 }

@@ -67,6 +67,6 @@ type UserBot struct {
 // Information about who owns this bot.
 type BotUserDataOwner struct {
 	Type      string `json:"type"`                // The type of owner, either "workspace" or "user".
-	Workspace bool   `json:"workspace,omitempty"` // undocumented
-	User      bool   `json:"user,omitempty"`      // undocumented
+	Workspace bool   `json:"workspace,omitempty"` // UNDOCUMENTED
+	User      bool   `json:"user,omitempty"`      // UNDOCUMENTED
 }

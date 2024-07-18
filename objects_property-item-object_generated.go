@@ -113,12 +113,12 @@ func (o PropertyItem) MarshalJSON() ([]byte, error) {
 // The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
 type PaginatedPropertyInfo struct {
 	Type     string   `json:"type"`
-	Id       string   `json:"id"` // undocumented
+	Id       string   `json:"id"` // UNDOCUMENTED
 	Title    struct{} `json:"title"`
 	RichText struct{} `json:"rich_text"`
 	Relation struct{} `json:"relation"`
 	People   struct{} `json:"people"`
-	Rollup   Rollup   `json:"rollup"`   // undocumented
+	Rollup   Rollup   `json:"rollup"`   // UNDOCUMENTED
 	NextUrl  *string  `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 

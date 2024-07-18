@@ -566,7 +566,7 @@ func TestProperty(t *testing.T) {
 			})
 
 			c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
-				optionDescription.AddFields(b.NewField(&Parameter{Property: "description", Description: UNDOCUMENTED_UC}, jen.Op("*").String()))
+				optionDescription.AddFields(b.NewField(&Parameter{Property: "description", Description: UNDOCUMENTED}, jen.Op("*").String()))
 			})
 		})
 
