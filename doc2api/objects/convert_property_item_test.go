@@ -63,12 +63,12 @@ func TestPropertyItem(t *testing.T) {
 		}).Output(func(e *Block, b *CodeBuilder) {
 			// TODO 良い名前
 			paginatedPropertyInfo = b.AddAdaptiveObject("PaginatedPropertyInfo", "type", e.Text).AddFields(
-				b.NewField(&Parameter{Property: "id", Description: "UNDOCUMENTED"}, jen.String()),
+				b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()),
 			)
 			for _, derived := range []string{"title", "rich_text", "relation", "people"} {
 				paginatedPropertyInfo.AddAdaptiveFieldWithEmptyStruct(derived, "")
 			}
-			paginatedPropertyInfo.AddAdaptiveFieldWithType("rollup", "UNDOCUMENTED", jen.Id("Rollup"))
+			paginatedPropertyInfo.AddAdaptiveFieldWithType("rollup", UNDOCUMENTED, jen.Id("Rollup"))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "object",

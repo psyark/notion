@@ -162,8 +162,8 @@ func TestUser(t *testing.T) {
 			e.Property = "type"
 			botOwner.AddFields(
 				b.NewField(e, jen.String()),
-				b.NewField(&Parameter{Property: "workspace", Description: "UNDOCUMENTED"}, jen.Bool(), OmitEmpty),
-				b.NewField(&Parameter{Property: "user", Description: "UNDOCUMENTED"}, jen.Bool(), OmitEmpty),
+				b.NewField(&Parameter{Property: "workspace", Description: UNDOCUMENTED}, jen.Bool(), OmitEmpty),
+				b.NewField(&Parameter{Property: "user", Description: UNDOCUMENTED}, jen.Bool(), OmitEmpty),
 			)
 		})
 		c.ExpectParameter(&Parameter{
