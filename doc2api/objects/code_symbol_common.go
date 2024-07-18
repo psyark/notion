@@ -11,7 +11,7 @@ import (
 type ObjectCommon struct {
 	name_   string
 	comment string
-	fields  []fieldCoder
+	fields  []fieldRenderer
 
 	// unions は自分が所属するunionObjectです。
 	// objectCommonを継承する各クラスは、symbolCode メソッド中でこのunionのisメソッドを実装する必要があります
@@ -33,7 +33,7 @@ func (o *ObjectCommon) AddComment(comment string) {
 // unionがmemberを見分ける際には依然としてこの方法しかない
 func (o *ObjectCommon) getDiscriminatorValues(discriminatorKey string) []string {
 	for _, f := range o.fields {
-		if f, ok := f.(*discriminatorField); ok && f.name == discriminatorKey {
+		if f, ok := f.(*DiscriminatorField); ok && f.name == discriminatorKey {
 			return []string{f.value}
 		}
 	}
@@ -48,7 +48,7 @@ func (o *ObjectCommon) code(c *Converter) jen.Code {
 
 	code.Type().Id(o.name_).StructFunc(func(g *jen.Group) {
 		for _, f := range o.fields {
-			g.Add(f.fieldCode())
+			g.Add(f.renderField())
 		}
 	}).Line()
 

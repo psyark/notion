@@ -32,10 +32,10 @@ func (o *ConcreteObject) AddToUnion(union *UnionObject) {
 	union.members = append(union.members, o)
 }
 
-func (o *ConcreteObject) AddFields(fields ...fieldCoder) *ConcreteObject {
+func (o *ConcreteObject) AddFields(fields ...fieldRenderer) *ConcreteObject {
 	if o.discriminatorValue != "" {
 		for _, f := range fields {
-			if f, ok := f.(*discriminatorField); ok {
+			if f, ok := f.(*DiscriminatorField); ok {
 				if f.value == o.discriminatorValue {
 					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", o.name(), f.value))
 				}
@@ -55,7 +55,7 @@ func (o *ConcreteObject) code(c *Converter) jen.Code {
 
 	code.Type().Id(o.name_).StructFunc(func(g *jen.Group) {
 		for _, f := range o.fields {
-			g.Add(f.fieldCode())
+			g.Add(f.renderField())
 		}
 	}).Line()
 

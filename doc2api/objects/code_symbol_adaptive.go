@@ -30,7 +30,7 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminatorKey string) []strin
 	return o.ObjectCommon.getDiscriminatorValues(discriminatorKey)
 }
 
-func (o *AdaptiveObject) AddFields(fields ...fieldCoder) *AdaptiveObject {
+func (o *AdaptiveObject) AddFields(fields ...fieldRenderer) *AdaptiveObject {
 	o.fields = append(o.fields, fields...)
 	return o
 }

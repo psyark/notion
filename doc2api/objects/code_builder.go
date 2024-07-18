@@ -127,7 +127,7 @@ func (*CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOp
 }
 
 // NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *discriminatorField {
+func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 	for _, value := range []string{p.ExampleValue, p.Type} {
 		if value != "" {
 			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
@@ -141,7 +141,7 @@ func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *discriminatorField {
 					}
 				}
 
-				return &discriminatorField{
+				return &DiscriminatorField{
 					name:    p.Property,
 					value:   value,
 					comment: p.Description,
