@@ -35,6 +35,8 @@ func (o *AdaptiveObject) AddFields(fields ...fieldCoder) *AdaptiveObject {
 	return o
 }
 
+// TODO 以下の3つのメソッドは共通化できるのでは？
+
 // AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
 func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
 	o.AddFields(&VariableField{
@@ -59,6 +61,7 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue s
 	return co
 }
 
+// TODO この関数は文字列を渡すだけで良いのでは？
 func (c *AdaptiveObject) AddToUnion(union *UnionObject) {
 	c.unions = append(c.unions, union)
 	union.members = append(union.members, c)

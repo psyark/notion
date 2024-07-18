@@ -26,6 +26,7 @@ type ConcreteObject struct {
 	discriminatorValue string
 }
 
+// TODO この関数は文字列を渡すだけで良いのでは？
 func (o *ConcreteObject) AddToUnion(union *UnionObject) {
 	o.unions = append(o.unions, union)
 	union.members = append(union.members, o)
