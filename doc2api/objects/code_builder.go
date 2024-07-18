@@ -181,3 +181,9 @@ var OmitEmpty fieldOption = func(f *VariableField) {
 var DiscriminatorNotEmpty fieldOption = func(f *VariableField) {
 	f.discriminatorNotEmpty = true
 }
+
+func DiscriminatorValue(value string) fieldOption {
+	return func(f *VariableField) {
+		f.discriminatorValue = value
+	}
+}
