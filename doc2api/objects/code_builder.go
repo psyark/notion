@@ -77,15 +77,6 @@ func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, identifierKey str
 	return u
 }
 
-func (b *CodeBuilder) addAlwaysStringIfNotExists(value string) {
-	as := AlwaysString(value)
-	if _, ok := b.converter.symbols.Load(as.name()); ok {
-		return
-	}
-	b.converter.symbols.Store(as.name(), as)
-	b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, as)
-}
-
 func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string) {
 	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
 
@@ -135,16 +126,22 @@ func (*CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOp
 	return f
 }
 
-// NewFixedStringField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-func (b *CodeBuilder) NewFixedStringField(p *Parameter) *fixedStringField {
+// NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *discriminatorField {
 	for _, value := range []string{p.ExampleValue, p.Type} {
 		if value != "" {
 			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
 				value = strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`)
 
-				b.addAlwaysStringIfNotExists(value)
+				{
+					as := DiscriminatorString(value)
+					if _, ok := b.converter.symbols.Load(as.name()); !ok {
+						b.converter.symbols.Store(as.name(), as)
+						b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, as)
+					}
+				}
 
-				return &fixedStringField{
+				return &discriminatorField{
 					name:    p.Property,
 					value:   value,
 					comment: p.Description,

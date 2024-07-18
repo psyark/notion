@@ -7,10 +7,9 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-// TODO 名前を考える。 FixedString？ Discriminator？
-type AlwaysString string
+type DiscriminatorString string
 
-func (c AlwaysString) code(_ *Converter) jen.Code {
+func (c DiscriminatorString) code(_ *Converter) jen.Code {
 	code := jen.Type().Id(c.name()).String().Line()
 	code.Func().Params(jen.Id("s").Id(c.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		jen.Return().List(jen.Index().Byte().Call(jen.Lit(fmt.Sprintf("%q", string(c)))), jen.Nil()),
@@ -18,6 +17,6 @@ func (c AlwaysString) code(_ *Converter) jen.Code {
 	return code
 }
 
-func (c AlwaysString) name() string {
+func (c DiscriminatorString) name() string {
 	return "always" + strcase.UpperCamelCase(string(c))
 }

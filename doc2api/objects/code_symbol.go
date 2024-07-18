@@ -15,5 +15,5 @@ var _ = []CodeSymbol{
 	&AdaptiveObject{},
 	&UnionObject{},
 	&UnmarshalTest{},
-	AlwaysString(""),
+	DiscriminatorString(""),
 }

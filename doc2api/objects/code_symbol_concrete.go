@@ -35,7 +35,7 @@ func (o *ConcreteObject) AddToUnion(union *UnionObject) {
 func (o *ConcreteObject) AddFields(fields ...fieldCoder) *ConcreteObject {
 	if o.discriminatorValue != "" {
 		for _, f := range fields {
-			if f, ok := f.(*fixedStringField); ok {
+			if f, ok := f.(*discriminatorField); ok {
 				if f.value == o.discriminatorValue {
 					panic(fmt.Errorf("%s に自明の fixedStringField %s がaddFieldされました", o.name(), f.value))
 				}

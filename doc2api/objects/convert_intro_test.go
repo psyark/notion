@@ -78,7 +78,7 @@ func TestIntro(t *testing.T) {
 		Type:        `"list"`,
 		Description: "The constant string \"list\".",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		pagination.AddFields(b.NewFixedStringField(e))
+		pagination.AddFields(b.NewDiscriminatorField(e))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "results",

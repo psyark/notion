@@ -51,7 +51,7 @@ func TestBlock(t *testing.T) {
 		ExampleValue: `"block"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		e.Property = strings.TrimSuffix(e.Property, "\\")
-		block.AddFields(b.NewFixedStringField(e))
+		block.AddFields(b.NewDiscriminatorField(e))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "id\\",

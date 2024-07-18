@@ -38,7 +38,7 @@ func TestEmoji(t *testing.T) {
 		Description:  `The constant string "emoji" that represents the object type.`,
 		ExampleValue: `"emoji"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		emoji.AddFields(b.NewFixedStringField(e))
+		emoji.AddFields(b.NewDiscriminatorField(e))
 	})
 
 	c.ExpectParameter(&Parameter{

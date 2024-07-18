@@ -33,7 +33,7 @@ func (o *ObjectCommon) AddComment(comment string) {
 // unionがmemberを見分ける際には依然としてこの方法しかない
 func (o *ObjectCommon) getDiscriminatorValues(discriminatorKey string) []string {
 	for _, f := range o.fields {
-		if f, ok := f.(*fixedStringField); ok && f.name == discriminatorKey {
+		if f, ok := f.(*discriminatorField); ok && f.name == discriminatorKey {
 			return []string{f.value}
 		}
 	}

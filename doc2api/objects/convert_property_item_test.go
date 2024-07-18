@@ -33,10 +33,10 @@ func TestPropertyItem(t *testing.T) {
 	c.ExpectParameter(&Parameter{
 		Property:     "object",
 		Type:         `"property_item"`,
-		Description:  "Always \"property_item\".",
+		Description:  `Always "property_item".`,
 		ExampleValue: `"property_item"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		propertyItem.AddFields(b.NewFixedStringField(e))
+		propertyItem.AddFields(b.NewDiscriminatorField(e))
 	})
 
 	c.ExpectParameter(&Parameter{

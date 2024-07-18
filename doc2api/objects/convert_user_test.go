@@ -62,7 +62,7 @@ func TestUser(t *testing.T) {
 		ExampleValue: `"user"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		e.Property = strings.TrimSuffix(e.Property, `\*`)
-		user.AddFields(b.NewFixedStringField(e))
+		user.AddFields(b.NewDiscriminatorField(e))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     `id\*`,

@@ -46,21 +46,21 @@ func TestPage(t *testing.T) {
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘Properties marked with an \\* are available to integrations with any capabilities. Other properties require read content capabilities in order to be returned from the Notion API. For more information on integration capabilities, see the capabilities guide."})
 
 	c.ExpectParameter(&Parameter{
-		Property:     "object\\",
+		Property:     `object\`,
 		Type:         "string",
 		Description:  `Always "page".`,
 		ExampleValue: `"page"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		e.Property = strings.TrimSuffix(e.Property, "\\")
-		page.AddFields(b.NewFixedStringField(e))
+		e.Property = strings.TrimSuffix(e.Property, `\`)
+		page.AddFields(b.NewDiscriminatorField(e))
 	})
 	c.ExpectParameter(&Parameter{
-		Property:     "id\\",
+		Property:     `id\`,
 		Type:         "string (UUIDv4)",
 		Description:  "Unique identifier of the page.",
 		ExampleValue: `"45ee8d13-687b-47ce-a5ca-6e2e45548c4b"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		e.Property = strings.TrimSuffix(e.Property, "\\")
+		e.Property = strings.TrimSuffix(e.Property, `\`)
 		page.AddFields(b.NewField(e, UUID))
 	})
 	c.ExpectParameter(&Parameter{
