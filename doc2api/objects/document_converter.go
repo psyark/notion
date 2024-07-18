@@ -19,7 +19,7 @@ import (
 type Converter struct {
 	symbols       *SyncMap[string, CodeSymbol]
 	globalBuilder *CodeBuilder
-	builders      []*CodeBuilder
+	comparators   []*DocumentComparator
 }
 
 func NewConverter() *Converter {
@@ -27,7 +27,6 @@ func NewConverter() *Converter {
 	return &Converter{
 		symbols:       &SyncMap[string, CodeSymbol]{},
 		globalBuilder: global,
-		builders:      []*CodeBuilder{global},
 	}
 }
 
@@ -62,19 +61,22 @@ func (c *Converter) FetchDocument(url string) *DocumentComparator {
 
 	lo.Must0(md.Convert([]byte(ssrProps.Doc.Body), io.Discard))
 
-	builder := &CodeBuilder{
-		url:       url,
-		fileName:  fmt.Sprintf("objects_%s_generated.go", strings.TrimPrefix(url, "https://developers.notion.com/reference/")),
-		converter: c,
+	comparator := &DocumentComparator{
+		elements: elements,
+		builder: &CodeBuilder{
+			url:       url,
+			fileName:  fmt.Sprintf("objects_%s_generated.go", strings.TrimPrefix(url, "https://developers.notion.com/reference/")),
+			converter: c,
+		},
 	}
-
-	c.builders = append(c.builders, builder)
-
-	return &DocumentComparator{elements: elements, builder: builder}
+	c.comparators = append(c.comparators, comparator)
+	return comparator
 }
 
 func (c *Converter) OutputAllBuilders() {
-	for _, b := range c.builders {
-		b.output()
+	for _, c := range c.comparators {
+		c.finish()
+		c.builder.output()
 	}
+	c.globalBuilder.output()
 }

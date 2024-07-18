@@ -178,6 +178,11 @@ func TestDatabase(t *testing.T) {
 				database.AddFields(b.NewField(e, jen.Op("*").String()))
 			})
 
+			c.ExpectBlock(&Block{
+				Kind: "Blockquote",
+				Text: "🚧 Maximum schema size recommendationNotion recommends a maximum schema size of 50KB. Updates to database schemas that are too large will be blocked to help maintain database performance.",
+			})
+
 			c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
 				database.AddFields(UndocumentedRequestID(b))
 			})

@@ -41,6 +41,14 @@ func (c *DocumentComparator) RequestBuilderForUndocumented(fn func(b *CodeBuilde
 	fn(c.builder)
 }
 
+// finish は比較を終了します
+func (c *DocumentComparator) finish() {
+	if c.index < len(c.elements) {
+		next := c.elements[c.index]
+		panic(fmt.Sprintf("比較されていないエレメントが存在します: %+v", next))
+	}
+}
+
 type Match[T DocumentElement] struct {
 	element T
 	builder *CodeBuilder
