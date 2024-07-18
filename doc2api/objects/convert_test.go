@@ -15,6 +15,7 @@ const (
 var (
 	converter *Converter
 	UUID      = jen.Qual("github.com/google/uuid", "UUID")
+	NullUUID  = jen.Op("*").Qual("github.com/google/uuid", "UUID")
 )
 
 func TestMain(m *testing.M) {
