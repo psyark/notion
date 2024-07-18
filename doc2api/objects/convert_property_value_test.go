@@ -333,17 +333,15 @@ func TestPropertyValue(t *testing.T) {
 			Kind: "Heading",
 			Text: "Formula property values",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			formula = b.AddAdaptiveObject("Formula", "type", e.Text, DiscriminatorOmitEmpty())
-			propertyValue.AddAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("Formula"))
+			formula = b.AddAdaptiveObject("Formula", "type", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.",
+		}).Output(func(e *Block, b *CodeBuilder) {
+			propertyValue.AddAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("Formula"))
 		})
-		c.ExpectBlock(&Block{
-			Kind: "Blockquote",
-			Text: "Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value.",
-		})
+		c.ExpectBlock(&Block{Kind: "Blockquote", Text: "Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value."})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"Formula\": {\n    \"id\": \"1lab\",\n    \"formula\": {\n      \"type\": \"number\",\n      \"number\": 1234\n    }\n  }\n}",
@@ -355,10 +353,7 @@ func TestPropertyValue(t *testing.T) {
 			Type:     "string (enum)",
 		})
 		/* String formula property values */
-		c.ExpectBlock(&Block{
-			Kind: "Heading",
-			Text: "String formula property values",
-		})
+		c.ExpectBlock(&Block{Kind: "Heading", Text: "String formula property values"})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "String formula property values contain an optional string within the string property.",
@@ -366,10 +361,7 @@ func TestPropertyValue(t *testing.T) {
 			formula.AddAdaptiveFieldWithType("string", e.Text, jen.Op("*").String())
 		})
 		/* Number formula property values */
-		c.ExpectBlock(&Block{
-			Kind: "Heading",
-			Text: "Number formula property values",
-		})
+		c.ExpectBlock(&Block{Kind: "Heading", Text: "Number formula property values"})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "Number formula property values contain an optional number within the number property.",
