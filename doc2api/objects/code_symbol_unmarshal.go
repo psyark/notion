@@ -2,6 +2,7 @@ package objects
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -18,6 +19,7 @@ func (c *UnmarshalTest) name() string {
 func (c *UnmarshalTest) code(_ *Converter) jen.Code {
 	return jen.Line().Func().Id(c.name()).Params(jen.Id("t").Op("*").Qual("testing", "T")).Block(
 		jen.Id("tests").Op(":=").Index().String().ValuesFunc(func(g *jen.Group) {
+			slices.Sort(c.jsonCodes) // 並列実行で出力が変わるのを防ぐため
 			for _, t := range c.jsonCodes {
 				g.Line().Lit(t)
 			}
