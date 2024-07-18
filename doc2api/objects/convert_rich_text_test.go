@@ -114,18 +114,18 @@ func TestRichText(t *testing.T) {
 				annotations.AddFields(b.NewField(e, jen.Bool()))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the text is struck through.",
-				ExampleValue: "false",
 				Property:     "strikethrough",
 				Type:         "boolean",
+				Description:  "Whether the text is struck through.",
+				ExampleValue: "false",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				annotations.AddFields(b.NewField(e, jen.Bool()))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the text is underlined.",
-				ExampleValue: "false",
 				Property:     "underline",
 				Type:         "boolean",
+				Description:  "Whether the text is underlined.",
+				ExampleValue: "false",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				annotations.AddFields(b.NewField(e, jen.Bool()))
 			})

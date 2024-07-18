@@ -80,10 +80,10 @@ func TestUser(t *testing.T) {
 		}) // PersonとBotで定義
 
 		c.ExpectParameter(&Parameter{
-			Description:  "User's name, as displayed in Notion.",
-			ExampleValue: `"Avocado Lovelace"`,
 			Property:     "name",
 			Type:         "string (optional)",
+			Description:  "User's name, as displayed in Notion.",
+			ExampleValue: `"Avocado Lovelace"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			user.AddFields(b.NewField(e, jen.String(), DiscriminatorNotEmpty))
 		})
@@ -137,10 +137,10 @@ func TestUser(t *testing.T) {
 			bot = user.AddAdaptiveFieldWithSpecificObject("bot", e.Text, b)
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
-			ExampleValue: "{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 			Property:     "bot",
 			Type:         "object",
+			Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
+			ExampleValue: "{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			b.AddUnmarshalTest("User", e.ExampleValue)
 		})

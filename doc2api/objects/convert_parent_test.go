@@ -33,10 +33,10 @@ func TestParent(t *testing.T) {
 		})
 
 		c.ExpectParameter(&Parameter{
-			Description:  "The ID of the database that this page belongs to.",
-			ExampleValue: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 			Property:     "database_id",
 			Type:         "string (UUIDv4)",
+			Description:  "The ID of the database that this page belongs to.",
+			ExampleValue: `"b8595b75-abd1-4cad-8dfe-f935a8ef57cb"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			parent.AddAdaptiveFieldWithType("database_id", e.Description, UUID)
 		})
@@ -106,10 +106,10 @@ func TestParent(t *testing.T) {
 			ExampleValue: `"block_id"`,
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The ID of the page that this page belongs to.",
-			ExampleValue: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 			Property:     "block_id",
 			Type:         "string (UUIDv4)",
+			Description:  "The ID of the page that this page belongs to.",
+			ExampleValue: `"ea29285f-7282-4b00-b80c-32bdbab50261"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			parent.AddAdaptiveFieldWithType("block_id", e.Description, UUID)
 		})

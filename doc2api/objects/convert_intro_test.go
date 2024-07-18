@@ -80,18 +80,16 @@ func TestIntro(t *testing.T) {
 			pagination.AddFields(b.NewFixedStringField(e))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "results",
-			Type:         "array of objects",
-			Description:  "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
-			ExampleValue: "",
+			Property:    "results",
+			Type:        "array of objects",
+			Description: "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			pagination.AddFields(b.NewField(e, jen.Qual("encoding/json", "RawMessage")))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "type",
-			Type:         "\"block\"  \n  \n\"comment\"  \n  \n\"database\"  \n  \n\"page\"  \n  \n\"page_or_database\"  \n  \n\"property_item\"  \n  \n\"user\"",
-			Description:  "A constant string that represents the type of the objects in results.",
-			ExampleValue: "",
+			Property:    "type",
+			Type:        "\"block\"  \n  \n\"comment\"  \n  \n\"database\"  \n  \n\"page\"  \n  \n\"page_or_database\"  \n  \n\"property_item\"  \n  \n\"user\"",
+			Description: "A constant string that represents the type of the objects in results.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			for _, name := range strings.Split(e.Type, "  \n  \n") {
 				name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
@@ -112,16 +110,14 @@ func TestIntro(t *testing.T) {
 		c.ExpectBlock(&Block{Kind: "Blockquote", Text: "🚧 Parameter location varies by endpointGET requests accept parameters in the query string.POST requests receive parameters in the request body."})
 
 		c.ExpectParameter(&Parameter{
-			Property:     "page_size",
-			Type:         "number",
-			Description:  "The number of items from the full list to include in the response.  \n  \nDefault: 100  \nMaximum: 100  \n  \nThe response may contain fewer than the default number of results.",
-			ExampleValue: "",
+			Property:    "page_size",
+			Type:        "number",
+			Description: "The number of items from the full list to include in the response.  \n  \nDefault: 100  \nMaximum: 100  \n  \nThe response may contain fewer than the default number of results.",
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "start_cursor",
-			Type:         "string",
-			Description:  "A next_cursor value returned in a previous response. Treat this as an opaque value.  \n  \nDefaults to undefined, which returns results from the beginning of the list.",
-			ExampleValue: "",
+			Property:    "start_cursor",
+			Type:        "string",
+			Description: "A next_cursor value returned in a previous response. Treat this as an opaque value.  \n  \nDefaults to undefined, which returns results from the beginning of the list.",
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "How to send a paginated request"})

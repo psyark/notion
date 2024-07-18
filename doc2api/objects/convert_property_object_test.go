@@ -41,10 +41,9 @@ func TestProperty(t *testing.T) {
 			property.AddFields(b.NewField(e, jen.String()))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "description",
-			Type:         "string",
-			Description:  "The description of a property as it appear in Notion. ",
-			ExampleValue: "",
+			Property:    "description",
+			Type:        "string",
+			Description: "The description of a property as it appear in Notion. ",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			property.AddFields(b.NewField(e, jen.Op("*").String(), OmitEmpty))
 		})

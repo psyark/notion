@@ -133,10 +133,10 @@ func TestBlock(t *testing.T) {
 			block.AddFields(b.NewField(e, jen.Bool()))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "An object containing type-specific block information.",
-			ExampleValue: "Refer to the block type object section for examples of each block type.",
 			Property:     "{type}",
 			Type:         "block type object",
+			Description:  "An object containing type-specific block information.",
+			ExampleValue: "Refer to the block type object section for examples of each block type.",
 		})
 
 		c.ExpectBlock(&Block{
@@ -228,26 +228,23 @@ func TestBlock(t *testing.T) {
 			Text: "Bulleted list item block objects contain the following information within the bulleted_list_item property:",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The rich text in the bulleted_list_item block.",
-			ExampleValue: "",
-			Property:     "rich_text",
-			Type:         "array of rich text objects",
+			Property:    "rich_text",
+			Type:        "array of rich text objects",
+			Description: "The rich text in the bulleted_list_item block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			bulletedListItem.AddFields(b.NewField(e, jen.Index().Id("RichText")))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-			ExampleValue: "",
-			Property:     "color",
-			Type:         "string (enum)",
+			Property:    "color",
+			Type:        "string (enum)",
+			Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			bulletedListItem.AddFields(b.NewField(e, jen.String(), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The nested child blocks (if any) of the bulleted_list_item block.",
-			ExampleValue: "",
-			Property:     "children",
-			Type:         "array of block objects",
+			Property:    "children",
+			Type:        "array of block objects",
+			Description: "The nested child blocks (if any) of the bulleted_list_item block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			bulletedListItem.AddFields(b.NewField(e, jen.Index().Id("Block")))
 		})
@@ -516,28 +513,24 @@ func TestBlock(t *testing.T) {
 			Text: "File block objects contain the following information within the file property:",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The caption of the file block.",
-			ExampleValue: "",
-			Property:     "caption",
-			Type:         "array of rich text objects",
+			Property:    "caption",
+			Type:        "array of rich text objects",
+			Description: "The caption of the file block.",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "A constant string.",
-			ExampleValue: "",
-			Property:     "type",
-			Type:         "\"file\"  \n  \n\"external\"",
+			Property:    "type",
+			Type:        "\"file\"  \n  \n\"external\"",
+			Description: "A constant string.",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "A file object that details information about the file contained in the block.",
-			ExampleValue: "",
-			Property:     "file",
-			Type:         "file object",
+			Property:    "file",
+			Type:        "file object",
+			Description: "A file object that details information about the file contained in the block.",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The name of the file block, as shown in the Notion UI. Note that the UI may auto-append .pdf or other extensions.",
-			ExampleValue: "",
-			Property:     "name",
-			Type:         "string",
+			Property:    "name",
+			Type:        "string",
+			Description: "The name of the file block, as shown in the Notion UI. Note that the UI may auto-append .pdf or other extensions.",
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -668,18 +661,16 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "A constant string representing the type of the mention.",
-			ExampleValue: "",
-			Property:     "type",
-			Type:         "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
+			Property:    "type",
+			Type:        "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
+			Description: "A constant string representing the type of the mention.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "An object with type-specific information about the mention.",
-			ExampleValue: "",
-			Property:     "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
-			Type:         "object",
+			Property:    "\"database\"  \n  \n\"date\"  \n  \n\"link_preview\"  \n  \n\"page\"  \n  \n\"user\"",
+			Type:        "object",
+			Description: "An object with type-specific information about the mention.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -703,26 +694,23 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The rich text displayed in the numbered_list_item block.",
-			ExampleValue: "",
-			Property:     "rich_text",
-			Type:         "array of rich text objects",
+			Property:    "rich_text",
+			Type:        "array of rich text objects",
+			Description: "The rich text displayed in the numbered_list_item block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-			ExampleValue: "",
-			Property:     "color",
-			Type:         "string (enum)",
+			Property:    "color",
+			Type:        "string (enum)",
+			Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The nested child blocks (if any) of the numbered_list_item block.",
-			ExampleValue: "",
-			Property:     "children",
-			Type:         "array of block objects",
+			Property:    "children",
+			Type:        "array of block objects",
+			Description: "The nested child blocks (if any) of the numbered_list_item block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -790,18 +778,16 @@ func TestBlock(t *testing.T) {
 			pdf.AddComment(e.Text)
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "caption",
-			Type:         "array of rich text objects",
-			Description:  "A caption, if provided, for the PDF block.",
-			ExampleValue: "",
+			Property:    "caption",
+			Type:        "array of rich text objects",
+			Description: "A caption, if provided, for the PDF block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			pdf.AddFields(b.NewField(e, jen.Index().Id("RichText")))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "type",
-			Type:         "\"external\"  \n  \n\"file\"",
-			Description:  "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
-			ExampleValue: "",
+			Property:    "type",
+			Type:        "\"external\"  \n  \n\"file\"",
+			Description: "A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			pdf.AddFields(b.NewField(e, jen.String()))
 		})
@@ -835,26 +821,23 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The rich text displayed in the quote block.",
-			ExampleValue: "",
-			Property:     "rich_text",
-			Type:         "array of rich text objects",
+			Property:    "rich_text",
+			Type:        "array of rich text objects",
+			Description: "The rich text displayed in the quote block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-			ExampleValue: "",
-			Property:     "color",
-			Type:         "string (enum)",
+			Property:    "color",
+			Type:        "string (enum)",
+			Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The nested child blocks, if any, of the quote block.",
-			ExampleValue: "",
-			Property:     "children",
-			Type:         "array of block objects",
+			Property:    "children",
+			Type:        "array of block objects",
+			Description: "The nested child blocks, if any, of the quote block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -919,16 +902,14 @@ func TestBlock(t *testing.T) {
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Duplicate synced block"})
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Duplicate synced block objects contain the following information within the synced_from object:"})
 		c.ExpectParameter(&Parameter{
-			Property:     "type",
-			Type:         "string (enum)",
-			Description:  "The type of the synced from object.  \n  \nPossible values are:  \n  \n- \"block_id\"",
-			ExampleValue: "",
+			Property:    "type",
+			Type:        "string (enum)",
+			Description: "The type of the synced from object.  \n  \nPossible values are:  \n  \n- \"block_id\"",
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "block_id",
-			Type:         "string (UUIDv4)",
-			Description:  "An identifier for the original synced_block.",
-			ExampleValue: "",
+			Property:    "block_id",
+			Type:        "string (UUIDv4)",
+			Description: "An identifier for the original synced_block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			b.AddConcreteObject("SyncedFrom", "").AddFields(b.NewField(e, UUID))
 		})
@@ -954,26 +935,23 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The number of columns in the table.  \n  \nNote that this cannot be changed via the public API once a table is created.",
-			ExampleValue: "",
-			Property:     "table_width",
-			Type:         "integer",
+			Property:    "table_width",
+			Type:        "integer",
+			Description: "The number of columns in the table.  \n  \nNote that this cannot be changed via the public API once a table is created.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
-			ExampleValue: "",
-			Property:     "has_column_header",
-			Type:         "boolean",
+			Property:    "has_column_header",
+			Type:        "boolean",
+			Description: "Whether the table has a column header. If true, then the first row in the table appears visually distinct from the other rows.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
-			ExampleValue: "",
-			Property:     "has_row_header",
-			Type:         "boolean",
+			Property:    "has_row_header",
+			Type:        "boolean",
+			Description: "Whether the table has a header row. If true, then the first column in the table appears visually distinct from the other columns.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -1015,10 +993,9 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
-			ExampleValue: "",
-			Property:     "cells",
-			Type:         "array of array of rich text objects",
+			Property:    "cells",
+			Type:        "array of array of rich text objects",
+			Description: "An array of cell contents in horizontal display order. Each cell is an array of rich text objects.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -1048,10 +1025,9 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-			ExampleValue: "",
-			Property:     "color",
-			Type:         "string (enum)",
+			Property:    "color",
+			Type:        "string (enum)",
+			Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -1087,18 +1063,16 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The rich text displayed in the title of the template.",
-			ExampleValue: "",
-			Property:     "rich_text",
-			Type:         "array of rich text objects",
+			Property:    "rich_text",
+			Type:        "array of rich text objects",
+			Description: "The rich text displayed in the title of the template.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
-			ExampleValue: "",
-			Property:     "children",
-			Type:         "array of block objects",
+			Property:    "children",
+			Type:        "array of block objects",
+			Description: "The nested child blocks, if any, of the template block. These blocks are duplicated when the template block is used in the UI.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
@@ -1171,26 +1145,23 @@ func TestBlock(t *testing.T) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The rich text displayed in the Toggle block.",
-			ExampleValue: "",
-			Property:     "rich_text",
-			Type:         "array of rich text objects",
+			Property:    "rich_text",
+			Type:        "array of rich text objects",
+			Description: "The rich text displayed in the Toggle block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
-			ExampleValue: "",
-			Property:     "color",
-			Type:         "string (enum)",
+			Property:    "color",
+			Type:        "string (enum)",
+			Description: "The color of the block. Possible values are:  \n  \n- \"blue\"\n- \"blue_background\"\n- \"brown\"\n- \"brown_background\"\n- \"default\"\n- \"gray\"\n- \"gray_background\"\n- \"green\"\n- \"green_background\"\n- \"orange\"\n- \"orange_background\"\n- \"yellow\"\n- \"green\"\n- \"pink\"\n- \"pink_background\"\n- \"purple\"\n- \"purple_background\"\n- \"red\"\n- \"red_background\"\n- \"yellow_background\"",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The nested child blocks, if any, of the Toggle block.",
-			ExampleValue: "",
-			Property:     "children",
-			Type:         "array of block objects",
+			Property:    "children",
+			Type:        "array of block objects",
+			Description: "The nested child blocks, if any, of the Toggle block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			// TODO
 		})

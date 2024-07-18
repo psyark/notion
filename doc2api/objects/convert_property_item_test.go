@@ -160,22 +160,22 @@ func TestPropertyItem(t *testing.T) {
 			propertyItem.AddAdaptiveFieldWithType("status", "undocumented", jen.Op("*").Id("Option"))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
-			ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 			Property:     "id",
 			Type:         "string (UUIDv4)",
+			Description:  "ID of the option.\n\nWhen updating a select property, you can use either name or id.",
+			ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 		}) // Optionで共通化
 		c.ExpectParameter(&Parameter{
-			Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-			ExampleValue: `"Fruit"`,
 			Property:     "name",
 			Type:         "string",
+			Description:  "Name of the option as it appears in Notion.\n\nIf the select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
+			ExampleValue: `"Fruit"`,
 		}) // Optionで共通化
 		c.ExpectParameter(&Parameter{
-			Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-			ExampleValue: `"red"`,
 			Property:     "color",
 			Type:         "string (enum)",
+			Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
+			ExampleValue: `"red"`,
 		}) // Optionで共通化
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -196,22 +196,22 @@ func TestPropertyItem(t *testing.T) {
 			Text: "Multi-select option values",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
-			ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 			Property:     "id",
 			Type:         "string (UUIDv4)",
+			Description:  "ID of the option.\n\nWhen updating a multi-select property, you can use either name or id.",
+			ExampleValue: `"b3d773ca-b2c9-47d8-ae98-3c2ce3b2bffb"`,
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
-			ExampleValue: `"Fruit"`,
 			Property:     "name",
 			Type:         "string",
+			Description:  "Name of the option as it appears in Notion.\n\nIf the multi-select database property does not yet have an option by that name, it will be added to the database schema if the integration also has write access to the parent database.\n\nNote: Commas (\",\") are not valid for select values.",
+			ExampleValue: `"Fruit"`,
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
-			ExampleValue: `"red"`,
 			Property:     "color",
 			Type:         "string (enum)",
+			Description:  "Color of the option. Possible values are: \"default\", \"gray\", \"brown\", \"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\", \"pink\". Defaults to \"default\".\n\nNot currently editable.",
+			ExampleValue: `"red"`,
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -320,16 +320,14 @@ func TestPropertyItem(t *testing.T) {
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Computing the values of following aggregations are not supported. Instead the endpoint returns a list of property_item objects for the rollup:"})
 		c.ExpectBlock(&Block{Kind: "List", Text: "show_unique (Show unique values)unique (Count unique values)median(Median)"})
 		c.ExpectParameter(&Parameter{
-			Property:     "type",
-			Type:         "string (enum)",
-			Description:  "The type of rollup. Possible values are \"number\", \"date\", \"array\", \"unsupported\" and \"incomplete\".",
-			ExampleValue: "",
+			Property:    "type",
+			Type:        "string (enum)",
+			Description: "The type of rollup. Possible values are \"number\", \"date\", \"array\", \"unsupported\" and \"incomplete\".",
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "function",
-			Type:         "string (enum)",
-			Description:  "Describes the aggregation used. \nPossible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original",
-			ExampleValue: "",
+			Property:    "function",
+			Type:        "string (enum)",
+			Description: "Describes the aggregation used. \nPossible values include: count,  count_values,  empty,  not_empty,  unique,  show_unique,  percent_empty,  percent_not_empty,  sum,  average,  median,  min,  max,  range,  earliest_date,  latest_date,  date_range,  checked,  unchecked,  percent_checked,  percent_unchecked,  count_per_group,  percent_per_group,  show_original",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			rollup.AddFields(b.NewField(e, jen.String()))
 		})

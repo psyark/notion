@@ -111,18 +111,16 @@ func TestPage(t *testing.T) {
 			page.AddFields(b.NewField(e, jen.Bool()))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "icon",
-			Type:         `File Object (only type of "external" is supported currently) or Emoji object`,
-			Description:  "Page icon.",
-			ExampleValue: "",
+			Property:    "icon",
+			Type:        `File Object (only type of "external" is supported currently) or Emoji object`,
+			Description: "Page icon.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			page.AddFields(b.NewField(e, jen.Id("FileOrEmoji")))
 		})
 		c.ExpectParameter(&Parameter{
-			Property:     "cover",
-			Type:         `File object (only type of "external" is supported currently)`,
-			Description:  "Page cover image.",
-			ExampleValue: "",
+			Property:    "cover",
+			Type:        `File object (only type of "external" is supported currently)`,
+			Description: "Page cover image.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			page.AddFields(b.NewField(e, jen.Op("*").Id("File")))
 		})

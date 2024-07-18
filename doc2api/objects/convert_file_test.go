@@ -49,16 +49,16 @@ func TestFile(t *testing.T) {
 		})
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Each file object includes the following fields:"})
 		c.ExpectParameter(&Parameter{
+			Property:     "type",
+			Type:         `string (enum)`,
 			Description:  "The type of the file object. Possible type values are:\u00a0\"external\",\u00a0\"file\".",
 			ExampleValue: `"external"`,
-			Property:     "type",
-			Type:         "string\u00a0(enum)",
 		})
 		c.ExpectParameter(&Parameter{
+			Property:     `external \| file`,
+			Type:         "object",
 			Description:  "An object containing type-specific configuration. The key of the object is external for external files, and file for Notion-hosted files.  \n  \nRefer to the type sections below for details on type-specific values.",
 			ExampleValue: "Refer to to the type-specific sections below for examples.",
-			Property:     "external \\| file",
-			Type:         "object",
 		})
 
 		c.WithScope(func(c *DocumentComparator) {

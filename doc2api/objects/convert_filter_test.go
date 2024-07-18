@@ -54,10 +54,10 @@ func TestFilter(t *testing.T) {
 			filter.AddFields(b.NewField(e, jen.String(), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "The type-specific filter condition for the query. Only types listed in the Field column of this table are supported.  \n  \nRefer to type-specific filter conditions for details on corresponding object values.",
-			ExampleValue: "\"checkbox\": {\n  \"equals\": true\n}",
 			Property:     "checkbox  \ndate  \nfiles  \nformula  \nmulti_select  \nnumber  \npeople  \nphone_number  \nrelation  \nrich_text  \nselect  \nstatus  \ntimestamp  \nID",
 			Type:         "object",
+			Description:  "The type-specific filter condition for the query. Only types listed in the Field column of this table are supported.  \n  \nRefer to type-specific filter conditions for details on corresponding object values.",
+			ExampleValue: "\"checkbox\": {\n  \"equals\": true\n}",
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -84,18 +84,18 @@ func TestFilter(t *testing.T) {
 				specificObject = filter.AddAdaptiveFieldWithSpecificObject("checkbox", e.Text, b)
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether a checkbox property value matches the provided value exactly.  \n  \nReturns or excludes all database entries with an exact value match.",
-				ExampleValue: "false",
 				Property:     "equals",
 				Type:         "boolean",
+				Description:  "Whether a checkbox property value matches the provided value exactly.  \n  \nReturns or excludes all database entries with an exact value match.",
+				ExampleValue: "false",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Bool(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether a checkbox property value differs from the provided value.  \n  \nReturns or excludes all database entries with a difference in values.",
-				ExampleValue: "true",
 				Property:     "does_not_equal",
 				Type:         "boolean",
+				Description:  "Whether a checkbox property value differs from the provided value.  \n  \nReturns or excludes all database entries with a difference in values.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Bool(), OmitEmpty))
 			})
@@ -303,34 +303,34 @@ func TestFilter(t *testing.T) {
 				formulaFilter.AddComment(e.Text)
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A checkbox filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
-				ExampleValue: "Refer to the checkbox filter condition.",
 				Property:     "checkbox",
 				Type:         "object",
+				Description:  "A checkbox filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
+				ExampleValue: "Refer to the checkbox filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				formulaFilter.AddAdaptiveFieldWithType("checkbox", e.Description, jen.Op("*").Id("FilterCheckbox"))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A date filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
-				ExampleValue: "Refer to the date filter condition.",
 				Property:     "date",
 				Type:         "object",
+				Description:  "A date filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
+				ExampleValue: "Refer to the date filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				formulaFilter.AddAdaptiveFieldWithType("date", e.Description, jen.Op("*").Id("FilterDate"))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A number filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
-				ExampleValue: "Refer to the number filter condition.",
 				Property:     "number",
 				Type:         "object",
+				Description:  "A number filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
+				ExampleValue: "Refer to the number filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				formulaFilter.AddAdaptiveFieldWithType("number", e.Description, jen.Op("*").Id("FilterNumber"))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A rich text filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
-				ExampleValue: "Refer to the rich text filter condition.",
 				Property:     "string",
 				Type:         "object",
+				Description:  "A rich text filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
+				ExampleValue: "Refer to the rich text filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				formulaFilter.AddAdaptiveFieldWithType("string", e.Description, jen.Op("*").Id("FilterRichText"))
 			})
@@ -401,66 +401,66 @@ func TestFilter(t *testing.T) {
 				specificObject = filter.AddAdaptiveFieldWithSpecificObject("number", e.Text, b)
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value differs from the provided number.",
-				ExampleValue: "42",
 				Property:     "does_not_equal",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value differs from the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is the same as the provided number.",
-				ExampleValue: "42",
 				Property:     "equals",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is the same as the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value exceeds the provided number.",
-				ExampleValue: "42",
 				Property:     "greater_than",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value exceeds the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is equal to or exceeds the provided number.",
-				ExampleValue: "42",
 				Property:     "greater_than_or_equal_to",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is equal to or exceeds the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the number property value is empty.  \n  \nReturns database entries where the number property value does not contain any data.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the number property value is empty.  \n  \nReturns database entries where the number property value does not contain any data.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the number property value is not empty.  \n  \nReturns database entries where the number property value contains data.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the number property value is not empty.  \n  \nReturns database entries where the number property value contains data.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is less than the provided number.",
-				ExampleValue: "42",
 				Property:     "less_than",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is less than the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is equal to or is less than the provided number.",
-				ExampleValue: "42",
 				Property:     "less_than_or_equal_to",
 				Type:         "number",
+				Description:  "The number to compare the number property value against.  \n  \nReturns database entries where the number property value is equal to or is less than the provided number.",
+				ExampleValue: "42",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Op("*").Float64(), OmitEmpty))
 			})
@@ -508,18 +508,18 @@ func TestFilter(t *testing.T) {
 				specificObject.AddFields(b.NewField(e, NullUUID, OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the people property value does not contain any data.  \n  \nReturns database entries where the people property value does not contain any data.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the people property value does not contain any data.  \n  \nReturns database entries where the people property value does not contain any data.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the people property value contains data.  \n  \nReturns database entries where the people property value is not empty.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the people property value contains data.  \n  \nReturns database entries where the people property value is not empty.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
@@ -557,18 +557,18 @@ func TestFilter(t *testing.T) {
 				specificObject.AddFields(b.NewField(e, NullUUID, OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the relation property value does not contain data.  \n  \nReturns database entries where the relation property value does not contain any data.",
-				ExampleValue: "true",
 				Property:     "is_empty",
 				Type:         "true",
+				Description:  "Whether the relation property value does not contain data.  \n  \nReturns database entries where the relation property value does not contain any data.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "Whether the relation property value contains data.  \n  \nReturns database entries where the property value is not empty.",
-				ExampleValue: "true",
 				Property:     "is_not_empty",
 				Type:         "true",
+				Description:  "Whether the relation property value contains data.  \n  \nReturns database entries where the property value is not empty.",
+				ExampleValue: "true",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				specificObject.AddFields(b.NewField(e, jen.Bool(), OmitEmpty))
 			})
@@ -685,26 +685,26 @@ func TestFilter(t *testing.T) {
 				Text: "Filter conditions for array rollup values",
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where the rollup property value matches the provided criteria.",
-				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				Property:     "any",
 				Type:         "object",
+				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where the rollup property value matches the provided criteria.",
+				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where every rollup property value matches the provided criteria.",
-				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				Property:     "every",
 				Type:         "object",
+				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where every rollup property value matches the provided criteria.",
+				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where no rollup property value matches the provided criteria.",
-				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 				Property:     "none",
 				Type:         "object",
+				Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where no rollup property value matches the provided criteria.",
+				ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
 			})
@@ -725,10 +725,10 @@ func TestFilter(t *testing.T) {
 				Text: "A rollup value is stored as a date only if the \"Earliest date\", \"Latest date\", or \"Date range\" computation is selected for the property in the Notion UI.",
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A date filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
-				ExampleValue: "Refer to the date filter condition.",
 				Property:     "date",
 				Type:         "object",
+				Description:  "A date filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
+				ExampleValue: "Refer to the date filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterDate"))
 			})
@@ -743,10 +743,10 @@ func TestFilter(t *testing.T) {
 				Text: "Filter conditions for number rollup values",
 			})
 			c.ExpectParameter(&Parameter{
-				Description:  "A number filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
-				ExampleValue: "Refer to the number filter condition.",
 				Property:     "number",
 				Type:         "object",
+				Description:  "A number filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
+				ExampleValue: "Refer to the number filter condition.",
 			}).Output(func(e *Parameter, b *CodeBuilder) {
 				rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterNumber"))
 			})
@@ -874,10 +874,10 @@ func TestFilter(t *testing.T) {
 			filter.AddAdaptiveFieldWithType("timestamp", e.Description, jen.String())
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "A date filter condition used to filter the specified timestamp.",
-			ExampleValue: "Refer to the date filter condition.",
 			Property:     "created_time  \nlast_edited_time",
 			Type:         "object",
+			Description:  "A date filter condition used to filter the specified timestamp.",
+			ExampleValue: "Refer to the date filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			for _, prop := range strings.Split(e.Property, "\n") {
 				e.Property = strings.TrimSpace(prop)
@@ -969,18 +969,18 @@ func TestFilter(t *testing.T) {
 			Text: "A compound filter condition contains an and or or key with a value that is an array of filter objects or nested compound filter objects. Nesting is supported up to two levels deep.",
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match all of the provided filter conditions.",
-			ExampleValue: "Refer to the examples below.",
 			Property:     "and",
 			Type:         "array",
+			Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match all of the provided filter conditions.",
+			ExampleValue: "Refer to the examples below.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			filter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
 		})
 		c.ExpectParameter(&Parameter{
-			Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match any of the provided filter conditions",
-			ExampleValue: "Refer to the examples below.",
 			Property:     "or",
 			Type:         "array",
+			Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match any of the provided filter conditions",
+			ExampleValue: "Refer to the examples below.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			filter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
 		})
