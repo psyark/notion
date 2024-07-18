@@ -55,5 +55,4 @@ func TestEmoji(t *testing.T) {
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Example: set a page icon via the Update page endpoint"})
 		c.ExpectBlock(&Block{Kind: "FencedCodeBlock", Text: "curl https://api.notion.com/v1/pages/60bdc8bd-3880-44b8-a9cd-8a145b3ffbd7 \\\n  -H 'Authorization: Bearer '\"$NOTION_API_KEY\"'' \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Notion-Version: 2022-06-28\" \\\n  -X PATCH \\\n\t--data '{\n  \"icon\": {\n\t  \"type\": \"emoji\", \n\t  \"emoji\": \"🥨\"\n    }\n}'"})
 	})
-
 }

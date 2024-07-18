@@ -6,7 +6,8 @@ import (
 	"github.com/dave/jennifer/jen"
 )
 
-// TODO abstractObject は廃止されたのでは？コメントを修正し、名前も考える
+// TODO abstractObject は廃止されたのでは？コメントを修正する
+// TODO 名前を考える SimpleObject？
 
 // ConcreteObject はAPIのjson応答に実際に出現する具体的なオブジェクトです。
 // これには以下の2パターンがあり、それぞれ次のような性質を持ちます

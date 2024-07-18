@@ -21,7 +21,7 @@ var _ = []memberCoder{
 }
 
 // TODO コメント書く
-// TODO 名前を考える Union？
+// TODO 名前を考える FlexibleUnion？
 
 // UnionObject は、共通の変数に格納される可能性のあるオブジェクトの集合です
 //

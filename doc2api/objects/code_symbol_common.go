@@ -21,7 +21,7 @@ type ObjectCommon struct {
 func (c *ObjectCommon) name() string {
 	return c.name_
 }
-func (c *ObjectCommon) addComment(comment string) {
+func (c *ObjectCommon) AddComment(comment string) {
 	if c.comment != "" {
 		c.comment += "\n\n"
 	}

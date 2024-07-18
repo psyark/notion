@@ -5,7 +5,7 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-// TODO 名前
+// TODO 名前を DiscriminatedUnionにする https://typescriptbook.jp/reference/values-types-variables/discriminated-union
 
 // AdaptiveObject は、Block や User に代表される抽象クラスのための
 // シンプルで効率的な表現を、従来の abstractObject に代わって提供します
