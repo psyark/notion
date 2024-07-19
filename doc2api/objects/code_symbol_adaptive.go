@@ -11,14 +11,14 @@ import (
 // シンプルで効率的な表現を、従来の abstractObject に代わって提供します
 type AdaptiveObject struct {
 	SimpleObject
-	discriminatorKey string // "type", "object" など、派生を識別するためのフィールド名
+	discriminator string // "type", "object" など、派生を識別するためのフィールド名
 }
 
 // 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
 // abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
 // unionがmemberを見分ける際には依然としてこの方法しかない
-func (o *AdaptiveObject) getDiscriminatorValues(discriminatorKey string) []string {
-	if o.discriminatorKey == discriminatorKey {
+func (o *AdaptiveObject) getDiscriminatorValues(discriminator string) []string {
+	if o.discriminator == discriminator {
 		values := []string{}
 		for _, f := range o.fields {
 			if f, ok := f.(*VariableField); ok && f.name == f.discriminatorValue {
@@ -27,9 +27,10 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminatorKey string) []strin
 		}
 		return values
 	}
-	return o.SimpleObject.getDiscriminatorValues(discriminatorKey)
+	return o.SimpleObject.getDiscriminatorValues(discriminator)
 }
 
+// TODO メソッドチェーンやめる
 func (o *AdaptiveObject) AddFields(fields ...fieldRenderer) *AdaptiveObject {
 	o.fields = append(o.fields, fields...)
 	return o
@@ -44,7 +45,7 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, com
 		typeCode:           typeCode,
 		comment:            comment,
 		discriminatorValue: discriminatorValue,
-		omitEmpty:          o.discriminatorKey == "", // Filterなど
+		omitEmpty:          o.discriminator == "", // Filterなど
 	})
 }
 
@@ -68,43 +69,40 @@ func (c *AdaptiveObject) AddToUnion(union *UnionObject) {
 }
 
 func (o *AdaptiveObject) code(c *Converter) jen.Code {
-	code := &jen.Statement{
-		o.SimpleObject.code(c),
-	}
+	code := &jen.Statement{o.SimpleObject.code(c)}
 
-	if o.discriminatorKey != "" {
-		discriminatorProp := strcase.UpperCamelCase(o.discriminatorKey)
-		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-			// type 未設定の場合の自動推定
-			jen.If(jen.Id("o").Dot(discriminatorProp).Op("==").Lit("")).Block(
-				jen.Switch().BlockFunc(func(g *jen.Group) {
-					for _, f := range o.fields {
-						if f, ok := f.(*VariableField); ok {
-							if f.discriminatorValue != "" {
-								g.Case(jen.Id("defined").Call(jen.Id("o").Dot(strcase.UpperCamelCase(f.name)))).Id("o").Dot(discriminatorProp).Op("=").Lit(f.discriminatorValue)
-							}
-						}
-					}
-				}),
-			),
-
-			jen.Type().Id("Alias").Id(o.name()),
-			jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
-			jen.If(jen.Err().Op("!=").Nil()).Block(jen.Return().List(jen.Nil(), jen.Err())),
-			jen.Id("visibility").Op(":=").Map(jen.String()).Bool().Values(jen.DictFunc(func(d jen.Dict) {
+	// discriminatorに対応するGoのフィールド
+	discriminatorProp := strcase.UpperCamelCase(o.discriminator)
+	code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+		// type 未設定の場合の自動推定
+		jen.If(jen.Id("o").Dot(discriminatorProp).Op("==").Lit("")).Block(
+			jen.Switch().BlockFunc(func(g *jen.Group) {
 				for _, f := range o.fields {
 					if f, ok := f.(*VariableField); ok {
-						if f.discriminatorNotEmpty {
-							d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("!=").Lit("")
-						} else if f.discriminatorValue != "" {
-							d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("==").Lit(f.discriminatorValue)
+						if f.discriminatorValue != "" {
+							g.Case(jen.Id("defined").Call(jen.Id("o").Dot(strcase.UpperCamelCase(f.name)))).Id("o").Dot(discriminatorProp).Op("=").Lit(f.discriminatorValue)
 						}
 					}
 				}
-			})),
-			jen.Return().Id("omitFields").Call(jen.Id("data"), jen.Id("visibility")),
-		)
-	}
+			}),
+		),
+
+		jen.Type().Id("Alias").Id(o.name()),
+		jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
+		jen.If(jen.Err().Op("!=").Nil()).Block(jen.Return().List(jen.Nil(), jen.Err())),
+		jen.Id("visibility").Op(":=").Map(jen.String()).Bool().Values(jen.DictFunc(func(d jen.Dict) {
+			for _, f := range o.fields {
+				if f, ok := f.(*VariableField); ok {
+					if f.discriminatorNotEmpty {
+						d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("!=").Lit("")
+					} else if f.discriminatorValue != "" {
+						d[jen.Lit(f.name)] = jen.Id("o").Dot(discriminatorProp).Op("==").Lit(f.discriminatorValue)
+					}
+				}
+			}
+		})),
+		jen.Return().Id("omitFields").Call(jen.Id("data"), jen.Id("visibility")),
+	)
 
 	return code
 }

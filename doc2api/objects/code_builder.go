@@ -8,6 +8,7 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/samber/lo"
+	"github.com/stoewer/go-strcase"
 )
 
 // CodeBuilder は
@@ -36,7 +37,7 @@ func DiscriminatorOmitEmpty() AddAdaptiveObjectOption {
 		for _, f := range o.fields {
 			switch f := f.(type) {
 			case *VariableField:
-				if f.name == o.discriminatorKey {
+				if f.name == o.discriminator {
 					f.omitEmpty = true
 				}
 			}
@@ -44,13 +45,17 @@ func DiscriminatorOmitEmpty() AddAdaptiveObjectOption {
 	}
 }
 
-func (b *CodeBuilder) AddAdaptiveObject(name string, discriminatorKey string, comment string, options ...AddAdaptiveObjectOption) *AdaptiveObject {
+func (b *CodeBuilder) AddAdaptiveObject(name string, discriminator string, comment string, options ...AddAdaptiveObjectOption) *AdaptiveObject {
+	if discriminator == "" {
+		panic(fmt.Errorf("%s のdiscriminatorが設定されていません。代わりにSimpleObjectを使ってください。", name))
+	}
+
 	o := &AdaptiveObject{}
 	o.name_ = name
-	o.discriminatorKey = discriminatorKey
+	o.discriminator = discriminator
 	o.comment = comment
-	if discriminatorKey != "" {
-		o.AddFields(&VariableField{name: discriminatorKey, typeCode: jen.String()})
+	if discriminator != "" {
+		o.AddFields(&VariableField{name: discriminator, typeCode: jen.String()})
 	}
 	for _, option := range options {
 		option(o)
@@ -125,6 +130,22 @@ func (*CodeBuilder) NewField(p *Parameter, typeCode jen.Code, options ...fieldOp
 	return f
 }
 
+type fieldOption func(f *VariableField)
+
+var OmitEmpty fieldOption = func(f *VariableField) {
+	f.omitEmpty = true
+}
+
+var DiscriminatorNotEmpty fieldOption = func(f *VariableField) {
+	f.discriminatorNotEmpty = true
+}
+
+func DiscriminatorValue(value string) fieldOption {
+	return func(f *VariableField) {
+		f.discriminatorValue = value
+	}
+}
+
 // NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
 func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 	for _, value := range []string{p.ExampleValue, p.Type} {
@@ -152,18 +173,13 @@ func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 	panic(fmt.Errorf("パラメータを fixedStringField に変換できません: %v", p))
 }
 
-type fieldOption func(f *VariableField)
-
-var OmitEmpty fieldOption = func(f *VariableField) {
-	f.omitEmpty = true
-}
-
-var DiscriminatorNotEmpty fieldOption = func(f *VariableField) {
-	f.discriminatorNotEmpty = true
-}
-
-func DiscriminatorValue(value string) fieldOption {
-	return func(f *VariableField) {
-		f.discriminatorValue = value
-	}
+func (b *CodeBuilder) NewSpecificObject(parent *SimpleObject, discriminatorValue string, comment string) *SimpleObject {
+	objName := parent.name() + strcase.UpperCamelCase(discriminatorValue)
+	parent.AddFields(&VariableField{
+		name:      discriminatorValue,
+		typeCode:  jen.Op("*").Id(objName),
+		comment:   comment,
+		omitEmpty: true,
+	})
+	return b.AddSimpleObject(objName, comment)
 }

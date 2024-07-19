@@ -26,7 +26,7 @@ func TestFilter(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/post-database-query-filter")
 
-	var filter *AdaptiveObject
+	var filter *SimpleObject
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "When you query a database, you can send a filter object in the body of the request that limits the returned entries based on the specified criteria."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "For example, the below query limits the response to entries where the \"Task completed\"  checkbox property value is true:"})
@@ -41,7 +41,7 @@ func TestFilter(t *testing.T) {
 		Kind: "Heading",
 		Text: "The filter object",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		filter = b.AddAdaptiveObject("Filter", "", e.Text)
+		filter = b.AddSimpleObject("Filter", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Each filter object contains the following fields:"})
@@ -82,7 +82,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Checkbox",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("checkbox", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "checkbox", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",
@@ -115,7 +115,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Date",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("date", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "date", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Blockquote",
@@ -260,7 +260,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Files",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("files", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "files", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "is_empty",
@@ -287,20 +287,19 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var formulaFilter *AdaptiveObject
+		var filterFormula *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "Formula",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			formulaFilter = b.AddAdaptiveObject("FormulaFilter", "", e.Text)
-			filter.AddAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("FormulaFilter"))
+			filterFormula = b.NewSpecificObject(filter, "formula", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "The primary field of the formula filter condition object matches the type of the formula’s result. For example, to filter a formula property that computes a checkbox, use a formula filter condition object with a checkbox field containing a checkbox filter condition as its value.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			formulaFilter.AddComment(e.Text)
+			filterFormula.AddComment(e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "checkbox",
@@ -308,7 +307,7 @@ func TestFilter(t *testing.T) {
 			Description:  "A checkbox filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
 			ExampleValue: "Refer to the checkbox filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			formulaFilter.AddAdaptiveFieldWithType("checkbox", e.Description, jen.Op("*").Id("FilterCheckbox"))
+			filterFormula.AddFields(b.NewField(e, jen.Op("*").Id("FilterCheckbox"), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "date",
@@ -316,7 +315,7 @@ func TestFilter(t *testing.T) {
 			Description:  "A date filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
 			ExampleValue: "Refer to the date filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			formulaFilter.AddAdaptiveFieldWithType("date", e.Description, jen.Op("*").Id("FilterDate"))
+			filterFormula.AddFields(b.NewField(e, jen.Op("*").Id("FilterDate"), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "number",
@@ -324,7 +323,7 @@ func TestFilter(t *testing.T) {
 			Description:  "A number filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
 			ExampleValue: "Refer to the number filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			formulaFilter.AddAdaptiveFieldWithType("number", e.Description, jen.Op("*").Id("FilterNumber"))
+			filterFormula.AddFields(b.NewField(e, jen.Op("*").Id("FilterNumber"), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "string",
@@ -332,7 +331,7 @@ func TestFilter(t *testing.T) {
 			Description:  "A rich text filter condition to compare the formula result against.  \n  \nReturns database entries where the formula result matches the provided condition.",
 			ExampleValue: "Refer to the rich text filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			formulaFilter.AddAdaptiveFieldWithType("string", e.Description, jen.Op("*").Id("FilterRichText"))
+			filterFormula.AddFields(b.NewField(e, jen.Op("*").Id("FilterRichText"), OmitEmpty))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -349,7 +348,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Multi-select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("multi_select", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "multi_select", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -398,7 +397,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Number",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("number", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "number", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "does_not_equal",
@@ -479,7 +478,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "People",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("people", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "people", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -538,7 +537,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Relation",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("relation", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "relation", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -590,7 +589,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Rich text",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("rich_text", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "rich_text", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -665,20 +664,19 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var rollupFilter *AdaptiveObject
+		var filterRollup *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "Rollup",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			rollupFilter = b.AddAdaptiveObject("RollupFilter", "", e.Text)
-			filter.AddAdaptiveFieldWithType("rollup", e.Text, jen.Op("*").Id("RollupFilter"))
+			filterRollup = b.NewSpecificObject(filter, "rollup", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			rollupFilter.AddComment(e.Text)
+			filterRollup.AddComment(e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -690,7 +688,7 @@ func TestFilter(t *testing.T) {
 			Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where the rollup property value matches the provided criteria.",
 			ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
+			filterRollup.AddFields(b.NewField(e, jen.Op("*").Id("Filter"), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "every",
@@ -698,7 +696,7 @@ func TestFilter(t *testing.T) {
 			Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where every rollup property value matches the provided criteria.",
 			ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
+			filterRollup.AddFields(b.NewField(e, jen.Op("*").Id("Filter"), OmitEmpty))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "none",
@@ -706,7 +704,7 @@ func TestFilter(t *testing.T) {
 			Description:  "The value to compare each rollup property value against. Can be a filter condition for any other type.  \n  \nReturns database entries where no rollup property value matches the provided criteria.",
 			ExampleValue: "\"rich_text\": {\n\"contains\": \"Take Fig on a walk\"\n}",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("Filter"))
+			filterRollup.AddFields(b.NewField(e, jen.Op("*").Id("Filter"), OmitEmpty))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -715,22 +713,15 @@ func TestFilter(t *testing.T) {
 			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 
-		c.ExpectBlock(&Block{
-			Kind: "Heading",
-			Text: "Filter conditions for date rollup values",
-		}).Output(func(e *Block, b *CodeBuilder) {
-		})
-		c.ExpectBlock(&Block{
-			Kind: "Paragraph",
-			Text: "A rollup value is stored as a date only if the \"Earliest date\", \"Latest date\", or \"Date range\" computation is selected for the property in the Notion UI.",
-		})
+		c.ExpectBlock(&Block{Kind: "Heading", Text: "Filter conditions for date rollup values"})
+		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A rollup value is stored as a date only if the \"Earliest date\", \"Latest date\", or \"Date range\" computation is selected for the property in the Notion UI."})
 		c.ExpectParameter(&Parameter{
 			Property:     "date",
 			Type:         "object",
 			Description:  "A date filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
 			ExampleValue: "Refer to the date filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterDate"))
+			filterRollup.AddFields(b.NewField(e, jen.Op("*").Id("FilterDate"), OmitEmpty))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -748,7 +739,7 @@ func TestFilter(t *testing.T) {
 			Description:  "A number filter condition to compare the rollup value against.  \n  \nReturns database entries where the rollup value matches the provided condition.",
 			ExampleValue: "Refer to the number filter condition.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			rollupFilter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Op("*").Id("FilterNumber"))
+			filterRollup.AddFields(b.NewField(e, jen.Op("*").Id("FilterNumber"), OmitEmpty))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "FencedCodeBlock",
@@ -759,14 +750,13 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-
 		var specificObject *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "Select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("select", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "select", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",
@@ -815,7 +805,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Status",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = filter.AddAdaptiveFieldWithSpecificObject("status", e.Text, b)
+			specificObject = b.NewSpecificObject(filter, "status", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",
@@ -871,7 +861,7 @@ func TestFilter(t *testing.T) {
 		Description:  "A constant string representing the type of timestamp to use as a filter.",
 		ExampleValue: `"created_time"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		filter.AddAdaptiveFieldWithType("timestamp", e.Description, jen.String())
+		filter.AddFields(b.NewField(e, jen.String(), OmitEmpty))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "created_time  \nlast_edited_time",
@@ -974,7 +964,7 @@ func TestFilter(t *testing.T) {
 		Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match all of the provided filter conditions.",
 		ExampleValue: "Refer to the examples below.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		filter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
+		filter.AddFields(b.NewField(e, jen.Index().Id("Filter"), OmitEmpty))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "or",
@@ -982,7 +972,7 @@ func TestFilter(t *testing.T) {
 		Description:  "An array of filter objects or compound filter conditions.  \n  \nReturns database entries that match any of the provided filter conditions",
 		ExampleValue: "Refer to the examples below.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		filter.AddAdaptiveFieldWithType(e.Property, e.Description, jen.Index().Id("Filter"))
+		filter.AddFields(b.NewField(e, jen.Index().Id("Filter"), OmitEmpty))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Heading",

@@ -15,13 +15,13 @@ type Filter struct {
 	Checkbox       *FilterCheckbox    `json:"checkbox,omitempty"`         // Checkbox
 	Date           *FilterDate        `json:"date,omitempty"`             // Date
 	Files          *FilterFiles       `json:"files,omitempty"`            // Files
-	Formula        *FormulaFilter     `json:"formula,omitempty"`          // Formula
+	Formula        *FilterFormula     `json:"formula,omitempty"`          // Formula
 	MultiSelect    *FilterMultiSelect `json:"multi_select,omitempty"`     // Multi-select
 	Number         *FilterNumber      `json:"number,omitempty"`           // Number
 	People         *FilterPeople      `json:"people,omitempty"`           // People
 	Relation       *FilterRelation    `json:"relation,omitempty"`         // Relation
 	RichText       *FilterRichText    `json:"rich_text,omitempty"`        // Rich text
-	Rollup         *RollupFilter      `json:"rollup,omitempty"`           // Rollup
+	Rollup         *FilterRollup      `json:"rollup,omitempty"`           // Rollup
 	Select         *FilterSelect      `json:"select,omitempty"`           // Select
 	Status         *FilterStatus      `json:"status,omitempty"`           // Status
 	Timestamp      string             `json:"timestamp,omitempty"`        // A constant string representing the type of timestamp to use as a filter.
@@ -72,7 +72,7 @@ Formula
 
 The primary field of the formula filter condition object matches the type of the formula’s result. For example, to filter a formula property that computes a checkbox, use a formula filter condition object with a checkbox field containing a checkbox filter condition as its value.
 */
-type FormulaFilter struct {
+type FilterFormula struct {
 	Checkbox *FilterCheckbox `json:"checkbox,omitempty"` // A checkbox filter condition to compare the formula result against. Returns database entries where the formula result matches the provided condition.
 	Date     *FilterDate     `json:"date,omitempty"`     // A date filter condition to compare the formula result against. Returns database entries where the formula result matches the provided condition.
 	Number   *FilterNumber   `json:"number,omitempty"`   // A number filter condition to compare the formula result against. Returns database entries where the formula result matches the provided condition.
@@ -136,7 +136,7 @@ Rollup
 
 A rollup database property can evaluate to an array, date, or number value. The filter condition for the rollup property contains a rollup key and a corresponding object value that depends on the computed value type.
 */
-type RollupFilter struct {
+type FilterRollup struct {
 	Any    *Filter       `json:"any,omitempty"`    // The value to compare each rollup property value against. Can be a filter condition for any other type. Returns database entries where the rollup property value matches the provided criteria.
 	Every  *Filter       `json:"every,omitempty"`  // The value to compare each rollup property value against. Can be a filter condition for any other type. Returns database entries where every rollup property value matches the provided criteria.
 	None   *Filter       `json:"none,omitempty"`   // The value to compare each rollup property value against. Can be a filter condition for any other type. Returns database entries where no rollup property value matches the provided criteria.
