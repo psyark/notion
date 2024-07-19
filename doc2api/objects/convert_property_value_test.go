@@ -257,7 +257,7 @@ func TestPropertyValue(t *testing.T) {
 		// TODO
 	})
 	/* Date property values */
-	var date *ConcreteObject
+	var date *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",

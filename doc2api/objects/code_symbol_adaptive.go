@@ -54,7 +54,7 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithEmptyStruct(discriminatorValue stri
 }
 
 // AddAdaptiveFieldWithSpecificObject は専用のConcreteObjectを作成し、その型のAdaptiveFieldを追加します
-func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *ConcreteObject {
+func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *ObjectCommon {
 	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
 	co := b.AddConcreteObject(dataName, comment)
 	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))

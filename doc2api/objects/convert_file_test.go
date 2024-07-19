@@ -64,7 +64,7 @@ func TestFile(t *testing.T) {
 
 	{
 
-		var fileFile *ConcreteObject
+		var fileFile *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -123,7 +123,7 @@ func TestFile(t *testing.T) {
 	})
 
 	{
-		var fileExternal *ConcreteObject
+		var fileExternal *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",

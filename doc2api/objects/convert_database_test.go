@@ -13,7 +13,7 @@ func TestDatabase(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/database")
 
-	var database *ConcreteObject
+	var database *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

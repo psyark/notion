@@ -183,7 +183,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyFormula *ConcreteObject
+		var propertyFormula *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -242,7 +242,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyMultiSelect *ConcreteObject
+		var propertyMultiSelect *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -291,7 +291,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyNumber *ConcreteObject
+		var propertyNumber *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -362,7 +362,7 @@ func TestProperty(t *testing.T) {
 
 	{
 		var propertyRelation *AdaptiveObject
-		var propertyRelationDualProperty *ConcreteObject
+		var propertyRelationDualProperty *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -441,7 +441,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyRollup *ConcreteObject
+		var propertyRollup *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -508,9 +508,9 @@ func TestProperty(t *testing.T) {
 	}
 
 	{
-		var propertySelect *ConcreteObject
-		var option *ConcreteObject
-		var optionDescription *ConcreteObject
+		var propertySelect *ObjectCommon
+		var option *ObjectCommon
+		var optionDescription *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -574,7 +574,7 @@ func TestProperty(t *testing.T) {
 	}
 
 	{
-		var propertyStatus *ConcreteObject
+		var propertyStatus *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -614,7 +614,7 @@ func TestProperty(t *testing.T) {
 	}) // Optionで共通化
 
 	{
-		var statusGroup *ConcreteObject
+		var statusGroup *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",

@@ -17,7 +17,7 @@ type memberCoder interface {
 
 var _ = []memberCoder{
 	&AdaptiveObject{},
-	&ConcreteObject{},
+	&ObjectCommon{},
 }
 
 // TODO コメント書く

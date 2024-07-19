@@ -26,7 +26,7 @@ func TestSort(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/post-database-query-sort")
 
-	var sort *ConcreteObject
+	var sort *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

@@ -10,7 +10,6 @@ type Symbol interface {
 
 var _ = []Symbol{
 	&ObjectCommon{},
-	&ConcreteObject{},
 	&AdaptiveObject{},
 	&UnionObject{},
 	&UnmarshalTest{},

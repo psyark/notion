@@ -76,7 +76,7 @@ func TestFilter(t *testing.T) {
 	})
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -109,7 +109,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -254,7 +254,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -343,7 +343,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -392,7 +392,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -473,7 +473,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -532,7 +532,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -584,7 +584,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -760,7 +760,7 @@ func TestFilter(t *testing.T) {
 
 	{
 
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -809,7 +809,7 @@ func TestFilter(t *testing.T) {
 	}
 
 	{
-		var specificObject *ConcreteObject
+		var specificObject *ObjectCommon
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",

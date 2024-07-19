@@ -97,7 +97,7 @@ func TestUser(t *testing.T) {
 		user.AddFields(b.NewField(e, jen.Op("*").String(), DiscriminatorNotEmpty))
 	})
 
-	var person *ConcreteObject
+	var person *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -124,8 +124,8 @@ func TestUser(t *testing.T) {
 		person.AddFields(b.NewField(e, jen.String()))
 	})
 
-	var bot *ConcreteObject
-	var botOwner *ConcreteObject
+	var bot *ObjectCommon
+	var botOwner *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",

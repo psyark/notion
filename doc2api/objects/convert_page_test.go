@@ -13,7 +13,7 @@ func TestPage(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/page")
 
-	var page *ConcreteObject
+	var page *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

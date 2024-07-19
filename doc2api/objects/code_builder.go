@@ -20,8 +20,8 @@ type CodeBuilder struct {
 	symbols   []Symbol
 }
 
-func (b *CodeBuilder) AddConcreteObject(name string, comment string) *ConcreteObject {
-	obj := &ConcreteObject{}
+func (b *CodeBuilder) AddConcreteObject(name string, comment string) *ObjectCommon {
+	obj := &ObjectCommon{}
 	obj.name_ = strings.TrimSpace(name)
 	obj.comment = comment
 	b.symbols = append(b.symbols, obj)

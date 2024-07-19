@@ -12,7 +12,7 @@ func TestEmoji(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/emoji-object")
 
-	var emoji *ConcreteObject
+	var emoji *ObjectCommon
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
