@@ -72,10 +72,6 @@ func (o *AdaptiveObject) code(c *Converter) jen.Code {
 		o.ObjectCommon.code(c),
 	}
 
-	for _, u := range o.unions {
-		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("is" + u.name()).Params().Block()
-	}
-
 	if o.discriminatorKey != "" {
 		discriminatorProp := strcase.UpperCamelCase(o.discriminatorKey)
 		code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(

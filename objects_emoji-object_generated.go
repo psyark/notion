@@ -9,4 +9,4 @@ type Emoji struct {
 	Emoji string      `json:"emoji"` // The emoji character.
 }
 
-func (_ *Emoji) isFileOrEmoji() {}
+func (Emoji) isFileOrEmoji() {}

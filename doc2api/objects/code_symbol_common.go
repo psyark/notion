@@ -55,6 +55,10 @@ func (o *ObjectCommon) code(c *Converter) jen.Code {
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(o.fieldUnmarshalerCode(c))
 
+	for _, union := range o.unions {
+		code.Func().Params(jen.Id(o.name())).Id("is" + union.name()).Params().Block().Line()
+	}
+
 	return code
 }
 

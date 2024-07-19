@@ -33,7 +33,8 @@ type PropertyItem struct {
 	RequestId      string             `json:"request_id,omitempty"` // UNDOCUMENTED
 }
 
-func (o PropertyItem) isPropertyItemOrPropertyItemPagination() {}
+func (PropertyItem) isPropertyItemOrPropertyItemPagination() {}
+
 func (o PropertyItem) MarshalJSON() ([]byte, error) {
 	if o.Type == "" {
 		switch {
