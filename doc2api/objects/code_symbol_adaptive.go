@@ -30,12 +30,6 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminator string) []string {
 	return o.SimpleObject.getDiscriminatorValues(discriminator)
 }
 
-// TODO メソッドチェーンやめる
-func (o *AdaptiveObject) AddFields(fields ...fieldRenderer) *AdaptiveObject {
-	o.fields = append(o.fields, fields...)
-	return o
-}
-
 // TODO 以下の3つのメソッドは共通化できるのでは？
 
 // AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します

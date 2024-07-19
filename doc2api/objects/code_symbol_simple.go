@@ -29,9 +29,8 @@ func (o *SimpleObject) AddToUnion(union *UnionObject) {
 	union.members = append(union.members, o)
 }
 
-func (o *SimpleObject) AddFields(fields ...fieldRenderer) *SimpleObject {
+func (o *SimpleObject) AddFields(fields ...fieldRenderer) {
 	o.fields = append(o.fields, fields...)
-	return o
 }
 
 // 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す

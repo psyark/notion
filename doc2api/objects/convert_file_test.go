@@ -19,9 +19,8 @@ func TestFile(t *testing.T) {
 		Kind: "Blockquote",
 		Text: "📘The Notion API does not yet support uploading files to Notion.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		file = b.AddAdaptiveObject("File", "type", e.Text).AddFields(
-			b.NewField(&Parameter{Property: "name", Description: UNDOCUMENTED}, jen.String(), OmitEmpty),
-		)
+		file = b.AddAdaptiveObject("File", "type", e.Text)
+		file.AddFields(b.NewField(&Parameter{Property: "name", Description: UNDOCUMENTED}, jen.String(), OmitEmpty))
 		file.AddToUnion(b.AddUnionToGlobalIfNotExists("FileOrEmoji", "type"))
 	})
 	c.ExpectBlock(&Block{

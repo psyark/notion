@@ -63,9 +63,8 @@ func TestPropertyItem(t *testing.T) {
 		Text: "The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		// TODO 良い名前
-		paginatedPropertyInfo = b.AddAdaptiveObject("PaginatedPropertyInfo", "type", e.Text).AddFields(
-			b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()),
-		)
+		paginatedPropertyInfo = b.AddAdaptiveObject("PaginatedPropertyInfo", "type", e.Text)
+		paginatedPropertyInfo.AddFields(b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()))
 		for _, derived := range []string{"title", "rich_text", "relation", "people"} {
 			paginatedPropertyInfo.AddAdaptiveFieldWithEmptyStruct(derived, "")
 		}
