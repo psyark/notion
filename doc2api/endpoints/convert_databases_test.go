@@ -12,7 +12,7 @@ func TestQueryDatabase(t *testing.T) {
 
 	Fetch(
 		"https://developers.notion.com/reference/post-database-query",
-	).Generate(GenericStructRef{Name: "Pagination", GenericTypeArg: "Database"}, ParamAnnotations{
+	).Generate(GenericStructRef{Name: "Pagination", GenericTypeArg: "Page"}, ParamAnnotations{
 		"database_id":  UUID,
 		"filter":       jen.Id("Filter"),
 		"sorts":        jen.Id("Sort"),

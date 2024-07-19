@@ -49,11 +49,7 @@ func Example_binding() {
 		panic(err)
 	}
 
-	pages, err := pagi.Pages()
-	if err != nil {
-		panic(err)
-	}
-	for _, page := range pages {
+	for _, page := range pagi.Results {
 		hoge := &TheDatabase{}
 		if err := UnmarshalPage(&page, hoge); err != nil {
 			panic(err)

@@ -137,12 +137,7 @@ func TestRetrieveBlockChildren(t *testing.T) {
 	if pagi, err := cli.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(compareJSON(t))); err != nil {
 		t.Fatal(err)
 	} else {
-		blocks, err := pagi.Blocks()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		for _, block := range blocks {
+		for _, block := range pagi.Results {
 			block := block
 			t.Run(block.Id.String(), func(t *testing.T) {
 				if _, err := cli.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))); err != nil {
