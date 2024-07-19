@@ -2,7 +2,8 @@ package objects
 
 import (
 	"fmt"
-	"sort"
+	"slices"
+	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/stoewer/go-strcase"
@@ -17,7 +18,7 @@ type memberCoder interface {
 
 var _ = []memberCoder{
 	&AdaptiveObject{},
-	&ObjectCommon{},
+	&SimpleObject{},
 }
 
 // TODO コメント書く
@@ -33,7 +34,7 @@ var _ = []memberCoder{
 //
 // 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がUnionObjectです
 type UnionObject struct {
-	ObjectCommon
+	namedSymbol
 	discriminator string        // "type" や "object" など
 	members       []memberCoder // このUnionのメンバー
 }
@@ -53,8 +54,8 @@ func (u *UnionObject) code(_ *Converter) jen.Code {
 			jen.Return().Nil(),
 		),
 		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.discriminator))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
-			sort.Slice(u.members, func(i, j int) bool {
-				return u.members[i].name() < u.members[j].name()
+			slices.SortFunc(u.members, func(a, b memberCoder) int {
+				return strings.Compare(a.name(), b.name())
 			})
 			for _, member := range u.members {
 				g.CaseFunc(func(g *jen.Group) {

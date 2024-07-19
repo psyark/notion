@@ -10,7 +10,7 @@ import (
 // AdaptiveObject は、Block や User に代表される抽象クラスのための
 // シンプルで効率的な表現を、従来の abstractObject に代わって提供します
 type AdaptiveObject struct {
-	ObjectCommon
+	SimpleObject
 	discriminatorKey string // "type", "object" など、派生を識別するためのフィールド名
 }
 
@@ -27,7 +27,7 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminatorKey string) []strin
 		}
 		return values
 	}
-	return o.ObjectCommon.getDiscriminatorValues(discriminatorKey)
+	return o.SimpleObject.getDiscriminatorValues(discriminatorKey)
 }
 
 func (o *AdaptiveObject) AddFields(fields ...fieldRenderer) *AdaptiveObject {
@@ -53,10 +53,10 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithEmptyStruct(discriminatorValue stri
 	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
 }
 
-// AddAdaptiveFieldWithSpecificObject は専用のConcreteObjectを作成し、その型のAdaptiveFieldを追加します
-func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *ObjectCommon {
+// AddAdaptiveFieldWithSpecificObject は専用の SimpleObject を作成し、その型のAdaptiveFieldを追加します
+func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *SimpleObject {
 	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
-	co := b.AddConcreteObject(dataName, comment)
+	co := b.AddSimpleObject(dataName, comment)
 	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
 	return co
 }
@@ -69,7 +69,7 @@ func (c *AdaptiveObject) AddToUnion(union *UnionObject) {
 
 func (o *AdaptiveObject) code(c *Converter) jen.Code {
 	code := &jen.Statement{
-		o.ObjectCommon.code(c),
+		o.SimpleObject.code(c),
 	}
 
 	if o.discriminatorKey != "" {

@@ -12,14 +12,14 @@ func TestEmoji(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/emoji-object")
 
-	var emoji *ObjectCommon
+	var emoji *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		union := b.AddUnionToGlobalIfNotExists("FileOrEmoji", "type")
-		emoji = b.AddConcreteObject("Emoji", e.Text)
+		emoji = b.AddSimpleObject("Emoji", e.Text)
 		emoji.AddToUnion(union)
 	})
 

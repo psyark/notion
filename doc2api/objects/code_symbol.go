@@ -9,9 +9,17 @@ type Symbol interface {
 }
 
 var _ = []Symbol{
-	&ObjectCommon{},
+	&SimpleObject{},
 	&AdaptiveObject{},
 	&UnionObject{},
 	&UnmarshalTest{},
 	DiscriminatorString(""),
+}
+
+type namedSymbol struct {
+	name_ string
+}
+
+func (n *namedSymbol) name() string {
+	return n.name_
 }

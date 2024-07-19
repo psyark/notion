@@ -13,13 +13,13 @@ func TestDatabase(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/database")
 
-	var database *ObjectCommon
+	var database *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "Database objects describe the property schema of a database in Notion. Pages are the items (or children) in a database. Page property values must conform to the property objects laid out in the parent database object.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		database = b.AddConcreteObject("Database", e.Text)
+		database = b.AddSimpleObject("Database", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "All databases"})

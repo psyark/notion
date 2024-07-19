@@ -13,13 +13,13 @@ func TestPage(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/page")
 
-	var page *ObjectCommon
+	var page *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "The Page object contains the page property values of a single Notion page.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		page = b.AddConcreteObject("Page", e.Text)
+		page = b.AddSimpleObject("Page", e.Text)
 	})
 
 	c.ExpectBlock(&Block{

@@ -219,7 +219,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "{\n  \"Tags\": {\n    \"object\": \"property_item\",\n    \"id\": \"z%7D%5C%3C\",\n    \"type\": \"multi_select\",\n    \"multi_select\": [\n      {\n        \"id\": \"91e6959e-7690-4f55-b8dd-d3da9debac45\",\n        \"name\": \"A\",\n        \"color\": \"orange\"\n      },\n      {\n        \"id\": \"2f998e2d-7b1c-485b-ba6b-5e6a815ec8f5\",\n        \"name\": \"B\",\n        \"color\": \"purple\"\n      }\n    ]\n  }\n}",
 	}).Output(addTest)
 
-	var propertyItemDate *ObjectCommon
+	var propertyItemDate *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",

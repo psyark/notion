@@ -97,7 +97,7 @@ func TestUser(t *testing.T) {
 		user.AddFields(b.NewField(e, jen.Op("*").String(), DiscriminatorNotEmpty))
 	})
 
-	var person *ObjectCommon
+	var person *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -124,8 +124,8 @@ func TestUser(t *testing.T) {
 		person.AddFields(b.NewField(e, jen.String()))
 	})
 
-	var bot *ObjectCommon
-	var botOwner *ObjectCommon
+	var bot *SimpleObject
+	var botOwner *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -152,7 +152,7 @@ func TestUser(t *testing.T) {
 		ExampleValue: "{     \"type\": \"workspace\",     \"workspace\": true }",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		bot.AddFields(b.NewField(e, jen.Op("*").Id("BotUserDataOwner"), OmitEmpty))
-		botOwner = b.AddConcreteObject("BotUserDataOwner", e.Description)
+		botOwner = b.AddSimpleObject("BotUserDataOwner", e.Description)
 		b.AddUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 	})
 	c.ExpectParameter(&Parameter{

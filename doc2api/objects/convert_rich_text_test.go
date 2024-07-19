@@ -84,13 +84,13 @@ func TestRichText(t *testing.T) {
 	})
 
 	{
-		var annotations *ObjectCommon
+		var annotations *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "The annotation object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			annotations = b.AddConcreteObject("Annotations", e.Text)
+			annotations = b.AddSimpleObject("Annotations", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -149,7 +149,7 @@ func TestRichText(t *testing.T) {
 	}
 
 	{
-		var richTextEquation *ObjectCommon
+		var richTextEquation *SimpleObject
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Rich text type objects"})
 		c.ExpectBlock(&Block{
@@ -253,7 +253,7 @@ func TestRichText(t *testing.T) {
 			b.AddUnmarshalTest("RichText", string(data))
 		})
 
-		var mentionLinkPreview *ObjectCommon
+		var mentionLinkPreview *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -373,7 +373,7 @@ func TestRichText(t *testing.T) {
 	})
 
 	{
-		var richTextText *ObjectCommon
+		var richTextText *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",

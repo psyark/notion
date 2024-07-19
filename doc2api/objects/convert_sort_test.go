@@ -26,13 +26,13 @@ func TestSort(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/post-database-query-sort")
 
-	var sort *ObjectCommon
+	var sort *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "A sort is a condition used to order the entries returned from a database query.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		sort = b.AddConcreteObject("Sort", e.Text)
+		sort = b.AddSimpleObject("Sort", e.Text)
 	})
 
 	c.ExpectBlock(&Block{

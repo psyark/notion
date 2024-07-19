@@ -165,7 +165,7 @@ func TestBlock(t *testing.T) {
 		Text: "Every block object has a key corresponding to the value of type. Under the key is an object with type-specific block information.",
 	})
 
-	var bookmark *ObjectCommon
+	var bookmark *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
@@ -215,7 +215,7 @@ func TestBlock(t *testing.T) {
 		Text: "{\n  //...other keys excluded\n  \"type\": \"breadcrumb\",\n  //...other keys excluded\n  \"breadcrumb\": {}\n}\n",
 	})
 
-	var bulletedListItem *ObjectCommon
+	var bulletedListItem *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -253,7 +253,7 @@ func TestBlock(t *testing.T) {
 		Text: "{\n  //...other keys excluded\n  \"type\": \"bulleted_list_item\",\n  //...other keys excluded\n  \"bulleted_list_item\": {\n    \"rich_text\": [{\n      \"type\": \"text\",\n      \"text\": {\n        \"content\": \"Lacinato kale\",\n        \"link\": null\n      }\n      // ..other keys excluded\n    }],\n    \"color\": \"default\",\n    \"children\":[{\n      \"type\": \"paragraph\"\n      // ..other keys excluded\n    }]\n  }\n}\n",
 	})
 
-	var specificObject *ObjectCommon
+	var specificObject *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -295,7 +295,7 @@ func TestBlock(t *testing.T) {
 		specificObject.AddFields(b.NewField(&Parameter{Property: "children", Description: UNDOCUMENTED}, jen.Index().Id("Block"), OmitEmpty))
 	})
 
-	var childDatabase *ObjectCommon
+	var childDatabase *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -323,7 +323,7 @@ func TestBlock(t *testing.T) {
 		Text: "📘 Creating and updating child_database blocksTo create or update child_database type blocks, use the Create a database and the Update a database endpoints, specifying the ID of the parent page in the parent body param.",
 	})
 
-	var childPage *ObjectCommon
+	var childPage *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -351,7 +351,7 @@ func TestBlock(t *testing.T) {
 		Text: "📘 Creating and updating child_page blocksTo create or update child_page type blocks, use the Create a page and the Update page endpoints, specifying the ID of the parent page in the parent body param.",
 	})
 
-	var code *ObjectCommon
+	var code *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -446,7 +446,7 @@ func TestBlock(t *testing.T) {
 		Text: "{\n  //...other keys excluded\n  \"type\": \"divider\",\n  //...other keys excluded\n  \"divider\": {}\n}\n",
 	})
 
-	var embed *ObjectCommon
+	var embed *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -478,7 +478,7 @@ func TestBlock(t *testing.T) {
 		Text: "👍Vimeo video links can be embedded in a Notion page via the public API using the embed block type.For example, the following object can be passed to the Append block children endpoint:For other video sources, see Supported video types.",
 	})
 
-	var equation *ObjectCommon
+	var equation *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -539,7 +539,7 @@ func TestBlock(t *testing.T) {
 		// TODO
 	})
 
-	var heading *ObjectCommon
+	var heading *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -549,7 +549,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		heading = b.AddConcreteObject("BlockHeading", e.Text)
+		heading = b.AddSimpleObject("BlockHeading", e.Text)
 		block.AddAdaptiveFieldWithType("heading_1", "", jen.Op("*").Id("BlockHeading"))
 		block.AddAdaptiveFieldWithType("heading_2", "", jen.Op("*").Id("BlockHeading"))
 		block.AddAdaptiveFieldWithType("heading_3", "", jen.Op("*").Id("BlockHeading"))
@@ -721,7 +721,7 @@ func TestBlock(t *testing.T) {
 		// TODO
 	})
 
-	var paragraph *ObjectCommon
+	var paragraph *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -763,7 +763,7 @@ func TestBlock(t *testing.T) {
 		Text: "{\n//...other keys excluded\n\t\"type\": \"paragraph\",\n  \t\"paragraph\":{\n  \t\t\"rich_text\": [\n    \t\t{\n      \t\t\"type\": \"mention\",\n      \t\t\"mention\": {\n        \t\t\"type\": \"date\",\n        \t\t\"date\": {\n          \t\t\"start\": \"2023-03-01\",\n          \t\t\"end\": null,\n          \t\t\"time_zone\": null\n        \t\t}\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \"2023-03-01\",\n      \t\t\"href\": null\n    \t\t},\n    \t\t{\n          \"type\": \"text\",\n      \t\t\"text\": {\n        \t\t\"content\": \" \",\n        \t\t\"link\": null\n      \t\t},\n      \t\t\"annotations\": {\n        \t\t\"bold\": false,\n        \t\t\"italic\": false,\n        \t\t\"strikethrough\": false,\n        \t\t\"underline\": false,\n        \t\t\"code\": false,\n        \t\t\"color\": \"default\"\n      \t\t},\n      \t\t\"plain_text\": \" \",\n      \t\t\"href\": null\n    \t\t}\n  \t\t],\n  \t\t\"color\": \"default\"\n  \t}\n}\n",
 	})
 
-	var pdf *ObjectCommon
+	var pdf *SimpleObject
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -849,7 +849,7 @@ func TestBlock(t *testing.T) {
 	})
 
 	{
-		var specificObject *ObjectCommon
+		var specificObject *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -911,7 +911,7 @@ func TestBlock(t *testing.T) {
 		Type:        "string (UUIDv4)",
 		Description: "An identifier for the original synced_block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		b.AddConcreteObject("SyncedFrom", "").AddFields(b.NewField(e, UUID))
+		b.AddSimpleObject("SyncedFrom", "").AddFields(b.NewField(e, UUID))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -1084,7 +1084,7 @@ func TestBlock(t *testing.T) {
 	})
 
 	{
-		var blockToDo *ObjectCommon
+		var blockToDo *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",

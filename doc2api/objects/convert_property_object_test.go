@@ -183,7 +183,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyFormula *ObjectCommon
+		var propertyFormula *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -242,7 +242,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyMultiSelect *ObjectCommon
+		var propertyMultiSelect *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -291,7 +291,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyNumber *ObjectCommon
+		var propertyNumber *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -362,7 +362,7 @@ func TestProperty(t *testing.T) {
 
 	{
 		var propertyRelation *AdaptiveObject
-		var propertyRelationDualProperty *ObjectCommon
+		var propertyRelationDualProperty *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -375,10 +375,6 @@ func TestProperty(t *testing.T) {
 			Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 		}).Output(func(e *Block, b *CodeBuilder) {
 			propertyRelation = b.AddAdaptiveObject("PropertyRelation", "type", e.Text)
-			// getSymbol[concreteObject]("PropertyRelation").AddFields(
-			// 	&interfaceField{name: "relation", typeName: "Relation"},
-			// ).AddComment(e.Text)
-			// b.addAbstractObject("Relation", "type", e.Text)
 			propertyRelation.AddAdaptiveFieldWithEmptyStruct("single_property", "undocumented")
 			propertyRelationDualProperty = propertyRelation.AddAdaptiveFieldWithSpecificObject("dual_property", "undocumented", b)
 		})
@@ -441,7 +437,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyRollup *ObjectCommon
+		var propertyRollup *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -508,9 +504,9 @@ func TestProperty(t *testing.T) {
 	}
 
 	{
-		var propertySelect *ObjectCommon
-		var option *ObjectCommon
-		var optionDescription *ObjectCommon
+		var propertySelect *SimpleObject
+		var option *SimpleObject
+		var optionDescription *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -531,8 +527,8 @@ func TestProperty(t *testing.T) {
 			propertySelect.AddFields(b.NewField(&Parameter{Property: "options"}, jen.Index().Id("OptionDescription")))
 			// (Select, MultiSelect, Status) * (Property, PropertyItem, PropertyValue) の9箇所で
 			// 以下の共通の構造体を使います
-			option = b.AddConcreteObject("Option", e.Text)
-			optionDescription = b.AddConcreteObject("OptionDescription", e.Text) // TODO Optionにdescriptionが入る場合と入らない場合があるので切り分ける
+			option = b.AddSimpleObject("Option", e.Text)
+			optionDescription = b.AddSimpleObject("OptionDescription", e.Text) // TODO Optionにdescriptionが入る場合と入らない場合があるので切り分ける
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "color",
@@ -574,7 +570,7 @@ func TestProperty(t *testing.T) {
 	}
 
 	{
-		var propertyStatus *ObjectCommon
+		var propertyStatus *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -614,13 +610,13 @@ func TestProperty(t *testing.T) {
 	}) // Optionで共通化
 
 	{
-		var statusGroup *ObjectCommon
+		var statusGroup *SimpleObject
 
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "A group is a collection of options. The groups array is a sorted list of the available groups for the property. Each group object in the array has the following fields:",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			statusGroup = b.AddConcreteObject("StatusGroup", e.Text)
+			statusGroup = b.AddSimpleObject("StatusGroup", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "color",
