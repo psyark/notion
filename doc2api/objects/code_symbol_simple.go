@@ -8,6 +8,13 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
+type symbolWithFields interface {
+	name() string
+	AddFields(fields ...fieldRenderer)
+}
+
+var _ symbolWithFields = &SimpleObject{}
+
 // SimpleObject は単純なオブジェクトに使われるGoコードを生成します
 type SimpleObject struct {
 	namedSymbol

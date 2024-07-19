@@ -31,6 +31,7 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminator string) []string {
 }
 
 // TODO 以下の3つのメソッドは共通化できるのでは？
+// TODO CodeBuilderのメソッドにする？
 
 // AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
 func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
@@ -39,7 +40,6 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, com
 		typeCode:           typeCode,
 		comment:            comment,
 		discriminatorValue: discriminatorValue,
-		omitEmpty:          o.discriminator == "", // Filterなど
 	})
 }
 

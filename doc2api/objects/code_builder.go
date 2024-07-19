@@ -173,13 +173,13 @@ func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 	panic(fmt.Errorf("パラメータを fixedStringField に変換できません: %v", p))
 }
 
-func (b *CodeBuilder) NewSpecificObject(parent *SimpleObject, discriminatorValue string, comment string) *SimpleObject {
+func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorValue string, comment string) *SimpleObject {
 	objName := parent.name() + strcase.UpperCamelCase(discriminatorValue)
 	parent.AddFields(&VariableField{
 		name:      discriminatorValue,
 		typeCode:  jen.Op("*").Id(objName),
 		comment:   comment,
-		omitEmpty: true,
+		omitEmpty: true, // TODO SimpleObjectのときはtrue、Adaptiveのときはfalseにすれば動くけど…
 	})
 	return b.AddSimpleObject(objName, comment)
 }

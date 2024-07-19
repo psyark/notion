@@ -324,7 +324,7 @@ func TestRichText(t *testing.T) {
 			Description:  `The type of the date mention. Possible values include: "today" and "now".`,
 			ExampleValue: `"today"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			templateMention.AddAdaptiveFieldWithType(e.Property, e.Description, jen.String())
+			templateMention.AddFields(b.NewField(e, jen.String(), DiscriminatorValue(e.Property)))
 		})
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "_Example rich text mention object for a template_mention_date mention _"})
 		c.ExpectBlock(&Block{
@@ -343,7 +343,7 @@ func TestRichText(t *testing.T) {
 			Description:  `The type of the user mention. The only possible value is "me".`,
 			ExampleValue: `"me"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			templateMention.AddAdaptiveFieldWithType(e.Property, e.Description, jen.String())
+			templateMention.AddFields(b.NewField(e, jen.String(), DiscriminatorValue(e.Property)))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",

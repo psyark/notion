@@ -598,10 +598,7 @@ func TestBlock(t *testing.T) {
 	}).Output(func(e *Block, b *CodeBuilder) {
 		block.AddAdaptiveFieldWithType("image", e.Text, jen.Op("*").Id("File"))
 	})
-	c.ExpectBlock(&Block{
-		Kind: "FencedCodeBlock",
-		Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n}\n",
-	})
+	c.ExpectBlock(&Block{Kind: "FencedCodeBlock", Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n}\n"})
 
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
