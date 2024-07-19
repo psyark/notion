@@ -12,12 +12,12 @@ Endpoints that return lists of objects support cursor-based pagination requests.
 
 If an endpoint supports pagination, then the response object contains the below fields.
 */
-type Pagination struct {
+type Pagination[T Block | Comment | Database | Page | PageOrDatabase | PropertyItem | User] struct {
 	Type           string                `json:"type"`
 	HasMore        bool                  `json:"has_more"`    // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
 	NextCursor     *string               `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint. Only available when has_more is true.
 	Object         alwaysList            `json:"object"`      // The constant string "list".
-	Results        json.RawMessage       `json:"results"`     // The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.
+	Results        []T                   `json:"results"`     // The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.
 	Block          struct{}              `json:"block"`
 	Comment        struct{}              `json:"comment"`
 	Database       struct{}              `json:"database"`
@@ -28,9 +28,9 @@ type Pagination struct {
 	RequestId      string                `json:"request_id,omitempty"` // UNDOCUMENTED
 }
 
-func (Pagination) isPropertyItemOrPropertyItemPagination() {}
+func (Pagination[T]) isPropertyItemOrPropertyItemPagination() {}
 
-func (o Pagination) MarshalJSON() ([]byte, error) {
+func (o Pagination[T]) MarshalJSON() ([]byte, error) {
 	if o.Type == "" {
 		switch {
 		case defined(o.Block):
@@ -49,7 +49,7 @@ func (o Pagination) MarshalJSON() ([]byte, error) {
 			o.Type = "user"
 		}
 	}
-	type Alias Pagination
+	type Alias Pagination[T]
 	data, err := json.Marshal(Alias(o))
 	if err != nil {
 		return nil, err

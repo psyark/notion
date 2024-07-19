@@ -14,6 +14,7 @@ import (
 type memberCoder interface {
 	Symbol
 	getDiscriminatorValues(identifierKey string) []string
+	isGeneric() bool
 }
 
 var _ = []memberCoder{
@@ -35,11 +36,10 @@ var _ = []memberCoder{
 // 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がUnionObjectです
 type UnionObject struct {
 	namedSymbol
-	discriminator string        // "type" や "object" など
-	members       []memberCoder // このUnionのメンバー
+	discriminator string // "type" や "object" など
 }
 
-func (u *UnionObject) code(_ *Converter) jen.Code {
+func (u *UnionObject) code(c *Converter) jen.Code {
 	// インターフェイス本体
 	code := jen.Type().Id(u.name()).Interface(jen.Id("is" + u.name()).Params()).Line().Line()
 	// Unmarshaler
@@ -54,20 +54,26 @@ func (u *UnionObject) code(_ *Converter) jen.Code {
 			jen.Return().Nil(),
 		),
 		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.discriminator))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
-			slices.SortFunc(u.members, func(a, b memberCoder) int {
-				return strings.Compare(a.name(), b.name())
+			slices.SortFunc(c.unionMemberRegistry, func(a, b unionMemberEntry) int {
+				return strings.Compare(a.member.name(), b.member.name())
 			})
-			for _, member := range u.members {
-				g.CaseFunc(func(g *jen.Group) {
-					dvs := member.getDiscriminatorValues(u.discriminator)
-					if len(dvs) == 0 {
-						panic(fmt.Errorf("メンバー %v を識別するための %s の値がありません", member.name(), u.discriminator))
+			for _, entry := range c.unionMemberRegistry {
+				if entry.union == u {
+					g.CaseFunc(func(g *jen.Group) {
+						dvs := entry.member.getDiscriminatorValues(u.discriminator)
+						if len(dvs) == 0 {
+							panic(fmt.Errorf("メンバー %v を識別するための %s の値がありません", entry.member.name(), u.discriminator))
+						}
+						for _, v := range dvs {
+							g.Lit(v)
+						}
+					})
+					if entry.typeArg != "" {
+						g.Id("u").Dot("value").Op("=").Op("&").Id(entry.member.name()).Index(jen.Id(entry.typeArg)).Values()
+					} else {
+						g.Id("u").Dot("value").Op("=").Op("&").Id(entry.member.name()).Values()
 					}
-					for _, v := range dvs {
-						g.Lit(v)
-					}
-				})
-				g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
+				}
 			}
 			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.discriminator)), jen.String().Call(jen.Id("data"))))
 		}),

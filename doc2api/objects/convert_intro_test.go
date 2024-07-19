@@ -27,13 +27,15 @@ func TestIntro(t *testing.T) {
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Samples requests and responses are shown for each endpoint. Requests are shown using the Notion JavaScript SDK, and cURL. These samples make it easy to copy, paste, and modify as you build your integration."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Notion SDKs are open source projects that you can install to easily start building. You may also choose any other language or library that allows you to make HTTP requests."})
 
-	// TODO ジェネリック型にする
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
 		Text: "Pagination",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		pagination = b.AddAdaptiveObject("Pagination", "type", e.Text)
-		pagination.AddToUnion(b.AddUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object"))
+		pagination = b.AddAdaptiveObject("Pagination", "type", e.Text, Generic(
+			jen.Id("Block").Op("|").Id("Comment").Op("|").Id("Database").Op("|").Id("Page").Op("|").Id("PageOrDatabase").Op("|").Id("PropertyItem").Op("|").Id("User"),
+		))
+		union := b.AddUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
+		b.RegisterUnionMember(union, pagination, "PropertyItem")
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -86,7 +88,7 @@ func TestIntro(t *testing.T) {
 		Type:        "array of objects",
 		Description: "The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		pagination.AddFields(b.NewField(e, jen.Qual("encoding/json", "RawMessage")))
+		pagination.AddFields(b.NewField(e, jen.Index().Id("T")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "type",

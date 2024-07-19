@@ -10,7 +10,7 @@ import (
 func TestAppendBlockChildren(t *testing.T) {
 	t.Parallel()
 
-	Fetch("https://developers.notion.com/reference/patch-block-children").Generate(StructRef("Pagination"), ParamAnnotations{
+	Fetch("https://developers.notion.com/reference/patch-block-children").Generate(GenericStructRef{Name: "Pagination", GenericTypeArg: "Block"}, ParamAnnotations{
 		"block_id": UUID,
 		"children": jen.Index().Id("Block"),
 		"after":    jen.String(),
@@ -20,7 +20,7 @@ func TestAppendBlockChildren(t *testing.T) {
 func TestRetrieveBlockChildren(t *testing.T) {
 	t.Parallel()
 
-	Fetch("https://developers.notion.com/reference/get-block-children").Generate(StructRef("Pagination"), ParamAnnotations{
+	Fetch("https://developers.notion.com/reference/get-block-children").Generate(GenericStructRef{Name: "Pagination", GenericTypeArg: "Block"}, ParamAnnotations{
 		"block_id": UUID,
 	})
 }

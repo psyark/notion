@@ -45,6 +45,12 @@ func DiscriminatorOmitEmpty() AddAdaptiveObjectOption {
 	}
 }
 
+func Generic(constraint jen.Code) AddAdaptiveObjectOption {
+	return func(o *AdaptiveObject) {
+		o.genericConstraint = constraint
+	}
+}
+
 func (b *CodeBuilder) AddAdaptiveObject(name string, discriminator string, comment string, options ...AddAdaptiveObjectOption) *AdaptiveObject {
 	if discriminator == "" {
 		panic(fmt.Errorf("%s のdiscriminatorが設定されていません。代わりにSimpleObjectを使ってください。", name))
@@ -54,9 +60,7 @@ func (b *CodeBuilder) AddAdaptiveObject(name string, discriminator string, comme
 	o.name_ = name
 	o.discriminator = discriminator
 	o.comment = comment
-	if discriminator != "" {
-		o.AddFields(&VariableField{name: discriminator, typeCode: jen.String()})
-	}
+	o.AddFields(&VariableField{name: discriminator, typeCode: jen.String()})
 	for _, option := range options {
 		option(o)
 	}
@@ -81,8 +85,11 @@ func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, discriminator str
 	return u
 }
 
-func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string) {
+func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string, typeArg ...string) {
 	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
+	if len(typeArg) != 0 {
+		ut.typeArg = typeArg[0]
+	}
 
 	if exists := b.converter.getUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
 		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
@@ -182,4 +189,8 @@ func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorVa
 		omitEmpty: true, // TODO SimpleObjectのときはtrue、Adaptiveのときはfalseにすれば動くけど…
 	})
 	return b.AddSimpleObject(objName, comment)
+}
+
+func (b *CodeBuilder) RegisterUnionMember(union *UnionObject, member memberCoder, typeArg string) {
+	b.converter.RegisterUnionMember(union, member, typeArg)
 }

@@ -18,18 +18,20 @@ import (
 
 // Converter はObjectsの多数のドキュメントから一連のコードを生成する機能を提供します
 type Converter struct {
-	symbols           *sync.Map
-	globalBuilder     *CodeBuilder
-	globalTestBuilder *CodeBuilder
-	comparators       []*DocumentComparator
+	symbols             *sync.Map
+	globalBuilder       *CodeBuilder
+	globalTestBuilder   *CodeBuilder
+	comparators         []*DocumentComparator
+	unionMemberRegistry []unionMemberEntry
 }
 
 func NewConverter() *Converter {
-	return &Converter{
-		symbols:           &sync.Map{},
-		globalBuilder:     &CodeBuilder{fileName: "objects_global_generated.go"},
-		globalTestBuilder: &CodeBuilder{fileName: "objects_global_generated_test.go"},
+	c := &Converter{
+		symbols: &sync.Map{},
 	}
+	c.globalBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated.go"}
+	c.globalTestBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated_test.go"}
+	return c
 }
 
 // FetchDocument は オブジェクトのドキュメントを取得し、
@@ -99,4 +101,17 @@ func (c *Converter) getUnionObject(name string) *UnionObject {
 }
 func (c *Converter) getUnmarshalTest(name string) *UnmarshalTest {
 	return getSymbol[*UnmarshalTest](name, c)
+}
+
+func (c *Converter) RegisterUnionMember(union *UnionObject, member memberCoder, typeArg string) {
+	if member.isGeneric() && typeArg == "" {
+		panic(fmt.Errorf("🚨 ジェネリック型 %sに対する型引数がありません", member.name()))
+	}
+	c.unionMemberRegistry = append(c.unionMemberRegistry, unionMemberEntry{union, member, typeArg})
+}
+
+type unionMemberEntry struct {
+	union   *UnionObject
+	member  memberCoder
+	typeArg string
 }

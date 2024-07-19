@@ -20,7 +20,7 @@ func TestEmoji(t *testing.T) {
 	}).Output(func(e *Block, b *CodeBuilder) {
 		union := b.AddUnionToGlobalIfNotExists("FileOrEmoji", "type")
 		emoji = b.AddSimpleObject("Emoji", e.Text)
-		emoji.AddToUnion(union)
+		b.RegisterUnionMember(union, emoji, "")
 	})
 
 	c.ExpectBlock(&Block{

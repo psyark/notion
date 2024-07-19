@@ -15,6 +15,7 @@ type ReturnType interface {
 var _ = []ReturnType{
 	StructRef(""),
 	Interface(""),
+	GenericStructRef{},
 }
 
 // StructRef は、エンドポイントが構造体の参照を返す際に使います
@@ -38,5 +39,24 @@ func (r Interface) Type() jen.Code {
 func (r Interface) Accessor() jen.Code {
 	return jen.Func().Params(jen.Id("u").Op("*").Id(strcase.LowerCamelCase(string(r) + "Unmarshaler"))).Add(r.Type()).Block(
 		jen.Return().Id("u").Dot("value"),
+	)
+}
+
+type GenericStructRef struct {
+	Name           string
+	GenericTypeArg string
+}
+
+func (g GenericStructRef) Type() jen.Code {
+	code := jen.Op("*").Id(string(g.Name))
+	if g.GenericTypeArg != "" {
+		code.Index(jen.Id(g.GenericTypeArg))
+	}
+	return code
+}
+
+func (g GenericStructRef) Accessor() jen.Code {
+	return jen.Func().Params(jen.Id("u").Add(g.Type())).Add(g.Type()).Block(
+		jen.Return().Id("u"),
 	)
 }

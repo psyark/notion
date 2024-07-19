@@ -56,18 +56,12 @@ func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue s
 	return co
 }
 
-// TODO この関数は文字列を渡すだけで良いのでは？
-func (c *AdaptiveObject) AddToUnion(union *UnionObject) {
-	c.unions = append(c.unions, union)
-	union.members = append(union.members, c)
-}
-
 func (o *AdaptiveObject) code(c *Converter) jen.Code {
 	code := &jen.Statement{o.SimpleObject.code(c)}
 
 	// discriminatorに対応するGoのフィールド
 	discriminatorProp := strcase.UpperCamelCase(o.discriminator)
-	code.Line().Func().Params(jen.Id("o").Id(o.name())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
+	code.Line().Func().Params(jen.Id("o").Add(o.typeCode(false))).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
 		// type 未設定の場合の自動推定
 		jen.If(jen.Id("o").Dot(discriminatorProp).Op("==").Lit("")).Block(
 			jen.Switch().BlockFunc(func(g *jen.Group) {
@@ -81,7 +75,7 @@ func (o *AdaptiveObject) code(c *Converter) jen.Code {
 			}),
 		),
 
-		jen.Type().Id("Alias").Id(o.name()),
+		jen.Type().Id("Alias").Add(o.typeCode(false)),
 		jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
 		jen.If(jen.Err().Op("!=").Nil()).Block(jen.Return().List(jen.Nil(), jen.Err())),
 		jen.Id("visibility").Op(":=").Map(jen.String()).Bool().Values(jen.DictFunc(func(d jen.Dict) {

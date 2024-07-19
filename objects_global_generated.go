@@ -58,7 +58,7 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 	}
 	switch getObject(data) {
 	case "list":
-		u.value = &Pagination{}
+		u.value = &Pagination[PropertyItem]{}
 	case "property_item":
 		u.value = &PropertyItem{}
 	default:

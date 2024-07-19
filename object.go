@@ -20,16 +20,6 @@ func (p *Page) GetProperty(id string) *PropertyValue {
 	return nil
 }
 
-func (p *Pagination) Pages() ([]Page, error) {
-	pages := []Page{}
-	return pages, json.Unmarshal(p.Results, &pages)
-}
-
-func (p *Pagination) Blocks() ([]Block, error) {
-	blocks := []Block{}
-	return blocks, json.Unmarshal(p.Results, &blocks)
-}
-
 type PropertyItemOrPropertyItemPaginationMap map[string]PropertyItemOrPropertyItemPagination
 
 func (m *PropertyItemOrPropertyItemPaginationMap) UnmarshalJSON(data []byte) error {

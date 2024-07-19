@@ -18,9 +18,13 @@ var _ symbolWithFields = &SimpleObject{}
 // SimpleObject は単純なオブジェクトに使われるGoコードを生成します
 type SimpleObject struct {
 	namedSymbol
-	comment string
-	fields  []fieldRenderer
-	unions  []*UnionObject // このオブジェクトが所属する UnionObject
+	comment           string
+	fields            []fieldRenderer
+	genericConstraint jen.Code
+}
+
+func (o *SimpleObject) isGeneric() bool {
+	return o.genericConstraint != nil
 }
 
 func (o *SimpleObject) AddComment(comment string) {
@@ -28,12 +32,6 @@ func (o *SimpleObject) AddComment(comment string) {
 		o.comment += "\n\n"
 	}
 	o.comment += strings.TrimSuffix(strings.TrimPrefix(comment, "\n"), "\n")
-}
-
-// TODO この関数は文字列を渡すだけで良いのでは？
-func (o *SimpleObject) AddToUnion(union *UnionObject) {
-	o.unions = append(o.unions, union)
-	union.members = append(union.members, o)
 }
 
 func (o *SimpleObject) AddFields(fields ...fieldRenderer) {
@@ -58,7 +56,7 @@ func (o *SimpleObject) code(c *Converter) jen.Code {
 		code.Comment(o.comment).Line()
 	}
 
-	code.Type().Id(o.name_).StructFunc(func(g *jen.Group) {
+	code.Type().Add(o.typeCode(true)).StructFunc(func(g *jen.Group) {
 		for _, f := range o.fields {
 			g.Add(f.renderField())
 		}
@@ -67,8 +65,24 @@ func (o *SimpleObject) code(c *Converter) jen.Code {
 	// フィールドにインターフェイスを含むならUnmarshalJSONで前処理を行う
 	code.Add(o.fieldUnmarshalerCode(c))
 
-	for _, union := range o.unions {
-		code.Func().Params(jen.Id(o.name())).Id("is" + union.name()).Params().Block().Line()
+	for _, entry := range c.unionMemberRegistry {
+		if entry.member.name() == o.name() {
+			code.Func().Params(o.typeCode(false)).Id("is" + entry.union.name()).Params().Block().Line()
+		}
+	}
+
+	return code
+}
+func (o *SimpleObject) typeCode(constraint bool) jen.Code {
+	code := jen.Id(o.name_)
+	if o.genericConstraint != nil {
+		code.IndexFunc(func(g *jen.Group) {
+			if constraint {
+				g.Id("T").Add(o.genericConstraint)
+			} else {
+				g.Id("T")
+			}
+		})
 	}
 	return code
 }
