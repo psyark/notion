@@ -6,11 +6,9 @@ require (
 	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/dave/jennifer v1.7.0
 	github.com/google/uuid v1.6.0
-	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.45.0
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/yuin/goldmark v1.7.4
-	golang.org/x/sync v0.7.0
 )
 
 require (
