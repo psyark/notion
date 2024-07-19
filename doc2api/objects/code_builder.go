@@ -17,7 +17,7 @@ type CodeBuilder struct {
 	converter *Converter
 	url       string
 	fileName  string
-	symbols   []CodeSymbol
+	symbols   []Symbol
 }
 
 func (b *CodeBuilder) AddConcreteObject(name string, comment string) *ConcreteObject {
@@ -62,15 +62,14 @@ func (b *CodeBuilder) AddAdaptiveObject(name string, discriminatorKey string, co
 
 // AddUnionToGlobalIfNotExists は、指定された名前と識別キーを持つ Unionを定義し、返します。
 // 二回目以降の呼び出しでは定義をスキップし、初回に定義されたものを返します。
-// TODO identifierKey -> discriminatorKey
-func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, identifierKey string) *UnionObject {
+func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, discriminator string) *UnionObject {
 	if u := b.converter.getUnionObject(name); u != nil {
 		return u
 	}
 
 	u := &UnionObject{}
 	u.name_ = strings.TrimSpace(name)
-	u.identifierKey = identifierKey
+	u.discriminator = discriminator
 	b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, u)
 	b.converter.symbols.Store(name, u)
 
@@ -91,7 +90,7 @@ func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string) {
 
 func (b *CodeBuilder) output(sortSymbols bool) {
 	if sortSymbols {
-		slices.SortFunc(b.symbols, func(a, b CodeSymbol) int {
+		slices.SortFunc(b.symbols, func(a, b Symbol) int {
 			return strings.Compare(a.name(), b.name())
 		})
 	}

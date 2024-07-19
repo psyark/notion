@@ -11,7 +11,7 @@ import (
 // TODO Union関係だと分かる名前にする　UnionMember？
 // memberCoder はunionObjectのメンバーとして存在できるオブジェクトを作成するためのCoderです
 type memberCoder interface {
-	CodeSymbol
+	Symbol
 	getDiscriminatorValues(identifierKey string) []string
 }
 
@@ -34,8 +34,7 @@ var _ = []memberCoder{
 // 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がUnionObjectです
 type UnionObject struct {
 	ObjectCommon
-	// TODO discriminatorKey にする
-	identifierKey string        // "type" や "object" など
+	discriminator string        // "type" や "object" など
 	members       []memberCoder // このUnionのメンバー
 }
 
@@ -47,21 +46,21 @@ func (u *UnionObject) code(_ *Converter) jen.Code {
 		jen.Id("value").Id(u.name()),
 	).Line()
 
-	code.Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", u.identifierKey)).Line()
+	code.Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", u.discriminator)).Line()
 	code.Func().Params(jen.Id("u").Op("*").Id(u.memberUnmarshalerName())).Id("UnmarshalJSON").Params(jen.Id("data").Index().Byte()).Error().Block(
 		jen.If(jen.String().Call(jen.Id("data")).Op("==").Lit("null")).Block(
 			jen.Id("u").Dot("value").Op("=").Nil(),
 			jen.Return().Nil(),
 		),
-		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.identifierKey))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
+		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.discriminator))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
 			sort.Slice(u.members, func(i, j int) bool {
 				return u.members[i].name() < u.members[j].name()
 			})
 			for _, member := range u.members {
 				g.CaseFunc(func(g *jen.Group) {
-					dvs := member.getDiscriminatorValues(u.identifierKey)
+					dvs := member.getDiscriminatorValues(u.discriminator)
 					if len(dvs) == 0 {
-						panic(fmt.Errorf("メンバー %v を識別するための %s の値がありません", member.name(), u.identifierKey))
+						panic(fmt.Errorf("メンバー %v を識別するための %s の値がありません", member.name(), u.discriminator))
 					}
 					for _, v := range dvs {
 						g.Lit(v)
@@ -69,7 +68,7 @@ func (u *UnionObject) code(_ *Converter) jen.Code {
 				})
 				g.Id("u").Dot("value").Op("=").Op("&").Id(member.name()).Values()
 			}
-			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.identifierKey)), jen.String().Call(jen.Id("data"))))
+			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.discriminator)), jen.String().Call(jen.Id("data"))))
 		}),
 		jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 	).Line().Line()

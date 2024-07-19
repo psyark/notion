@@ -27,6 +27,7 @@ func TestIntro(t *testing.T) {
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Samples requests and responses are shown for each endpoint. Requests are shown using the Notion JavaScript SDK, and cURL. These samples make it easy to copy, paste, and modify as you build your integration."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Notion SDKs are open source projects that you can install to easily start building. You may also choose any other language or library that allows you to make HTTP requests."})
 
+	// TODO ジェネリック型にする
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
 		Text: "Pagination",

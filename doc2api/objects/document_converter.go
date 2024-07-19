@@ -84,7 +84,7 @@ func (c *Converter) OutputAllBuilders() {
 	c.globalTestBuilder.output(true)
 }
 
-func getSymbol[T CodeSymbol](name string, c *Converter) T {
+func getSymbol[T Symbol](name string, c *Converter) T {
 	if item, ok := c.symbols.Load(name); ok {
 		if item, ok := item.(T); ok {
 			return item
