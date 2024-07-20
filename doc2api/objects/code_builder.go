@@ -15,10 +15,9 @@ import (
 // builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
 // 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは変化しません
 type CodeBuilder struct {
-	converter *Converter // TODO これを保持しないことはできる？試してみる
-	url       string
-	fileName  string
-	symbols   []Symbol
+	url      string
+	fileName string
+	symbols  []Symbol
 }
 
 func (b *CodeBuilder) AddSimpleObject(name string, comment string) *SimpleObject {
@@ -67,7 +66,7 @@ func (b *CodeBuilder) AddUnionStruct(name string, discriminator string, comment 
 	return o
 }
 
-func (b *CodeBuilder) output(sortSymbols bool) {
+func (b *CodeBuilder) output(converter *Converter, sortSymbols bool) {
 	if sortSymbols {
 		slices.SortFunc(b.symbols, func(a, b Symbol) int {
 			return strings.Compare(a.name(), b.name())
@@ -85,7 +84,7 @@ func (b *CodeBuilder) output(sortSymbols bool) {
 			file.HeaderComment(b.url)
 		}
 		for _, s := range b.symbols {
-			file.Line().Line().Add(s.code(b.converter))
+			file.Line().Line().Add(s.code(converter))
 		}
 		lo.Must0(file.Save(filePath))
 	}

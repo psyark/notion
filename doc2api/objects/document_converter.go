@@ -25,10 +25,10 @@ type Converter struct {
 }
 
 func NewConverter() *Converter {
-	c := &Converter{}
-	c.globalBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated.go"}
-	c.globalTestBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated_test.go"}
-	return c
+	return &Converter{
+		globalBuilder:     &CodeBuilder{fileName: "objects_global_generated.go"},
+		globalTestBuilder: &CodeBuilder{fileName: "objects_global_generated_test.go"},
+	}
 }
 
 // FetchDocument は オブジェクトのドキュメントを取得し、
@@ -65,9 +65,8 @@ func (c *Converter) FetchDocument(url string) *DocumentComparator {
 	comparator := &DocumentComparator{
 		elements: elements,
 		builder: &CodeBuilder{
-			url:       url,
-			fileName:  fmt.Sprintf("objects_%s_generated.go", strings.TrimPrefix(url, "https://developers.notion.com/reference/")),
-			converter: c,
+			url:      url,
+			fileName: fmt.Sprintf("objects_%s_generated.go", strings.TrimPrefix(url, "https://developers.notion.com/reference/")),
 		},
 	}
 	c.comparators = append(c.comparators, comparator)
@@ -106,12 +105,12 @@ func (c *Converter) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 }
 
 func (c *Converter) OutputAllBuilders() {
-	for _, c := range c.comparators {
-		c.finish()
-		c.builder.output(false)
+	for _, cmp := range c.comparators {
+		cmp.finish()
+		cmp.builder.output(c, false)
 	}
-	c.globalBuilder.output(true)
-	c.globalTestBuilder.output(true)
+	c.globalBuilder.output(c, true)
+	c.globalTestBuilder.output(c, true)
 }
 
 func findSymbol[T Symbol](builder *CodeBuilder, name string) T {
