@@ -32,15 +32,15 @@ func WithRoundTripper(roundTripper http.RoundTripper) callOption {
 	}
 }
 
-func WithValidator(validator func(data []byte, unmarshaller any) error) callOption {
+func WithValidator(validator func(data []byte, unmarshaler any) error) callOption {
 	return func(co *callOptions) {
 		co.validator = validator
 	}
 }
 
 // Deprecated: use request
-func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, getResult func(unmarshaller *U) R, options ...callOption) (R, error) {
-	var unmarshaller U
+func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, getResult func(unmarshaler *U) R, options ...callOption) (R, error) {
+	var unmarshaler U
 	var zero R
 
 	co := &callOptions{roundTripper: http.DefaultTransport}
@@ -87,15 +87,15 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 		}
 	}
 
-	if err := json.Unmarshal(resBody, &unmarshaller); err != nil {
+	if err := json.Unmarshal(resBody, &unmarshaler); err != nil {
 		return zero, err
 	}
 
 	if co.validator != nil {
-		if err := co.validator(resBody, getResult(&unmarshaller)); err != nil {
+		if err := co.validator(resBody, getResult(&unmarshaler)); err != nil {
 			return zero, err
 		}
 	}
 
-	return getResult(&unmarshaller), nil
+	return getResult(&unmarshaler), nil
 }
