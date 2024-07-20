@@ -28,9 +28,18 @@ var (
 	DATABASE_PAGE_FOR_WRITE = uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961") // https://www.notion.so/PageToUpdate-b8ff7c186ef2416cb9654daf0d7aa961
 )
 
-func init() {
+func TestMain(m *testing.M) {
+	ctx := context.Background()
+
 	lo.Must0(godotenv.Load("env.local"))
 	client = NewClient(os.Getenv("API_ACCESS_TOKEN"))
+
+	params := SearchByTitleParams{}
+	pagi := lo.Must(client.SearchByTitle(ctx, params))
+	data := lo.Must(json.MarshalIndent(pagi, "", "  "))
+	fmt.Println(string(data))
+
+	m.Run()
 }
 
 func TestCreateDatabase(t *testing.T) {

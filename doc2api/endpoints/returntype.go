@@ -6,6 +6,7 @@ import (
 )
 
 // エンドポイントの返却値の型を出力するためのインターフェイスです
+// TODO 無名関数ではなく、何らかのインターフェイスを満たしたジェネリック型を生成する
 
 type ReturnType interface {
 	Type() jen.Code     // Type はメソッドの戻り型のコードです
