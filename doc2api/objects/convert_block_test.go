@@ -12,13 +12,13 @@ func TestBlock(t *testing.T) {
 	t.Parallel()
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/block")
-	var block *AdaptiveObject
+	var block *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "A block object represents a piece of content within Notion. The API translates the headings, toggles, paragraphs, lists, media, and more that you can interact with in the Notion UI as different block type objects.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block = b.AddAdaptiveObject("Block", "type", e.Text)
+		block = b.AddUnionStruct("Block", "type", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "For example, the following block object represents a Heading 2 in the Notion UI:"})

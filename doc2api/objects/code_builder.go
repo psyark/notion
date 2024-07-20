@@ -13,9 +13,9 @@ import (
 
 // CodeBuilder は
 // builderは生成されるオブジェクトやフィールドの依存関係の構築を行います
-// 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは冪等に保たれます
+// 実行時にオブジェクトが登録される順番が一定しなくても、出力されるソースコードは変化しません
 type CodeBuilder struct {
-	converter *Converter
+	converter *Converter // TODO これを保持しないことはできる？試してみる
 	url       string
 	fileName  string
 	symbols   []Symbol
@@ -30,10 +30,10 @@ func (b *CodeBuilder) AddSimpleObject(name string, comment string) *SimpleObject
 	return obj
 }
 
-type AddAdaptiveObjectOption func(o *AdaptiveObject)
+type addUnionStructOption func(o *UnionStruct)
 
-func DiscriminatorOmitEmpty() AddAdaptiveObjectOption {
-	return func(o *AdaptiveObject) {
+func DiscriminatorOmitEmpty() addUnionStructOption {
+	return func(o *UnionStruct) {
 		for _, f := range o.fields {
 			switch f := f.(type) {
 			case *VariableField:
@@ -45,27 +45,27 @@ func DiscriminatorOmitEmpty() AddAdaptiveObjectOption {
 	}
 }
 
-func Generic(constraint jen.Code) AddAdaptiveObjectOption {
-	return func(o *AdaptiveObject) {
+func Generic(constraint jen.Code) addUnionStructOption {
+	return func(o *UnionStruct) {
 		o.genericConstraint = constraint
 	}
 }
 
-func (b *CodeBuilder) AddAdaptiveObject(name string, discriminator string, comment string, options ...AddAdaptiveObjectOption) *AdaptiveObject {
+func (b *CodeBuilder) AddUnionStruct(name string, discriminator string, comment string, options ...addUnionStructOption) *UnionStruct {
 	if discriminator == "" {
-		panic(fmt.Errorf("%s のdiscriminatorが設定されていません。代わりにSimpleObjectを使ってください。", name))
+		panic(fmt.Errorf("%s のdiscriminatorは省略できません。", name))
 	}
 
-	o := &AdaptiveObject{}
+	o := &UnionStruct{discriminator: discriminator}
 	o.name_ = name
-	o.discriminator = discriminator
 	o.comment = comment
 	o.AddFields(&VariableField{name: discriminator, typeCode: jen.String()})
+
 	for _, option := range options {
 		option(o)
 	}
 	b.symbols = append(b.symbols, o)
-	b.converter.symbols.Store(name, o)
+	b.converter.symbols.Store(name, o) // TODO UnionStructを保存する理由はないかもしれない
 	return o
 }
 
@@ -138,6 +138,7 @@ func DiscriminatorValue(value string) fieldOption {
 }
 
 // NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+// TODO converterのメソッドにすべきでは
 func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 	for _, value := range []string{p.ExampleValue, p.Type} {
 		if value != "" {
@@ -161,7 +162,7 @@ func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 			panic(value)
 		}
 	}
-	panic(fmt.Errorf("パラメータを fixedStringField に変換できません: %v", p))
+	panic(fmt.Errorf("パラメータ %v には文字列リテラルが含まれません", p))
 }
 
 func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorValue string, comment string) *SimpleObject {

@@ -5,20 +5,51 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-// TODO 名前を DiscriminatedUnionにする https://typescriptbook.jp/reference/values-types-variables/discriminated-union
-
-// AdaptiveObject は、Block や User に代表される抽象クラスのための
+// UnionStruct は、Block や User に代表される抽象クラスのための
 // シンプルで効率的な表現を、従来の abstractObject に代わって提供します
-type AdaptiveObject struct {
+
+// UnionStruct は、structで表現されるUnionです。
+//
+// 類似するUnionInterface とは異なり、Unionのメンバー定義を内包しています。
+// 例えば Block(Bookmark/Breadcrumb/...), User(Person/Bot) のように、
+// 互いに関連が高く、ドキュメントの同じページで完結するようなUnionを表現します。
+type UnionStruct struct {
 	SimpleObject
 	discriminator string // "type", "object" など、派生を識別するためのフィールド名
 }
 
-// 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
-// abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
-// unionがmemberを見分ける際には依然としてこの方法しかない
-func (o *AdaptiveObject) getDiscriminatorValues(discriminator string) []string {
+// TODO 名前から adaptive を消す
+// TODO 以下の3つのメソッドは共通化できるのでは？
+// TODO CodeBuilderのメソッドにする？
+
+// AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
+func (o *UnionStruct) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
+	o.AddFields(&VariableField{
+		name:               discriminatorValue,
+		typeCode:           typeCode,
+		comment:            comment,
+		discriminatorValue: discriminatorValue,
+	})
+}
+
+// AddAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
+func (o *UnionStruct) AddAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
+	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
+}
+
+// AddAdaptiveFieldWithSpecificObject は専用の SimpleObject を作成し、その型のAdaptiveFieldを追加します
+func (o *UnionStruct) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *SimpleObject {
+	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
+	co := b.AddSimpleObject(dataName, comment)
+	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
+	return co
+}
+
+func (o *UnionStruct) getDiscriminatorValues(discriminator string) []string {
+	// このUnionStructがUnionInterfaceの一部である場合に呼ばれます
 	if o.discriminator == discriminator {
+		// このUnionStructが、所属するUnionInterfaceと同じdiscriminatorの場合に
+		// このブロックが評価されます（現時点では FileOrEmojiのメンバーのFileがそれに該当します）
 		values := []string{}
 		for _, f := range o.fields {
 			if f, ok := f.(*VariableField); ok && f.name == f.discriminatorValue {
@@ -30,33 +61,7 @@ func (o *AdaptiveObject) getDiscriminatorValues(discriminator string) []string {
 	return o.SimpleObject.getDiscriminatorValues(discriminator)
 }
 
-// TODO 以下の3つのメソッドは共通化できるのでは？
-// TODO CodeBuilderのメソッドにする？
-
-// AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
-func (o *AdaptiveObject) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
-	o.AddFields(&VariableField{
-		name:               discriminatorValue,
-		typeCode:           typeCode,
-		comment:            comment,
-		discriminatorValue: discriminatorValue,
-	})
-}
-
-// AddAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
-func (o *AdaptiveObject) AddAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
-	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
-}
-
-// AddAdaptiveFieldWithSpecificObject は専用の SimpleObject を作成し、その型のAdaptiveFieldを追加します
-func (o *AdaptiveObject) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *SimpleObject {
-	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
-	co := b.AddSimpleObject(dataName, comment)
-	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
-	return co
-}
-
-func (o *AdaptiveObject) code(c *Converter) jen.Code {
+func (o *UnionStruct) code(c *Converter) jen.Code {
 	code := &jen.Statement{o.SimpleObject.code(c)}
 
 	// discriminatorに対応するGoのフィールド

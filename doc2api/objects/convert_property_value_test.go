@@ -12,13 +12,13 @@ func TestPropertyValue(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/property-value-object")
 
-	var propertyValue, formula *AdaptiveObject
+	var propertyValue, formula *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue = b.AddAdaptiveObject("PropertyValue", "type", e.Text, DiscriminatorOmitEmpty())
+		propertyValue = b.AddUnionStruct("PropertyValue", "type", e.Text, DiscriminatorOmitEmpty())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
@@ -334,7 +334,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Heading",
 		Text: "Formula property values",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		formula = b.AddAdaptiveObject("Formula", "type", e.Text)
+		formula = b.AddUnionStruct("Formula", "type", e.Text)
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

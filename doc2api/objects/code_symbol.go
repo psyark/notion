@@ -10,7 +10,7 @@ type Symbol interface {
 
 var _ = []Symbol{
 	&SimpleObject{},
-	&AdaptiveObject{},
+	&UnionStruct{},
 	&UnionInterface{},
 	&UnmarshalTest{},
 	DiscriminatorString(""),

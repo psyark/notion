@@ -13,13 +13,13 @@ func TestUser(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/user")
 
-	var user *AdaptiveObject
+	var user *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "The User object represents a user in a Notion workspace. Users include full workspace members, guests, and integrations. You can find more information about members and guests in this guide.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		user = b.AddAdaptiveObject("User", "type", e.Text, DiscriminatorOmitEmpty())
+		user = b.AddUnionStruct("User", "type", e.Text, DiscriminatorOmitEmpty())
 	})
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘 Provisioning users and groups using SCIMThe SCIM API is available for workspaces in Notion's Enterprise Plan. Learn more about using SCIM with Notion."})
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘 Setting up single sign-on (SSO) with NotionSingle sign-on (SSO) can be configured for workspaces in Notion's Enterprise Plan. Learn more about SSO with Notion."})

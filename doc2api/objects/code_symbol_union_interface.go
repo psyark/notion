@@ -77,11 +77,15 @@ func (u *UnionInterface) memberUnmarshalerName() string {
 // unionInterfaceMember は、UnionInterfaceのメンバーになれるオブジェクトです
 type unionInterfaceMember interface {
 	Symbol
+
+	// UnionInterfaceのdiscriminatorに対して、そのメンバーが取りうる値のリストを返します。
+	//
+	// 現在のところ、これが2つ以上の値を返すのは FileOrEmojiに対して Fileが返す "file", "external" です。
 	getDiscriminatorValues(discriminator string) []string
 	isGeneric() bool
 }
 
 var _ = []unionInterfaceMember{
-	&AdaptiveObject{},
+	&UnionStruct{},
 	&SimpleObject{},
 }

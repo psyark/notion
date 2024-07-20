@@ -14,13 +14,13 @@ func TestProperty(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/property-object")
 
-	var property *AdaptiveObject
+	var property *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property = b.AddAdaptiveObject("Property", "type", e.Text)
+		property = b.AddUnionStruct("Property", "type", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘 Database rowsIf you’re looking for information about how to use the API to work with database rows, then refer to the page property values documentation. The API treats database rows as pages."})
@@ -361,7 +361,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	{
-		var propertyRelation *AdaptiveObject
+		var propertyRelation *UnionStruct
 		var propertyRelationDualProperty *SimpleObject
 
 		c.ExpectBlock(&Block{
@@ -374,7 +374,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyRelation = b.AddAdaptiveObject("PropertyRelation", "type", e.Text)
+			propertyRelation = b.AddUnionStruct("PropertyRelation", "type", e.Text)
 			propertyRelation.AddAdaptiveFieldWithEmptyStruct("single_property", "undocumented")
 			propertyRelationDualProperty = propertyRelation.AddAdaptiveFieldWithSpecificObject("dual_property", "undocumented", b)
 		})

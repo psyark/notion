@@ -12,13 +12,13 @@ func TestParent(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/parent-object")
 
-	var parent *AdaptiveObject
+	var parent *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the \"parent\". Parent information is represented by a consistent parent object throughout the API.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		parent = b.AddAdaptiveObject("Parent", "type", e.Text)
+		parent = b.AddUnionStruct("Parent", "type", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "General parenting rules:"})

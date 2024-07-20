@@ -17,13 +17,13 @@ func TestPropertyItem(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/property-item-object")
 
-	var propertyItem *AdaptiveObject
+	var propertyItem *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem = b.AddAdaptiveObject("PropertyItem", "type", e.Text)
+		propertyItem = b.AddUnionStruct("PropertyItem", "type", e.Text)
 
 		union := converter.RegisterUnionInterface("PropertyItemOrPropertyItemPagination", "object")
 		converter.RegisterUnionMember(union, propertyItem, "")
@@ -57,7 +57,7 @@ func TestPropertyItem(t *testing.T) {
 		ExampleValue: `"rich_text"`,
 	})
 
-	var paginatedPropertyInfo *AdaptiveObject
+	var paginatedPropertyInfo *UnionStruct
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Paginated property values"})
 	c.ExpectBlock(&Block{
@@ -65,7 +65,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		// TODO 良い名前
-		paginatedPropertyInfo = b.AddAdaptiveObject("PaginatedPropertyInfo", "type", e.Text)
+		paginatedPropertyInfo = b.AddUnionStruct("PaginatedPropertyInfo", "type", e.Text)
 		paginatedPropertyInfo.AddFields(b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()))
 		for _, derived := range []string{"title", "rich_text", "relation", "people"} {
 			paginatedPropertyInfo.AddAdaptiveFieldWithEmptyStruct(derived, "")
@@ -301,7 +301,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "{\n  \"Project\": {\n    \"object\": \"list\",\n    \"results\": [\n      {\n        \"object\": \"property_item\",\n        \"id\": \"vYdV\",\n        \"type\": \"relation\",\n        \"relation\": {\n          \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"\n        }\n      }\n    ],\n    \"next_cursor\": null,\n    \"has_more\": true,\n    \"type\": \"property_item\",\n    \"property_item\": {\n      \"id\": \"vYdV\",\n      \"next_url\": null,\n      \"type\": \"relation\",\n      \"relation\": {}\n    }\n  }\n}",
 	}).Output(addTest)
 
-	var rollup *AdaptiveObject
+	var rollup *UnionStruct
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
 		Text: "Rollup property values",
@@ -311,7 +311,7 @@ func TestPropertyItem(t *testing.T) {
 		// 比較的ドキュメントが充実しているこちらで作成を行う
 		// https://developers.notion.com/reference/property-value-object#rollup-property-values
 		// https://developers.notion.com/reference/property-item-object#rollup-property-values
-		rollup = b.AddAdaptiveObject("Rollup", "type", "")
+		rollup = b.AddUnionStruct("Rollup", "type", "")
 		propertyItem.AddAdaptiveFieldWithType("rollup", e.Text, jen.Op("*").Id("Rollup"))
 	})
 

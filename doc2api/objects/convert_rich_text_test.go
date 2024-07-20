@@ -13,13 +13,13 @@ func TestRichText(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/rich-text")
 
-	var richText *AdaptiveObject
+	var richText *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
 		Text: "Notion uses rich text to allow users to customize their content. Rich text refers to a type of document where content can be styled and formatted in a variety of customizable ways. This includes styling decisions, such as the use of italics, font size, and font color, as well as formatting, such as the use of hyperlinks or code blocks.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		richText = b.AddAdaptiveObject("RichText", "type", e.Text)
+		richText = b.AddUnionStruct("RichText", "type", e.Text)
 	})
 
 	c.ExpectBlock(&Block{
@@ -183,13 +183,13 @@ func TestRichText(t *testing.T) {
 	}
 
 	{
-		var mention *AdaptiveObject
+		var mention *UnionStruct
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "Mention",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mention = b.AddAdaptiveObject("Mention", "type", e.Text)
+			mention = b.AddUnionStruct("Mention", "type", e.Text)
 			richText.AddAdaptiveFieldWithType("mention", e.Text, jen.Op("*").Id("Mention"))
 		})
 		c.ExpectBlock(&Block{
@@ -293,13 +293,13 @@ func TestRichText(t *testing.T) {
 			b.AddUnmarshalTest("RichText", e.Text)
 		})
 
-		var templateMention *AdaptiveObject
+		var templateMention *UnionStruct
 
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
 			Text: "Template mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			templateMention = b.AddAdaptiveObject("TemplateMention", "type", e.Text)
+			templateMention = b.AddUnionStruct("TemplateMention", "type", e.Text)
 			mention.AddAdaptiveFieldWithType("template_mention", e.Text, jen.Op("*").Id("TemplateMention"))
 		})
 		c.ExpectBlock(&Block{

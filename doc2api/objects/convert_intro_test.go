@@ -13,7 +13,7 @@ func TestIntro(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/intro")
 
-	var pagination *AdaptiveObject
+	var pagination *UnionStruct
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The reference is your key to a comprehensive understanding of the Notion API."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Integrations use the API to access Notion's pages, databases, and users. Integrations can connect services to Notion and build interactive experiences for users within Notion. Using the navigation on the left, you'll find details for objects and endpoints used in the API."})
@@ -31,7 +31,7 @@ func TestIntro(t *testing.T) {
 		Kind: "Heading",
 		Text: "Pagination",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		pagination = b.AddAdaptiveObject("Pagination", "type", e.Text, Generic(
+		pagination = b.AddUnionStruct("Pagination", "type", e.Text, Generic(
 			jen.Id("Block").Op("|").Id("Comment").Op("|").Id("Database").Op("|").Id("Page").Op("|").Id("PageOrDatabase").Op("|").Id("PropertyItem").Op("|").Id("User"),
 		))
 

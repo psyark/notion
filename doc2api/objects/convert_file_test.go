@@ -13,13 +13,13 @@ func TestFile(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/file-object")
 
-	var file *AdaptiveObject
+	var file *UnionStruct
 
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
 		Text: "📘The Notion API does not yet support uploading files to Notion.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		file = b.AddAdaptiveObject("File", "type", e.Text)
+		file = b.AddUnionStruct("File", "type", e.Text)
 		file.AddFields(b.NewField(&Parameter{Property: "name", Description: UNDOCUMENTED}, jen.String(), OmitEmpty))
 
 		union := converter.RegisterUnionInterface("FileOrEmoji", "type")

@@ -38,12 +38,9 @@ func (o *SimpleObject) AddFields(fields ...fieldRenderer) {
 	o.fields = append(o.fields, fields...)
 }
 
-// 指定した discriminatorKey（"type" または "object"） に対してこのオブジェクトが持つ固有の値（"external" など）を返す
-// abstractがderivedを見分ける際のロジックではこれを使わない戦略へ移行しているが
-// unionがmemberを見分ける際には依然としてこの方法しかない
-func (o *SimpleObject) getDiscriminatorValues(discriminatorKey string) []string {
+func (o *SimpleObject) getDiscriminatorValues(discriminator string) []string {
 	for _, f := range o.fields {
-		if f, ok := f.(*DiscriminatorField); ok && f.name == discriminatorKey {
+		if f, ok := f.(*DiscriminatorField); ok && f.name == discriminator {
 			return []string{f.value}
 		}
 	}
