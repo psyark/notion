@@ -21,6 +21,7 @@ func TestMain(m *testing.M) {
 	converter = NewConverter()
 	m.Run()
 	converter.OutputAllBuilders()
+	converter.OutputBindingHelper()
 }
 
 func UndocumentedRequestID(b *CodeBuilder) *VariableField {

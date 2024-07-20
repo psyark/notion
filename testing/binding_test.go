@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	. "github.com/psyark/notion"
+	"github.com/psyark/notion/binding"
 )
 
 type TheDatabase struct {
@@ -41,7 +42,7 @@ func Example_binding() {
 		panic(err)
 	}
 
-	ts := ToTaggedStruct(db)
+	ts := binding.ToTaggedStruct(db)
 	fmt.Println(ts)
 
 	pagi, err := cli.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, WithRoundTripper(useCache("ExampleBinding_Query")))
@@ -51,7 +52,7 @@ func Example_binding() {
 
 	for _, page := range pagi.Results {
 		hoge := &TheDatabase{}
-		if err := UnmarshalPage(&page, hoge); err != nil {
+		if err := binding.UnmarshalPage(&page, hoge); err != nil {
 			panic(err)
 		}
 
@@ -65,7 +66,7 @@ func Example_binding() {
 		}
 
 		hoge := &TheDatabase{}
-		if err := UnmarshalPage(page, hoge); err != nil {
+		if err := binding.UnmarshalPage(page, hoge); err != nil {
 			panic(err)
 		}
 
@@ -74,7 +75,7 @@ func Example_binding() {
 		hoge.Number = &newFloat
 		newUrl := *hoge.URL + "/hoge"
 		hoge.URL = &newUrl
-		if params, err := GetUpdatePageParams(hoge, page); err != nil {
+		if params, err := binding.GetUpdatePageParams(hoge, page); err != nil {
 			panic(err)
 		} else {
 			data, _ := json.MarshalIndent(params, "", "  ")

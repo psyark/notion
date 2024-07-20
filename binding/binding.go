@@ -1,6 +1,4 @@
-package notion
-
-// TODO サブパッケージに移動
+package binding
 
 import (
 	"encoding/json"
@@ -10,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/psyark/notion"
 )
 
 var safeName func(string) string
@@ -28,7 +27,7 @@ func init() {
 
 // UnmarshalPage は渡されたpageのプロパティ・カバー・アイコンをdstに格納します
 // dstは適切にタグ付けされたstructへのポインタである必要があります
-func UnmarshalPage(page *Page, dst any) error {
+func UnmarshalPage(page *notion.Page, dst any) error {
 	t := reflect.TypeOf(dst)
 	v := reflect.ValueOf(dst)
 	if t.Kind() != reflect.Pointer {
@@ -41,13 +40,13 @@ func UnmarshalPage(page *Page, dst any) error {
 		return fmt.Errorf("dst must be a pointer to a tagged struct")
 	}
 
-	setProperty := func(fv reflect.Value, prop *PropertyValue) (err error) {
+	setProperty := func(fv reflect.Value, prop *notion.PropertyValue) (err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				err = fmt.Errorf("%v", r)
 			}
 		}()
-		fv.Set(prop.get())
+		fv.Set(get(prop))
 		return err
 	}
 
@@ -72,7 +71,7 @@ func UnmarshalPage(page *Page, dst any) error {
 // GetUpdatePageParams は渡されたsrcと現在のpageを比較し、
 // プロパティ・カバー・アイコンを更新するためのUpdatePageParams、または更新が不要な場合のnilを返します
 // srcは適切にタグ付けされたstruct（またはそのポインタ）である必要があります
-func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, error) {
+func GetUpdatePageParams(src any, page *notion.Page) (*notion.UpdatePagePropertiesParams, error) {
 	t := reflect.TypeOf(src)
 	v := reflect.ValueOf(src)
 	if t.Kind() != reflect.Pointer {
@@ -85,7 +84,7 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, erro
 		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
 	}
 
-	delta := map[string]PropertyValue{}
+	delta := map[string]notion.PropertyValue{}
 	for i := 0; i < t.NumField(); i++ {
 		sf := t.Field(i)
 		if sf.Tag.Get("notion") != "" {
@@ -95,19 +94,19 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, erro
 				return nil, fmt.Errorf("タグ %q に相当するプロパティがありません", propId)
 			}
 
-			json1, _ := json.Marshal(prop.get().Interface())
+			json1, _ := json.Marshal(get(prop).Interface())
 			json2, _ := json.Marshal(v.Field(i).Interface())
 			if string(json1) != string(json2) {
-				pv := PropertyValue{Type: prop.Type}
-				pv.set(v.Field(i))
+				pv := notion.PropertyValue{Type: prop.Type}
+				set(&pv, v.Field(i))
 				delta[propId] = pv
 			}
 		}
 	}
 
-	var params *UpdatePagePropertiesParams
+	var params *notion.UpdatePagePropertiesParams
 	if len(delta) != 0 {
-		params = &UpdatePagePropertiesParams{}
+		params = &notion.UpdatePagePropertiesParams{}
 		params.Properties(delta)
 	}
 
@@ -117,11 +116,11 @@ func GetUpdatePageParams(src any, page *Page) (*UpdatePagePropertiesParams, erro
 // GetCreatePageParams は渡されたsrcからdbの定義に従って
 // プロパティ・カバー・アイコンが設定されたCreatePageParamsを返します
 // srcは適切にタグ付けされたstruct（またはそのポインタ）である必要があります
-func GetCreatePageParams(src any, db *Database) *CreatePageParams {
+func GetCreatePageParams(src any, db *notion.Database) *notion.CreatePageParams {
 	return nil
 }
 
-func ToTaggedStruct(db *Database) string {
+func ToTaggedStruct(db *notion.Database) string {
 	names := []string{}
 	for _, prop := range db.Properties {
 		names = append(names, prop.Name)
@@ -136,6 +135,6 @@ func ToTaggedStruct(db *Database) string {
 		fields = append(fields, jen.Id(safeName(prop.Name)).Op(getTypeForBinding(prop)).Tag(map[string]string{"notion": prop.Id}))
 	}
 
-	code := jen.Type().Id(safeName(String(db.Title))).Struct(fields...)
+	code := jen.Type().Id(safeName(notion.String(db.Title))).Struct(fields...)
 	return (&jen.Statement{code}).GoString()
 }
