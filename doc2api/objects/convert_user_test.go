@@ -143,7 +143,7 @@ func TestUser(t *testing.T) {
 		Description:  "If you're using GET /v1/users/me or GET /v1/users/{{your_bot_id}}, then this field returns data about the bot, including owner, owner.type, and workspace_name. These properties are detailed below.",
 		ExampleValue: "{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		b.AddUnmarshalTest("User", e.ExampleValue)
+		converter.AddUnmarshalTest("User", e.ExampleValue)
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "owner",
@@ -153,7 +153,7 @@ func TestUser(t *testing.T) {
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		bot.AddFields(b.NewField(e, jen.Op("*").Id("BotUserDataOwner"), OmitEmpty))
 		botOwner = b.AddSimpleObject("BotUserDataOwner", e.Description)
-		b.AddUnmarshalTest("BotUserDataOwner", e.ExampleValue)
+		converter.AddUnmarshalTest("BotUserDataOwner", e.ExampleValue)
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "owner.type",

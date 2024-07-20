@@ -20,7 +20,7 @@ func TestSort(t *testing.T) {
 		lo.Must0(json.Unmarshal([]byte(e.Text), &wrapper))
 
 		for _, s := range wrapper.Sorts {
-			b.AddUnmarshalTest("Sort", string(s))
+			converter.AddUnmarshalTest("Sort", string(s))
 		}
 	}
 

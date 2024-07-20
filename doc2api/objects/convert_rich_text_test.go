@@ -40,7 +40,7 @@ func TestRichText(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"Some words \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Some words \",\n  \"href\": null\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("RichText", e.Text)
+		converter.AddUnmarshalTest("RichText", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘Many block types support rich text. In cases where it is supported, a rich_text object will be included in the block type object. All rich_text objects will include a plain_text property, which provides a convenient way for developers to access unformatted text from the Notion block."})
@@ -178,7 +178,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"equation\",\n  \"equation\": {\n    \"expression\": \"E = mc^2\"\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"E = mc^2\",\n  \"href\": null\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 	}
 
@@ -224,7 +224,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"database\",\n    \"database\": {\n      \"id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"Database with test things\",\n  \"href\": \"https://www.notion.so/a1d8501e1ac143e9a6bdea9fe6c8822b\"\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -250,7 +250,7 @@ func TestRichText(t *testing.T) {
 			json.Unmarshal([]byte(e.Text), &tmp)
 			tmp["mention"].(map[string]any)["date"].(map[string]any)["time_zone"] = nil
 			data, _ := json.Marshal(tmp)
-			b.AddUnmarshalTest("RichText", string(data))
+			converter.AddUnmarshalTest("RichText", string(data))
 		})
 
 		var mentionLinkPreview *SimpleObject
@@ -273,7 +273,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"link_preview\",\n    \"link_preview\": {\n      \"url\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\",\n  \"href\": \"https://workspace.slack.com/archives/C04PF0F9QSD/z1671139297838409?thread_ts=1671139274.065079&cid=C03PF0F9QSD\"\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 
 		c.ExpectBlock(&Block{
@@ -290,7 +290,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"page\",\n    \"page\": {\n      \"id\": \"3c612f56-fdd0-4a30-a4d6-bda7d7426309\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is a test page\",\n  \"href\": \"https://www.notion.so/3c612f56fdd04a30a4d6bda7d7426309\"\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 
 		var templateMention *UnionStruct
@@ -331,7 +331,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_date\",\n      \"template_mention_date\": \"today\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Today\",\n  \"href\": null\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -353,7 +353,7 @@ func TestRichText(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"template_mention\",\n    \"template_mention\": {\n      \"type\": \"template_mention_user\",\n      \"template_mention_user\": \"me\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Me\",\n  \"href\": null\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("RichText", e.Text)
+			converter.AddUnmarshalTest("RichText", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -370,7 +370,7 @@ func TestRichText(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"mention\",\n  \"mention\": {\n    \"type\": \"user\",\n    \"user\": {\n      \"object\": \"user\",\n      \"id\": \"b2e19928-b427-4aad-9a9d-fde65479b1d9\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"@Anonymous\",\n  \"href\": null\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("RichText", e.Text)
+		converter.AddUnmarshalTest("RichText", e.Text)
 	})
 
 	{
@@ -411,14 +411,14 @@ func TestRichText(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"This is an \",\n    \"link\": null\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"This is an \",\n  \"href\": null\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("RichText", e.Text)
+		converter.AddUnmarshalTest("RichText", e.Text)
 	})
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Example rich text text object with link"})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"text\",\n  \"text\": {\n    \"content\": \"inline link\",\n    \"link\": {\n      \"url\": \"https://developers.notion.com/\"\n    }\n  },\n  \"annotations\": {\n    \"bold\": false,\n    \"italic\": false,\n    \"strikethrough\": false,\n    \"underline\": false,\n    \"code\": false,\n    \"color\": \"default\"\n  },\n  \"plain_text\": \"inline link\",\n  \"href\": \"https://developers.notion.com/\"\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("RichText", e.Text)
+		converter.AddUnmarshalTest("RichText", e.Text)
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",

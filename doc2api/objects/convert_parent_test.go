@@ -46,7 +46,7 @@ func TestParent(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"database_id\",\n  \"database_id\": \"d9824bdc-8445-4327-be8b-5b47500af6ce\"\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Parent", e.Text)
+		converter.AddUnmarshalTest("Parent", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Page parent"})
@@ -70,7 +70,7 @@ func TestParent(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"page_id\",\n\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Parent", e.Text)
+		converter.AddUnmarshalTest("Parent", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Workspace parent"})
@@ -94,7 +94,7 @@ func TestParent(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n\t\"type\": \"workspace\",\n\t\"workspace\": true\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Parent", e.Text)
+		converter.AddUnmarshalTest("Parent", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Block parent"})
@@ -119,6 +119,6 @@ func TestParent(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n\t\"type\": \"block_id\",\n\t\"block_id\": \"7d50a184-5bbe-4d90-8f29-6bec57ed817b\"\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Parent", e.Text)
+		converter.AddUnmarshalTest("Parent", e.Text)
 	})
 }

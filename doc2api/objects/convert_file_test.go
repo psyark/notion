@@ -35,13 +35,13 @@ func TestFile(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"file\",\n  \"file\": {\n    \"url\": \"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/7b8b0713-dbd4-4962-b38b-955b6c49a573/My_test_image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20221024%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20221024T205211Z&X-Amz-Expires=3600&X-Amz-Signature=208aa971577ff05e75e68354e8a9488697288ff3fb3879c2d599433a7625bf90&X-Amz-SignedHeaders=host&x-id=GetObject\",\n    \"expiry_time\": \"2022-10-24T22:49:22.765Z\"\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("File", e.Text)
+		converter.AddUnmarshalTest("File", e.Text)
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"external\",\n  \"external\": {\n    \"url\": \"https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1065&q=80\"\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("File", e.Text)
+		converter.AddUnmarshalTest("File", e.Text)
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -120,7 +120,7 @@ func TestFile(t *testing.T) {
 			"} \n    ],\n    \"next_cursor\": null,",
 			1,
 		)
-		b.AddUnmarshalTest("Pagination", e.Text, "Block")
+		converter.AddUnmarshalTest("Pagination", e.Text, "Block")
 	})
 
 	{
@@ -168,7 +168,7 @@ func TestFile(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"object\": \"list\",\n  \"results\": [\n    {\n      \"object\": \"block\",\n      \"id\": \"af1459f2-d2c5-4ca6-9f05-8038e6eb167f\",\n      \"parent\": {\n        \"type\": \"page_id\",\n        \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n      },\n      \"created_time\": \"2022-12-15T01:14:00.000Z\",\n      \"last_edited_time\": \"2022-12-15T01:14:00.000Z\",\n      \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"has_children\": false,\n      \"archived\": false,\n      \"in_trash\": false,\n      \"type\": \"pdf\",\n      \"pdf\": {\n        \"caption\": [],\n        \"type\": \"external\",\n        \"external\": {\n          \"url\": \"https://www.yourwebsite.dev/files/TestFile.pdf\"\n        }\n      }\n    }\n  ],\n  \"next_cursor\": null,\n  \"has_more\": false,\n  \"type\": \"block\",\n  \"block\": {}\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Pagination", e.Text, "Block")
+		converter.AddUnmarshalTest("Pagination", e.Text, "Block")
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Example: Retrieve a link to an external file using GET /children"})
@@ -182,7 +182,7 @@ func TestFile(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"object\": \"list\",\n  \"results\": [\n    {\n      \"object\": \"block\",\n      \"id\": \"47a920e4-346c-4df8-ae78-905ce10adcb8\",\n      \"parent\": {\n        \"type\": \"page_id\",\n        \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n      },\n      \"created_time\": \"2022-12-15T00:18:00.000Z\",\n      \"last_edited_time\": \"2022-12-15T00:18:00.000Z\",\n      \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n      },\n      \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n      },\n      \"has_children\": false,\n      \"archived\": false,\n      \"in_trash\": false,\n      \"type\": \"paragraph\",\n      \"paragraph\": {\n        \"rich_text\": [],\n        \"color\": \"default\"\n      }\n    },\n    {\n      \"object\": \"block\",\n      \"id\": \"af1459f2-d2c5-4ca6-9f05-8038e6eb167f\",\n      \"parent\": {\n        \"type\": \"page_id\",\n        \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n      },\n      \"created_time\": \"2022-12-15T01:14:00.000Z\",\n      \"last_edited_time\": \"2022-12-15T01:14:00.000Z\",\n      \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"has_children\": false,\n      \"archived\": false,\n      \"in_trash\": false,\n      \"type\": \"pdf\",\n      \"pdf\": {\n        \"caption\": [],\n        \"type\": \"external\",\n        \"external\": {\n          \"url\": \"https://www.yourwebsite.dev/files/TestFile.pdf\"\n        }\n      }\n    }\n  ],\n  \"next_cursor\": null,\n  \"has_more\": false,\n  \"type\": \"block\",\n  \"block\": {}\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Pagination", e.Text, "Block")
+		converter.AddUnmarshalTest("Pagination", e.Text, "Block")
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Example: Update a link to an external file using PATCH /blocks/{block_id}"})
@@ -198,7 +198,7 @@ func TestFile(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"object\": \"block\",\n  \"id\": \"af1459f2-d2c5-4ca6-9f05-8038e6eb167f\",\n  \"parent\": {\n    \"type\": \"page_id\",\n    \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n  },\n  \"created_time\": \"2022-12-15T01:14:00.000Z\",\n  \"last_edited_time\": \"2022-12-16T21:23:00.000Z\",\n  \"created_by\": {\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n  },\n  \"last_edited_by\": {\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n  },\n  \"has_children\": false,\n  \"archived\": false,\n  \"in_trash\": false,\n  \"type\": \"pdf\",\n  \"pdf\": {\n    \"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n      \"url\": \"https://www.yourwebsite.dev/files/NewFile.pdf\"\n    }\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Block", e.Text)
+		converter.AddUnmarshalTest("Block", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘To modify page or database property values that are made from file objects, like icon, cover, or files page property values, use the update page or update database endpoints."})

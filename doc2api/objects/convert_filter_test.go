@@ -64,7 +64,7 @@ func TestFilter(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"filter\": {\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"equals\": true\n    }\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+		converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
@@ -104,7 +104,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Task completed\",\n    \"checkbox\": {\n      \"does_not_equal\": true\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -249,7 +249,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Due date\",\n    \"date\": {\n      \"on_or_after\": \"2023-02-08\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -282,7 +282,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Blueprint\",\n    \"files\": {\n      \"is_not_empty\": true\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -337,7 +337,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"One month deadline\",\n    \"formula\": {\n      \"date\":{\n          \"after\": \"2021-05-10\"\n      }\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -386,7 +386,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Programming language\",\n    \"multi_select\": {\n      \"contains\": \"TypeScript\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -467,7 +467,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Estimated working days\",\n    \"number\": {\n      \"less_than_or_equal_to\": 5\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -526,7 +526,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Last edited by\",\n    \"people\": {\n      \"contains\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -578,7 +578,7 @@ func TestFilter(t *testing.T) {
 			text := regexp.MustCompile(`\w{32}`).ReplaceAllStringFunc(e.Text, func(s string) string {
 				return uuid.MustParse(s).String()
 			})
-			b.AddUnmarshalTest("Filter", extractFilter(text))
+			converter.AddUnmarshalTest("Filter", extractFilter(text))
 		})
 	}
 
@@ -659,7 +659,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Description\",\n    \"rich_text\": {\n      \"contains\": \"cross-team\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -710,7 +710,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Related tasks\",\n    \"rollup\": {\n      \"any\": {\n        \"rich_text\": {\n          \"contains\": \"Migrate database\"\n        }\n      }\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Filter conditions for date rollup values"})
@@ -727,7 +727,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Parent project due date\",\n    \"rollup\": {\n      \"date\": {\n        \"on_or_before\": \"2023-02-08\"\n      }\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Heading",
@@ -745,7 +745,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Total estimated working days\",\n    \"rollup\": {\n      \"number\": {\n        \"does_not_equal\": 42\n      }\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -794,7 +794,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Frontend framework\",\n    \"select\": {\n      \"equals\": \"React\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -843,7 +843,7 @@ func TestFilter(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "{\n  \"filter\": {\n    \"property\": \"Project status\",\n    \"status\": {\n      \"equals\": \"Not started\"\n    }\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+			converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 		})
 	}
 
@@ -878,7 +878,7 @@ func TestFilter(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"filter\": {\n    \"timestamp\": \"created_time\",\n    \"created_time\": {\n      \"on_or_before\": \"2022-10-13\"\n    }\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+		converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 	})
 
 	c.ExpectBlock(&Block{
@@ -952,7 +952,7 @@ func TestFilter(t *testing.T) {
 		Text: "{\n  \"and\": [\n    {\n      \"property\": \"Done\",\n      \"checkbox\": {\n        \"equals\": true\n      }\n    }, \n    {\n      \"or\": [\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"A\"\n        },\n        {\n          \"property\": \"Tags\",\n          \"contains\": \"B\"\n        }\n      ]\n    }\n  ]\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		// TODO サンプルコードがめちゃくちゃ
-		// b.AddUnmarshalTest("Filter", e.Code)
+		// converter.AddUnmarshalTest("Filter", e.Code)
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -982,12 +982,12 @@ func TestFilter(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"filter\": {\n    \"and\": [\n      {\n        \"property\": \"Complete\",\n        \"checkbox\": {\n          \"equals\": true\n        }\n      },\n      {\n        \"property\": \"Working days\",\n        \"number\": {\n          \"greater_than\": 10\n        }\n      }\n    ]\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+		converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"filter\": {\n    \"or\": [\n      {\n        \"property\": \"Description\",\n        \"rich_text\": {\n          \"contains\": \"2023\"\n        }\n      },\n      {\n        \"and\": [\n          {\n            \"property\": \"Department\",\n            \"select\": {\n              \"equals\": \"Engineering\"\n            }\n          },\n          {\n            \"property\": \"Priority goal\",\n            \"checkbox\": {\n              \"equals\": true\n            }\n          }\n        ]\n      }\n    ]\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Filter", extractFilter(e.Text))
+		converter.AddUnmarshalTest("Filter", extractFilter(e.Text))
 	})
 }

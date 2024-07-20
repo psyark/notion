@@ -73,6 +73,20 @@ func (c *Converter) FetchDocument(url string) *DocumentComparator {
 	return comparator
 }
 
+func (c *Converter) AddUnmarshalTest(targetName string, jsonCode string, typeArg ...string) {
+	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
+	if len(typeArg) != 0 {
+		ut.typeArg = typeArg[0]
+	}
+
+	if exists := c.getUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
+		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
+	} else { // 無ければ追加
+		ut.jsonCodes = append(ut.jsonCodes, jsonCode)
+		c.globalTestBuilder.symbols = append(c.globalTestBuilder.symbols, ut)
+	}
+}
+
 func (c *Converter) OutputAllBuilders() {
 	for _, c := range c.comparators {
 		c.finish()

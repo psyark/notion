@@ -67,20 +67,6 @@ func (b *CodeBuilder) AddUnionStruct(name string, discriminator string, comment 
 	return o
 }
 
-func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string, typeArg ...string) {
-	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
-	if len(typeArg) != 0 {
-		ut.typeArg = typeArg[0]
-	}
-
-	if exists := b.converter.getUnmarshalTest(ut.name()); exists != nil { // 同名のものが既にあるなら
-		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
-	} else { // 無ければ追加
-		ut.jsonCodes = append(ut.jsonCodes, jsonCode)
-		b.converter.globalTestBuilder.symbols = append(b.converter.globalTestBuilder.symbols, ut)
-	}
-}
-
 func (b *CodeBuilder) output(sortSymbols bool) {
 	if sortSymbols {
 		slices.SortFunc(b.symbols, func(a, b Symbol) int {

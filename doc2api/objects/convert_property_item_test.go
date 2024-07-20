@@ -12,7 +12,7 @@ func TestPropertyItem(t *testing.T) {
 	t.Parallel()
 
 	addTest := func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
+		converter.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
 	}
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/property-item-object")
@@ -373,7 +373,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "{\n  \"Rollup\": {\n    \"object\": \"list\",\n    \"results\": [\n      {\n        \"object\": \"property_item\",\n        \"id\": \"vYdV\",\n        \"type\": \"relation\",\n        \"relation\": {\n          \"id\": \"535c3fb2-95e6-4b37-a696-036e5eac5cf6\"\n        }\n      }...\n    ],\t\n    \"next_cursor\": \"1QaTunT5\",\n    \"has_more\": true,\n    \"type\": \"property_item\",\n    \"property_item\": {\n      \"id\": \"y}~p\",\n      \"next_url\": \"http://api.notion.com/v1/pages/0e5235bf86aa4efb93aa772cce7eab71/properties/y%7D~p?start_cursor=1QaTunT5&page_size=25\",\n      \"type\": \"rollup\",\n      \"rollup\": {\n        \"function\": \"sum\",\n        \"type\": \"incomplete\",\n        \"incomplete\": {}\n      }\n    }\n  }\n}",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		e.Text = strings.Replace(e.Text, "...", "", 1)
-		b.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
+		converter.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "People property values"})
@@ -466,7 +466,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "{\n  \"Created Time\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"create_time\",\n  \t\"created_time\": \"2020-03-17T19:10:04.968Z\"\n  }\n}",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		e.Text = strings.Replace(e.Text, "create_time", "created_time", 1) // ドキュメントの不具合
-		b.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
+		converter.AddUnmarshalTest("PropertyItemOrPropertyItemPaginationMap", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Created by property values"})

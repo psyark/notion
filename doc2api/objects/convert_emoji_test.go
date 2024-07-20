@@ -28,7 +28,7 @@ func TestEmoji(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "{\n  \"type\": \"emoji\",\n  \"emoji\": \"😻\"\n}",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		b.AddUnmarshalTest("Emoji", e.Text)
+		converter.AddUnmarshalTest("Emoji", e.Text)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The object contains the following fields:"})
