@@ -156,7 +156,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Equation",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			richTextEquation = richText.AddAdaptiveFieldWithSpecificObject("equation", e.Text, b)
+			richTextEquation = richText.AddPayloadField("equation", e.Text, WithPayloadObject(b))
 		})
 
 		c.ExpectBlock(&Block{
@@ -190,7 +190,7 @@ func TestRichText(t *testing.T) {
 			Text: "Mention",
 		}).Output(func(e *Block, b *CodeBuilder) {
 			mention = b.AddUnionStruct("Mention", "type", e.Text)
-			richText.AddAdaptiveFieldWithType("mention", e.Text, jen.Op("*").Id("Mention"))
+			richText.AddPayloadField("mention", e.Text, WithType(jen.Op("*").Id("Mention")))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -215,7 +215,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Database mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mention.AddAdaptiveFieldWithType("database", e.Text, jen.Op("*").Id("PageReference"))
+			mention.AddPayloadField("database", e.Text, WithType(jen.Op("*").Id("PageReference")))
 		})
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: `Database mentions contain a database reference within the corresponding database field. A database reference is an object with an id key and a string value (UUIDv4) corresponding to a database ID.`})
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "If an integration doesn’t have access to the mentioned database, then the mention is returned with just the ID. The plain_text value that would be a title appears as \"Untitled\" and the annotation object’s values are defaults."})
@@ -230,7 +230,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Date mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mention.AddAdaptiveFieldWithType("date", e.Text, jen.Op("*").Id("PropertyValueDate"))
+			mention.AddPayloadField("date", e.Text, WithType(jen.Op("*").Id("PropertyValueDate")))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -259,7 +259,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Link Preview mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mentionLinkPreview = mention.AddAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
+			mentionLinkPreview = mention.AddPayloadField("link_preview", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -280,7 +280,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Page mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mention.AddAdaptiveFieldWithType("page", e.Text, jen.Op("*").Id("PageReference"))
+			mention.AddPayloadField("page", e.Text, WithType(jen.Op("*").Id("PageReference")))
 		})
 
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Page mentions contain a page reference within the corresponding\u00a0page\u00a0field. A page reference is an object with an\u00a0id\u00a0property and a string value (UUIDv4) corresponding to a page ID."})
@@ -300,7 +300,7 @@ func TestRichText(t *testing.T) {
 			Text: "Template mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
 			templateMention = b.AddUnionStruct("TemplateMention", "type", e.Text)
-			mention.AddAdaptiveFieldWithType("template_mention", e.Text, jen.Op("*").Id("TemplateMention"))
+			mention.AddPayloadField("template_mention", e.Text, WithType(jen.Op("*").Id("TemplateMention")))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -359,7 +359,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "User mention type object",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			mention.AddAdaptiveFieldWithType("user", e.Text, jen.Op("*").Id("User"))
+			mention.AddPayloadField("user", e.Text, WithType(jen.Op("*").Id("User")))
 		})
 	}
 
@@ -380,7 +380,7 @@ func TestRichText(t *testing.T) {
 			Kind: "Heading",
 			Text: "Text",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			richTextText = richText.AddAdaptiveFieldWithSpecificObject("text", e.Text, b)
+			richTextText = richText.AddPayloadField("text", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",

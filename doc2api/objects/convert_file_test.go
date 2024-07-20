@@ -71,11 +71,11 @@ func TestFile(t *testing.T) {
 			Kind: "Heading",
 			Text: "Notion-hosted files",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			fileFile = file.AddAdaptiveFieldWithSpecificObject("file", e.Text, b)
+			fileFile = file.AddPayloadField("file", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
-			Text: "All Notion-hosted files have a\u00a0type\u00a0of\u00a0\"file\". The corresponding file specific object contains the following fields:",
+			Text: `All Notion-hosted files have a type of "file". The corresponding file specific object contains the following fields:`,
 		}).Output(func(e *Block, b *CodeBuilder) {
 			fileFile.AddComment(e.Text)
 		})
@@ -89,8 +89,8 @@ func TestFile(t *testing.T) {
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "expiry_time",
-			Type:         "string\u00a0(ISO 8601 date time)",
-			Description:  "The date and time when the link expires, formatted as an\u00a0ISO 8601 date time\u00a0string.",
+			Type:         `string (ISO 8601 date time)`,
+			Description:  `The date and time when the link expires, formatted as an ISO 8601 date time string.`,
 			ExampleValue: `"2020-03-17T19:10:04.968Z"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
 			fileFile.AddFields(b.NewField(e, jen.Id("ISO8601String")))
@@ -130,7 +130,7 @@ func TestFile(t *testing.T) {
 			Kind: "Heading",
 			Text: "External files",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			fileExternal = file.AddAdaptiveFieldWithSpecificObject("external", e.Text, b)
+			fileExternal = file.AddPayloadField("external", e.Text, WithPayloadObject(b))
 		})
 
 		c.ExpectBlock(&Block{

@@ -18,31 +18,34 @@ type UnionStruct struct {
 	discriminator string // "type", "object" など、派生を識別するためのフィールド名
 }
 
-// TODO 名前から adaptive を消す
-// TODO 以下の3つのメソッドは共通化できるのでは？
-// TODO CodeBuilderのメソッドにする？
-
-// AddAdaptiveFieldWithType は任意の型でAdaptiveFieldを追加します
-func (o *UnionStruct) AddAdaptiveFieldWithType(discriminatorValue string, comment string, typeCode jen.Code) {
-	o.AddFields(&VariableField{
-		name:               discriminatorValue,
-		typeCode:           typeCode,
-		comment:            comment,
-		discriminatorValue: discriminatorValue,
-	})
+// AddPayloadField は、このUnionStructにペイロードフィールドを追加します。
+// ペイロードフィールドとは、以下のようなフィールドです。
+// - 指定した discriminatorValue を名前に持ちます。
+// - UnionStructのdiscriminatorの値が discriminatorValue のときに有効になります。
+func (o *UnionStruct) AddPayloadField(discriminatorValue string, comment string, option addPayloadFieldOption) *SimpleObject {
+	field := &VariableField{name: discriminatorValue, comment: comment, discriminatorValue: discriminatorValue}
+	o.AddFields(field)
+	return option(o, field)
 }
 
-// AddAdaptiveFieldWithEmptyStruct は空のStructでAdaptiveFieldを追加します
-func (o *UnionStruct) AddAdaptiveFieldWithEmptyStruct(discriminatorValue string, comment string) {
-	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Struct())
-}
+type addPayloadFieldOption func(union *UnionStruct, field *VariableField) *SimpleObject
 
-// AddAdaptiveFieldWithSpecificObject は専用の SimpleObject を作成し、その型のAdaptiveFieldを追加します
-func (o *UnionStruct) AddAdaptiveFieldWithSpecificObject(discriminatorValue string, comment string, b *CodeBuilder) *SimpleObject {
-	dataName := o.name() + strcase.UpperCamelCase(discriminatorValue)
-	co := b.AddSimpleObject(dataName, comment)
-	o.AddAdaptiveFieldWithType(discriminatorValue, comment, jen.Op("*").Id(dataName))
-	return co
+func WithType(code jen.Code) addPayloadFieldOption {
+	return func(union *UnionStruct, field *VariableField) *SimpleObject {
+		field.typeCode = code
+		return nil
+	}
+}
+func WithEmptyStruct() addPayloadFieldOption {
+	return WithType(jen.Struct())
+}
+func WithPayloadObject(b *CodeBuilder) addPayloadFieldOption {
+	return func(union *UnionStruct, field *VariableField) *SimpleObject {
+		payloadName := union.name() + strcase.UpperCamelCase(field.discriminatorValue)
+		payload := b.AddSimpleObject(payloadName, field.comment)
+		field.typeCode = jen.Op("*").Id(payloadName)
+		return payload
+	}
 }
 
 func (o *UnionStruct) getDiscriminatorValues(discriminator string) []string {

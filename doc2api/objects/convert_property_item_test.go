@@ -68,9 +68,9 @@ func TestPropertyItem(t *testing.T) {
 		paginatedPropertyInfo = b.AddUnionStruct("PaginatedPropertyInfo", "type", e.Text)
 		paginatedPropertyInfo.AddFields(b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()))
 		for _, derived := range []string{"title", "rich_text", "relation", "people"} {
-			paginatedPropertyInfo.AddAdaptiveFieldWithEmptyStruct(derived, "")
+			paginatedPropertyInfo.AddPayloadField(derived, "", WithEmptyStruct())
 		}
-		paginatedPropertyInfo.AddAdaptiveFieldWithType("rollup", UNDOCUMENTED, jen.Id("Rollup"))
+		paginatedPropertyInfo.AddPayloadField("rollup", UNDOCUMENTED, WithType(jen.Id("Rollup")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "object",
@@ -114,7 +114,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "Title property value objects contain an array of rich text objects within the title property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		// ドキュメントには "array of rich text" と書いてあるが間違い
-		propertyItem.AddAdaptiveFieldWithType("title", e.Text, jen.Id("RichText"))
+		propertyItem.AddPayloadField("title", e.Text, WithType(jen.Id("RichText")))
 	})
 
 	c.ExpectBlock(&Block{
@@ -131,7 +131,7 @@ func TestPropertyItem(t *testing.T) {
 		Text: "Rich Text property value objects contain an array of rich text objects within the rich_text property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		// ドキュメントには "array of rich text" と書いてあるが間違い
-		propertyItem.AddAdaptiveFieldWithType("rich_text", e.Text, jen.Id("RichText"))
+		propertyItem.AddPayloadField("rich_text", e.Text, WithType(jen.Id("RichText")))
 	})
 
 	c.ExpectBlock(&Block{
@@ -144,7 +144,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Number property value objects contain a number within the number property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("number", e.Text, jen.Op("*").Float64())
+		propertyItem.AddPayloadField("number", e.Text, WithType(jen.Op("*").Float64()))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -158,8 +158,8 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Select property value objects contain the following data within the select property:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("select", e.Text, jen.Op("*").Id("Option"))
-		propertyItem.AddAdaptiveFieldWithType("status", "undocumented", jen.Op("*").Id("Option"))
+		propertyItem.AddPayloadField("select", e.Text, WithType(jen.Op("*").Id("Option")))
+		propertyItem.AddPayloadField("status", UNDOCUMENTED, WithType(jen.Op("*").Id("Option")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "id",
@@ -191,7 +191,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Multi-select property value objects contain an array of multi-select option values within the multi_select property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("multi_select", e.Text, jen.Index().Id("Option"))
+		propertyItem.AddPayloadField("multi_select", e.Text, WithType(jen.Index().Id("Option")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Heading",
@@ -226,7 +226,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Heading",
 		Text: "Date property values",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItemDate = propertyItem.AddAdaptiveFieldWithSpecificObject("date", e.Text, b)
+		propertyItemDate = propertyItem.AddPayloadField("date", e.Text, WithPayloadObject(b))
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Date property value objects contain the following data within the date property:"})
@@ -264,7 +264,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("formula", e.Text, jen.Op("*").Id("Formula"))
+		propertyItem.AddPayloadField("formula", e.Text, WithType(jen.Op("*").Id("Formula")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "type",
@@ -294,7 +294,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Relation property value objects contain an array of relation property items with page references within the relation property. A page reference is an object with an id property which is a string value (UUIDv4) corresponding to a page ID in another database.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("relation", e.Text, jen.Op("*").Id("PageReference")) // 単一
+		propertyItem.AddPayloadField("relation", e.Text, WithType(jen.Op("*").Id("PageReference"))) // 単一
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -312,7 +312,7 @@ func TestPropertyItem(t *testing.T) {
 		// https://developers.notion.com/reference/property-value-object#rollup-property-values
 		// https://developers.notion.com/reference/property-item-object#rollup-property-values
 		rollup = b.AddUnionStruct("Rollup", "type", "")
-		propertyItem.AddAdaptiveFieldWithType("rollup", e.Text, jen.Op("*").Id("Rollup"))
+		propertyItem.AddPayloadField("rollup", e.Text, WithType(jen.Op("*").Id("Rollup")))
 	})
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "Rollup property value objects represent the result of evaluating a rollup described in thedatabase's properties. The property is returned as a list object of type property_item with a list of relation items used to computed the rollup under results."})
@@ -339,7 +339,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Number rollup property values contain a number within the number property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		rollup.AddAdaptiveFieldWithType("number", e.Text, jen.Op("*").Float64())
+		rollup.AddPayloadField("number", e.Text, WithType(jen.Op("*").Float64()))
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Date rollup property values"})
@@ -347,7 +347,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Date rollup property values contain a date property value within the date property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		rollup.AddAdaptiveFieldWithType("date", e.Text, jen.Op("*").Id("PropertyItemDate"))
+		rollup.AddPayloadField("date", e.Text, WithType(jen.Op("*").Id("PropertyItemDate")))
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Array rollup property values"})
@@ -358,15 +358,15 @@ func TestPropertyItem(t *testing.T) {
 		// ドキュメントには array of property_item とあるが、
 		// type="rich_text"の場合に入る値などから
 		// array of property_value が正しいと判断している
-		rollup.AddAdaptiveFieldWithType("array", e.Text, jen.Index().Id("PropertyValue"))
+		rollup.AddPayloadField("array", e.Text, WithType(jen.Index().Id("PropertyValue")))
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Incomplete rollup property values"})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
-		Text: "Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type \"incomplete\". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.",
+		Text: `Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type "incomplete". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.`,
 	}).Output(func(e *Block, b *CodeBuilder) {
-		rollup.AddAdaptiveFieldWithType("incomplete", e.Text, jen.Struct())
+		rollup.AddPayloadField("incomplete", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -381,7 +381,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "People property value objects contain an array of user objects within the people property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("people", e.Text, jen.Id("User")) // 単一では？
+		propertyItem.AddPayloadField("people", e.Text, WithType(jen.Id("User"))) // 単一では？
 	})
 
 	c.ExpectBlock(&Block{
@@ -396,7 +396,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("files", e.Text, jen.Index().Id("File"))
+		propertyItem.AddPayloadField("files", e.Text, WithType(jen.Index().Id("File")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -410,7 +410,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Checkbox property value objects contain a boolean within the checkbox property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("checkbox", e.Text, jen.Bool())
+		propertyItem.AddPayloadField("checkbox", e.Text, WithType(jen.Bool()))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -422,7 +422,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "URL property value objects contain a non-empty string within the url property. The string describes a web address (i.e. \"http://worrydream.com/EarlyHistoryOfSmalltalk/\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("url", e.Text, jen.Op("*").String())
+		propertyItem.AddPayloadField("url", e.Text, WithType(jen.Op("*").String()))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -434,7 +434,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Email property value objects contain a string within the email property. The string describes an email address (i.e. \"hello@example.org\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("email", e.Text, jen.Op("*").String())
+		propertyItem.AddPayloadField("email", e.Text, WithType(jen.Op("*").String()))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -446,7 +446,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Phone number property value objects contain a string within the phone_number property. No structure is enforced.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("phone_number", e.Text, jen.Op("*").String())
+		propertyItem.AddPayloadField("phone_number", e.Text, WithType(jen.Op("*").String()))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -458,7 +458,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("created_time", e.Text, jen.Id("ISO8601String"))
+		propertyItem.AddPayloadField("created_time", e.Text, WithType(jen.Id("ISO8601String")))
 	})
 
 	c.ExpectBlock(&Block{
@@ -474,7 +474,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("created_by", e.Text, jen.Op("*").Id("User"))
+		propertyItem.AddPayloadField("created_by", e.Text, WithType(jen.Op("*").Id("User")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -497,7 +497,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("last_edited_time", e.Text, jen.Id("ISO8601String"))
+		propertyItem.AddPayloadField("last_edited_time", e.Text, WithType(jen.Id("ISO8601String")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -517,7 +517,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyItem.AddAdaptiveFieldWithType("last_edited_by", e.Text, jen.Op("*").Id("User"))
+		propertyItem.AddPayloadField("last_edited_by", e.Text, WithType(jen.Op("*").Id("User")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",

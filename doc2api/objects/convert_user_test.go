@@ -107,7 +107,7 @@ func TestUser(t *testing.T) {
 		Kind: "Paragraph",
 		Text: `User objects that represent people have the type property set to "person". These objects also have the following properties:`,
 	}).Output(func(e *Block, b *CodeBuilder) {
-		person = user.AddAdaptiveFieldWithSpecificObject("person", e.Text, b)
+		person = user.AddPayloadField("person", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "person",
@@ -135,7 +135,7 @@ func TestUser(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "A user object's type property is\"bot\" when the user object represents a bot. A bot user object has the following properties:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		bot = user.AddAdaptiveFieldWithSpecificObject("bot", e.Text, b)
+		bot = user.AddPayloadField("bot", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "bot",

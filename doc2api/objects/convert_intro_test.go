@@ -99,9 +99,9 @@ func TestIntro(t *testing.T) {
 		for _, name := range strings.Split(e.Type, "  \n  \n") {
 			name := strings.TrimPrefix(strings.TrimSuffix(name, `"`), `"`)
 			if name == "property_item" {
-				pagination.AddAdaptiveFieldWithType(name, "", jen.Id("PaginatedPropertyInfo"))
+				pagination.AddPayloadField(name, "", WithType(jen.Id("PaginatedPropertyInfo")))
 			} else {
-				pagination.AddAdaptiveFieldWithEmptyStruct(name, "")
+				pagination.AddPayloadField(name, "", WithEmptyStruct())
 			}
 		}
 	})

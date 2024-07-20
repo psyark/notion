@@ -14,7 +14,7 @@ type PropertyItem struct {
 	RichText       RichText           `json:"rich_text"`            // Rich Text property value objects contain an array of rich text objects within the rich_text property.
 	Number         *float64           `json:"number"`               // Number property value objects contain a number within the number property.
 	Select         *Option            `json:"select"`               // Select property value objects contain the following data within the select property:
-	Status         *Option            `json:"status"`               // undocumented
+	Status         *Option            `json:"status"`               // UNDOCUMENTED
 	MultiSelect    []Option           `json:"multi_select"`         // Multi-select property value objects contain an array of multi-select option values within the multi_select property.
 	Date           *PropertyItemDate  `json:"date"`                 // Date property values
 	Formula        *Formula           `json:"formula"`              // Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value is an object containing type-specific data. The type-specific data are described in the sections below.

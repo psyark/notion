@@ -175,7 +175,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Bookmark",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		bookmark = block.AddAdaptiveFieldWithSpecificObject("bookmark", e.Text, b)
+		bookmark = block.AddPayloadField("bookmark", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -208,7 +208,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Breadcrumb block objects do not contain any information within the breadcrumb property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithEmptyStruct("breadcrumb", e.Text)
+		block.AddPayloadField("breadcrumb", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -221,7 +221,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Bulleted list item",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		bulletedListItem = block.AddAdaptiveFieldWithSpecificObject("bulleted_list_item", e.Text, b)
+		bulletedListItem = block.AddPayloadField("bulleted_list_item", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -259,7 +259,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Callout",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		specificObject = block.AddAdaptiveFieldWithSpecificObject("callout", e.Text, b)
+		specificObject = block.AddPayloadField("callout", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -301,7 +301,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Child database",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		childDatabase = block.AddAdaptiveFieldWithSpecificObject("child_database", e.Text, b)
+		childDatabase = block.AddPayloadField("child_database", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -329,7 +329,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Child page",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		childPage = block.AddAdaptiveFieldWithSpecificObject("child_page", e.Text, b)
+		childPage = block.AddPayloadField("child_page", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -357,7 +357,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Code",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		code = block.AddAdaptiveFieldWithSpecificObject("code", e.Text, b)
+		code = block.AddPayloadField("code", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -397,7 +397,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Column lists are parent blocks for columns. They do not contain any information within the column_list property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithEmptyStruct("column_list", e.Text)
+		block.AddPayloadField("column_list", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -407,7 +407,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithEmptyStruct("column", e.Text)
+		block.AddPayloadField("column", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -439,7 +439,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Divider block objects do not contain any information within the divider property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithEmptyStruct("divider", e.Text)
+		block.AddPayloadField("divider", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -452,7 +452,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Embed",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		embed = block.AddAdaptiveFieldWithSpecificObject("embed", e.Text, b)
+		embed = block.AddPayloadField("embed", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -484,7 +484,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Equation",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		equation = block.AddAdaptiveFieldWithSpecificObject("equation", e.Text, b)
+		equation = block.AddPayloadField("equation", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -506,7 +506,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "File",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithType("file", e.Text, jen.Op("*").Id("File")) // TODO FileWithCaption
+		block.AddPayloadField("file", e.Text, WithType(jen.Op("*").Id("File"))) // TODO FileWithCaption
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -550,9 +550,9 @@ func TestBlock(t *testing.T) {
 		Text: "All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		heading = b.AddSimpleObject("BlockHeading", e.Text)
-		block.AddAdaptiveFieldWithType("heading_1", "", jen.Op("*").Id("BlockHeading"))
-		block.AddAdaptiveFieldWithType("heading_2", "", jen.Op("*").Id("BlockHeading"))
-		block.AddAdaptiveFieldWithType("heading_3", "", jen.Op("*").Id("BlockHeading"))
+		block.AddPayloadField("heading_1", "", WithType(jen.Op("*").Id("BlockHeading")))
+		block.AddPayloadField("heading_2", "", WithType(jen.Op("*").Id("BlockHeading")))
+		block.AddPayloadField("heading_3", "", WithType(jen.Op("*").Id("BlockHeading")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "rich_text",
@@ -596,7 +596,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Image block objects contain a file object detailing information about the image.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddAdaptiveFieldWithType("image", e.Text, jen.Op("*").Id("File"))
+		block.AddPayloadField("image", e.Text, WithType(jen.Op("*").Id("File")))
 	})
 	c.ExpectBlock(&Block{Kind: "FencedCodeBlock", Text: "{\n  //...other keys excluded\n  \"type\": \"image\",\n  //...other keys excluded\n  \"image\": {\n    \"type\": \"external\",\n    \"external\": {\n \t  \t\"url\": \"https://website.domain/images/image.png\"\n    }\n  }\n}\n"})
 
@@ -627,7 +627,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Link Preview block objects contain the originally pasted url:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		linkPreview := block.AddAdaptiveFieldWithSpecificObject("link_preview", e.Text, b)
+		linkPreview := block.AddPayloadField("link_preview", e.Text, WithPayloadObject(b))
 		linkPreview.AddFields(b.NewField(&Parameter{Property: "url"}, jen.String()))
 	})
 	c.ExpectBlock(&Block{
@@ -724,7 +724,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "Paragraph",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		paragraph = block.AddAdaptiveFieldWithSpecificObject("paragraph", e.Text, b)
+		paragraph = block.AddPayloadField("paragraph", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -766,7 +766,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Heading",
 		Text: "PDF",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		pdf = block.AddAdaptiveFieldWithSpecificObject("pdf", e.Text, b)
+		pdf = block.AddPayloadField("pdf", e.Text, WithPayloadObject(b))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -852,7 +852,7 @@ func TestBlock(t *testing.T) {
 			Kind: "Heading",
 			Text: "Synced block",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = block.AddAdaptiveFieldWithSpecificObject("synced_block", e.Text, b)
+			specificObject = block.AddPayloadField("synced_block", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -1087,7 +1087,7 @@ func TestBlock(t *testing.T) {
 			Kind: "Heading",
 			Text: "To do",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			blockToDo = block.AddAdaptiveFieldWithSpecificObject("to_do", e.Text, b)
+			blockToDo = block.AddPayloadField("to_do", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",

@@ -63,7 +63,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Checkbox",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("checkbox", e.Text)
+		property.AddPayloadField("checkbox", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -80,7 +80,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Created by",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("created_by", e.Text)
+		property.AddPayloadField("created_by", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -101,7 +101,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Created time",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("created_time", e.Text)
+		property.AddPayloadField("created_time", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -122,7 +122,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Date",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("date", e.Text)
+		property.AddPayloadField("date", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -144,7 +144,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Email",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("email", e.Text)
+		property.AddPayloadField("email", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -165,7 +165,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Files",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("files", e.Text)
+		property.AddPayloadField("files", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
@@ -189,7 +189,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Formula",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyFormula = property.AddAdaptiveFieldWithSpecificObject("formula", e.Text, b)
+			propertyFormula = property.AddPayloadField("formula", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -221,7 +221,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Last edited by",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("last_edited_by", e.Text)
+		property.AddPayloadField("last_edited_by", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The last_edited_by type object is empty. There is no additional property configuration."})
@@ -230,7 +230,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Last edited time",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("last_edited_time", e.Text)
+		property.AddPayloadField("last_edited_time", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The last_edited_time type object is empty. There is no additional property configuration."})
@@ -248,7 +248,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Multi-select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyMultiSelect = property.AddAdaptiveFieldWithSpecificObject("multi_select", e.Text, b)
+			propertyMultiSelect = property.AddPayloadField("multi_select", e.Text, WithPayloadObject(b))
 		})
 
 		c.ExpectBlock(&Block{
@@ -297,7 +297,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Number",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyNumber = property.AddAdaptiveFieldWithSpecificObject("number", e.Text, b)
+			propertyNumber = property.AddPayloadField("number", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -326,7 +326,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "People",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("people", e.Text)
+		property.AddPayloadField("people", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -343,7 +343,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Phone number",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("phone_number", e.Text)
+		property.AddPayloadField("phone_number", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -368,15 +368,15 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Relation",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			property.AddAdaptiveFieldWithType("relation", e.Text, jen.Op("*").Id("PropertyRelation"))
+			property.AddPayloadField("relation", e.Text, WithType(jen.Op("*").Id("PropertyRelation")))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 		}).Output(func(e *Block, b *CodeBuilder) {
 			propertyRelation = b.AddUnionStruct("PropertyRelation", "type", e.Text)
-			propertyRelation.AddAdaptiveFieldWithEmptyStruct("single_property", "undocumented")
-			propertyRelationDualProperty = propertyRelation.AddAdaptiveFieldWithSpecificObject("dual_property", "undocumented", b)
+			propertyRelation.AddPayloadField("single_property", "undocumented", WithEmptyStruct())
+			propertyRelationDualProperty = propertyRelation.AddPayloadField("dual_property", "undocumented", WithPayloadObject(b))
 		})
 
 		c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The relation type object contains the following fields:"})
@@ -423,7 +423,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Rich text",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("rich_text", e.Text)
+		property.AddPayloadField("rich_text", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -443,7 +443,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Rollup",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyRollup = property.AddAdaptiveFieldWithSpecificObject("rollup", e.Text, b)
+			propertyRollup = property.AddPayloadField("rollup", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -512,7 +512,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertySelect = property.AddAdaptiveFieldWithSpecificObject("select", e.Text, b)
+			propertySelect = property.AddPayloadField("select", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -576,7 +576,7 @@ func TestProperty(t *testing.T) {
 			Kind: "Heading",
 			Text: "Status",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			propertyStatus = property.AddAdaptiveFieldWithSpecificObject("status", e.Text, b)
+			propertyStatus = property.AddPayloadField("status", e.Text, WithPayloadObject(b))
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -666,7 +666,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Title",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("title", e.Text)
+		property.AddPayloadField("title", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration."})
 	c.ExpectBlock(&Block{
@@ -682,7 +682,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "URL",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddAdaptiveFieldWithEmptyStruct("url", e.Text)
+		property.AddPayloadField("url", e.Text, WithEmptyStruct())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A URL database property is represented in the Notion UI as a column that contains URL values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The url type object is empty. There is no additional property configuration."})
