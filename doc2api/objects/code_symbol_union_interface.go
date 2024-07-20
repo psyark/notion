@@ -9,37 +9,22 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-// TODO Union関係だと分かる名前にする　UnionMember？
-// memberCoder はunionObjectのメンバーとして存在できるオブジェクトを作成するためのCoderです
-type memberCoder interface {
-	Symbol
-	getDiscriminatorValues(identifierKey string) []string
-	isGeneric() bool
-}
-
-var _ = []memberCoder{
-	&AdaptiveObject{},
-	&SimpleObject{},
-}
-
-// TODO コメント書く
-// TODO 名前を考える FlexibleUnion？
-
-// UnionObject は、共通の変数に格納される可能性のあるオブジェクトの集合です
+// UnionInterface は、interfaceで表現されるUnionです。
 //
-// interfaceが使われる点やUnmarshalerが生成される点で abstractObjectと似ていますが、
-// 以下のような違いがあり、目的に応じて使い分けがされます
-// - UnionObject は必ずしも共通のフィールドを必要としない
-// - とあるオブジェクトが直接所属する UnionObject の数に制限はない
-// - （ドキュメントのページを跨ぐため）常に objects.global.go に書き込まれる
+// 類似するUnionStruct とは異なり、Unionのメンバー定義を内包していません。
+// 例えば PropertyItemOrPropertyItemPagination のように、
+// 互いに関連が低く、ドキュメントのページを跨ぐようなUnionを表現します。
 //
-// 例えば FileOrEmoji や PropertyItemOrPropertyItemPagination がUnionObjectです
-type UnionObject struct {
-	namedSymbol
+// 🚨 アンマーシャリングは透過的に行いません
+//   - 出力する型に対して固有の Unmarshaler が生成されます。
+//   - UnionInterface が生成する型をフィールドに持つオブジェクトには、
+//     そのフィールドをアンマーシャルするための UnmarshalJSON が生成されます。
+type UnionInterface struct {
+	nameImpl
 	discriminator string // "type" や "object" など
 }
 
-func (u *UnionObject) code(c *Converter) jen.Code {
+func (u *UnionInterface) code(c *Converter) jen.Code {
 	// インターフェイス本体
 	code := jen.Type().Id(u.name()).Interface(jen.Id("is" + u.name()).Params()).Line().Line()
 	// Unmarshaler
@@ -62,7 +47,7 @@ func (u *UnionObject) code(c *Converter) jen.Code {
 					g.CaseFunc(func(g *jen.Group) {
 						dvs := entry.member.getDiscriminatorValues(u.discriminator)
 						if len(dvs) == 0 {
-							panic(fmt.Errorf("メンバー %v を識別するための %s の値がありません", entry.member.name(), u.discriminator))
+							panic(fmt.Errorf("メンバー %v を判別するための %s の値がありません", entry.member.name(), u.discriminator))
 						}
 						for _, v := range dvs {
 							g.Lit(v)
@@ -85,6 +70,18 @@ func (u *UnionObject) code(c *Converter) jen.Code {
 	return code
 }
 
-func (u *UnionObject) memberUnmarshalerName() string {
+func (u *UnionInterface) memberUnmarshalerName() string {
 	return strcase.LowerCamelCase(u.name()) + "Unmarshaler"
+}
+
+// unionInterfaceMember は、UnionInterfaceのメンバーになれるオブジェクトです
+type unionInterfaceMember interface {
+	Symbol
+	getDiscriminatorValues(discriminator string) []string
+	isGeneric() bool
+}
+
+var _ = []unionInterfaceMember{
+	&AdaptiveObject{},
+	&SimpleObject{},
 }

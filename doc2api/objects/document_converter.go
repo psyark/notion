@@ -96,14 +96,31 @@ func getSymbol[T Symbol](name string, c *Converter) T {
 	var zero T
 	return zero
 }
-func (c *Converter) getUnionObject(name string) *UnionObject {
-	return getSymbol[*UnionObject](name, c)
+func (c *Converter) getUnionInterface(name string) *UnionInterface {
+	return getSymbol[*UnionInterface](name, c)
 }
 func (c *Converter) getUnmarshalTest(name string) *UnmarshalTest {
 	return getSymbol[*UnmarshalTest](name, c)
 }
 
-func (c *Converter) RegisterUnionMember(union *UnionObject, member memberCoder, typeArg string) {
+// RegisterUnionInterface は、指定された名前と判別子を持つ UnionInterfaceを定義し、返します。
+// 二回目以降の呼び出しでは定義をスキップし、初回に定義されたものを返します。
+func (c *Converter) RegisterUnionInterface(name string, discriminator string) *UnionInterface {
+	if union := c.getUnionInterface(name); union != nil {
+		return union
+	}
+
+	union := &UnionInterface{discriminator: discriminator}
+	union.name_ = strings.TrimSpace(name)
+
+	c.globalBuilder.symbols = append(c.globalBuilder.symbols, union)
+	c.symbols.Store(name, union)
+
+	return union
+}
+
+// RegisterUnionMember は、UnionInterface と unionInterfaceMember を互いの親子として登録します。
+func (c *Converter) RegisterUnionMember(union *UnionInterface, member unionInterfaceMember, typeArg string) {
 	if member.isGeneric() && typeArg == "" {
 		panic(fmt.Errorf("🚨 ジェネリック型 %sに対する型引数がありません", member.name()))
 	}
@@ -111,7 +128,7 @@ func (c *Converter) RegisterUnionMember(union *UnionObject, member memberCoder, 
 }
 
 type unionMemberEntry struct {
-	union   *UnionObject
-	member  memberCoder
+	union   *UnionInterface
+	member  unionInterfaceMember
 	typeArg string
 }

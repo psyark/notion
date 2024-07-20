@@ -69,22 +69,6 @@ func (b *CodeBuilder) AddAdaptiveObject(name string, discriminator string, comme
 	return o
 }
 
-// AddUnionToGlobalIfNotExists は、指定された名前と識別キーを持つ Unionを定義し、返します。
-// 二回目以降の呼び出しでは定義をスキップし、初回に定義されたものを返します。
-func (b *CodeBuilder) AddUnionToGlobalIfNotExists(name string, discriminator string) *UnionObject {
-	if u := b.converter.getUnionObject(name); u != nil {
-		return u
-	}
-
-	u := &UnionObject{}
-	u.name_ = strings.TrimSpace(name)
-	u.discriminator = discriminator
-	b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, u)
-	b.converter.symbols.Store(name, u)
-
-	return u
-}
-
 func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string, typeArg ...string) {
 	ut := &UnmarshalTest{targetName: targetName} // UnmarshalTestを作る
 	if len(typeArg) != 0 {
@@ -189,8 +173,4 @@ func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorVa
 		omitEmpty: true, // TODO SimpleObjectのときはtrue、Adaptiveのときはfalseにすれば動くけど…
 	})
 	return b.AddSimpleObject(objName, comment)
-}
-
-func (b *CodeBuilder) RegisterUnionMember(union *UnionObject, member memberCoder, typeArg string) {
-	b.converter.RegisterUnionMember(union, member, typeArg)
 }

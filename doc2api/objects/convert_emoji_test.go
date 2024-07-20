@@ -18,9 +18,10 @@ func TestEmoji(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "An emoji object contains information about an emoji character. It is most often used to represent an emoji that is rendered as a page icon in the Notion UI.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		union := b.AddUnionToGlobalIfNotExists("FileOrEmoji", "type")
 		emoji = b.AddSimpleObject("Emoji", e.Text)
-		b.RegisterUnionMember(union, emoji, "")
+
+		union := converter.RegisterUnionInterface("FileOrEmoji", "type")
+		converter.RegisterUnionMember(union, emoji, "")
 	})
 
 	c.ExpectBlock(&Block{

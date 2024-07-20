@@ -24,8 +24,9 @@ func TestPropertyItem(t *testing.T) {
 		Text: "A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		propertyItem = b.AddAdaptiveObject("PropertyItem", "type", e.Text)
-		union := b.AddUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-		b.RegisterUnionMember(union, propertyItem, "")
+
+		union := converter.RegisterUnionInterface("PropertyItemOrPropertyItemPagination", "object")
+		converter.RegisterUnionMember(union, propertyItem, "")
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "All property items"})

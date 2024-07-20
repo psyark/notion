@@ -48,10 +48,11 @@ func (f *VariableField) renderField() jen.Code {
 	return code
 }
 
-func (f *VariableField) getUnion(c *Converter) *UnionObject {
+// このフィールドがUnionInterface型である場合、それを返します
+func (f *VariableField) getUnionInterface(c *Converter) *UnionInterface {
 	code := jen.Var().Id("_").Add(f.typeCode).GoString()
 	name := strings.TrimPrefix(code, "var _ ")
-	return c.getUnionObject(name)
+	return c.getUnionInterface(name)
 }
 
 // 識別子が入るフィールド

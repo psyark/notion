@@ -21,8 +21,9 @@ func TestFile(t *testing.T) {
 	}).Output(func(e *Block, b *CodeBuilder) {
 		file = b.AddAdaptiveObject("File", "type", e.Text)
 		file.AddFields(b.NewField(&Parameter{Property: "name", Description: UNDOCUMENTED}, jen.String(), OmitEmpty))
-		union := b.AddUnionToGlobalIfNotExists("FileOrEmoji", "type")
-		b.RegisterUnionMember(union, file, "")
+
+		union := converter.RegisterUnionInterface("FileOrEmoji", "type")
+		converter.RegisterUnionMember(union, file, "")
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

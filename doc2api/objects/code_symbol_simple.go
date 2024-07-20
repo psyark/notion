@@ -17,7 +17,7 @@ var _ symbolWithFields = &SimpleObject{}
 
 // SimpleObject は単純なオブジェクトに使われるGoコードを生成します
 type SimpleObject struct {
-	namedSymbol
+	nameImpl
 	comment           string
 	fields            []fieldRenderer
 	genericConstraint jen.Code
@@ -92,7 +92,7 @@ func (o *SimpleObject) fieldUnmarshalerCode(c *Converter) jen.Code {
 
 	unionFields := []*VariableField{}
 	for _, f := range o.fields {
-		if f, ok := f.(*VariableField); ok && f.getUnion(c) != nil {
+		if f, ok := f.(*VariableField); ok && f.getUnionInterface(c) != nil {
 			unionFields = append(unionFields, f)
 		}
 	}
@@ -104,7 +104,7 @@ func (o *SimpleObject) fieldUnmarshalerCode(c *Converter) jen.Code {
 			g.Id("t").Op(":=").Op("&").StructFunc(func(g *jen.Group) {
 				g.Op("*").Id("Alias")
 				for _, f := range unionFields {
-					g.Id(strcase.UpperCamelCase(f.name)).Id(f.getUnion(c).memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
+					g.Id(strcase.UpperCamelCase(f.name)).Id(f.getUnionInterface(c).memberUnmarshalerName()).Tag(map[string]string{"json": f.name})
 				}
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),

@@ -34,8 +34,9 @@ func TestIntro(t *testing.T) {
 		pagination = b.AddAdaptiveObject("Pagination", "type", e.Text, Generic(
 			jen.Id("Block").Op("|").Id("Comment").Op("|").Id("Database").Op("|").Id("Page").Op("|").Id("PageOrDatabase").Op("|").Id("PropertyItem").Op("|").Id("User"),
 		))
-		union := b.AddUnionToGlobalIfNotExists("PropertyItemOrPropertyItemPagination", "object")
-		b.RegisterUnionMember(union, pagination, "PropertyItem")
+
+		union := converter.RegisterUnionInterface("PropertyItemOrPropertyItemPagination", "object")
+		converter.RegisterUnionMember(union, pagination, "PropertyItem")
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",

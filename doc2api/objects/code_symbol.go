@@ -11,15 +11,15 @@ type Symbol interface {
 var _ = []Symbol{
 	&SimpleObject{},
 	&AdaptiveObject{},
-	&UnionObject{},
+	&UnionInterface{},
 	&UnmarshalTest{},
 	DiscriminatorString(""),
 }
 
-type namedSymbol struct {
+type nameImpl struct {
 	name_ string
 }
 
-func (n *namedSymbol) name() string {
+func (n *nameImpl) name() string {
 	return n.name_
 }
