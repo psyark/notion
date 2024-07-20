@@ -9,6 +9,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/google/uuid"
 	. "github.com/psyark/notion/doc2api/objects"
+	"github.com/stoewer/go-strcase"
 )
 
 func TestFilter(t *testing.T) {
@@ -27,6 +28,15 @@ func TestFilter(t *testing.T) {
 	c := converter.FetchDocument("https://developers.notion.com/reference/post-database-query-filter")
 
 	var filter *SimpleObject
+
+	// Type-specific filter conditions に従い、
+	// フィルターの型ごとのフィールドとペイロードオブジェクトを作成します
+	// （このような使い方はFilter特有のため、CodeBuilderに同様の機能を作りません）
+	newSpecificObject := func(b *CodeBuilder, name string, comment string) *SimpleObject {
+		objName := "Filter" + strcase.UpperCamelCase(name)
+		filter.AddFields(b.NewField(&Parameter{Property: name, Description: comment}, jen.Op("*").Id(objName), OmitEmpty))
+		return b.AddSimpleObject(objName, comment)
+	}
 
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "When you query a database, you can send a filter object in the body of the request that limits the returned entries based on the specified criteria."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "For example, the below query limits the response to entries where the \"Task completed\"  checkbox property value is true:"})
@@ -82,7 +92,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Checkbox",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "checkbox", e.Text)
+			specificObject = newSpecificObject(b, "checkbox", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",
@@ -115,7 +125,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Date",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "date", e.Text)
+			specificObject = newSpecificObject(b, "date", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Blockquote",
@@ -260,7 +270,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Files",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "files", e.Text)
+			specificObject = newSpecificObject(b, "files", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "is_empty",
@@ -293,7 +303,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Formula",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			filterFormula = b.NewSpecificObject(filter, "formula", e.Text)
+			filterFormula = newSpecificObject(b, "formula", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -348,7 +358,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Multi-select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "multi_select", e.Text)
+			specificObject = newSpecificObject(b, "multi_select", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -397,7 +407,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Number",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "number", e.Text)
+			specificObject = newSpecificObject(b, "number", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "does_not_equal",
@@ -478,7 +488,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "People",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "people", e.Text)
+			specificObject = newSpecificObject(b, "people", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -537,7 +547,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Relation",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "relation", e.Text)
+			specificObject = newSpecificObject(b, "relation", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -589,7 +599,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Rich text",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "rich_text", e.Text)
+			specificObject = newSpecificObject(b, "rich_text", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "contains",
@@ -670,7 +680,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Rollup",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			filterRollup = b.NewSpecificObject(filter, "rollup", e.Text)
+			filterRollup = newSpecificObject(b, "rollup", e.Text)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
@@ -756,7 +766,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Select",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "select", e.Text)
+			specificObject = newSpecificObject(b, "select", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",
@@ -805,7 +815,7 @@ func TestFilter(t *testing.T) {
 			Kind: "Heading",
 			Text: "Status",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			specificObject = b.NewSpecificObject(filter, "status", e.Text)
+			specificObject = newSpecificObject(b, "status", e.Text)
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "equals",

@@ -8,7 +8,6 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/samber/lo"
-	"github.com/stoewer/go-strcase"
 )
 
 // CodeBuilder は
@@ -117,15 +116,4 @@ func DiscriminatorValue(value string) fieldOption {
 	return func(f *VariableField) {
 		f.discriminatorValue = value
 	}
-}
-
-func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorValue string, comment string) *SimpleObject {
-	objName := parent.name() + strcase.UpperCamelCase(discriminatorValue)
-	parent.AddFields(&VariableField{
-		name:      discriminatorValue,
-		typeCode:  jen.Op("*").Id(objName),
-		comment:   comment,
-		omitEmpty: true, // TODO SimpleObjectのときはtrue、Adaptiveのときはfalseにすれば動くけど…
-	})
-	return b.AddSimpleObject(objName, comment)
 }
