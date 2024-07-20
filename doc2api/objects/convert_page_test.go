@@ -52,7 +52,7 @@ func TestPage(t *testing.T) {
 		ExampleValue: `"page"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		e.Property = strings.TrimSuffix(e.Property, `\`)
-		page.AddFields(b.NewDiscriminatorField(e))
+		page.AddFields(converter.NewDiscriminatorField(e))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     `id\`,

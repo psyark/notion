@@ -38,7 +38,7 @@ func TestPropertyItem(t *testing.T) {
 		Description:  `Always "property_item".`,
 		ExampleValue: `"property_item"`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		propertyItem.AddFields(b.NewDiscriminatorField(e))
+		propertyItem.AddFields(converter.NewDiscriminatorField(e))
 	})
 
 	c.ExpectParameter(&Parameter{

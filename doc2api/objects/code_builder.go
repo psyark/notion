@@ -120,33 +120,6 @@ func DiscriminatorValue(value string) fieldOption {
 	}
 }
 
-// NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
-// TODO converterのメソッドにすべきでは
-func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
-	for _, value := range []string{p.ExampleValue, p.Type} {
-		if value != "" {
-			if strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`) {
-				value = strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`)
-
-				{
-					ds := DiscriminatorString(value)
-					if already := b.converter.getDiscriminatorString(ds.name()); already == nil {
-						b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, ds)
-					}
-				}
-
-				return &DiscriminatorField{
-					name:    p.Property,
-					value:   value,
-					comment: p.Description,
-				}
-			}
-			panic(value)
-		}
-	}
-	panic(fmt.Errorf("パラメータ %v には文字列リテラルが含まれません", p))
-}
-
 func (b *CodeBuilder) NewSpecificObject(parent symbolWithFields, discriminatorValue string, comment string) *SimpleObject {
 	objName := parent.name() + strcase.UpperCamelCase(discriminatorValue)
 	parent.AddFields(&VariableField{

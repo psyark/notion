@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -87,6 +88,23 @@ func (c *Converter) AddUnmarshalTest(targetName string, jsonCode string, typeArg
 	}
 }
 
+// NewDiscriminatorField は、ドキュメントに書かれたパラメータを、渡されたタイプに従ってGoコードのフィールドに変換します
+func (c *Converter) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
+	for _, value := range []string{p.ExampleValue, p.Type} {
+		if match := regexp.MustCompile(`^"(\w+)"$`).FindStringSubmatch(value); match != nil {
+			value = match[1]
+
+			// 未登録なら DiscriminatorString を登録
+			if ds := DiscriminatorString(value); c.getDiscriminatorString(ds.name()) == nil {
+				c.globalBuilder.symbols = append(c.globalBuilder.symbols, ds)
+			}
+
+			return &DiscriminatorField{name: p.Property, value: value, comment: p.Description}
+		}
+	}
+	panic(fmt.Errorf("パラメータ %v には文字列リテラルが含まれません", p))
+}
+
 func (c *Converter) OutputAllBuilders() {
 	for _, c := range c.comparators {
 		c.finish()
@@ -96,38 +114,27 @@ func (c *Converter) OutputAllBuilders() {
 	c.globalTestBuilder.output(true)
 }
 
-func (c *Converter) getUnionInterface(name string) *UnionInterface {
-	for _, symbol := range c.globalBuilder.symbols {
+func findSymbol[T Symbol](builder *CodeBuilder, name string) T {
+	for _, symbol := range builder.symbols {
 		switch symbol := symbol.(type) {
-		case *UnionInterface:
+		case T:
 			if symbol.name() == name {
 				return symbol
 			}
 		}
 	}
-	return nil
+	var zero T
+	return zero
+}
+
+func (c *Converter) getUnionInterface(name string) *UnionInterface {
+	return findSymbol[*UnionInterface](c.globalBuilder, name)
 }
 func (c *Converter) getDiscriminatorString(name string) *DiscriminatorString {
-	for _, symbol := range c.globalBuilder.symbols {
-		switch symbol := symbol.(type) {
-		case *DiscriminatorString:
-			if symbol.name() == name {
-				return symbol
-			}
-		}
-	}
-	return nil
+	return findSymbol[*DiscriminatorString](c.globalBuilder, name)
 }
 func (c *Converter) getUnmarshalTest(name string) *UnmarshalTest {
-	for _, symbol := range c.globalTestBuilder.symbols {
-		switch symbol := symbol.(type) {
-		case *UnmarshalTest:
-			if symbol.name() == name {
-				return symbol
-			}
-		}
-	}
-	return nil
+	return findSymbol[*UnmarshalTest](c.globalTestBuilder, name)
 }
 
 // RegisterUnionInterface は、指定された名前と判別子を持つ UnionInterfaceを定義し、返します。
