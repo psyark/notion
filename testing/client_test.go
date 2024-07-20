@@ -26,7 +26,7 @@ var (
 	DATABASE_PAGE_FOR_READ1 = uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf") // https://www.notion.so/ABCDEFG-7e01d5af9d0e4d2584e4d5bfc39b65bf
 	DATABASE_PAGE_FOR_READ2 = uuid.MustParse("7e1105bc19a64a1381453cff0b488092") // https://www.notion.so/7e1105bc19a64a1381453cff0b488092
 	DATABASE_PAGE_FOR_WRITE = uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961") // https://www.notion.so/PageToUpdate-b8ff7c186ef2416cb9654daf0d7aa961
-	currentPage             uuid.UUID
+	generatedPage           uuid.UUID
 )
 
 func TestMain(m *testing.M) {
@@ -42,13 +42,20 @@ func TestMain(m *testing.M) {
 		switch pd := pd.(type) {
 		case *Page:
 			if pd.Parent.PageId == ROOT {
-
-			}
-		case *Database:
-			if pd.Parent.PageId == ROOT {
-				fmt.Println(String(pd.Title))
+				params := UpdatePagePropertiesParams{}
+				params.InTrash(true)
+				lo.Must(client.UpdatePageProperties(ctx, pd.Id, params))
 			}
 		}
+	}
+
+	{
+		params := CreatePageParams{}
+		params.Parent(Parent{PageId: ROOT})
+		params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "生成されたページ"}}}}})
+		params.Icon(Emoji{Emoji: "🍣"})
+		page := lo.Must(client.CreatePage(ctx, params))
+		generatedPage = page.Id
 	}
 
 	m.Run()
@@ -58,7 +65,7 @@ func TestCreateDatabase(t *testing.T) {
 	ctx := context.Background()
 
 	params := CreateDatabaseParams{}
-	params.Parent(Parent{PageId: ROOT})
+	params.Parent(Parent{PageId: generatedPage})
 	params.Title([]RichText{{Text: &RichTextText{Content: "テストデータベース"}}})
 	params.Properties(map[string]PropertySchema{
 		"タイトル": {Title: &struct{}{}},
@@ -67,7 +74,7 @@ func TestCreateDatabase(t *testing.T) {
 		"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
 	})
 
-	lo.Must(client.CreateDatabase(ctx, params, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))))
+	lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
 }
 
 func TestCreatePage(t *testing.T) {
