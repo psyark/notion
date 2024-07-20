@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/samber/lo"
@@ -18,7 +17,6 @@ import (
 
 // Converter はObjectsの多数のドキュメントから一連のコードを生成する機能を提供します
 type Converter struct {
-	symbols             *sync.Map
 	globalBuilder       *CodeBuilder
 	globalTestBuilder   *CodeBuilder
 	comparators         []*DocumentComparator
@@ -26,9 +24,7 @@ type Converter struct {
 }
 
 func NewConverter() *Converter {
-	c := &Converter{
-		symbols: &sync.Map{},
-	}
+	c := &Converter{}
 	c.globalBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated.go"}
 	c.globalTestBuilder = &CodeBuilder{converter: c, fileName: "objects_global_generated_test.go"}
 	return c
@@ -86,21 +82,38 @@ func (c *Converter) OutputAllBuilders() {
 	c.globalTestBuilder.output(true)
 }
 
-func getSymbol[T Symbol](name string, c *Converter) T {
-	if item, ok := c.symbols.Load(name); ok {
-		if item, ok := item.(T); ok {
-			return item
+func (c *Converter) getUnionInterface(name string) *UnionInterface {
+	for _, symbol := range c.globalBuilder.symbols {
+		switch symbol := symbol.(type) {
+		case *UnionInterface:
+			if symbol.name() == name {
+				return symbol
+			}
 		}
 	}
-
-	var zero T
-	return zero
+	return nil
 }
-func (c *Converter) getUnionInterface(name string) *UnionInterface {
-	return getSymbol[*UnionInterface](name, c)
+func (c *Converter) getDiscriminatorString(name string) *DiscriminatorString {
+	for _, symbol := range c.globalBuilder.symbols {
+		switch symbol := symbol.(type) {
+		case *DiscriminatorString:
+			if symbol.name() == name {
+				return symbol
+			}
+		}
+	}
+	return nil
 }
 func (c *Converter) getUnmarshalTest(name string) *UnmarshalTest {
-	return getSymbol[*UnmarshalTest](name, c)
+	for _, symbol := range c.globalTestBuilder.symbols {
+		switch symbol := symbol.(type) {
+		case *UnmarshalTest:
+			if symbol.name() == name {
+				return symbol
+			}
+		}
+	}
+	return nil
 }
 
 // RegisterUnionInterface は、指定された名前と判別子を持つ UnionInterfaceを定義し、返します。
@@ -114,7 +127,6 @@ func (c *Converter) RegisterUnionInterface(name string, discriminator string) *U
 	union.name_ = strings.TrimSpace(name)
 
 	c.globalBuilder.symbols = append(c.globalBuilder.symbols, union)
-	c.symbols.Store(name, union)
 
 	return union
 }

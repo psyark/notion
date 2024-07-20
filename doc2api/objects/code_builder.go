@@ -26,7 +26,6 @@ func (b *CodeBuilder) AddSimpleObject(name string, comment string) *SimpleObject
 	obj.name_ = strings.TrimSpace(name)
 	obj.comment = comment
 	b.symbols = append(b.symbols, obj)
-	b.converter.symbols.Store(name, obj)
 	return obj
 }
 
@@ -65,7 +64,6 @@ func (b *CodeBuilder) AddUnionStruct(name string, discriminator string, comment 
 		option(o)
 	}
 	b.symbols = append(b.symbols, o)
-	b.converter.symbols.Store(name, o) // TODO UnionStructを保存する理由はないかもしれない
 	return o
 }
 
@@ -79,7 +77,6 @@ func (b *CodeBuilder) AddUnmarshalTest(targetName string, jsonCode string, typeA
 		exists.jsonCodes = append(exists.jsonCodes, jsonCode) // JSONコードだけ追加
 	} else { // 無ければ追加
 		ut.jsonCodes = append(ut.jsonCodes, jsonCode)
-		b.converter.symbols.Store(ut.name(), ut)
 		b.converter.globalTestBuilder.symbols = append(b.converter.globalTestBuilder.symbols, ut)
 	}
 }
@@ -146,10 +143,9 @@ func (b *CodeBuilder) NewDiscriminatorField(p *Parameter) *DiscriminatorField {
 				value = strings.TrimPrefix(strings.TrimSuffix(value, `"`), `"`)
 
 				{
-					as := DiscriminatorString(value)
-					if _, ok := b.converter.symbols.Load(as.name()); !ok {
-						b.converter.symbols.Store(as.name(), as)
-						b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, as)
+					ds := DiscriminatorString(value)
+					if already := b.converter.getDiscriminatorString(ds.name()); already == nil {
+						b.converter.globalBuilder.symbols = append(b.converter.globalBuilder.symbols, ds)
 					}
 				}
 
