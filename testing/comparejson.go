@@ -20,7 +20,7 @@ func compareJSON(t *testing.T) func([]byte, any) error {
 			return err
 		}
 
-		if diff, err := jsondiff.CompareJSON(wantBytes, gotBytes); err != nil {
+		if diff, err := jsondiff.CompareJSON(gotBytes, wantBytes); err != nil {
 			return err
 		} else if diff != nil {
 			_ = os.Remove(fmt.Sprintf("testdata/pass/%s.json", fileName))

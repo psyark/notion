@@ -20,6 +20,7 @@ import (
 var client *Client
 
 var (
+	// TODO 環境変数に移動
 	ROOT                    = uuid.MustParse("9c20de5e26af4959a26e390b537af4c8") // https://www.notion.so/Root-9c20de5e26af4959a26e390b537af4c8
 	STANDALONE_PAGE         = uuid.MustParse("b05213d5c3af4de6924cc9b106ae93ec") // https://www.notion.so/Page-b05213d5c3af4de6924cc9b106ae93ec
 	DATABASE                = uuid.MustParse("edd0404128004a83bd29deb729221ec7") // https://www.notion.so/edd0404128004a83bd29deb729221ec7
@@ -52,8 +53,10 @@ func TestMain(m *testing.M) {
 	{
 		params := CreatePageParams{}
 		params.Parent(Parent{PageId: ROOT})
-		params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "生成されたページ"}}}}})
-		params.Icon(Emoji{Emoji: "🍣"})
+		params.Icon(Emoji{Emoji: "✨"})
+		params.Properties(map[string]PropertyValue{
+			"title": {Title: []RichText{{Text: &RichTextText{Content: fmt.Sprintf("生成されたページ (%s)", time.Now().Format(time.RFC3339))}}}},
+		})
 		page := lo.Must(client.CreatePage(ctx, params))
 		generatedPage = page.Id
 	}
@@ -66,7 +69,7 @@ func TestCreateDatabase(t *testing.T) {
 
 	params := CreateDatabaseParams{}
 	params.Parent(Parent{PageId: generatedPage})
-	params.Title([]RichText{{Text: &RichTextText{Content: "テストデータベース"}}})
+	params.Title([]RichText{{Text: &RichTextText{Content: "生成されたデータベース"}}})
 	params.Properties(map[string]PropertySchema{
 		"タイトル": {Title: &struct{}{}},
 		"テキスト": {RichText: &struct{}{}},
@@ -217,4 +220,11 @@ func TestRetrieveBlockChildren(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+func TestRetrieveDatabase(t *testing.T) {
+	ctx := context.Background()
+	lo.Must(client.RetrieveDatabase(ctx, DATABASE, WithValidator(compareJSON(t))))
+
+	// fmt.Println(string(lo.Must(json.MarshalIndent(database, "", "  "))))
 }

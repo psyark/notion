@@ -692,4 +692,10 @@ func TestProperty(t *testing.T) {
 	}).Output(func(e *Block, b *CodeBuilder) {
 		converter.AddUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
 	})
+
+	c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
+		property.AddPayloadField("button", UNDOCUMENTED, WithEmptyStruct())
+		payload := property.AddPayloadField("unique_id", UNDOCUMENTED, WithPayloadObject(b))
+		payload.AddFields(b.NewField(&Parameter{Property: "prefix", Description: UNDOCUMENTED}, jen.Op("*").String()))
+	})
 }

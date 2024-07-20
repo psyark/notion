@@ -34,6 +34,8 @@ type Property struct {
 	Status         *PropertyStatus      `json:"status"`                // Status
 	Title          struct{}             `json:"title"`                 // Title
 	Url            struct{}             `json:"url"`                   // URL
+	Button         struct{}             `json:"button"`                // UNDOCUMENTED
+	UniqueId       *PropertyUniqueId    `json:"unique_id"`             // UNDOCUMENTED
 }
 
 func (o Property) MarshalJSON() ([]byte, error) {
@@ -79,6 +81,10 @@ func (o Property) MarshalJSON() ([]byte, error) {
 			o.Type = "title"
 		case defined(o.Url):
 			o.Type = "url"
+		case defined(o.Button):
+			o.Type = "button"
+		case defined(o.UniqueId):
+			o.Type = "unique_id"
 		}
 	}
 	type Alias Property
@@ -87,6 +93,7 @@ func (o Property) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	visibility := map[string]bool{
+		"button":           o.Type == "button",
 		"checkbox":         o.Type == "checkbox",
 		"created_by":       o.Type == "created_by",
 		"created_time":     o.Type == "created_time",
@@ -106,6 +113,7 @@ func (o Property) MarshalJSON() ([]byte, error) {
 		"select":           o.Type == "select",
 		"status":           o.Type == "status",
 		"title":            o.Type == "title",
+		"unique_id":        o.Type == "unique_id",
 		"url":              o.Type == "url",
 	}
 	return omitFields(data, visibility)
@@ -222,4 +230,9 @@ type StatusGroup struct {
 	Id        string   `json:"id"`         // An identifier for the option. The id does not change if the name is changed. It is sometimes, but not always, a UUID.
 	Name      string   `json:"name"`       // The name of the option as it appears in the Notion UI. Note: Commas (",") are not valid for status values.
 	OptionIds []string `json:"option_ids"` // A sorted list of ids of all of the options that belong to a group.
+}
+
+// UNDOCUMENTED
+type PropertyUniqueId struct {
+	Prefix *string `json:"prefix"` // UNDOCUMENTED
 }
