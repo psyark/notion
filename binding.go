@@ -1,5 +1,7 @@
 package notion
 
+// TODO サブパッケージに移動
+
 import (
 	"encoding/json"
 	"fmt"
