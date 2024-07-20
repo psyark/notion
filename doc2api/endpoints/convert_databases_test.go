@@ -7,6 +7,18 @@ import (
 	. "github.com/psyark/notion/doc2api/endpoints"
 )
 
+func TestCreateDatabase(t *testing.T) {
+	t.Parallel()
+
+	Fetch(
+		"https://developers.notion.com/reference/create-a-database",
+	).Generate(GenericStructRef{Name: "Database"}, ParamAnnotations{
+		"parent":     jen.Id("Parent"),
+		"title":      jen.Index().Id("RichText"),
+		"properties": jen.Id("PropertySchema"),
+	})
+}
+
 func TestQueryDatabase(t *testing.T) {
 	t.Parallel()
 
