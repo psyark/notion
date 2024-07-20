@@ -15,7 +15,7 @@ func TestCreateDatabase(t *testing.T) {
 	).Generate(GenericStructRef{Name: "Database"}, ParamAnnotations{
 		"parent":     jen.Id("Parent"),
 		"title":      jen.Index().Id("RichText"),
-		"properties": jen.Id("PropertySchema"),
+		"properties": jen.Map(jen.String()).Id("PropertySchema"),
 	})
 }
 

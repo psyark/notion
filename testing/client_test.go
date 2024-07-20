@@ -20,6 +20,7 @@ import (
 var client *Client
 
 var (
+	ROOT                    = uuid.MustParse("9c20de5e26af4959a26e390b537af4c8") // https://www.notion.so/Root-9c20de5e26af4959a26e390b537af4c8
 	STANDALONE_PAGE         = uuid.MustParse("b05213d5c3af4de6924cc9b106ae93ec") // https://www.notion.so/Page-b05213d5c3af4de6924cc9b106ae93ec
 	DATABASE                = uuid.MustParse("edd0404128004a83bd29deb729221ec7") // https://www.notion.so/edd0404128004a83bd29deb729221ec7
 	DATABASE_PAGE_FOR_READ1 = uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf") // https://www.notion.so/ABCDEFG-7e01d5af9d0e4d2584e4d5bfc39b65bf
@@ -30,6 +31,22 @@ var (
 func init() {
 	lo.Must0(godotenv.Load("env.local"))
 	client = NewClient(os.Getenv("API_ACCESS_TOKEN"))
+}
+
+func TestCreateDatabase(t *testing.T) {
+	ctx := context.Background()
+
+	params := CreateDatabaseParams{}
+	params.Parent(Parent{PageId: ROOT})
+	params.Title([]RichText{{Text: &RichTextText{Content: "テストデータベース"}}})
+	params.Properties(map[string]PropertySchema{
+		"タイトル": {Title: &struct{}{}},
+		"テキスト": {RichText: &struct{}{}},
+		"数値":   {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
+		"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
+	})
+
+	lo.Must(client.CreateDatabase(ctx, params, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))))
 }
 
 func TestCreatePage(t *testing.T) {
