@@ -3,6 +3,8 @@ package objects
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/dave/jennifer/jen"
 )
 
 // DocumentComparator は、クライアント実装を最新に保つために、オンラインのドキュメントの更新を検知するための機能を提供します。
@@ -38,8 +40,26 @@ func (c *DocumentComparator) RequestBuilderForUndocumented(fn func(b *CodeBuilde
 // finish は比較を終了します
 func (c *DocumentComparator) finish() {
 	if c.index < len(c.elements) {
-		next := c.elements[c.index]
-		panic(fmt.Sprintf("比較されていないエレメントが存在します: %+v", next))
+		file := jen.NewFile("x")
+		file.Func().Id("main").Params().BlockFunc(func(g *jen.Group) {
+			for _, elem := range c.elements[c.index:] {
+				switch elem := elem.(type) {
+				case *Block:
+					g.Id("c").Dot("ExpectBlock").Call(jen.Op("&").Id("Block").Values(jen.DictFunc(func(d jen.Dict) {
+						d[jen.Id("Kind")] = jen.Lit(elem.Kind)
+						d[jen.Id("Text")] = jen.Lit(elem.Text)
+					})))
+				case *Parameter:
+					g.Id("c").Dot("ExpectParameter").Call(jen.Op("&").Id("Parameter").Values(jen.DictFunc(func(d jen.Dict) {
+						d[jen.Id("Property")] = jen.Lit(elem.Property)
+						d[jen.Id("Type")] = jen.Lit(elem.Type)
+						d[jen.Id("Description")] = jen.Lit(elem.Description)
+						d[jen.Id("ExampleValue")] = jen.Lit(elem.ExampleValue)
+					})))
+				}
+			}
+		})
+		panic(fmt.Sprintf("比較されていないエレメントが存在します:\n\n%s", file.GoString()))
 	}
 }
 
