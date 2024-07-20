@@ -2,7 +2,11 @@ package notion
 
 import "encoding/json"
 
-// Nullable は JSONでomitemptyを指定しつつ、非empty値としてnullの存在を許す型です
+// Nullable は empty | null | 値あり の三種類の状態を取りうるデータ型で、
+// omitempty JSONタグと併せて使います。
+// empty -> 出力はスキップされます
+// null -> null が出力されます
+// 値あり -> その値が出力されます
 type Nullable[T any] []struct {
 	isNull bool
 	value  T
@@ -13,7 +17,7 @@ func (n Nullable[T]) IsEmpty() bool {
 }
 
 func (n *Nullable[T]) SetEmpty() {
-	*n = (*n)[0:0]
+	*n = Nullable[T]{}
 }
 
 func (n Nullable[T]) IsNull() bool {
@@ -21,52 +25,34 @@ func (n Nullable[T]) IsNull() bool {
 }
 
 func (n *Nullable[T]) SetNull() {
-	if n.IsEmpty() {
-		*n = append(*n, struct {
-			isNull bool
-			value  T
-		}{})
-	}
-	(*n)[0].isNull = true
+	*n = Nullable[T]{{isNull: true}}
 }
 
-func (n Nullable[T]) Value() T {
+func (n Nullable[T]) Value() (value T) {
 	if !n.IsEmpty() {
 		return (n)[0].value
 	}
-	var value T
-	return value
+	return
 }
 
 func (n *Nullable[T]) SetValue(value T) {
 	if n.IsEmpty() {
-		*n = append(*n, struct {
-			isNull bool
-			value  T
-		}{})
+		*n = Nullable[T]{{value: value}}
 	}
-	(*n)[0].isNull = false
-	(*n)[0].value = value
 }
 
 func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
-	if n.IsEmpty() {
-		*n = append(*n, struct {
-			isNull bool
-			value  T
-		}{})
-	}
-
+	*n = Nullable[T]{{}}
 	if string(data) == "null" {
 		(*n)[0].isNull = true
 	} else {
 		(*n)[0].isNull = false
 		return json.Unmarshal(data, &(*n)[0].value)
 	}
-
 	return nil
 }
 
+// TODO omitemptyを指定しなかった場合のエラーを抑制
 func (n Nullable[T]) MarshalJSON() ([]byte, error) {
 	if n[0].isNull {
 		return []byte("null"), nil
