@@ -42,3 +42,16 @@ func TestRetrieveDatabase(t *testing.T) {
 		"database_id": jen.Qual("github.com/google/uuid", "UUID"),
 	})
 }
+
+func TestUpdateDatabase(t *testing.T) {
+	t.Parallel()
+
+	Fetch(
+		"https://developers.notion.com/reference/update-a-database",
+	).Generate(StructRef("Database"), ParamAnnotations{
+		"database_id": jen.Qual("github.com/google/uuid", "UUID"),
+		"title":       jen.Index().Id("RichText"),
+		"description": jen.Index().Id("RichText"),
+		"properties":  jen.Map(jen.String()).Id("PropertySchema"),
+	})
+}
