@@ -39,6 +39,38 @@ func (u *fileOrEmojiUnmarshaler) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.value)
 }
 
+type PageOrDatabase interface {
+	isPageOrDatabase()
+}
+
+type pageOrDatabaseUnmarshaler struct {
+	value PageOrDatabase
+}
+
+/*
+UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
+according to the "object" field of the message.
+*/
+func (u *pageOrDatabaseUnmarshaler) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		u.value = nil
+		return nil
+	}
+	switch getObject(data) {
+	case "database":
+		u.value = &Database{}
+	case "page":
+		u.value = &Page{}
+	default:
+		return fmt.Errorf("unmarshaling PageOrDatabase: data has unknown object field: %s", string(data))
+	}
+	return json.Unmarshal(data, u.value)
+}
+
+func (u *pageOrDatabaseUnmarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.value)
+}
+
 type PropertyItemOrPropertyItemPagination interface {
 	isPropertyItemOrPropertyItemPagination()
 }

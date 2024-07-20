@@ -12,7 +12,7 @@ Endpoints that return lists of objects support cursor-based pagination requests.
 
 If an endpoint supports pagination, then the response object contains the below fields.
 */
-type Pagination[T Block | Comment | Database | Page | PageOrDatabase | PropertyItem | User] struct {
+type Pagination[T any] struct {
 	Type           string                `json:"type"`
 	HasMore        bool                  `json:"has_more"`    // Whether the response includes the end of the list. false if there are no more results. Otherwise, true.
 	NextCursor     *string               `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint. Only available when has_more is true.

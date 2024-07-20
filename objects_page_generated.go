@@ -47,3 +47,4 @@ func (o *Page) UnmarshalJSON(data []byte) error {
 	o.Icon = t.Icon.value
 	return nil
 }
+func (Page) isPageOrDatabase() {}

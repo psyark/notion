@@ -26,6 +26,7 @@ var (
 	DATABASE_PAGE_FOR_READ1 = uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf") // https://www.notion.so/ABCDEFG-7e01d5af9d0e4d2584e4d5bfc39b65bf
 	DATABASE_PAGE_FOR_READ2 = uuid.MustParse("7e1105bc19a64a1381453cff0b488092") // https://www.notion.so/7e1105bc19a64a1381453cff0b488092
 	DATABASE_PAGE_FOR_WRITE = uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961") // https://www.notion.so/PageToUpdate-b8ff7c186ef2416cb9654daf0d7aa961
+	currentPage             uuid.UUID
 )
 
 func TestMain(m *testing.M) {
@@ -36,8 +37,19 @@ func TestMain(m *testing.M) {
 
 	params := SearchByTitleParams{}
 	pagi := lo.Must(client.SearchByTitle(ctx, params))
-	data := lo.Must(json.MarshalIndent(pagi, "", "  "))
-	fmt.Println(string(data))
+
+	for _, pd := range pagi.Results {
+		switch pd := pd.(type) {
+		case *Page:
+			if pd.Parent.PageId == ROOT {
+
+			}
+		case *Database:
+			if pd.Parent.PageId == ROOT {
+				fmt.Println(String(pd.Title))
+			}
+		}
+	}
 
 	m.Run()
 }

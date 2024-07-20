@@ -20,6 +20,12 @@ func TestDatabase(t *testing.T) {
 		Text: "Database objects describe the property schema of a database in Notion. Pages are the items (or children) in a database. Page property values must conform to the property objects laid out in the parent database object.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		database = b.AddSimpleObject("Database", e.Text)
+
+		converter.RegisterUnionMember(
+			converter.RegisterUnionInterface("PageOrDatabase", "object"),
+			database,
+			"",
+		)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "All databases"})

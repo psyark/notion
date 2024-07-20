@@ -32,7 +32,9 @@ func TestIntro(t *testing.T) {
 		Text: "Pagination",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		pagination = b.AddUnionStruct("Pagination", "type", e.Text, Generic(
-			jen.Id("Block").Op("|").Id("Comment").Op("|").Id("Database").Op("|").Id("Page").Op("|").Id("PageOrDatabase").Op("|").Id("PropertyItem").Op("|").Id("User"),
+			jen.Any(),
+			// TODO 型制約
+			// jen.Id("Block").Op("|").Id("Comment").Op("|").Id("Database").Op("|").Id("Page").Op("|").Id("PageOrDatabase").Op("|").Id("PropertyItem").Op("|").Id("User"),
 		))
 
 		union := converter.RegisterUnionInterface("PropertyItemOrPropertyItemPagination", "object")

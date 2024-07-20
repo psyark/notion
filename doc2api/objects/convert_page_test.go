@@ -20,6 +20,12 @@ func TestPage(t *testing.T) {
 		Text: "The Page object contains the page property values of a single Notion page.",
 	}).Output(func(e *Block, b *CodeBuilder) {
 		page = b.AddSimpleObject("Page", e.Text)
+
+		converter.RegisterUnionMember(
+			converter.RegisterUnionInterface("PageOrDatabase", "object"),
+			page,
+			"",
+		)
 	})
 
 	c.ExpectBlock(&Block{
