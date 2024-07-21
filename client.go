@@ -42,15 +42,6 @@ func accessValue[T any](v T) T {
 	return v
 }
 
-type unmarshaler[T any] interface {
-	getValue() T
-}
-
-func accessUnmarshalerValue[U any, T any](u U) T {
-	var a any = u
-	return a.(unmarshaler[T]).getValue()
-}
-
 func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, accessor func(unmarshaler U) R, options ...callOption) (R, error) {
 	var unmarshaler U
 	var zero R

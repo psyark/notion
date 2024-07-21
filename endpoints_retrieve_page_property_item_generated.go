@@ -77,7 +77,9 @@ func (c *Client) RetrievePagePropertyItem(ctx context.Context, page_id uuid.UUID
 		http.MethodGet,
 		fmt.Sprintf("/v1/pages/%v/properties/%v", page_id, property_id),
 		nil,
-		accessUnmarshalerValue[propertyItemOrPropertyItemPaginationUnmarshaler, PropertyItemOrPropertyItemPagination],
+		func(u *propertyItemOrPropertyItemPaginationUnmarshaler) PropertyItemOrPropertyItemPagination {
+			return u.value
+		},
 		options...,
 	)
 }

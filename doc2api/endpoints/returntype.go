@@ -35,8 +35,9 @@ func (r Interface) Type() jen.Code {
 	return jen.Id(string(r))
 }
 func (r Interface) Accessor() jen.Code {
-	return jen.Id("accessUnmarshalerValue").Types(jen.Id(strcase.LowerCamelCase(string(r))+"Unmarshaler"), r.Type())
-
+	return jen.Func().Params(jen.Id("u").Op("*").Id(strcase.LowerCamelCase(string(r) + "Unmarshaler"))).Add(r.Type()).Block(
+		jen.Return().Id("u").Dot("value"),
+	)
 }
 
 type GenericStructRef struct {
