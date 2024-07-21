@@ -61,9 +61,7 @@ func (c *Client) RetrieveDatabase(ctx context.Context, database_id uuid.UUID, op
 		http.MethodGet,
 		fmt.Sprintf("/v1/databases/%v", database_id),
 		nil,
-		func(u *Database) *Database {
-			return u
-		},
+		accessValue[*Database],
 		options...,
 	)
 }

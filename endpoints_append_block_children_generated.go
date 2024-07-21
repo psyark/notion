@@ -40,9 +40,7 @@ func (c *Client) AppendBlockChildren(ctx context.Context, block_id uuid.UUID, pa
 		http.MethodPatch,
 		fmt.Sprintf("/v1/blocks/%v/children", block_id),
 		params,
-		func(u *Pagination[Block]) *Pagination[Block] {
-			return u
-		},
+		accessValue[*Pagination[Block]],
 		options...,
 	)
 }

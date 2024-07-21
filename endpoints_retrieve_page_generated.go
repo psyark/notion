@@ -57,9 +57,7 @@ func (c *Client) RetrievePage(ctx context.Context, page_id uuid.UUID, options ..
 		http.MethodGet,
 		fmt.Sprintf("/v1/pages/%v", page_id),
 		nil,
-		func(u *Page) *Page {
-			return u
-		},
+		accessValue[*Page],
 		options...,
 	)
 }

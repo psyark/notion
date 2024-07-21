@@ -42,9 +42,7 @@ func (c *Client) RetrieveBlockChildren(ctx context.Context, block_id uuid.UUID, 
 		http.MethodGet,
 		fmt.Sprintf("/v1/blocks/%v/children", block_id),
 		nil,
-		func(u *Pagination[Block]) *Pagination[Block] {
-			return u
-		},
+		accessValue[*Pagination[Block]],
 		options...,
 	)
 }

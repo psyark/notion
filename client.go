@@ -38,8 +38,19 @@ func WithValidator(validator func(data []byte, unmarshaler any) error) callOptio
 	}
 }
 
-// Deprecated: use request
-func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, getResult func(unmarshaler *U) R, options ...callOption) (R, error) {
+func accessValue[T any](v T) T {
+	return v
+}
+
+type unmarshaler[T any] interface {
+	getValue() T
+}
+
+func accessUnmarshalerValue[T any](u unmarshaler[T]) T {
+	return u.getValue()
+}
+
+func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, accessor func(unmarshaler U) R, options ...callOption) (R, error) {
 	var unmarshaler U
 	var zero R
 
@@ -92,10 +103,10 @@ func call[U any, R any](ctx context.Context, accessToken string, method string, 
 	}
 
 	if co.validator != nil {
-		if err := co.validator(resBody, getResult(&unmarshaler)); err != nil {
+		if err := co.validator(resBody, accessor(unmarshaler)); err != nil {
 			return zero, err
 		}
 	}
 
-	return getResult(&unmarshaler), nil
+	return accessor(unmarshaler), nil
 }

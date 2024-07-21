@@ -34,9 +34,7 @@ func (c *Client) DeleteBlock(ctx context.Context, block_id uuid.UUID, options ..
 		http.MethodDelete,
 		fmt.Sprintf("/v1/blocks/%v", block_id),
 		nil,
-		func(u *Block) *Block {
-			return u
-		},
+		accessValue[*Block],
 		options...,
 	)
 }

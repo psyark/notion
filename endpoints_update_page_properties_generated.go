@@ -41,9 +41,7 @@ func (c *Client) UpdatePageProperties(ctx context.Context, page_id uuid.UUID, pa
 		http.MethodPatch,
 		fmt.Sprintf("/v1/pages/%v", page_id),
 		params,
-		func(u *Page) *Page {
-			return u
-		},
+		accessValue[*Page],
 		options...,
 	)
 }

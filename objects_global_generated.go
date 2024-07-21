@@ -15,6 +15,10 @@ type fileOrEmojiUnmarshaler struct {
 	value FileOrEmoji
 }
 
+func (u *fileOrEmojiUnmarshaler) getValue() FileOrEmoji {
+	return u.value
+}
+
 /*
 UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
 according to the "type" field of the message.
@@ -47,6 +51,10 @@ type pageOrDatabaseUnmarshaler struct {
 	value PageOrDatabase
 }
 
+func (u *pageOrDatabaseUnmarshaler) getValue() PageOrDatabase {
+	return u.value
+}
+
 /*
 UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance
 according to the "object" field of the message.
@@ -77,6 +85,10 @@ type PropertyItemOrPropertyItemPagination interface {
 
 type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 	value PropertyItemOrPropertyItemPagination
+}
+
+func (u *propertyItemOrPropertyItemPaginationUnmarshaler) getValue() PropertyItemOrPropertyItemPagination {
+	return u.value
 }
 
 /*

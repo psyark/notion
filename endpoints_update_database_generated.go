@@ -64,9 +64,7 @@ func (c *Client) UpdateDatabase(ctx context.Context, database_id uuid.UUID, para
 		http.MethodPatch,
 		fmt.Sprintf("/v1/databases/%v", database_id),
 		params,
-		func(u *Database) *Database {
-			return u
-		},
+		accessValue[*Database],
 		options...,
 	)
 }

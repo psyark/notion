@@ -2,11 +2,9 @@ package endpoints
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/stoewer/go-strcase"
 )
 
 // エンドポイントの返却値の型を出力するためのインターフェイスです
-// TODO 無名関数ではなく、何らかのインターフェイスを満たしたジェネリック型を生成する
 
 type ReturnType interface {
 	Type() jen.Code     // Type はメソッドの戻り型のコードです
@@ -26,9 +24,7 @@ func (r StructRef) Type() jen.Code {
 	return jen.Op("*").Id(string(r))
 }
 func (r StructRef) Accessor() jen.Code {
-	return jen.Func().Params(jen.Id("u").Add(r.Type())).Add(r.Type()).Block(
-		jen.Return().Id("u"),
-	)
+	return jen.Id("accessValue").Index(r.Type())
 }
 
 // Interface は、エンドポイントがインターフェイスを返す際に使います
@@ -38,9 +34,7 @@ func (r Interface) Type() jen.Code {
 	return jen.Id(string(r))
 }
 func (r Interface) Accessor() jen.Code {
-	return jen.Func().Params(jen.Id("u").Op("*").Id(strcase.LowerCamelCase(string(r) + "Unmarshaler"))).Add(r.Type()).Block(
-		jen.Return().Id("u").Dot("value"),
-	)
+	return jen.Id("accessUnmarshalerValue").Index(r.Type())
 }
 
 type GenericStructRef struct {
@@ -57,7 +51,5 @@ func (g GenericStructRef) Type() jen.Code {
 }
 
 func (g GenericStructRef) Accessor() jen.Code {
-	return jen.Func().Params(jen.Id("u").Add(g.Type())).Add(g.Type()).Block(
-		jen.Return().Id("u"),
-	)
+	return jen.Id("accessValue").Index(g.Type())
 }

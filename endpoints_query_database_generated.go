@@ -140,9 +140,7 @@ func (c *Client) QueryDatabase(ctx context.Context, database_id uuid.UUID, param
 		http.MethodPost,
 		fmt.Sprintf("/v1/databases/%v/query", database_id),
 		params,
-		func(u *Pagination[Page]) *Pagination[Page] {
-			return u
-		},
+		accessValue[*Pagination[Page]],
 		options...,
 	)
 }

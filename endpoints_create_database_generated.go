@@ -34,9 +34,7 @@ func (c *Client) CreateDatabase(ctx context.Context, params CreateDatabaseParams
 		http.MethodPost,
 		"/v1/databases",
 		params,
-		func(u *Database) *Database {
-			return u
-		},
+		accessValue[*Database],
 		options...,
 	)
 }

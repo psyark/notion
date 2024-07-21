@@ -40,9 +40,7 @@ func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, option
 		http.MethodPost,
 		"/v1/pages",
 		params,
-		func(u *Page) *Page {
-			return u
-		},
+		accessValue[*Page],
 		options...,
 	)
 }

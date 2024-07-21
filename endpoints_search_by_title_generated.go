@@ -34,9 +34,7 @@ func (c *Client) SearchByTitle(ctx context.Context, params SearchByTitleParams, 
 		http.MethodPost,
 		"/v1/search",
 		params,
-		func(u *Pagination[PageOrDatabase]) *Pagination[PageOrDatabase] {
-			return u
-		},
+		accessValue[*Pagination[PageOrDatabase]],
 		options...,
 	)
 }
