@@ -160,7 +160,7 @@ func (p QueryDatabaseParams) Sorts(sorts Sort) QueryDatabaseParams {
 }
 
 // When supplied, returns a page of results starting after the cursor provided. If not supplied, this endpoint will return the first page of results.
-func (p QueryDatabaseParams) StartCursor(start_cursor uuid.UUID) QueryDatabaseParams {
+func (p QueryDatabaseParams) StartCursor(start_cursor string) QueryDatabaseParams {
 	p["start_cursor"] = start_cursor
 	return p
 }

@@ -28,7 +28,7 @@ func TestQueryDatabase(t *testing.T) {
 		"database_id":  UUID,
 		"filter":       jen.Id("Filter"),
 		"sorts":        jen.Id("Sort"),
-		"start_cursor": UUID,
+		"start_cursor": jen.String(),
 		"page_size":    jen.Int(),
 	})
 }
