@@ -80,12 +80,27 @@ func TestClient(t *testing.T) {
 		params.Parent(Parent{PageId: generatedPage.Id})
 		params.Title([]RichText{{Text: &RichTextText{Content: "生成されたデータベース"}}})
 		params.Properties(map[string]PropertySchema{
-			"タイトル": {Title: &struct{}{}},
-			"テキスト": {RichText: &struct{}{}},
-			"数値":   {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
-			"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
-			"ボタン":  {Button: &struct{}{}},
-			"ID":   {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
+			"タイトル":     {Title: &struct{}{}},
+			"テキスト":     {RichText: &struct{}{}},
+			"数値":       {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
+			"セレクト":     {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
+			"マルチセレクト":  {MultiSelect: &PropertySchemaMultiSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
+			"日付":       {Date: &struct{}{}},
+			"ユーザー":     {People: &struct{}{}},
+			"ファイル":     {Files: &struct{}{}},
+			"チェックボックス": {Checkbox: &struct{}{}},
+			"URL":      {Url: &struct{}{}},
+			"メール":      {Email: &struct{}{}},
+			"電話":       {Email: &struct{}{}},
+			"数式":       {Formula: &PropertySchemaFormula{}},
+			"リレーション":   {Relation: &PropertySchemaRelation{Type: "single_property", DatabaseId: DATABASE}},
+			"ロールアップ":   {Rollup: &PropertySchemaRollup{RollupPropertyId: "title", RelationPropertyName: "リレーション", Function: "show_original"}},
+			"作成日時":     {CreatedTime: &struct{}{}},
+			"作成者":      {CreatedBy: &struct{}{}},
+			"最終更新日時":   {LastEditedTime: &struct{}{}},
+			"最終更新者":    {LastEditedBy: &struct{}{}},
+			"ボタン":      {Button: &struct{}{}},
+			"ID":       {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
 		})
 
 		generatedDatabase = lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
