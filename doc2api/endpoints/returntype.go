@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"github.com/dave/jennifer/jen"
+	"github.com/stoewer/go-strcase"
 )
 
 // エンドポイントの返却値の型を出力するためのインターフェイスです
@@ -34,7 +35,8 @@ func (r Interface) Type() jen.Code {
 	return jen.Id(string(r))
 }
 func (r Interface) Accessor() jen.Code {
-	return jen.Id("accessUnmarshalerValue").Index(r.Type())
+	return jen.Id("accessUnmarshalerValue").Types(jen.Id(strcase.LowerCamelCase(string(r))+"Unmarshaler"), r.Type())
+
 }
 
 type GenericStructRef struct {

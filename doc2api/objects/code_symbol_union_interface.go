@@ -32,7 +32,7 @@ func (u *UnionInterface) code(c *Converter) jen.Code {
 		jen.Id("value").Id(u.name()),
 	).Line()
 
-	code.Func().Params(jen.Id("u").Op("*").Id(u.memberUnmarshalerName())).Id("getValue").Params().Id(u.name()).Block(
+	code.Func().Params(jen.Id("u").Id(u.memberUnmarshalerName())).Id("getValue").Params().Id(u.name()).Block(
 		jen.Return().Id("u").Dot("value"),
 	).Line()
 	code.Comment(fmt.Sprintf("UnmarshalJSON unmarshals a JSON message and sets the value field to the appropriate instance\naccording to the %q field of the message.", u.discriminator)).Line()

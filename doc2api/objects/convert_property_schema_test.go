@@ -27,9 +27,12 @@ func TestPropertySchema(t *testing.T) {
 		return b.AddUnionStruct(payloadName, "type", comment)
 	}
 
-	addEmptyPayload := func(b *CodeBuilder, e *Block) {
+	addEmptyPayload := func(b *CodeBuilder, name, comment string) {
+		propertySchema.AddFields(b.NewField(&Parameter{Property: name, Description: comment}, jen.Op("*").Struct(), OmitEmpty))
+	}
+	addEmptyPayloadByBlock := func(b *CodeBuilder, e *Block) {
 		match := regexp.MustCompile(`have no additional configuration within the (\w+) property.`).FindStringSubmatch(e.Text)
-		propertySchema.AddFields(b.NewField(&Parameter{Property: match[1], Description: e.Text}, jen.Op("*").Struct(), OmitEmpty))
+		addEmptyPayload(b, match[1], e.Text)
 	}
 
 	c.ExpectBlock(&Block{
@@ -57,7 +60,7 @@ func TestPropertySchema(t *testing.T) {
 		Kind: "Paragraph",
 		Text: `Each database must have exactly one database property schema object of type "title". This database property controls the title that appears at the top of the page when the page is opened. Title database property objects have no additional configuration within the title property.`,
 	}).Output(func(e *Block, b *CodeBuilder) {
-		addEmptyPayload(b, e)
+		addEmptyPayloadByBlock(b, e)
 	})
 
 	c.ExpectBlock(&Block{Kind: "Heading", Text: "Text configuration"})
@@ -65,7 +68,7 @@ func TestPropertySchema(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Text database property schema objects have no additional configuration within the rich_text property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		addEmptyPayload(b, e)
+		addEmptyPayloadByBlock(b, e)
 	})
 
 	{
@@ -175,7 +178,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Date database property schema objects have no additional configuration within the date property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "People configuration"})
@@ -183,7 +186,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "People database property schema objects have no additional configuration within the people property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "File configuration"})
@@ -191,7 +194,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "File database property schema objects have no additional configuration within the file property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Checkbox configuration"})
@@ -199,7 +202,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Checkbox database property schema objects have no additional configuration within the checkbox property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "URL configuration"})
@@ -207,7 +210,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "URL database property schema objects have no additional configuration within the url property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Email configuration"})
@@ -215,7 +218,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Email database property schema objects have no additional configuration within the email property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Phone number configuration"})
@@ -223,7 +226,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Phone number database property schema objects have no additional configuration within the phone_number property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 	}
 
@@ -355,7 +358,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Created time database property schema objects have no additional configuration within the created_time property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Created by configuration"})
@@ -363,7 +366,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Created by database property schema objects have no additional configuration within the created_by property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Last edited time configuration"})
@@ -371,7 +374,7 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Last edited time database property schema objects have no additional configuration within the last_edited_time property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Last edited by configuration"})
@@ -379,7 +382,15 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Last edited by database property schema objects have no additional configuration within the last_edited_by property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayload(b, e)
+			addEmptyPayloadByBlock(b, e)
+		})
+	}
+
+	{
+		c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
+			addEmptyPayload(b, "button", UNDOCUMENTED)
+			payload := addPayload(b, "unique_id", UNDOCUMENTED)
+			payload.AddFields(b.NewField(&Parameter{Property: "prefix", Description: UNDOCUMENTED}, jen.Op("*").String()))
 		})
 	}
 }

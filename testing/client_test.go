@@ -75,6 +75,8 @@ func TestCreateDatabase(t *testing.T) {
 		"テキスト": {RichText: &struct{}{}},
 		"数値":   {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
 		"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
+		"ボタン":  {Button: &struct{}{}},
+		"ID":   {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
 	})
 
 	lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))

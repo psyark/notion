@@ -15,7 +15,7 @@ type fileOrEmojiUnmarshaler struct {
 	value FileOrEmoji
 }
 
-func (u *fileOrEmojiUnmarshaler) getValue() FileOrEmoji {
+func (u fileOrEmojiUnmarshaler) getValue() FileOrEmoji {
 	return u.value
 }
 
@@ -51,7 +51,7 @@ type pageOrDatabaseUnmarshaler struct {
 	value PageOrDatabase
 }
 
-func (u *pageOrDatabaseUnmarshaler) getValue() PageOrDatabase {
+func (u pageOrDatabaseUnmarshaler) getValue() PageOrDatabase {
 	return u.value
 }
 
@@ -87,7 +87,7 @@ type propertyItemOrPropertyItemPaginationUnmarshaler struct {
 	value PropertyItemOrPropertyItemPagination
 }
 
-func (u *propertyItemOrPropertyItemPaginationUnmarshaler) getValue() PropertyItemOrPropertyItemPagination {
+func (u propertyItemOrPropertyItemPaginationUnmarshaler) getValue() PropertyItemOrPropertyItemPagination {
 	return u.value
 }
 

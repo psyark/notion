@@ -32,6 +32,8 @@ type PropertySchema struct {
 	CreatedBy      *struct{}                  `json:"created_by,omitempty"`       // Created by database property schema objects have no additional configuration within the created_by property.
 	LastEditedTime *struct{}                  `json:"last_edited_time,omitempty"` // Last edited time database property schema objects have no additional configuration within the last_edited_time property.
 	LastEditedBy   *struct{}                  `json:"last_edited_by,omitempty"`   // Last edited by database property schema objects have no additional configuration within the last_edited_by property.
+	Button         *struct{}                  `json:"button,omitempty"`           // UNDOCUMENTED
+	UniqueId       *PropertySchemaUniqueId    `json:"unique_id,omitempty"`        // UNDOCUMENTED
 }
 
 // Number database property schema objects optionally contain the following configuration within the number property.
@@ -96,4 +98,9 @@ type PropertySchemaRollup struct {
 	RollupPropertyName   string `json:"rollup_property_name,omitempty"`   // The name of the property in the related database that is used as an input to function. The related database must be shared with the integration. One of rollup_property_name or rollup_property_id must be provided.
 	RollupPropertyId     string `json:"rollup_property_id,omitempty"`     // The id of the property  in the related database that is used as an input to function. The related database must be shared with the integration. One of rollup_property_name or rollup_property_id must be provided.
 	Function             string `json:"function,omitempty"`               // The function that is evaluated for every page in the relation of the rollup. Possible values include: count_all, count_values, count_unique_values, count_empty, count_not_empty, percent_empty, percent_not_empty, sum, average, median, min, max, range, show_original
+}
+
+// UNDOCUMENTED
+type PropertySchemaUniqueId struct {
+	Prefix *string `json:"prefix"` // UNDOCUMENTED
 }
