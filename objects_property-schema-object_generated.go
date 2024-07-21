@@ -3,7 +3,10 @@
 
 package notion
 
-import "encoding/json"
+import (
+	"encoding/json"
+	uuid "github.com/google/uuid"
+)
 
 /*
 Metadata that controls how a database property behaves.
@@ -20,7 +23,7 @@ type PropertySchema struct {
 	MultiSelect    *PropertySchemaMultiSelect `json:"multi_select,omitempty"`     // Multi-select database property schema objects optionally contain the following configuration within the multi_select property:
 	Date           *struct{}                  `json:"date,omitempty"`             // Date database property schema objects have no additional configuration within the date property.
 	People         *struct{}                  `json:"people,omitempty"`           // People database property schema objects have no additional configuration within the people property.
-	File           *struct{}                  `json:"file,omitempty"`             // File database property schema objects have no additional configuration within the file property.
+	Files          *struct{}                  `json:"files,omitempty"`            // File database property schema objects have no additional configuration within the file property.
 	Checkbox       *struct{}                  `json:"checkbox,omitempty"`         // Checkbox database property schema objects have no additional configuration within the checkbox property.
 	Url            *struct{}                  `json:"url,omitempty"`              // URL database property schema objects have no additional configuration within the url property.
 	Email          *struct{}                  `json:"email,omitempty"`            // Email database property schema objects have no additional configuration within the email property.
@@ -64,10 +67,10 @@ type PropertySchemaFormula struct {
 
 // Relation database property objects contain the following configuration within the relation property. In addition, they must contain a key corresponding with the value of type. The value is an object containing type-specific configuration. The type-specific configurations are defined below.
 type PropertySchemaRelation struct {
-	Type           string   `json:"type"`
-	DatabaseId     string   `json:"database_id"`     // The database this relation refers to. This database must be shared with the integration.
-	SingleProperty struct{} `json:"single_property"` // Single property relation objects have no additional configuration within the single_property property.
-	DualProperty   struct{} `json:"dual_property"`   // Dual property relation objects have no additional configuration within the dual_property property.
+	Type           string    `json:"type"`
+	DatabaseId     uuid.UUID `json:"database_id"`     // The database this relation refers to. This database must be shared with the integration.
+	SingleProperty struct{}  `json:"single_property"` // Single property relation objects have no additional configuration within the single_property property.
+	DualProperty   struct{}  `json:"dual_property"`   // Dual property relation objects have no additional configuration within the dual_property property.
 }
 
 func (o PropertySchemaRelation) MarshalJSON() ([]byte, error) {

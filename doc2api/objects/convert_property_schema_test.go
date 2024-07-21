@@ -194,7 +194,8 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "File database property schema objects have no additional configuration within the file property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			addEmptyPayloadByBlock(b, e)
+			// ドキュメントには file とあるが files が正しい
+			addEmptyPayload(b, "files", e.Text)
 		})
 
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Checkbox configuration"})
@@ -271,7 +272,7 @@ func TestPropertySchema(t *testing.T) {
 			Description:  "The database this relation refers to. This database must be shared with the integration.",
 			ExampleValue: `"668d797c-76fa-4934-9b05-ad288df2d136"`,
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			payload.AddFields(b.NewField(e, jen.String()))
+			payload.AddFields(b.NewField(e, UUID))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:     "type",
