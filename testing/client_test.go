@@ -27,7 +27,6 @@ var (
 	DATABASE_PAGE_FOR_READ1 = uuid.MustParse("7e01d5af9d0e4d2584e4d5bfc39b65bf") // https://www.notion.so/ABCDEFG-7e01d5af9d0e4d2584e4d5bfc39b65bf
 	DATABASE_PAGE_FOR_READ2 = uuid.MustParse("7e1105bc19a64a1381453cff0b488092") // https://www.notion.so/7e1105bc19a64a1381453cff0b488092
 	DATABASE_PAGE_FOR_WRITE = uuid.MustParse("b8ff7c186ef2416cb9654daf0d7aa961") // https://www.notion.so/PageToUpdate-b8ff7c186ef2416cb9654daf0d7aa961
-	generatedPage           uuid.UUID
 )
 
 func TestMain(m *testing.M) {
@@ -50,57 +49,52 @@ func TestMain(m *testing.M) {
 		}
 	}
 
-	{
-		params := CreatePageParams{}
-		params.Parent(Parent{PageId: ROOT})
-		params.Icon(Emoji{Emoji: "✨"})
-		params.Properties(map[string]PropertyValue{
-			"title": {Title: []RichText{{Text: &RichTextText{Content: fmt.Sprintf("生成されたページ (%s)", time.Now().Format(time.RFC3339))}}}},
-		})
-		page := lo.Must(client.CreatePage(ctx, params))
-		generatedPage = page.Id
-	}
-
 	m.Run()
 }
 
-func TestCreateDatabase(t *testing.T) {
+func TestClient(t *testing.T) {
 	ctx := context.Background()
 
-	params := CreateDatabaseParams{}
-	params.Parent(Parent{PageId: generatedPage})
-	params.Title([]RichText{{Text: &RichTextText{Content: "生成されたデータベース"}}})
-	params.Properties(map[string]PropertySchema{
-		"タイトル": {Title: &struct{}{}},
-		"テキスト": {RichText: &struct{}{}},
-		"数値":   {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
-		"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
-		"ボタン":  {Button: &struct{}{}},
-		"ID":   {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
+	var generatedPage *Page
+
+	t.Run("CreatePage", func(t *testing.T) {
+		params := CreatePageParams{}
+		params.Parent(Parent{PageId: ROOT})
+		params.Icon(Emoji{Emoji: "✨"})
+		params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
+		params.Properties(map[string]PropertyValue{
+			"title": {Title: []RichText{{Text: &RichTextText{Content: fmt.Sprintf("生成されたページ (%s)", time.Now().Format(time.RFC3339))}}}},
+		})
+		generatedPage = lo.Must(client.CreatePage(ctx, params))
 	})
 
-	lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
-}
+	t.Run("RetrievePage", func(t *testing.T) {
+		t.Parallel()
+		lo.Must(client.RetrievePage(ctx, generatedPage.Id, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))))
+	})
 
-func TestCreatePage(t *testing.T) {
-	ctx := context.Background()
+	var generatedDatabase *Database
 
-	params := CreatePageParams{}
-	params.Parent(Parent{Type: "database_id", DatabaseId: DATABASE})
-	params.Properties(map[string]PropertyValue{"title": {Title: []RichText{{Text: &RichTextText{Content: "test"}}}}})
-	params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
+	t.Run("CreateDatabase", func(t *testing.T) {
+		params := CreateDatabaseParams{}
+		params.Parent(Parent{PageId: generatedPage.Id})
+		params.Title([]RichText{{Text: &RichTextText{Content: "生成されたデータベース"}}})
+		params.Properties(map[string]PropertySchema{
+			"タイトル": {Title: &struct{}{}},
+			"テキスト": {RichText: &struct{}{}},
+			"数値":   {Number: &PropertySchemaNumber{Format: "number_with_commas"}},
+			"セレクト": {Select: &PropertySchemaSelect{Options: []PropertySchemaOption{{Name: "赤", Color: "red"}}}},
+			"ボタン":  {Button: &struct{}{}},
+			"ID":   {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
+		})
 
-	_, err := client.CreatePage(ctx, params, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t)))
-	if err != nil {
-		t.Error(err)
-	}
-}
+		generatedDatabase = lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
+	})
 
-func TestRetrievePage(t *testing.T) {
-	ctx := context.Background()
-	if _, err := client.RetrievePage(ctx, STANDALONE_PAGE, WithRoundTripper(useCache(t.Name())), WithValidator(compareJSON(t))); err != nil {
-		t.Fatal(err)
-	}
+	t.Run("RetrieveDatabase", func(t *testing.T) {
+		t.Parallel()
+		lo.Must(client.RetrieveDatabase(ctx, generatedDatabase.Id, WithValidator(compareJSON(t))))
+	})
 }
 
 func TestRetrievePagePropertyItem(t *testing.T) {
@@ -222,11 +216,4 @@ func TestRetrieveBlockChildren(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-}
-
-func TestRetrieveDatabase(t *testing.T) {
-	ctx := context.Background()
-	lo.Must(client.RetrieveDatabase(ctx, DATABASE, WithValidator(compareJSON(t))))
-
-	// fmt.Println(string(lo.Must(json.MarshalIndent(database, "", "  "))))
 }
