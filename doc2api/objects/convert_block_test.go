@@ -368,7 +368,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of Rich text object text objects",
 		Description: "The rich text in the caption of the code block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		code.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		code.AddFields(b.NewField(e, jen.Index().Id("RichText"), OmitEmpty))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "rich_text",

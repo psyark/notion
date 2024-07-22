@@ -178,9 +178,9 @@ type BlockChildPage struct {
 
 // Code
 type BlockCode struct {
-	Caption  []RichText `json:"caption"`   // The rich text in the caption of the code block.
-	RichText []RichText `json:"rich_text"` // The rich text in the code block.
-	Language string     `json:"language"`  // The language of the code contained in the code block.
+	Caption  []RichText `json:"caption,omitempty"` // The rich text in the caption of the code block.
+	RichText []RichText `json:"rich_text"`         // The rich text in the code block.
+	Language string     `json:"language"`          // The language of the code contained in the code block.
 }
 
 // Embed
