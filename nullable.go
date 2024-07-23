@@ -1,6 +1,6 @@
 package notion
 
-import "encoding/json"
+import "github.com/psyark/notion/json"
 
 // Nullable は empty | null | 値あり の三種類の状態を取りうるデータ型で、
 // omitempty JSONタグと併せて使います。

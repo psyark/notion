@@ -10,9 +10,7 @@ func TestBlock_unmarshal(t *testing.T) {
 		"{\n  \"object\": \"block\",\n  \"id\": \"af1459f2-d2c5-4ca6-9f05-8038e6eb167f\",\n  \"parent\": {\n    \"type\": \"page_id\",\n    \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n  },\n  \"created_time\": \"2022-12-15T01:14:00.000Z\",\n  \"last_edited_time\": \"2022-12-16T21:23:00.000Z\",\n  \"created_by\": {\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n  },\n  \"last_edited_by\": {\n    \"object\": \"user\",\n    \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n  },\n  \"has_children\": false,\n  \"archived\": false,\n  \"in_trash\": false,\n  \"type\": \"pdf\",\n  \"pdf\": {\n    \"caption\": [],\n    \"type\": \"external\",\n    \"external\": {\n      \"url\": \"https://www.yourwebsite.dev/files/NewFile.pdf\"\n    }\n  }\n}\n",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Block](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Block](t, wantStr)
 	}
 }
 
@@ -21,9 +19,7 @@ func TestBotUserDataOwner_unmarshal(t *testing.T) {
 		"{     \"type\": \"workspace\",     \"workspace\": true }",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[BotUserDataOwner](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[BotUserDataOwner](t, wantStr)
 	}
 }
 
@@ -32,9 +28,7 @@ func TestEmoji_unmarshal(t *testing.T) {
 		"{\n  \"type\": \"emoji\",\n  \"emoji\": \"😻\"\n}",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Emoji](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Emoji](t, wantStr)
 	}
 }
 
@@ -44,9 +38,7 @@ func TestFile_unmarshal(t *testing.T) {
 		"{\n  \"type\": \"file\",\n  \"file\": {\n    \"url\": \"https://s3.us-west-2.amazonaws.com/secure.notion-static.com/7b8b0713-dbd4-4962-b38b-955b6c49a573/My_test_image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20221024%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20221024T205211Z&X-Amz-Expires=3600&X-Amz-Signature=208aa971577ff05e75e68354e8a9488697288ff3fb3879c2d599433a7625bf90&X-Amz-SignedHeaders=host&x-id=GetObject\",\n    \"expiry_time\": \"2022-10-24T22:49:22.765Z\"\n  }\n}\n",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[File](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[File](t, wantStr)
 	}
 }
 
@@ -72,9 +64,7 @@ func TestFilter_unmarshal(t *testing.T) {
 		"{\n    \"timestamp\": \"created_time\",\n    \"created_time\": {\n      \"on_or_before\": \"2022-10-13\"\n    }\n  }",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Filter](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Filter](t, wantStr)
 	}
 }
 
@@ -83,9 +73,7 @@ func TestPage_unmarshal(t *testing.T) {
 		"{\n    \"object\": \"page\",\n    \"id\": \"be633bf1-dfa0-436d-b259-571129a590e5\",\n    \"created_time\": \"2022-10-24T22:54:00.000Z\",\n    \"last_edited_time\": \"2023-03-08T18:25:00.000Z\",\n    \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"c2f20311-9e54-4d11-8c79-7398424ae41e\"\n    },\n    \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n    },\n    \"cover\": null,\n    \"icon\": {\n        \"type\": \"emoji\",\n        \"emoji\": \"🐞\"\n    },\n    \"parent\": {\n        \"type\": \"database_id\",\n        \"database_id\": \"a1d8501e-1ac1-43e9-a6bd-ea9fe6c8822b\"\n    },\n    \"archived\": true,\n    \"in_trash\": true,\n    \"properties\": {\n        \"Due date\": {\n            \"id\": \"M%3BBw\",\n            \"type\": \"date\",\n            \"date\": {\n                \"start\": \"2023-02-23\",\n                \"end\": null,\n                \"time_zone\": null\n            }\n        },\n        \"Status\": {\n            \"id\": \"Z%3ClH\",\n            \"type\": \"status\",\n            \"status\": {\n                \"id\": \"86ddb6ec-0627-47f8-800d-b65afd28be13\",\n                \"name\": \"Not started\",\n                \"color\": \"default\"\n            }\n        },\n        \"Title\": {\n            \"id\": \"title\",\n            \"type\": \"title\",\n            \"title\": [\n                {\n                    \"type\": \"text\",\n                    \"text\": {\n                        \"content\": \"Bug bash\",\n                        \"link\": null\n                    },\n                    \"annotations\": {\n                        \"bold\": false,\n                        \"italic\": false,\n                        \"strikethrough\": false,\n                        \"underline\": false,\n                        \"code\": false,\n                        \"color\": \"default\"\n                    },\n                    \"plain_text\": \"Bug bash\",\n                    \"href\": null\n                }\n            ]\n        }\n    },\n    \"url\": \"https://www.notion.so/Bug-bash-be633bf1dfa0436db259571129a590e5\",\n\t\t\"public_url\": \"https://jm-testing.notion.site/p1-6df2c07bfc6b4c46815ad205d132e22d\"\n}\n",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Page](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Page](t, wantStr)
 	}
 }
 
@@ -96,9 +84,7 @@ func TestPaginationBlock_unmarshal(t *testing.T) {
 		"{\n  \"object\": \"list\",\n  \"results\": [\n    {\n      \"object\": \"block\",\n      \"id\": \"af1459f2-d2c5-4ca6-9f05-8038e6eb167f\",\n      \"parent\": {\n        \"type\": \"page_id\",\n        \"page_id\": \"13d6da82-2f93-43fa-8ec1-4c89b8184d5a\"\n      },\n      \"created_time\": \"2022-12-15T01:14:00.000Z\",\n      \"last_edited_time\": \"2022-12-15T01:14:00.000Z\",\n      \"created_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"last_edited_by\": {\n        \"object\": \"user\",\n        \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\"\n      },\n      \"has_children\": false,\n      \"archived\": false,\n      \"in_trash\": false,\n      \"type\": \"pdf\",\n      \"pdf\": {\n        \"caption\": [],\n        \"type\": \"external\",\n        \"external\": {\n          \"url\": \"https://www.yourwebsite.dev/files/TestFile.pdf\"\n        }\n      }\n    }\n  ],\n  \"next_cursor\": null,\n  \"has_more\": false,\n  \"type\": \"block\",\n  \"block\": {}\n}\n",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Pagination[Block]](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Pagination[Block]](t, wantStr)
 	}
 }
 
@@ -110,9 +96,7 @@ func TestParent_unmarshal(t *testing.T) {
 		"{\n  \"type\": \"page_id\",\n\t\"page_id\": \"59833787-2cf9-4fdf-8782-e53db20768a5\"\n}\n",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Parent](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Parent](t, wantStr)
 	}
 }
 
@@ -134,9 +118,7 @@ func TestPropertyItemOrPropertyItemPaginationMap_unmarshal(t *testing.T) {
 		"{\n  \"Website\": {\n    \"object\": \"property_item\",\n    \"id\": \"KpQq\",\n    \"type\": \"url\",\n    \"url\": \"https://notion.so/notiondevs\"\n  }\n}",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[PropertyItemOrPropertyItemPaginationMap](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[PropertyItemOrPropertyItemPaginationMap](t, wantStr)
 	}
 }
 
@@ -162,9 +144,7 @@ func TestPropertyMap_unmarshal(t *testing.T) {
 		"{\"Updated price\": {\n  \"id\": \"YU%7C%40\",\n  \"name\": \"Updated price\",\n  \"type\": \"formula\",\n  \"formula\": {\n    \"expression\": \"{{notion:block_property:BtVS:00000000-0000-0000-0000-000000000000:8994905a-074a-415f-9bcf-d1f8b4fa38e4}}/2\"\n  }\n}\n}",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[PropertyMap](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[PropertyMap](t, wantStr)
 	}
 }
 
@@ -183,9 +163,7 @@ func TestRichText_unmarshal(t *testing.T) {
 		"{\"annotations\":{\"bold\":false,\"code\":false,\"color\":\"default\",\"italic\":false,\"strikethrough\":false,\"underline\":false},\"href\":null,\"mention\":{\"date\":{\"end\":null,\"start\":\"2022-12-16\",\"time_zone\":null},\"type\":\"date\"},\"plain_text\":\"2022-12-16\",\"type\":\"mention\"}",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[RichText](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[RichText](t, wantStr)
 	}
 }
 
@@ -196,9 +174,7 @@ func TestSort_unmarshal(t *testing.T) {
 		"{\n            \"property\": \"Name\",\n            \"direction\": \"ascending\"\n        }",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[Sort](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[Sort](t, wantStr)
 	}
 }
 
@@ -207,8 +183,6 @@ func TestUser_unmarshal(t *testing.T) {
 		"{     \"object\": \"user\",     \"id\": \"9188c6a5-7381-452f-b3dc-d4865aa89bdf\",     \"name\": \"Test Integration\",     \"avatar_url\": null,     \"type\": \"bot\",     \"bot\": {         \"owner\": {         \"type\": \"workspace\",         \"workspace\": true         },  \"workspace_name\": \"Ada Lovelace’s Notion\"     } }",
 	}
 	for _, wantStr := range tests {
-		if err := checkUnmarshal[User](wantStr); err != nil {
-			t.Error(err)
-		}
+		checkUnmarshal[User](t, wantStr)
 	}
 }

@@ -3,7 +3,7 @@
 
 package notion
 
-import "encoding/json"
+import json "github.com/psyark/notion/json"
 
 /*
 Notion uses rich text to allow users to customize their content. Rich text refers to a type of document where content can be styled and formatted in a variety of customizable ways. This includes styling decisions, such as the use of italics, font size, and font color, as well as formatting, such as the use of hyperlinks or code blocks.

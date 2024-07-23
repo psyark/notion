@@ -1,12 +1,14 @@
 package notion
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
+	"testing"
 
 	"github.com/google/uuid"
-	"github.com/wI2L/jsondiff"
+	"github.com/psyark/notion/json"
+	"github.com/samber/lo"
+	"github.com/stretchr/testify/assert"
 )
 
 type PropertyMap map[string]Property // for test
@@ -84,21 +86,9 @@ func defined(fieldValue any) bool {
 	}
 }
 
-func checkUnmarshal[T any](wantStr string) error {
+func checkUnmarshal[T any](t *testing.T, wantStr string) {
 	var target T
-	want := []byte(wantStr)
-	if err := json.Unmarshal(want, &target); err != nil {
-		return fmt.Errorf("%w : %s", err, wantStr)
-	}
-	got, _ := json.Marshal(&target)
-
-	diff, err := jsondiff.CompareJSON(want, got)
-	if err != nil {
-		return err
-	}
-	if diff != nil {
-		return fmt.Errorf("mismatch:\n%s", diff.String())
-	}
-
-	return nil
+	lo.Must0(json.Unmarshal([]byte(wantStr), &target))
+	got := string(lo.Must(json.MarshalIndent(&target, "", "  ")))
+	assert.JSONEq(t, wantStr, got)
 }

@@ -1,8 +1,7 @@
 package notion
 
 import (
-	"encoding/json"
-
+	"github.com/psyark/notion/json"
 	"github.com/samber/lo"
 )
 
@@ -15,6 +14,7 @@ type SearchFilter struct {
 	Property string `json:"property"` // The name of the property to filter by. Currently the only property you can filter by is the object type. Possible values include object. Limitation: Currently the only filter allowed is object which will filter by type of object (either page or database)
 }
 
+// TODO 生成
 func (p *Pagination[T]) UnmarshalJSON(data []byte) error {
 	type Alias Pagination[T]
 

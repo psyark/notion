@@ -1,9 +1,10 @@
 package notion
 
 import (
-	"encoding/json"
 	"fmt"
 	"testing"
+
+	"github.com/psyark/notion/json"
 )
 
 type Outer struct {

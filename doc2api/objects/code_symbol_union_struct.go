@@ -84,7 +84,7 @@ func (o *UnionStruct) code(c *Converter) jen.Code {
 		),
 
 		jen.Type().Id("Alias").Add(o.typeCode(false)),
-		jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("encoding/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
+		jen.List(jen.Id("data"), jen.Err()).Op(":=").Qual("github.com/psyark/notion/json", "Marshal").Call(jen.Id("Alias").Call(jen.Id("o"))),
 		jen.If(jen.Err().Op("!=").Nil()).Block(jen.Return().List(jen.Nil(), jen.Err())),
 		jen.Id("visibility").Op(":=").Map(jen.String()).Bool().Values(jen.DictFunc(func(d jen.Dict) {
 			for _, f := range o.fields {

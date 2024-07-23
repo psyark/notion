@@ -62,10 +62,10 @@ func (u *UnionInterface) code(c *Converter) jen.Code {
 			}
 			g.Default().Return(jen.Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: data has unknown %s field: %%s", u.name(), u.discriminator)), jen.String().Call(jen.Id("data"))))
 		}),
-		jen.Return().Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
+		jen.Return().Qual("github.com/psyark/notion/json", "Unmarshal").Call(jen.Id("data"), jen.Id("u").Dot("value")),
 	).Line().Line()
 	code.Func().Params(jen.Id("u").Op("*").Id(u.memberUnmarshalerName())).Id("MarshalJSON").Params().Params(jen.Index().Byte(), jen.Error()).Block(
-		jen.Return().Qual("encoding/json", "Marshal").Call(jen.Id("u").Dot("value")),
+		jen.Return().Qual("github.com/psyark/notion/json", "Marshal").Call(jen.Id("u").Dot("value")),
 	).Line()
 	return code
 }

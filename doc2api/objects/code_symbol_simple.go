@@ -99,7 +99,7 @@ func (o *SimpleObject) fieldUnmarshalerCode(c *Converter) jen.Code {
 			}).Values(jen.Dict{
 				jen.Id("Alias"): jen.Parens(jen.Op("*").Id("Alias")).Call(jen.Id("o")),
 			})
-			g.If(jen.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
+			g.If(jen.Err().Op(":=").Qual("github.com/psyark/notion/json", "Unmarshal").Call(jen.Id("data"), jen.Id("t"))).Op(";").Err().Op("!=").Nil().Block(
 				jen.Return().Qual("fmt", "Errorf").Call(jen.Lit(fmt.Sprintf("unmarshaling %s: %%w", o.name())), jen.Err()),
 			)
 			for _, f := range unionFields {

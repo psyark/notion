@@ -3,10 +3,11 @@ package notion
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/psyark/notion/json"
 )
 
 const APIVersion = "2022-06-28"

@@ -32,9 +32,7 @@ func (c *UnmarshalTest) code(_ *Converter) jen.Code {
 			g.Line()
 		}),
 		jen.For().List(jen.Id("_"), jen.Id("wantStr")).Op(":=").Range().Id("tests").Block(
-			jen.If(jen.Err().Op(":=").Id("checkUnmarshal").Index(typeCode).Call(jen.Id("wantStr")).Op(";").Id("err").Op("!=").Nil()).Block(
-				jen.Id("t").Dot("Error").Call(jen.Err()),
-			),
+			jen.Id("checkUnmarshal").Types(typeCode).Call(jen.Id("t"), jen.Id("wantStr")),
 		),
 	)
 }

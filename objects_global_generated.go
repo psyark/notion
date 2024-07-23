@@ -3,8 +3,8 @@
 package notion
 
 import (
-	"encoding/json"
 	"fmt"
+	json "github.com/psyark/notion/json"
 )
 
 type FileOrEmoji interface {

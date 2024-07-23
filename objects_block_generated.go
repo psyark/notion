@@ -4,9 +4,9 @@
 package notion
 
 import (
-	"encoding/json"
 	"fmt"
 	uuid "github.com/google/uuid"
+	json "github.com/psyark/notion/json"
 )
 
 /*

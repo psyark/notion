@@ -3,7 +3,7 @@
 
 package notion
 
-import "encoding/json"
+import json "github.com/psyark/notion/json"
 
 /*
 Pagination

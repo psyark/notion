@@ -4,8 +4,8 @@
 package notion
 
 import (
-	"encoding/json"
 	uuid "github.com/google/uuid"
+	json "github.com/psyark/notion/json"
 )
 
 // Pages, databases, and blocks are either located inside other pages, databases, and blocks, or are located at the top level of a workspace. This location is known as the "parent". Parent information is represented by a consistent parent object throughout the API.
