@@ -4,7 +4,8 @@ package notion
 
 import (
 	"fmt"
-	json "github.com/psyark/notion/json"
+	"github.com/json-iterator/go"
+	"github.com/psyark/notion/json"
 )
 
 type FileOrEmoji interface {
@@ -24,7 +25,7 @@ func (u *fileOrEmojiUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getType(data) {
+	switch jsoniter.Get(data, "type").ToString() {
 	case "emoji":
 		u.value = &Emoji{}
 	case "file", "external":
@@ -56,7 +57,7 @@ func (u *pageOrDatabaseUnmarshaler) UnmarshalJSON(data []byte) error {
 		u.value = nil
 		return nil
 	}
-	switch getObject(data) {
+	switch jsoniter.Get(data, "object").ToString() {
 	case "database":
 		u.value = &Database{}
 	case "page":
@@ -88,7 +89,7 @@ func (u *propertyItemOrPropertyItemPaginationUnmarshaler) UnmarshalJSON(data []b
 		u.value = nil
 		return nil
 	}
-	switch getObject(data) {
+	switch jsoniter.Get(data, "object").ToString() {
 	case "list":
 		u.value = &Pagination[PropertyItem]{}
 	case "property_item":

@@ -3,7 +3,7 @@
 
 package notion
 
-import json "github.com/psyark/notion/json"
+import "github.com/psyark/notion/json"
 
 /*
 📘The Notion API does not yet support uploading files to Notion.

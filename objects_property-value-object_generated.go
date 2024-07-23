@@ -3,7 +3,7 @@
 
 package notion
 
-import json "github.com/psyark/notion/json"
+import "github.com/psyark/notion/json"
 
 /*
 A property value defines the identifier, type, and value of a page property in a page object. It's used when retrieving and updating pages, ex: Create and Update pages.

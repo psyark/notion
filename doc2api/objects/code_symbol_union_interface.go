@@ -38,7 +38,7 @@ func (u *UnionInterface) code(c *Converter) jen.Code {
 			jen.Id("u").Dot("value").Op("=").Nil(),
 			jen.Return().Nil(),
 		),
-		jen.Switch(jen.Id("get"+strcase.UpperCamelCase(u.discriminator))).Call(jen.Id("data")).BlockFunc(func(g *jen.Group) {
+		jen.Switch(jen.Qual("github.com/json-iterator/go", "Get").Call(jen.Id("data"), jen.Lit(u.discriminator)).Dot("ToString").Call()).BlockFunc(func(g *jen.Group) {
 			slices.SortFunc(c.unionMemberRegistry, func(a, b unionMemberEntry) int {
 				return strings.Compare(a.member.name(), b.member.name())
 			})

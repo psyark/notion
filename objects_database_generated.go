@@ -5,8 +5,8 @@ package notion
 
 import (
 	"fmt"
-	uuid "github.com/google/uuid"
-	json "github.com/psyark/notion/json"
+	"github.com/google/uuid"
+	"github.com/psyark/notion/json"
 )
 
 // Database objects describe the property schema of a database in Notion. Pages are the items (or children) in a database. Page property values must conform to the property objects laid out in the parent database object.

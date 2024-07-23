@@ -4,8 +4,8 @@
 package notion
 
 import (
-	uuid "github.com/google/uuid"
-	json "github.com/psyark/notion/json"
+	"github.com/google/uuid"
+	"github.com/psyark/notion/json"
 )
 
 // All database objects include a child properties object. This properties object is composed of individual database property objects. These property objects define the database schema and are rendered in the Notion UI as database columns.

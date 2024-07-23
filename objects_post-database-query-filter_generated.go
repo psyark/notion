@@ -3,7 +3,7 @@
 
 package notion
 
-import uuid "github.com/google/uuid"
+import "github.com/google/uuid"
 
 /*
 The filter object

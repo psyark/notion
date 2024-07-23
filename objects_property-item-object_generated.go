@@ -3,7 +3,7 @@
 
 package notion
 
-import json "github.com/psyark/notion/json"
+import "github.com/psyark/notion/json"
 
 // A property_item object describes the identifier, type, and value of a page property. It's returned from the Retrieve a page property item
 type PropertyItem struct {
