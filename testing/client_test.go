@@ -191,21 +191,15 @@ func TestQueryDatabase(t *testing.T) {
 }
 
 func TestRetrieveBlockChildren(t *testing.T) {
-	t.Skip()
-
 	ctx := context.Background()
-	if pagi, err := client.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(compareJSON(t))); err != nil {
-		t.Fatal(err)
-	} else {
-		for _, block := range pagi.Results {
-			block := block
-			t.Run(block.Id.String(), func(t *testing.T) {
-				if _, err := client.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))); err != nil {
-					t.Fatal(err)
-				}
-			})
-		}
+
+	pagi := lo.Must(client.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(compareJSON(t))))
+	for _, block := range pagi.Results {
+		t.Run(block.Id.String(), func(t *testing.T) {
+			lo.Must(client.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))))
+		})
 	}
+
 	t.Run("AppendBlockChildren", func(t *testing.T) {
 		params := AppendBlockChildrenParams{}
 		params.Children([]Block{
@@ -227,8 +221,6 @@ func TestRetrieveBlockChildren(t *testing.T) {
 				},
 			}},
 		})
-		if _, err := client.AppendBlockChildren(ctx, STANDALONE_PAGE, params, WithValidator(compareJSON(t))); err != nil {
-			t.Fatal(err)
-		}
+		lo.Must(client.AppendBlockChildren(ctx, STANDALONE_PAGE, params, WithValidator(compareJSON(t))))
 	})
 }
