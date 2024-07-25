@@ -13,15 +13,6 @@ import (
 
 type PropertyMap map[string]Property // for test
 
-func (p *Page) GetProperty(id string) *PropertyValue {
-	for _, pv := range p.Properties {
-		if pv.Id == id {
-			return &pv
-		}
-	}
-	return nil
-}
-
 type PropertyItemOrPropertyItemPaginationMap map[string]PropertyItemOrPropertyItemPagination
 
 func (m *PropertyItemOrPropertyItemPaginationMap) UnmarshalJSON(data []byte) error {

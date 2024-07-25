@@ -54,7 +54,7 @@ func UnmarshalPage(page *notion.Page, dst any) error {
 		sf := t.Field(i)
 		if sf.Tag.Get("notion") != "" {
 			propId := sf.Tag.Get("notion") // TODO カバーやアイコンの考慮
-			prop := page.GetProperty(propId)
+			prop := page.Properties.Get(propId)
 			if prop == nil {
 				return fmt.Errorf("タグ %q に相当するプロパティがありません", propId)
 			}
@@ -89,7 +89,7 @@ func GetUpdatePageParams(src any, page *notion.Page) (*notion.UpdatePageProperti
 		sf := t.Field(i)
 		if sf.Tag.Get("notion") != "" {
 			propId := sf.Tag.Get("notion") // TODO カバーやアイコンの考慮
-			prop := page.GetProperty(propId)
+			prop := page.Properties.Get(propId)
 			if prop == nil {
 				return nil, fmt.Errorf("タグ %q に相当するプロパティがありません", propId)
 			}

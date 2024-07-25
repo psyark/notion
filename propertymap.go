@@ -1,14 +1,12 @@
 package notion
 
-import "fmt"
-
 type PropertyValueMap map[string]PropertyValue
 
-func (m PropertyValueMap) Get(id string) (*PropertyValue, error) {
+func (m PropertyValueMap) Get(id string) *PropertyValue {
 	for _, v := range m {
 		if v.Id == id {
-			return &v, nil
+			return &v
 		}
 	}
-	return nil, fmt.Errorf("not exists")
+	return nil
 }
