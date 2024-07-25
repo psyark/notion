@@ -63,7 +63,7 @@ func TestClient(t *testing.T) {
 		params.Icon(Emoji{Emoji: "✨"})
 		params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
 		params.Properties(map[string]PropertyValue{
-			"title": {Title: []RichText{{Text: &RichTextText{Content: fmt.Sprintf("生成されたページ (%s)", time.Now().Format(time.RFC3339))}}}},
+			"title": {Title: NewRichTextArray(fmt.Sprintf("生成されたページ (%s)", time.Now().Format(time.RFC3339)))},
 		})
 		generatedPage = lo.Must(client.CreatePage(ctx, params))
 	})
@@ -78,7 +78,7 @@ func TestClient(t *testing.T) {
 	t.Run("CreateDatabase", func(t *testing.T) {
 		params := CreateDatabaseParams{}
 		params.Parent(Parent{PageId: generatedPage.Id})
-		params.Title([]RichText{{Text: &RichTextText{Content: "生成されたデータベース"}}})
+		params.Title(NewRichTextArray("生成されたデータベース"))
 		params.Properties(map[string]PropertySchema{
 			"タイトル":     {Title: &struct{}{}},
 			"テキスト":     {RichText: &struct{}{}},
@@ -119,23 +119,23 @@ func TestClient(t *testing.T) {
 
 			{Bookmark: &BlockBookmark{Url: "http://example.com"}},
 			{Breadcrumb: &struct{}{}},
-			{BulletedListItem: &BlockBulletedListItem{RichText: []RichText{{Text: &RichTextText{Content: "箇条書きリスト"}}}}},
+			{BulletedListItem: &BlockBulletedListItem{RichText: NewRichTextArray("箇条書きリスト")}},
 			{Callout: &BlockCallout{
-				RichText: []RichText{{Text: &RichTextText{Content: "コールアウト"}}},
+				RichText: NewRichTextArray("コールアウト"),
 				Icon:     &Emoji{Emoji: "🍣"},
 			}},
 			{Code: &BlockCode{
-				RichText: []RichText{{Text: &RichTextText{Content: `// hoge`}}},
+				RichText: NewRichTextArray(`// hoge`),
 				Language: "go",
 			}},
 			{Image: &File{External: &FileExternal{Url: "https://placehold.jp/640x640.png"}}},
-			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
-			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
-			{Heading3: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 3"}}}}},
-			{ToDo: &BlockToDo{RichText: []RichText{{Text: &RichTextText{Content: "To Do"}}}}},
+			{Heading1: &BlockHeading{RichText: NewRichTextArray("Heading 1")}},
+			{Heading2: &BlockHeading{RichText: NewRichTextArray("Heading 2")}},
+			{Heading3: &BlockHeading{RichText: NewRichTextArray("Heading 3")}},
+			{ToDo: &BlockToDo{RichText: NewRichTextArray("To Do")}},
 			{SyncedBlock: &BlockSyncedBlock{
 				Children: []Block{
-					{Paragraph: &BlockParagraph{RichText: []RichText{{Text: &RichTextText{Content: "synced"}}}}},
+					{Paragraph: &BlockParagraph{RichText: NewRichTextArray("synced")}},
 				},
 			}},
 		})

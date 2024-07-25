@@ -48,7 +48,7 @@ func (p CreateDatabaseParams) Parent(parent Parent) CreateDatabaseParams {
 }
 
 // Title of database as it appears in Notion. An array of [rich text objects](ref:rich-text).
-func (p CreateDatabaseParams) Title(title []RichText) CreateDatabaseParams {
+func (p CreateDatabaseParams) Title(title RichTextArray) CreateDatabaseParams {
 	p["title"] = title
 	return p
 }

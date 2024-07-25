@@ -60,7 +60,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Title property value objects contain an array of rich text objects within the title property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("title", e.Text, WithType(jen.Index().Id("RichText")))
+		propertyValue.AddPayloadField("title", e.Text, WithType(jen.Id("RichTextArray")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -87,7 +87,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Rich Text property value objects contain an array of rich text objects within the rich_text property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("rich_text", e.Text, WithType(jen.Index().Id("RichText")))
+		propertyValue.AddPayloadField("rich_text", e.Text, WithType(jen.Id("RichTextArray")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",

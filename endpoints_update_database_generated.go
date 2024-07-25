@@ -72,13 +72,13 @@ func (c *Client) UpdateDatabase(ctx context.Context, database_id uuid.UUID, para
 type UpdateDatabaseParams map[string]any
 
 // An array of [rich text objects](https://developers.notion.com/reference/rich-text) that represents the title of the database that is displayed in the Notion UI. If omitted, then the database title remains unchanged.
-func (p UpdateDatabaseParams) Title(title []RichText) UpdateDatabaseParams {
+func (p UpdateDatabaseParams) Title(title RichTextArray) UpdateDatabaseParams {
 	p["title"] = title
 	return p
 }
 
 // An array of [rich text objects](https://developers.notion.com/reference/rich-text) that represents the description of the database that is displayed in the Notion UI. If omitted, then the database description remains unchanged.
-func (p UpdateDatabaseParams) Description(description []RichText) UpdateDatabaseParams {
+func (p UpdateDatabaseParams) Description(description RichTextArray) UpdateDatabaseParams {
 	p["description"] = description
 	return p
 }

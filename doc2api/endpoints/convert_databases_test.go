@@ -14,7 +14,7 @@ func TestCreateDatabase(t *testing.T) {
 		"https://developers.notion.com/reference/create-a-database",
 	).Generate(GenericStructRef{Name: "Database"}, ParamAnnotations{
 		"parent":     jen.Id("Parent"),
-		"title":      jen.Index().Id("RichText"),
+		"title":      jen.Id("RichTextArray"),
 		"properties": jen.Map(jen.String()).Id("PropertySchema"),
 	})
 }
@@ -50,8 +50,8 @@ func TestUpdateDatabase(t *testing.T) {
 		"https://developers.notion.com/reference/update-a-database",
 	).Generate(StructRef("Database"), ParamAnnotations{
 		"database_id": jen.Qual("github.com/google/uuid", "UUID"),
-		"title":       jen.Index().Id("RichText"),
-		"description": jen.Index().Id("RichText"),
+		"title":       jen.Id("RichTextArray"),
+		"description": jen.Id("RichTextArray"),
 		"properties":  jen.Map(jen.String()).Id("PropertySchema"),
 	})
 }

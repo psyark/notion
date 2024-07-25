@@ -93,7 +93,7 @@ func TestDatabase(t *testing.T) {
 		Description:  "Name of the database as it appears in Notion.  \nSee rich text object) for a breakdown of the properties.",
 		ExampleValue: "\"title\": [\n        {\n            \"type\": \"text\",\n            \"text\": {\n                \"content\": \"Can I create a URL property\",\n                \"link\": null\n            },\n            \"annotations\": {\n                \"bold\": false,\n                \"italic\": false,\n                \"strikethrough\": false,\n                \"underline\": false,\n                \"code\": false,\n                \"color\": \"default\"\n            },\n            \"plain_text\": \"Can I create a URL property\",\n            \"href\": null\n        }\n    ]",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		database.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		database.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 
 	c.ExpectParameter(&Parameter{
@@ -101,7 +101,7 @@ func TestDatabase(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "Description of the database as it appears in Notion.  \nSee rich text object) for a breakdown of the properties.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		database.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		database.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 
 	c.ExpectParameter(&Parameter{

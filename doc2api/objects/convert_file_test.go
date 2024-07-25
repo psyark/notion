@@ -202,4 +202,8 @@ func TestFile(t *testing.T) {
 	})
 
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "📘To modify page or database property values that are made from file objects, like icon, cover, or files page property values, use the update page or update database endpoints."})
+
+	c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
+		file.AddFields(b.NewField(&Parameter{Property: "caption", Description: UNDOCUMENTED}, jen.Id("RichTextArray"), OmitEmpty))
+	})
 }

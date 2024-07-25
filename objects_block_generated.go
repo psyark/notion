@@ -133,23 +133,23 @@ func (o Block) MarshalJSON() ([]byte, error) {
 
 // Bookmark
 type BlockBookmark struct {
-	Caption []RichText `json:"caption"` // The caption for the bookmark.
-	Url     string     `json:"url"`     // The link for the bookmark.
+	Caption RichTextArray `json:"caption"` // The caption for the bookmark.
+	Url     string        `json:"url"`     // The link for the bookmark.
 }
 
 // Bulleted list item
 type BlockBulletedListItem struct {
-	RichText []RichText `json:"rich_text"`       // The rich text in the bulleted_list_item block.
-	Color    string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children []Block    `json:"children"`        // The nested child blocks (if any) of the bulleted_list_item block.
+	RichText RichTextArray `json:"rich_text"`          // The rich text in the bulleted_list_item block.
+	Color    string        `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block       `json:"children,omitempty"` // The nested child blocks (if any) of the bulleted_list_item block.
 }
 
 // Callout
 type BlockCallout struct {
-	RichText []RichText  `json:"rich_text"`          // The rich text in the callout block.
-	Icon     FileOrEmoji `json:"icon,omitempty"`     // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
-	Color    string      `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children []Block     `json:"children,omitempty"` // UNDOCUMENTED
+	RichText RichTextArray `json:"rich_text"`          // The rich text in the callout block.
+	Icon     FileOrEmoji   `json:"icon,omitempty"`     // An emoji or file object that represents the callout's icon. If the callout does not have an icon.
+	Color    string        `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block       `json:"children,omitempty"` // UNDOCUMENTED
 }
 
 // UnmarshalJSON assigns the appropriate implementation to interface field(s)
@@ -178,9 +178,9 @@ type BlockChildPage struct {
 
 // Code
 type BlockCode struct {
-	Caption  []RichText `json:"caption,omitempty"` // The rich text in the caption of the code block.
-	RichText []RichText `json:"rich_text"`         // The rich text in the code block.
-	Language string     `json:"language"`          // The language of the code contained in the code block.
+	Caption  RichTextArray `json:"caption,omitempty"` // The rich text in the caption of the code block.
+	RichText RichTextArray `json:"rich_text"`         // The rich text in the code block.
+	Language string        `json:"language"`          // The language of the code contained in the code block.
 }
 
 // Embed
@@ -195,9 +195,9 @@ type BlockEquation struct {
 
 // All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
 type BlockHeading struct {
-	RichText     []RichText `json:"rich_text"`       // The rich text of the heading.
-	Color        string     `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	IsToggleable bool       `json:"is_toggleable"`   // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
+	RichText     RichTextArray `json:"rich_text"`       // The rich text of the heading.
+	Color        string        `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	IsToggleable bool          `json:"is_toggleable"`   // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
 }
 
 // Link Preview block objects contain the originally pasted url:
@@ -207,9 +207,9 @@ type BlockLinkPreview struct {
 
 // Paragraph
 type BlockParagraph struct {
-	RichText []RichText `json:"rich_text"`          // The rich text displayed in the paragraph block.
-	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children []Block    `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
+	RichText RichTextArray `json:"rich_text"`          // The rich text displayed in the paragraph block.
+	Color    string        `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block       `json:"children,omitempty"` // The nested child blocks (if any) of the paragraph block.
 }
 
 /*
@@ -218,7 +218,7 @@ PDF
 A PDF block object represents a PDF that has been embedded within a Notion page. It contains the following fields:
 */
 type BlockPdf struct {
-	Caption  []RichText    `json:"caption"`            // A caption, if provided, for the PDF block.
+	Caption  RichTextArray `json:"caption"`            // A caption, if provided, for the PDF block.
 	Type     string        `json:"type"`               // A constant string representing the type of PDF. file indicates a Notion-hosted file, and external represents a third-party link.
 	External *FileExternal `json:"external,omitempty"` // An object containing type-specific information about the PDF.
 	File     *FileFile     `json:"file,omitempty"`     // An object containing type-specific information about the PDF.
@@ -244,8 +244,8 @@ type SyncedFrom struct {
 
 // To do
 type BlockToDo struct {
-	RichText []RichText `json:"rich_text"`          // The rich text displayed in the To do block.
-	Checked  *bool      `json:"checked,omitempty"`  // Whether the To do is checked.
-	Color    string     `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	Children []Block    `json:"children,omitempty"` // The nested child blocks, if any, of the To do block.
+	RichText RichTextArray `json:"rich_text"`          // The rich text displayed in the To do block.
+	Checked  *bool         `json:"checked,omitempty"`  // Whether the To do is checked.
+	Color    string        `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	Children []Block       `json:"children,omitempty"` // The nested child blocks, if any, of the To do block.
 }

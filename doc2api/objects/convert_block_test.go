@@ -186,7 +186,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects text",
 		Description: "The caption for the bookmark.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		bookmark.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		bookmark.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "url",
@@ -232,7 +232,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "The rich text in the bulleted_list_item block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		bulletedListItem.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		bulletedListItem.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "color",
@@ -246,7 +246,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of block objects",
 		Description: "The nested child blocks (if any) of the bulleted_list_item block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		bulletedListItem.AddFields(b.NewField(e, jen.Index().Id("Block")))
+		bulletedListItem.AddFields(b.NewField(e, jen.Index().Id("Block"), OmitEmpty))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -270,7 +270,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "The rich text in the callout block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		specificObject.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		specificObject.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "icon",
@@ -368,14 +368,14 @@ func TestBlock(t *testing.T) {
 		Type:        "array of Rich text object text objects",
 		Description: "The rich text in the caption of the code block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		code.AddFields(b.NewField(e, jen.Index().Id("RichText"), OmitEmpty))
+		code.AddFields(b.NewField(e, jen.Id("RichTextArray"), OmitEmpty))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "rich_text",
 		Type:        "array of Rich text object text objects",
 		Description: "The rich text in the code block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		code.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		code.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "language",
@@ -559,7 +559,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "The rich text of the heading.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		heading.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		heading.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "color",
@@ -735,7 +735,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "The rich text displayed in the paragraph block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		paragraph.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		paragraph.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "color",
@@ -779,7 +779,7 @@ func TestBlock(t *testing.T) {
 		Type:        "array of rich text objects",
 		Description: "A caption, if provided, for the PDF block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		pdf.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+		pdf.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:    "type",
@@ -1098,7 +1098,7 @@ func TestBlock(t *testing.T) {
 			Type:        "array of rich text objects",
 			Description: "The rich text displayed in the To do block.",
 		}).Output(func(e *Parameter, b *CodeBuilder) {
-			blockToDo.AddFields(b.NewField(e, jen.Index().Id("RichText")))
+			blockToDo.AddFields(b.NewField(e, jen.Id("RichTextArray")))
 		})
 		c.ExpectParameter(&Parameter{
 			Property:    "checked",

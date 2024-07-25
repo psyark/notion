@@ -10,9 +10,9 @@ import (
 func getTypeForBinding(p notion.Property) string {
 	switch p.Type {
 	case "title":
-		return "[]RichText"
+		return "RichTextArray"
 	case "rich_text":
-		return "[]RichText"
+		return "RichTextArray"
 	case "number":
 		return "*float64"
 	case "select":

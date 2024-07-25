@@ -15,8 +15,8 @@ Each page property value object contains the following keys. In addition, it con
 type PropertyValue struct {
 	Type           string             `json:"type,omitempty"`
 	Id             string             `json:"id,omitempty"`     // Underlying identifier for the property. This identifier is guaranteed to remain constant when the property name changes. It may be a UUID, but is often a short random string. The id may be used in place of name when creating or updating pages.
-	Title          []RichText         `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
-	RichText       []RichText         `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
+	Title          RichTextArray      `json:"title"`            // Title property value objects contain an array of rich text objects within the title property.
+	RichText       RichTextArray      `json:"rich_text"`        // Rich Text property value objects contain an array of rich text objects within the rich_text property.
 	Number         *float64           `json:"number"`           // Number property value objects contain a number within the number property.
 	Select         *Option            `json:"select"`           // Select property value objects contain the following data within the select property:
 	Status         *Option            `json:"status"`           // Status property value objects contain the following data within the status property:
