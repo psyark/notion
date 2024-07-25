@@ -36,8 +36,8 @@ func WithType(code jen.Code) addPayloadFieldOption {
 		return nil
 	}
 }
-func WithEmptyStruct() addPayloadFieldOption {
-	return WithType(jen.Struct())
+func WithEmptyStructRef() addPayloadFieldOption {
+	return WithType(jen.Op("*").Struct())
 }
 func WithPayloadObject(b *CodeBuilder) addPayloadFieldOption {
 	return func(union *UnionStruct, field *VariableField) *SimpleObject {

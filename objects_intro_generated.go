@@ -18,13 +18,13 @@ type Pagination[T any] struct {
 	NextCursor     *string               `json:"next_cursor"` // A string that can be used to retrieve the next page of results by passing the value as the start_cursor parameter to the same endpoint. Only available when has_more is true.
 	Object         alwaysList            `json:"object"`      // The constant string "list".
 	Results        []T                   `json:"results"`     // The list, or partial list, of endpoint-specific results. Refer to a supported endpoint's individual documentation for details.
-	Block          struct{}              `json:"block"`
-	Comment        struct{}              `json:"comment"`
-	Database       struct{}              `json:"database"`
-	Page           struct{}              `json:"page"`
-	PageOrDatabase struct{}              `json:"page_or_database"`
+	Block          *struct{}             `json:"block"`
+	Comment        *struct{}             `json:"comment"`
+	Database       *struct{}             `json:"database"`
+	Page           *struct{}             `json:"page"`
+	PageOrDatabase *struct{}             `json:"page_or_database"`
 	PropertyItem   PaginatedPropertyInfo `json:"property_item"`
-	User           struct{}              `json:"user"`
+	User           *struct{}             `json:"user"`
 	RequestId      string                `json:"request_id,omitempty"` // UNDOCUMENTED
 }
 

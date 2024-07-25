@@ -103,7 +103,7 @@ func TestIntro(t *testing.T) {
 			if name == "property_item" {
 				pagination.AddPayloadField(name, "", WithType(jen.Id("PaginatedPropertyInfo")))
 			} else {
-				pagination.AddPayloadField(name, "", WithEmptyStruct())
+				pagination.AddPayloadField(name, "", WithEmptyStructRef())
 			}
 		}
 	})

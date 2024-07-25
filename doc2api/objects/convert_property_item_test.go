@@ -68,7 +68,7 @@ func TestPropertyItem(t *testing.T) {
 		paginatedPropertyInfo = b.AddUnionStruct("PaginatedPropertyInfo", "type", e.Text)
 		paginatedPropertyInfo.AddFields(b.NewField(&Parameter{Property: "id", Description: UNDOCUMENTED}, jen.String()))
 		for _, derived := range []string{"title", "rich_text", "relation", "people"} {
-			paginatedPropertyInfo.AddPayloadField(derived, "", WithEmptyStruct())
+			paginatedPropertyInfo.AddPayloadField(derived, "", WithEmptyStructRef())
 		}
 		paginatedPropertyInfo.AddPayloadField("rollup", UNDOCUMENTED, WithType(jen.Id("Rollup")))
 	})
@@ -366,7 +366,7 @@ func TestPropertyItem(t *testing.T) {
 		Kind: "Paragraph",
 		Text: `Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type "incomplete". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.`,
 	}).Output(func(e *Block, b *CodeBuilder) {
-		rollup.AddPayloadField("incomplete", e.Text, WithEmptyStruct())
+		rollup.AddPayloadField("incomplete", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",

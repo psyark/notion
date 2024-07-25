@@ -208,7 +208,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Breadcrumb block objects do not contain any information within the breadcrumb property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddPayloadField("breadcrumb", e.Text, WithEmptyStruct())
+		block.AddPayloadField("breadcrumb", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -397,7 +397,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Column lists are parent blocks for columns. They do not contain any information within the column_list property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddPayloadField("column_list", e.Text, WithEmptyStruct())
+		block.AddPayloadField("column_list", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -407,7 +407,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddPayloadField("column", e.Text, WithEmptyStruct())
+		block.AddPayloadField("column", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -439,7 +439,7 @@ func TestBlock(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Divider block objects do not contain any information within the divider property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		block.AddPayloadField("divider", e.Text, WithEmptyStruct())
+		block.AddPayloadField("divider", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",

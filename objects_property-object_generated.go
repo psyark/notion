@@ -14,27 +14,27 @@ type Property struct {
 	Id             string               `json:"id"`                    // An identifier for the property, usually a short string of random letters and symbols. Some automatically generated property types have special human-readable IDs. For example, all Title properties have an id of "title".
 	Name           string               `json:"name"`                  // The name of the property as it appears in Notion.
 	Description    *string              `json:"description,omitempty"` // The description of a property as it appear in Notion.
-	Checkbox       struct{}             `json:"checkbox"`              // Checkbox
-	CreatedBy      struct{}             `json:"created_by"`            // Created by
-	CreatedTime    struct{}             `json:"created_time"`          // Created time
-	Date           struct{}             `json:"date"`                  // Date
-	Email          struct{}             `json:"email"`                 // Email
-	Files          struct{}             `json:"files"`                 // Files
+	Checkbox       *struct{}            `json:"checkbox"`              // Checkbox
+	CreatedBy      *struct{}            `json:"created_by"`            // Created by
+	CreatedTime    *struct{}            `json:"created_time"`          // Created time
+	Date           *struct{}            `json:"date"`                  // Date
+	Email          *struct{}            `json:"email"`                 // Email
+	Files          *struct{}            `json:"files"`                 // Files
 	Formula        *PropertyFormula     `json:"formula"`               // Formula
-	LastEditedBy   struct{}             `json:"last_edited_by"`        // Last edited by
-	LastEditedTime struct{}             `json:"last_edited_time"`      // Last edited time
+	LastEditedBy   *struct{}            `json:"last_edited_by"`        // Last edited by
+	LastEditedTime *struct{}            `json:"last_edited_time"`      // Last edited time
 	MultiSelect    *PropertyMultiSelect `json:"multi_select"`          // Multi-select
 	Number         *PropertyNumber      `json:"number"`                // Number
-	People         struct{}             `json:"people"`                // People
-	PhoneNumber    struct{}             `json:"phone_number"`          // Phone number
+	People         *struct{}            `json:"people"`                // People
+	PhoneNumber    *struct{}            `json:"phone_number"`          // Phone number
 	Relation       *PropertyRelation    `json:"relation"`              // Relation
-	RichText       struct{}             `json:"rich_text"`             // Rich text
+	RichText       *struct{}            `json:"rich_text"`             // Rich text
 	Rollup         *PropertyRollup      `json:"rollup"`                // Rollup
 	Select         *PropertySelect      `json:"select"`                // Select
 	Status         *PropertyStatus      `json:"status"`                // Status
-	Title          struct{}             `json:"title"`                 // Title
-	Url            struct{}             `json:"url"`                   // URL
-	Button         struct{}             `json:"button"`                // UNDOCUMENTED
+	Title          *struct{}            `json:"title"`                 // Title
+	Url            *struct{}            `json:"url"`                   // URL
+	Button         *struct{}            `json:"button"`                // UNDOCUMENTED
 	UniqueId       *PropertyUniqueId    `json:"unique_id"`             // UNDOCUMENTED
 }
 
@@ -149,7 +149,7 @@ type PropertyNumber struct {
 // A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.
 type PropertyRelation struct {
 	Type           string                        `json:"type"`
-	SingleProperty struct{}                      `json:"single_property"` // undocumented
+	SingleProperty *struct{}                     `json:"single_property"` // undocumented
 	DualProperty   *PropertyRelationDualProperty `json:"dual_property"`   // undocumented
 	DatabaseId     uuid.UUID                     `json:"database_id"`     // The database that the relation property refers to. The corresponding linked page values must belong to the database in order to be valid.
 }

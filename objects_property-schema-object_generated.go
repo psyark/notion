@@ -69,8 +69,8 @@ type PropertySchemaFormula struct {
 type PropertySchemaRelation struct {
 	Type           string    `json:"type"`
 	DatabaseId     uuid.UUID `json:"database_id"`     // The database this relation refers to. This database must be shared with the integration.
-	SingleProperty struct{}  `json:"single_property"` // Single property relation objects have no additional configuration within the single_property property.
-	DualProperty   struct{}  `json:"dual_property"`   // Dual property relation objects have no additional configuration within the dual_property property.
+	SingleProperty *struct{} `json:"single_property"` // Single property relation objects have no additional configuration within the single_property property.
+	DualProperty   *struct{} `json:"dual_property"`   // Dual property relation objects have no additional configuration within the dual_property property.
 }
 
 func (o PropertySchemaRelation) MarshalJSON() ([]byte, error) {

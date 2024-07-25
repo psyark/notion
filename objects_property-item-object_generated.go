@@ -112,14 +112,14 @@ func (o PropertyItem) MarshalJSON() ([]byte, error) {
 
 // The title, rich_text, relation and people property items of are returned as a paginated list object of individual property_item objects in the results. An abridged set of the the properties found in the list object are found below, see the Pagination documentation for additional information.
 type PaginatedPropertyInfo struct {
-	Type     string   `json:"type"`
-	Id       string   `json:"id"` // UNDOCUMENTED
-	Title    struct{} `json:"title"`
-	RichText struct{} `json:"rich_text"`
-	Relation struct{} `json:"relation"`
-	People   struct{} `json:"people"`
-	Rollup   Rollup   `json:"rollup"`   // UNDOCUMENTED
-	NextUrl  *string  `json:"next_url"` // The URL the user can request to get the next page of results.
+	Type     string    `json:"type"`
+	Id       string    `json:"id"` // UNDOCUMENTED
+	Title    *struct{} `json:"title"`
+	RichText *struct{} `json:"rich_text"`
+	Relation *struct{} `json:"relation"`
+	People   *struct{} `json:"people"`
+	Rollup   Rollup    `json:"rollup"`   // UNDOCUMENTED
+	NextUrl  *string   `json:"next_url"` // The URL the user can request to get the next page of results.
 }
 
 func (o PaginatedPropertyInfo) MarshalJSON() ([]byte, error) {
@@ -165,7 +165,7 @@ type Rollup struct {
 	Number     *float64          `json:"number"`     // Number rollup property values contain a number within the number property.
 	Date       *PropertyItemDate `json:"date"`       // Date rollup property values contain a date property value within the date property.
 	Array      []PropertyValue   `json:"array"`      // Array rollup property values contain an array of property_item objects within the results property.
-	Incomplete struct{}          `json:"incomplete"` // Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type "incomplete". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.
+	Incomplete *struct{}         `json:"incomplete"` // Rollups with an aggregation with more than one page of aggregated results will return a rollup object of type "incomplete". To obtain the final value paginate through the next values in the rollup using the next_cursor or next_url property.
 }
 
 func (o Rollup) MarshalJSON() ([]byte, error) {

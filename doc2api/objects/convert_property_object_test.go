@@ -63,7 +63,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Checkbox",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("checkbox", e.Text, WithEmptyStruct())
+		property.AddPayloadField("checkbox", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -80,7 +80,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Created by",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("created_by", e.Text, WithEmptyStruct())
+		property.AddPayloadField("created_by", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -101,7 +101,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Created time",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("created_time", e.Text, WithEmptyStruct())
+		property.AddPayloadField("created_time", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -122,7 +122,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Date",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("date", e.Text, WithEmptyStruct())
+		property.AddPayloadField("date", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -144,7 +144,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Email",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("email", e.Text, WithEmptyStruct())
+		property.AddPayloadField("email", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -165,7 +165,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Files",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("files", e.Text, WithEmptyStruct())
+		property.AddPayloadField("files", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Blockquote",
@@ -221,7 +221,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Last edited by",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("last_edited_by", e.Text, WithEmptyStruct())
+		property.AddPayloadField("last_edited_by", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A last edited by database property is rendered in the Notion UI as a column that contains people mentions of the person who last edited each row as values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The last_edited_by type object is empty. There is no additional property configuration."})
@@ -230,7 +230,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Last edited time",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("last_edited_time", e.Text, WithEmptyStruct())
+		property.AddPayloadField("last_edited_time", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A last edited time database property is rendered in the Notion UI as a column that contains timestamps of when each row was last edited as values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The last_edited_time type object is empty. There is no additional property configuration."})
@@ -326,7 +326,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "People",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("people", e.Text, WithEmptyStruct())
+		property.AddPayloadField("people", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -343,7 +343,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Phone number",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("phone_number", e.Text, WithEmptyStruct())
+		property.AddPayloadField("phone_number", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -375,7 +375,7 @@ func TestProperty(t *testing.T) {
 			Text: "A relation database property is rendered in the Notion UI as column that contains relations, references to pages in another database, as values.",
 		}).Output(func(e *Block, b *CodeBuilder) {
 			propertyRelation = b.AddUnionStruct("PropertyRelation", "type", e.Text)
-			propertyRelation.AddPayloadField("single_property", "undocumented", WithEmptyStruct())
+			propertyRelation.AddPayloadField("single_property", "undocumented", WithEmptyStructRef())
 			propertyRelationDualProperty = propertyRelation.AddPayloadField("dual_property", "undocumented", WithPayloadObject(b))
 		})
 
@@ -423,7 +423,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Rich text",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("rich_text", e.Text, WithEmptyStruct())
+		property.AddPayloadField("rich_text", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -666,7 +666,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "Title",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("title", e.Text, WithEmptyStruct())
+		property.AddPayloadField("title", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A title database property controls the title that appears at the top of a page when a database row is opened. The title type object itself is empty; there is no additional configuration."})
 	c.ExpectBlock(&Block{
@@ -682,7 +682,7 @@ func TestProperty(t *testing.T) {
 		Kind: "Heading",
 		Text: "URL",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		property.AddPayloadField("url", e.Text, WithEmptyStruct())
+		property.AddPayloadField("url", e.Text, WithEmptyStructRef())
 	})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "A URL database property is represented in the Notion UI as a column that contains URL values."})
 	c.ExpectBlock(&Block{Kind: "Paragraph", Text: "The url type object is empty. There is no additional property configuration."})
@@ -694,7 +694,7 @@ func TestProperty(t *testing.T) {
 	})
 
 	c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
-		property.AddPayloadField("button", UNDOCUMENTED, WithEmptyStruct())
+		property.AddPayloadField("button", UNDOCUMENTED, WithEmptyStructRef())
 		payload := property.AddPayloadField("unique_id", UNDOCUMENTED, WithPayloadObject(b))
 		payload.AddFields(b.NewField(&Parameter{Property: "prefix", Description: UNDOCUMENTED}, jen.Op("*").String()))
 	})

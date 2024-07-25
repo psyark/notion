@@ -93,7 +93,7 @@ func TestClient(t *testing.T) {
 			"メール":      {Email: &struct{}{}},
 			"電話":       {Email: &struct{}{}},
 			"数式":       {Formula: &PropertySchemaFormula{}},
-			"リレーション":   {Relation: &PropertySchemaRelation{Type: "single_property", DatabaseId: DATABASE}},
+			"リレーション":   {Relation: &PropertySchemaRelation{SingleProperty: &struct{}{}, DatabaseId: DATABASE}},
 			"ロールアップ":   {Rollup: &PropertySchemaRollup{RollupPropertyId: "title", RelationPropertyName: "リレーション", Function: "show_original"}},
 			"作成日時":     {CreatedTime: &struct{}{}},
 			"作成者":      {CreatedBy: &struct{}{}},
@@ -109,6 +109,37 @@ func TestClient(t *testing.T) {
 	t.Run("RetrieveDatabase", func(t *testing.T) {
 		t.Parallel()
 		lo.Must(client.RetrieveDatabase(ctx, generatedDatabase.Id, WithValidator(compareJSON(t))))
+	})
+
+	t.Run("AppendBlockChildren", func(t *testing.T) {
+		t.Parallel()
+		params := AppendBlockChildrenParams{}
+		params.Children([]Block{
+			{Divider: &struct{}{}},
+
+			{Bookmark: &BlockBookmark{Url: "http://example.com"}},
+			{Breadcrumb: &struct{}{}},
+			{BulletedListItem: &BlockBulletedListItem{RichText: []RichText{{Text: &RichTextText{Content: "箇条書きリスト"}}}}},
+			{Callout: &BlockCallout{
+				RichText: []RichText{{Text: &RichTextText{Content: "コールアウト"}}},
+				Icon:     &Emoji{Emoji: "🍣"},
+			}},
+			{Code: &BlockCode{
+				RichText: []RichText{{Text: &RichTextText{Content: `// hoge`}}},
+				Language: "go",
+			}},
+			{Image: &File{External: &FileExternal{Url: "https://placehold.jp/640x640.png"}}},
+			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
+			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
+			{Heading3: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 3"}}}}},
+			{ToDo: &BlockToDo{RichText: []RichText{{Text: &RichTextText{Content: "To Do"}}}}},
+			{SyncedBlock: &BlockSyncedBlock{
+				Children: []Block{
+					{Paragraph: &BlockParagraph{RichText: []RichText{{Text: &RichTextText{Content: "synced"}}}}},
+				},
+			}},
+		})
+		lo.Must(client.AppendBlockChildren(ctx, generatedPage.Id, params, WithValidator(compareJSON(t))))
 	})
 }
 
@@ -199,28 +230,4 @@ func TestRetrieveBlockChildren(t *testing.T) {
 			lo.Must(client.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))))
 		})
 	}
-
-	t.Run("AppendBlockChildren", func(t *testing.T) {
-		params := AppendBlockChildrenParams{}
-		params.Children([]Block{
-			{Type: "breadcrumb"},
-			{Heading1: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 1"}}}}},
-			{Heading2: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 2"}}}}},
-			{Heading3: &BlockHeading{RichText: []RichText{{Text: &RichTextText{Content: "Heading 3"}}}}},
-			{ToDo: &BlockToDo{RichText: []RichText{{Text: &RichTextText{Content: "To Do"}}}}},
-			{Callout: &BlockCallout{
-				RichText: []RichText{{Text: &RichTextText{Content: "Callout"}}},
-				Icon:     &Emoji{Emoji: "🍣"},
-				Children: []Block{
-					{Image: &File{External: &FileExternal{Url: "https://placehold.jp/640x640.png"}}},
-				},
-			}},
-			{SyncedBlock: &BlockSyncedBlock{
-				Children: []Block{
-					{Paragraph: &BlockParagraph{RichText: []RichText{{Text: &RichTextText{Content: "synced"}}}}},
-				},
-			}},
-		})
-		lo.Must(client.AppendBlockChildren(ctx, STANDALONE_PAGE, params, WithValidator(compareJSON(t))))
-	})
 }

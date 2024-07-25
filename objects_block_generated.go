@@ -27,15 +27,15 @@ type Block struct {
 	InTrash          bool                   `json:"in_trash"`                   // Whether the block has been deleted.
 	HasChildren      bool                   `json:"has_children"`               // Whether or not the block has children blocks nested within it.
 	Bookmark         *BlockBookmark         `json:"bookmark"`                   // Bookmark
-	Breadcrumb       struct{}               `json:"breadcrumb"`                 // Breadcrumb block objects do not contain any information within the breadcrumb property.
+	Breadcrumb       *struct{}              `json:"breadcrumb"`                 // Breadcrumb block objects do not contain any information within the breadcrumb property.
 	BulletedListItem *BlockBulletedListItem `json:"bulleted_list_item"`         // Bulleted list item
 	Callout          *BlockCallout          `json:"callout"`                    // Callout
 	ChildDatabase    *BlockChildDatabase    `json:"child_database"`             // Child database
 	ChildPage        *BlockChildPage        `json:"child_page"`                 // Child page
 	Code             *BlockCode             `json:"code"`                       // Code
-	ColumnList       struct{}               `json:"column_list"`                // Column lists are parent blocks for columns. They do not contain any information within the column_list property.
-	Column           struct{}               `json:"column"`                     // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
-	Divider          struct{}               `json:"divider"`                    // Divider block objects do not contain any information within the divider property.
+	ColumnList       *struct{}              `json:"column_list"`                // Column lists are parent blocks for columns. They do not contain any information within the column_list property.
+	Column           *struct{}              `json:"column"`                     // Columns are parent blocks for any block types listed in this reference except for other columns. They do not contain any information within the column property. They can only be appended to column_lists.
+	Divider          *struct{}              `json:"divider"`                    // Divider block objects do not contain any information within the divider property.
 	Embed            *BlockEmbed            `json:"embed"`                      // Embed
 	Equation         *BlockEquation         `json:"equation"`                   // Equation
 	File             *File                  `json:"file"`                       // File

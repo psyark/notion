@@ -285,14 +285,14 @@ func TestPropertySchema(t *testing.T) {
 			Kind: "Paragraph",
 			Text: "Single property relation objects have no additional configuration within the single_property property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			payload.AddPayloadField("single_property", e.Text, WithEmptyStruct())
+			payload.AddPayloadField("single_property", e.Text, WithEmptyStructRef())
 		})
 		c.ExpectBlock(&Block{Kind: "Heading", Text: "Dual property relation configuration"})
 		c.ExpectBlock(&Block{
 			Kind: "Paragraph",
 			Text: "Dual property relation objects have no additional configuration within the dual_property property.",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			payload.AddPayloadField("dual_property", e.Text, WithEmptyStruct())
+			payload.AddPayloadField("dual_property", e.Text, WithEmptyStructRef())
 		})
 	}
 
