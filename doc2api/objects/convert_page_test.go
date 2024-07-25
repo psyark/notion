@@ -137,7 +137,7 @@ func TestPage(t *testing.T) {
 		Description:  "Property values of this page. As of version 2022-06-28, properties only contains the ID of the property; in prior versions properties contained the values as well.  \n  \nIf parent.type is \"page_id\" or \"workspace\", then the only valid key is title.  \n  \nIf parent.type is \"database_id\", then the keys and values of this field are determined by the properties  of the database this page belongs to.  \n  \nkey string  \nName of a property as it appears in Notion.  \n  \nvalue object  \nSee Property value object.",
 		ExampleValue: `{ "id": "A%40Hk" }`,
 	}).Output(func(e *Parameter, b *CodeBuilder) {
-		page.AddFields(b.NewField(e, jen.Map(jen.String()).Id("PropertyValue")))
+		page.AddFields(b.NewField(e, jen.Id("PropertyValueMap")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "parent",

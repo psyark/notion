@@ -49,7 +49,7 @@ func (c *Client) UpdatePageProperties(ctx context.Context, page_id uuid.UUID, pa
 type UpdatePagePropertiesParams map[string]any
 
 // The property values to update for the page. The keys are the names or IDs of the property and the values are property values. If a page property ID is not included, then it is not changed.
-func (p UpdatePagePropertiesParams) Properties(properties map[string]PropertyValue) UpdatePagePropertiesParams {
+func (p UpdatePagePropertiesParams) Properties(properties PropertyValueMap) UpdatePagePropertiesParams {
 	p["properties"] = properties
 	return p
 }

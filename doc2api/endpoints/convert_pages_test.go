@@ -12,7 +12,7 @@ func TestCreatePage(t *testing.T) {
 
 	Fetch("https://developers.notion.com/reference/post-page").Generate(StructRef("Page"), ParamAnnotations{
 		"parent":     jen.Id("Parent"),
-		"properties": jen.Map(jen.String()).Id("PropertyValue"),
+		"properties": jen.Id("PropertyValueMap"),
 		"children":   jen.Index().Id("Block"),
 		"icon":       jen.Id("FileOrEmoji"),
 		"cover":      jen.Id("File"),
@@ -41,7 +41,7 @@ func TestUpdatePageProperties(t *testing.T) {
 
 	Fetch("https://developers.notion.com/reference/patch-page").Generate(StructRef("Page"), ParamAnnotations{
 		"page_id":    UUID,
-		"properties": jen.Map(jen.String()).Id("PropertyValue"),
+		"properties": jen.Id("PropertyValueMap"),
 		"in_trash":   jen.Bool(),
 		"icon":       jen.Id("FileOrEmoji"),
 		"cover":      jen.Id("File"),

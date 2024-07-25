@@ -54,7 +54,7 @@ func (p CreatePageParams) Parent(parent Parent) CreatePageParams {
 }
 
 // The values of the page’s properties. If the `parent` is a database, then the schema must match the parent database’s properties. If the `parent` is a page, then the only valid object key is `title`.
-func (p CreatePageParams) Properties(properties map[string]PropertyValue) CreatePageParams {
+func (p CreatePageParams) Properties(properties PropertyValueMap) CreatePageParams {
 	p["properties"] = properties
 	return p
 }
