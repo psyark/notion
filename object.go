@@ -50,14 +50,6 @@ func (e Error) Error() string {
 	return fmt.Sprintf("(%v) %v", e.Code, e.Message)
 }
 
-func String(rta []RichText) string {
-	str := ""
-	for _, rt := range rta {
-		str += rt.PlainText
-	}
-	return str
-}
-
 func defined(fieldValue any) bool {
 	v := reflect.ValueOf(fieldValue)
 
