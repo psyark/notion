@@ -9,6 +9,7 @@ import (
 	"github.com/psyark/notion/json"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/wI2L/jsondiff"
 )
 
 type PropertyMap map[string]Property // for test
@@ -81,5 +82,11 @@ func checkUnmarshal[T any](t *testing.T, wantStr string) {
 	var target T
 	lo.Must0(json.Unmarshal([]byte(wantStr), &target))
 	got := string(lo.Must(json.MarshalIndent(&target, "", "  ")))
+
+	patch := lo.Must(jsondiff.CompareJSON([]byte(wantStr), []byte(got)))
+	for _, diff := range patch {
+		t.Error(diff)
+	}
+
 	assert.JSONEq(t, wantStr, got)
 }

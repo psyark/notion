@@ -14,6 +14,19 @@ func TestProperty(t *testing.T) {
 
 	c := converter.FetchDocument("https://developers.notion.com/reference/property-object")
 
+	// rewriteInaccurateExampleJSON_AddDescription := func(jsonStr string, pathToOptions ...string) string {
+	// 	return rewriteInaccurateExampleJSON(jsonStr, func(data any) any {
+	// 		for _, p := range pathToOptions {
+	// 			data = data.(map[string]any)[p]
+	// 		}
+	// 		options := data.([]any)
+	// 		for i := range options {
+	// 			options[i].(map[string]any)["description"] = nil
+	// 		}
+	// 		return data
+	// 	})
+	// }
+
 	var property *UnionStruct
 
 	c.ExpectBlock(&Block{
@@ -287,7 +300,14 @@ func TestProperty(t *testing.T) {
 		Kind: "FencedCodeBlock",
 		Text: "\"Store availability\": {\n  \"id\": \"flsb\",\n  \"name\": \"Store availability\",\n  \"type\": \"multi_select\",\n  \"multi_select\": {\n    \"options\": [\n      {\n        \"id\": \"5de29601-9c24-4b04-8629-0bca891c5120\",\n        \"name\": \"Duc Loi Market\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"385890b8-fe15-421b-b214-b02959b0f8d9\",\n        \"name\": \"Rainbow Grocery\",\n        \"color\": \"gray\"\n      },\n      {\n        \"id\": \"72ac0a6c-9e00-4e8c-80c5-720e4373e0b9\",\n        \"name\": \"Nijiya Market\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"9556a8f7-f4b0-4e11-b277-f0af1f8c9490\",\n        \"name\": \"Gus's Community Market\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}\n",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		converter.AddUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
+		jsonStr := rewriteInaccurateExampleJSON(fmt.Sprintf(`{%s}`, e.Text), func(data any) any {
+			options := data.(map[string]any)["Store availability"].(map[string]any)["multi_select"].(map[string]any)["options"].([]any)
+			for i := range options {
+				options[i].(map[string]any)["description"] = nil
+			}
+			return data
+		})
+		converter.AddUnmarshalTest("PropertyMap", jsonStr)
 	})
 
 	{
@@ -561,11 +581,18 @@ func TestProperty(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "\"Food group\": {\n  \"id\": \"%40Q%5BM\",\n  \"name\": \"Food group\",\n  \"type\": \"select\",\n  \"select\": {\n    \"options\": [\n      {\n        \"id\": \"e28f74fc-83a7-4469-8435-27eb18f9f9de\",\n        \"name\": \"🥦Vegetable\",\n        \"color\": \"purple\"\n      },\n      {\n        \"id\": \"6132d771-b283-4cd9-ba44-b1ed30477c7f\",\n        \"name\": \"🍎Fruit\",\n        \"color\": \"red\"\n      },\n      {\n        \"id\": \"fc9ea861-820b-4f2b-bc32-44ed9eca873c\",\n        \"name\": \"💪Protein\",\n        \"color\": \"yellow\"\n      }\n    ]\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			converter.AddUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
+			jsonStr := rewriteInaccurateExampleJSON(fmt.Sprintf(`{%s}`, e.Text), func(data any) any {
+				options := data.(map[string]any)["Food group"].(map[string]any)["select"].(map[string]any)["options"].([]any)
+				for i := range options {
+					options[i].(map[string]any)["description"] = nil
+				}
+				return data
+			})
+			converter.AddUnmarshalTest("PropertyMap", jsonStr)
 		})
 
 		c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
-			optionDescription.AddFields(b.NewField(&Parameter{Property: "description", Description: UNDOCUMENTED}, jen.Op("*").String()))
+			optionDescription.AddFields(b.NewField(&Parameter{Property: "description", Description: UNDOCUMENTED}, jen.Op("*").String())) // nullが入るので omitemptyにできない
 		})
 	}
 
@@ -654,7 +681,14 @@ func TestProperty(t *testing.T) {
 			Kind: "FencedCodeBlock",
 			Text: "\"Status\": {\n  \"id\": \"biOx\",\n  \"name\": \"Status\",\n  \"type\": \"status\",\n  \"status\": {\n    \"options\": [\n      {\n        \"id\": \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\",\n        \"name\": \"Not started\",\n        \"color\": \"default\"\n      },\n      {\n        \"id\": \"330aeafb-598c-4e1c-bc13-1148aa5963d3\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\"\n      },\n      {\n        \"id\": \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\",\n        \"name\": \"Done\",\n        \"color\": \"green\"\n      }\n    ],\n    \"groups\": [\n      {\n        \"id\": \"b9d42483-e576-4858-a26f-ed940a5f678f\",\n        \"name\": \"To-do\",\n        \"color\": \"gray\",\n        \"option_ids\": [\n          \"034ece9a-384d-4d1f-97f7-7f685b29ae9b\"\n        ]\n      },\n      {\n        \"id\": \"cf4952eb-1265-46ec-86ab-4bded4fa2e3b\",\n        \"name\": \"In progress\",\n        \"color\": \"blue\",\n        \"option_ids\": [\n          \"330aeafb-598c-4e1c-bc13-1148aa5963d3\"\n        ]\n      },\n      {\n        \"id\": \"4fa7348e-ae74-46d9-9585-e773caca6f40\",\n        \"name\": \"Complete\",\n        \"color\": \"green\",\n        \"option_ids\": [\n          \"497e64fb-01e2-41ef-ae2d-8a87a3bb51da\"\n        ]\n      }\n    ]\n  }\n}\n",
 		}).Output(func(e *Block, b *CodeBuilder) {
-			converter.AddUnmarshalTest("PropertyMap", fmt.Sprintf(`{%s}`, e.Text))
+			jsonStr := rewriteInaccurateExampleJSON(fmt.Sprintf(`{%s}`, e.Text), func(data any) any {
+				options := data.(map[string]any)["Status"].(map[string]any)["status"].(map[string]any)["options"].([]any)
+				for i := range options {
+					options[i].(map[string]any)["description"] = nil
+				}
+				return data
+			})
+			converter.AddUnmarshalTest("PropertyMap", jsonStr)
 		})
 		c.ExpectBlock(&Block{
 			Kind: "Blockquote",
