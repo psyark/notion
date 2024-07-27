@@ -7,14 +7,15 @@ import (
 	"testing"
 
 	"github.com/flytam/filenamify"
+	"github.com/psyark/notion"
 	"github.com/samber/lo"
 	"github.com/wI2L/jsondiff"
 )
 
-func compareJSON(t *testing.T) func([]byte, any) error {
+func compareJSON(t *testing.T) notion.CallOption {
 	fileName := lo.Must(filenamify.FilenamifyV2(t.Name()))
 
-	return func(wantBytes []byte, got any) error {
+	return notion.WithValidator(func(wantBytes []byte, got any) error {
 		gotBytes, err := json.Marshal(got)
 		if err != nil {
 			return err
@@ -40,5 +41,5 @@ func compareJSON(t *testing.T) func([]byte, any) error {
 		}
 
 		return nil
-	}
+	})
 }

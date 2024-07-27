@@ -27,7 +27,7 @@ Returns a 400 if the request is incorrectly formatted, or a 429 HTTP response if
 
 _Note: Each Public API endpoint can return several possible error codes. See the [Error codes section](https://developers.notion.com/reference/status-codes#error-codes) of the Status codes documentation for more information._
 */
-func (c *Client) CreateDatabase(ctx context.Context, params CreateDatabaseParams, options ...callOption) (*Database, error) {
+func (c *Client) CreateDatabase(ctx context.Context, params CreateDatabaseParams, options ...CallOption) (*Database, error) {
 	return call(
 		ctx,
 		c.accessToken,

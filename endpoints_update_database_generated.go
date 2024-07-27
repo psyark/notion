@@ -57,7 +57,7 @@ Each Public API endpoint can return several possible error codes. See the [Error
 >
 > To update a database [relation](https://www.notion.so/help/relations-and-rollups#what-is-a-database-relation) property, the related database must also be shared with your integration.
 */
-func (c *Client) UpdateDatabase(ctx context.Context, database_id uuid.UUID, params UpdateDatabaseParams, options ...callOption) (*Database, error) {
+func (c *Client) UpdateDatabase(ctx context.Context, database_id uuid.UUID, params UpdateDatabaseParams, options ...CallOption) (*Database, error) {
 	return call(
 		ctx,
 		c.accessToken,

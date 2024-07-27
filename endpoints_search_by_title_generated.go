@@ -27,7 +27,7 @@ Each Public API endpoint can return several possible error codes. See the [Error
 >
 > To search a specific database — not all databases shared with the integration — use the [Query a database](https://developers.notion.com/reference/post-database-query) endpoint instead.
 */
-func (c *Client) SearchByTitle(ctx context.Context, params SearchByTitleParams, options ...callOption) (*Pagination[PageOrDatabase], error) {
+func (c *Client) SearchByTitle(ctx context.Context, params SearchByTitleParams, options ...CallOption) (*Pagination[PageOrDatabase], error) {
 	return call(
 		ctx,
 		c.accessToken,

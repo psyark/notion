@@ -50,7 +50,7 @@ Returns a 400 or 429 HTTP response if the request exceeds the [request limits](r
 
 _Note: Each Public API endpoint can return several possible error codes. See the Error codes section of the Status codes documentation for more information._
 */
-func (c *Client) RetrievePage(ctx context.Context, page_id uuid.UUID, options ...callOption) (*Page, error) {
+func (c *Client) RetrievePage(ctx context.Context, page_id uuid.UUID, options ...CallOption) (*Page, error) {
 	return call(
 		ctx,
 		c.accessToken,

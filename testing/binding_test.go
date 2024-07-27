@@ -49,14 +49,14 @@ func TestBinding(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("ToTaggedStruct", func(t *testing.T) {
-		db := lo.Must(client.RetrieveDatabase(ctx, DATABASE, WithRoundTripper(useCache(t))))
+		db := lo.Must(client.RetrieveDatabase(ctx, DATABASE, useCache(t)))
 		ts := binding.ToTaggedStruct(db)
 
 		assert.Equal(t, tagged, ts)
 	})
 
 	t.Run("UnmarshalPage", func(t *testing.T) {
-		pagi := lo.Must(client.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, WithRoundTripper(useCache(t))))
+		pagi := lo.Must(client.QueryDatabase(ctx, DATABASE, QueryDatabaseParams{}, useCache(t)))
 		for _, page := range pagi.Results {
 			hoge := &TheDatabase{}
 			lo.Must0(binding.UnmarshalPage(&page, hoge))
@@ -65,7 +65,7 @@ func TestBinding(t *testing.T) {
 	})
 
 	t.Run("GetUpdatePageParams", func(t *testing.T) {
-		page := lo.Must(client.RetrievePage(ctx, DATABASE_PAGE_FOR_READ1, WithRoundTripper(useCache(t))))
+		page := lo.Must(client.RetrievePage(ctx, DATABASE_PAGE_FOR_READ1, useCache(t)))
 
 		hoge := &TheDatabase{}
 		lo.Must0(binding.UnmarshalPage(page, hoge))

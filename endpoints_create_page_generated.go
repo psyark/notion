@@ -33,7 +33,7 @@ Returns a new [page object](https://developers.notion.com/reference/page).
 
 Each Public API endpoint can return several possible error codes. See the [Error codes section](https://developers.notion.com/reference/status-codes#error-codes) of the Status codes documentation for more information.
 */
-func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...callOption) (*Page, error) {
+func (c *Client) CreatePage(ctx context.Context, params CreatePageParams, options ...CallOption) (*Page, error) {
 	return call(
 		ctx,
 		c.accessToken,

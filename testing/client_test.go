@@ -71,7 +71,7 @@ func TestClient(t *testing.T) {
 
 	t.Run("RetrievePage", func(t *testing.T) {
 		t.Parallel()
-		lo.Must(client.RetrievePage(ctx, generatedPage.Id, WithRoundTripper(useCache(t)), WithValidator(compareJSON(t))))
+		lo.Must(client.RetrievePage(ctx, generatedPage.Id, useCache(t), compareJSON(t)))
 	})
 
 	var generatedDatabase *Database
@@ -104,7 +104,7 @@ func TestClient(t *testing.T) {
 			"ID":       {UniqueId: &PropertySchemaUniqueId{Prefix: lo.ToPtr("OK")}},
 		})
 
-		generatedDatabase = lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
+		generatedDatabase = lo.Must(client.CreateDatabase(ctx, params, compareJSON(t)))
 
 		t.Run("CreatePage", func(t *testing.T) {
 			params := CreatePageParams{}
@@ -125,13 +125,13 @@ func TestClient(t *testing.T) {
 				"電話":       {Email: lo.ToPtr("117")},
 				"リレーション":   {Relation: []PageReference{}},
 			})
-			lo.Must(client.CreatePage(ctx, params, WithValidator(compareJSON(t))))
+			lo.Must(client.CreatePage(ctx, params, compareJSON(t)))
 		})
 	})
 
 	t.Run("RetrieveDatabase", func(t *testing.T) {
 		t.Parallel()
-		lo.Must(client.RetrieveDatabase(ctx, generatedDatabase.Id, WithValidator(compareJSON(t))))
+		lo.Must(client.RetrieveDatabase(ctx, generatedDatabase.Id, compareJSON(t)))
 	})
 
 	t.Run("AppendBlockChildren", func(t *testing.T) {
@@ -162,13 +162,13 @@ func TestClient(t *testing.T) {
 				},
 			}},
 		})
-		lo.Must(client.AppendBlockChildren(ctx, generatedPage.Id, params, WithValidator(compareJSON(t))))
+		lo.Must(client.AppendBlockChildren(ctx, generatedPage.Id, params, compareJSON(t)))
 	})
 }
 
 func TestRetrievePagePropertyItem(t *testing.T) {
 	ctx := context.Background()
-	if db, err := client.RetrieveDatabase(ctx, DATABASE, WithRoundTripper(useCache(t)), WithValidator(compareJSON(t))); err != nil {
+	if db, err := client.RetrieveDatabase(ctx, DATABASE, useCache(t), compareJSON(t)); err != nil {
 		t.Fatal(err)
 	} else {
 		for name, prop := range db.Properties {
@@ -176,7 +176,7 @@ func TestRetrievePagePropertyItem(t *testing.T) {
 			for i, pageId := range []uuid.UUID{DATABASE_PAGE_FOR_READ1, DATABASE_PAGE_FOR_READ2} {
 				testName := fmt.Sprintf("%s_%d", name, i+1)
 				t.Run(testName, func(t *testing.T) {
-					if _, err := client.RetrievePagePropertyItem(ctx, pageId, prop.Id, WithRoundTripper(useCache(t)), WithValidator(compareJSON(t))); err != nil {
+					if _, err := client.RetrievePagePropertyItem(ctx, pageId, prop.Id, useCache(t), compareJSON(t)); err != nil {
 						t.Fatal(err)
 					}
 				})
@@ -212,7 +212,7 @@ func TestUpdatePage(t *testing.T) {
 		t.Run(fmt.Sprintf("#%v", i), func(t *testing.T) {
 			params := UpdatePagePropertiesParams{}
 			config(params)
-			if _, err := client.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, WithValidator(compareJSON(t)), WithRoundTripper(useCache(t))); err != nil {
+			if _, err := client.UpdatePageProperties(ctx, DATABASE_PAGE_FOR_WRITE, params, compareJSON(t), useCache(t)); err != nil {
 				x, _ := json.MarshalIndent(params, "", "  ")
 				fmt.Println(string(x))
 				t.Fatal(err)
@@ -235,7 +235,7 @@ func TestQueryDatabase(t *testing.T) {
 		filter := filter
 		t.Run(fmt.Sprintf("%s_%d", filter.Property, i), func(t *testing.T) {
 			params.Filter(filter)
-			if pagi, err := client.QueryDatabase(ctx, DATABASE, params, WithRoundTripper(useCache(t)), WithValidator(compareJSON(t))); err != nil {
+			if pagi, err := client.QueryDatabase(ctx, DATABASE, params, useCache(t), compareJSON(t)); err != nil {
 				t.Fatal(err)
 			} else {
 				fmt.Println(len(pagi.Results))
@@ -247,10 +247,10 @@ func TestQueryDatabase(t *testing.T) {
 func TestRetrieveBlockChildren(t *testing.T) {
 	ctx := context.Background()
 
-	pagi := lo.Must(client.RetrieveBlockChildren(ctx, STANDALONE_PAGE, WithValidator(compareJSON(t))))
+	pagi := lo.Must(client.RetrieveBlockChildren(ctx, STANDALONE_PAGE, compareJSON(t)))
 	for _, block := range pagi.Results {
 		t.Run(block.Id.String(), func(t *testing.T) {
-			lo.Must(client.DeleteBlock(ctx, block.Id, WithValidator(compareJSON(t))))
+			lo.Must(client.DeleteBlock(ctx, block.Id, compareJSON(t)))
 		})
 	}
 }

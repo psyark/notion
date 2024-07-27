@@ -49,7 +49,7 @@ func (r endpointDocument) Generate(returnType ReturnType, paramAnnots ParamAnnot
 			g.Id("params").Id(r.paramsName())
 		}
 
-		g.Id("options").Op("...").Id("callOption")
+		g.Id("options").Op("...").Id("CallOption")
 	}).Params(returnType.Type(), jen.Error()).BlockFunc(func(g *jen.Group) {
 		g.Return().Id("call").Call(
 			jen.Line().Id("ctx"),

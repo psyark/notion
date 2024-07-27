@@ -54,7 +54,7 @@ Each Public API endpoint can return several possible error codes. See the [Error
 >
 > To fetch the information in a [linked database](https://www.notion.so/help/guides/using-linked-databases), share the original source database with your Notion integration.
 */
-func (c *Client) RetrieveDatabase(ctx context.Context, database_id uuid.UUID, options ...callOption) (*Database, error) {
+func (c *Client) RetrieveDatabase(ctx context.Context, database_id uuid.UUID, options ...CallOption) (*Database, error) {
 	return call(
 		ctx,
 		c.accessToken,

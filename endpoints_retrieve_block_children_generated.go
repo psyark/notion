@@ -35,7 +35,7 @@ Returns a 400 or 429 HTTP response if the request exceeds the [request limits](r
 
 _Note: Each Public API endpoint can return several possible error codes. See the [Error codes section](https://developers.notion.com/reference/status-codes#error-codes) of the Status codes documentation for more information._
 */
-func (c *Client) RetrieveBlockChildren(ctx context.Context, block_id uuid.UUID, options ...callOption) (*Pagination[Block], error) {
+func (c *Client) RetrieveBlockChildren(ctx context.Context, block_id uuid.UUID, options ...CallOption) (*Pagination[Block], error) {
 	return call(
 		ctx,
 		c.accessToken,

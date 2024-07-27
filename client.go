@@ -25,15 +25,15 @@ type callOptions struct {
 	validator    func(wantBytes []byte, got any) error
 }
 
-type callOption func(*callOptions)
+type CallOption func(*callOptions)
 
-func WithRoundTripper(roundTripper http.RoundTripper) callOption {
+func WithRoundTripper(roundTripper http.RoundTripper) CallOption {
 	return func(co *callOptions) {
 		co.roundTripper = roundTripper
 	}
 }
 
-func WithValidator(validator func(data []byte, unmarshaler any) error) callOption {
+func WithValidator(validator func(data []byte, unmarshaler any) error) CallOption {
 	return func(co *callOptions) {
 		co.validator = validator
 	}
@@ -43,7 +43,7 @@ func accessValue[T any](v T) T {
 	return v
 }
 
-func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, accessor func(unmarshaler U) R, options ...callOption) (R, error) {
+func call[U any, R any](ctx context.Context, accessToken string, method string, path string, params map[string]any, accessor func(unmarshaler U) R, options ...CallOption) (R, error) {
 	var unmarshaler U
 	var zero R
 

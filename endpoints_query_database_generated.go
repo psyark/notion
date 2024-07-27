@@ -133,7 +133,7 @@ Returns a 400 or a 429 HTTP response if the request exceeds the [request limits]
 
 _Note: Each Public API endpoint can return several possible error codes. See the [Error codes section](https://developers.notion.com/reference/status-codes#error-codes) of the Status codes documentation for more information._
 */
-func (c *Client) QueryDatabase(ctx context.Context, database_id uuid.UUID, params QueryDatabaseParams, options ...callOption) (*Pagination[Page], error) {
+func (c *Client) QueryDatabase(ctx context.Context, database_id uuid.UUID, params QueryDatabaseParams, options ...CallOption) (*Pagination[Page], error) {
 	return call(
 		ctx,
 		c.accessToken,

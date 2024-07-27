@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/flytam/filenamify"
+	"github.com/psyark/notion"
 	"github.com/samber/lo"
 )
 
@@ -17,9 +18,9 @@ type cache struct {
 }
 
 // TODO 引数を *testing.T にする
-func useCache(t *testing.T) *cache {
+func useCache(t *testing.T) notion.CallOption {
 	fileName := lo.Must(filenamify.FilenamifyV2(t.Name()))
-	return &cache{filePath: fmt.Sprintf("testdata/cache/%s", fileName)}
+	return notion.WithRoundTripper(&cache{filePath: fmt.Sprintf("testdata/cache/%s", fileName)})
 }
 
 func (c *cache) RoundTrip(req *http.Request) (*http.Response, error) {
