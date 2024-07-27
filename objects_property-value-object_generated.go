@@ -37,6 +37,7 @@ type PropertyValue struct {
 	LastEditedTime ISO8601String          `json:"last_edited_time"` // Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. "2020-03-17T19:10:04.968Z"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.
 	LastEditedBy   User                   `json:"last_edited_by"`   // Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.
 	UniqueId       *PropertyValueUniqueId `json:"unique_id"`        // UNDOCUMENTED
+	Button         *struct{}              `json:"button"`           // UNDOCUMENTED
 }
 
 func (o PropertyValue) MarshalJSON() ([]byte, error) {
@@ -86,6 +87,8 @@ func (o PropertyValue) MarshalJSON() ([]byte, error) {
 			o.Type = "last_edited_by"
 		case defined(o.UniqueId):
 			o.Type = "unique_id"
+		case defined(o.Button):
+			o.Type = "button"
 		}
 	}
 	type Alias PropertyValue
@@ -94,6 +97,7 @@ func (o PropertyValue) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	visibility := map[string]bool{
+		"button":           o.Type == "button",
 		"checkbox":         o.Type == "checkbox",
 		"created_by":       o.Type == "created_by",
 		"created_time":     o.Type == "created_time",
