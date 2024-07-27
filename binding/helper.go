@@ -56,102 +56,52 @@ func getTypeForBinding(p notion.Property) string {
 	}
 	panic(p.Type)
 }
-func get(p *notion.PropertyValue) reflect.Value {
+func access(p *notion.PropertyValue) reflect.Value {
 	switch p.Type {
 	case "title":
-		return reflect.ValueOf(p.Title)
+		return reflect.ValueOf(&p.Title)
 	case "rich_text":
-		return reflect.ValueOf(p.RichText)
+		return reflect.ValueOf(&p.RichText)
 	case "number":
-		return reflect.ValueOf(p.Number)
+		return reflect.ValueOf(&p.Number)
 	case "select":
-		return reflect.ValueOf(p.Select)
+		return reflect.ValueOf(&p.Select)
 	case "status":
-		return reflect.ValueOf(p.Status)
+		return reflect.ValueOf(&p.Status)
 	case "multi_select":
-		return reflect.ValueOf(p.MultiSelect)
+		return reflect.ValueOf(&p.MultiSelect)
 	case "date":
-		return reflect.ValueOf(p.Date)
+		return reflect.ValueOf(&p.Date)
 	case "formula":
-		return reflect.ValueOf(p.Formula)
+		return reflect.ValueOf(&p.Formula)
 	case "relation":
-		return reflect.ValueOf(p.Relation)
+		return reflect.ValueOf(&p.Relation)
 	case "rollup":
-		return reflect.ValueOf(p.Rollup)
+		return reflect.ValueOf(&p.Rollup)
 	case "people":
-		return reflect.ValueOf(p.People)
+		return reflect.ValueOf(&p.People)
 	case "files":
-		return reflect.ValueOf(p.Files)
+		return reflect.ValueOf(&p.Files)
 	case "checkbox":
-		return reflect.ValueOf(p.Checkbox)
+		return reflect.ValueOf(&p.Checkbox)
 	case "url":
-		return reflect.ValueOf(p.Url)
+		return reflect.ValueOf(&p.Url)
 	case "email":
-		return reflect.ValueOf(p.Email)
+		return reflect.ValueOf(&p.Email)
 	case "phone_number":
-		return reflect.ValueOf(p.PhoneNumber)
+		return reflect.ValueOf(&p.PhoneNumber)
 	case "created_time":
-		return reflect.ValueOf(p.CreatedTime)
+		return reflect.ValueOf(&p.CreatedTime)
 	case "created_by":
-		return reflect.ValueOf(p.CreatedBy)
+		return reflect.ValueOf(&p.CreatedBy)
 	case "last_edited_time":
-		return reflect.ValueOf(p.LastEditedTime)
+		return reflect.ValueOf(&p.LastEditedTime)
 	case "last_edited_by":
-		return reflect.ValueOf(p.LastEditedBy)
+		return reflect.ValueOf(&p.LastEditedBy)
 	case "unique_id":
-		return reflect.ValueOf(p.UniqueId)
+		return reflect.ValueOf(&p.UniqueId)
 	case "button":
-		return reflect.ValueOf(p.Button)
+		return reflect.ValueOf(&p.Button)
 	}
 	panic(p.Type)
-}
-func set(p *notion.PropertyValue, value reflect.Value) {
-	switch p.Type {
-	case "title":
-		reflect.ValueOf(&p.Title).Elem().Set(value)
-	case "rich_text":
-		reflect.ValueOf(&p.RichText).Elem().Set(value)
-	case "number":
-		reflect.ValueOf(&p.Number).Elem().Set(value)
-	case "select":
-		reflect.ValueOf(&p.Select).Elem().Set(value)
-	case "status":
-		reflect.ValueOf(&p.Status).Elem().Set(value)
-	case "multi_select":
-		reflect.ValueOf(&p.MultiSelect).Elem().Set(value)
-	case "date":
-		reflect.ValueOf(&p.Date).Elem().Set(value)
-	case "formula":
-		reflect.ValueOf(&p.Formula).Elem().Set(value)
-	case "relation":
-		reflect.ValueOf(&p.Relation).Elem().Set(value)
-	case "rollup":
-		reflect.ValueOf(&p.Rollup).Elem().Set(value)
-	case "people":
-		reflect.ValueOf(&p.People).Elem().Set(value)
-	case "files":
-		reflect.ValueOf(&p.Files).Elem().Set(value)
-	case "checkbox":
-		reflect.ValueOf(&p.Checkbox).Elem().Set(value)
-	case "url":
-		reflect.ValueOf(&p.Url).Elem().Set(value)
-	case "email":
-		reflect.ValueOf(&p.Email).Elem().Set(value)
-	case "phone_number":
-		reflect.ValueOf(&p.PhoneNumber).Elem().Set(value)
-	case "created_time":
-		reflect.ValueOf(&p.CreatedTime).Elem().Set(value)
-	case "created_by":
-		reflect.ValueOf(&p.CreatedBy).Elem().Set(value)
-	case "last_edited_time":
-		reflect.ValueOf(&p.LastEditedTime).Elem().Set(value)
-	case "last_edited_by":
-		reflect.ValueOf(&p.LastEditedBy).Elem().Set(value)
-	case "unique_id":
-		reflect.ValueOf(&p.UniqueId).Elem().Set(value)
-	case "button":
-		reflect.ValueOf(&p.Button).Elem().Set(value)
-	default:
-		panic(p.Type)
-	}
 }

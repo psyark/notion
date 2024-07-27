@@ -138,3 +138,10 @@ func ToTaggedStruct(db *notion.Database) string {
 	code := jen.Type().Id(safeName(db.Title.String())).Struct(fields...)
 	return (&jen.Statement{code}).GoString()
 }
+
+func get(p *notion.PropertyValue) reflect.Value {
+	return access(p).Elem()
+}
+func set(p *notion.PropertyValue, value reflect.Value) {
+	access(p).Elem().Set(value)
+}

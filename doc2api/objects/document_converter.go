@@ -147,29 +147,15 @@ func (c *Converter) OutputBindingHelper() {
 		jen.Panic(jen.Id("p").Dot("Type")),
 	)
 
-	// TODO switch 分岐をするaccessメソッドと、それを利用するget/setにする
-
-	// get
-	helper.Func().Id("get").Params(jen.Id("p").Op("*").Qual("github.com/psyark/notion", "PropertyValue")).Qual("reflect", "Value").Block(
+	helper.Func().Id("access").Params(jen.Id("p").Op("*").Qual("github.com/psyark/notion", "PropertyValue")).Qual("reflect", "Value").Block(
 		jen.Switch(jen.Id("p").Dot("Type")).BlockFunc(func(g *jen.Group) {
 			for _, f := range propertyValue.fields {
 				if f, ok := f.(*VariableField); ok && f.discriminatorValue == f.name {
-					g.Case(jen.Lit(f.discriminatorValue)).Return().Qual("reflect", "ValueOf").Call(jen.Id("p").Dot(strcase.UpperCamelCase(f.name)))
+					g.Case(jen.Lit(f.discriminatorValue)).Return().Qual("reflect", "ValueOf").Call(jen.Op("&").Id("p").Dot(strcase.UpperCamelCase(f.name)))
 				}
 			}
 		}),
 		jen.Panic(jen.Id("p").Dot("Type")),
-	)
-	// set
-	helper.Func().Id("set").Params(jen.Id("p").Op("*").Qual("github.com/psyark/notion", "PropertyValue"), jen.Id("value").Qual("reflect", "Value")).Block(
-		jen.Switch(jen.Id("p").Dot("Type")).BlockFunc(func(g *jen.Group) {
-			for _, f := range propertyValue.fields {
-				if f, ok := f.(*VariableField); ok && f.discriminatorValue == f.name {
-					g.Case(jen.Lit(f.discriminatorValue)).Qual("reflect", "ValueOf").Call(jen.Op("&").Id("p").Dot(strcase.UpperCamelCase(f.name))).Dot("Elem").Call().Dot("Set").Call(jen.Id("value"))
-				}
-			}
-			g.Default().Panic(jen.Id("p").Dot("Type"))
-		}),
 	)
 
 	if err := helper.Save("../../binding/helper.go"); err != nil {
