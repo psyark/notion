@@ -668,4 +668,10 @@ func TestPropertyValue(t *testing.T) {
 	}).Output(func(e *Block, b *CodeBuilder) {
 		propertyValue.AddPayloadField("last_edited_by", e.Text, WithType(jen.Id("User")))
 	})
+
+	c.RequestBuilderForUndocumented(func(b *CodeBuilder) {
+		payload := propertyValue.AddPayloadField("unique_id", UNDOCUMENTED, WithPayloadObject(b))
+		payload.AddFields(b.NewField(&Parameter{Property: "number", Description: UNDOCUMENTED}, jen.Int()))
+		payload.AddFields(b.NewField(&Parameter{Property: "prefix", Description: UNDOCUMENTED}, jen.String()))
+	})
 }

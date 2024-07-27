@@ -49,6 +49,8 @@ func getTypeForBinding(p notion.Property) string {
 		return "ISO8601String"
 	case "last_edited_by":
 		return "User"
+	case "unique_id":
+		return "*PropertyValueUniqueId"
 	}
 	panic(p.Type)
 }
@@ -94,6 +96,8 @@ func get(p *notion.PropertyValue) reflect.Value {
 		return reflect.ValueOf(p.LastEditedTime)
 	case "last_edited_by":
 		return reflect.ValueOf(p.LastEditedBy)
+	case "unique_id":
+		return reflect.ValueOf(p.UniqueId)
 	}
 	panic(p.Type)
 }
@@ -139,6 +143,8 @@ func set(p *notion.PropertyValue, value reflect.Value) {
 		reflect.ValueOf(&p.LastEditedTime).Elem().Set(value)
 	case "last_edited_by":
 		reflect.ValueOf(&p.LastEditedBy).Elem().Set(value)
+	case "unique_id":
+		reflect.ValueOf(&p.UniqueId).Elem().Set(value)
 	default:
 		panic(p.Type)
 	}

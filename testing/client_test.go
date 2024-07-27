@@ -104,6 +104,13 @@ func TestClient(t *testing.T) {
 		})
 
 		generatedDatabase = lo.Must(client.CreateDatabase(ctx, params, WithValidator(compareJSON(t))))
+
+		t.Run("CreatePage", func(t *testing.T) {
+			params := CreatePageParams{}
+			params.Parent(Parent{DatabaseId: generatedDatabase.Id})
+			params.Properties(PropertyValueMap{})
+			lo.Must(client.CreatePage(ctx, params, WithValidator(compareJSON(t))))
+		})
 	})
 
 	t.Run("RetrieveDatabase", func(t *testing.T) {
