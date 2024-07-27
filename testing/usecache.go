@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"testing"
 
 	"github.com/flytam/filenamify"
 	"github.com/samber/lo"
@@ -16,8 +17,8 @@ type cache struct {
 }
 
 // TODO 引数を *testing.T にする
-func useCache(requestID string) *cache {
-	fileName := lo.Must(filenamify.FilenamifyV2(requestID))
+func useCache(t *testing.T) *cache {
+	fileName := lo.Must(filenamify.FilenamifyV2(t.Name()))
 	return &cache{filePath: fmt.Sprintf("testdata/cache/%s", fileName)}
 }
 
