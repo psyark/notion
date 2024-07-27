@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"testing"
@@ -107,8 +108,23 @@ func TestClient(t *testing.T) {
 
 		t.Run("CreatePage", func(t *testing.T) {
 			params := CreatePageParams{}
+			params.Cover(File{External: &FileExternal{Url: "https://picsum.photos/200"}})
+			params.Icon(Emoji{Emoji: "🍣"})
 			params.Parent(Parent{DatabaseId: generatedDatabase.Id})
-			params.Properties(PropertyValueMap{})
+			params.Properties(PropertyValueMap{
+				"タイトル":     {Title: NewRichTextArray("生成されたエントリー")},
+				"テキスト":     {RichText: NewRichTextArray("これは生成されたエントリーです")},
+				"数値":       {Number: lo.ToPtr(math.Pi)},
+				"セレクト":     {Select: &Option{Name: "赤"}},
+				"マルチセレクト":  {MultiSelect: []Option{{Name: "赤"}}},
+				"日付":       {Date: &PropertyValueDate{Start: "2024-07-27"}}, // TODO 値を入れないのはどうする？
+				"ユーザー":     {People: []User{}},                              // TODO 値をいれる
+				"チェックボックス": {Checkbox: true},
+				"URL":      {Url: lo.ToPtr("https://picsum.photos/200")},
+				"メール":      {Email: lo.ToPtr("me@example.com")},
+				"電話":       {Email: lo.ToPtr("117")},
+				"リレーション":   {Relation: []PageReference{}},
+			})
 			lo.Must(client.CreatePage(ctx, params, WithValidator(compareJSON(t))))
 		})
 	})
