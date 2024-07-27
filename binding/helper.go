@@ -56,7 +56,7 @@ func getTypeForBinding(p notion.Property) string {
 	}
 	panic(p.Type)
 }
-func access(p *notion.PropertyValue) reflect.Value {
+func accessPayloadField(p *notion.PropertyValue) reflect.Value {
 	switch p.Type {
 	case "title":
 		return reflect.ValueOf(&p.Title)

@@ -46,7 +46,7 @@ func UnmarshalPage(page *notion.Page, dst any) error {
 				err = fmt.Errorf("%v", r)
 			}
 		}()
-		fv.Set(get(prop))
+		fv.Set(getPayloadValue(prop))
 		return err
 	}
 
@@ -94,11 +94,11 @@ func GetUpdatePageParams(src any, page *notion.Page) (*notion.UpdatePageProperti
 				return nil, fmt.Errorf("タグ %q に相当するプロパティがありません", propId)
 			}
 
-			json1, _ := json.Marshal(get(prop).Interface())
+			json1, _ := json.Marshal(getPayloadValue(prop).Interface())
 			json2, _ := json.Marshal(v.Field(i).Interface())
 			if string(json1) != string(json2) {
 				pv := notion.PropertyValue{Type: prop.Type}
-				set(&pv, v.Field(i))
+				setPayloadValue(&pv, v.Field(i))
 				delta[propId] = pv
 			}
 		}
@@ -139,9 +139,10 @@ func ToTaggedStruct(db *notion.Database) string {
 	return (&jen.Statement{code}).GoString()
 }
 
-func get(p *notion.PropertyValue) reflect.Value {
-	return access(p).Elem()
+func getPayloadValue(p *notion.PropertyValue) reflect.Value {
+	return accessPayloadField(p).Elem()
 }
-func set(p *notion.PropertyValue, value reflect.Value) {
-	access(p).Elem().Set(value)
+
+func setPayloadValue(p *notion.PropertyValue, value reflect.Value) {
+	accessPayloadField(p).Elem().Set(value)
 }

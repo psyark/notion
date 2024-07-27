@@ -147,7 +147,7 @@ func (c *Converter) OutputBindingHelper() {
 		jen.Panic(jen.Id("p").Dot("Type")),
 	)
 
-	helper.Func().Id("access").Params(jen.Id("p").Op("*").Qual("github.com/psyark/notion", "PropertyValue")).Qual("reflect", "Value").Block(
+	helper.Func().Id("accessPayloadField").Params(jen.Id("p").Op("*").Qual("github.com/psyark/notion", "PropertyValue")).Qual("reflect", "Value").Block(
 		jen.Switch(jen.Id("p").Dot("Type")).BlockFunc(func(g *jen.Group) {
 			for _, f := range propertyValue.fields {
 				if f, ok := f.(*VariableField); ok && f.discriminatorValue == f.name {
