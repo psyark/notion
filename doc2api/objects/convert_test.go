@@ -26,6 +26,9 @@ func TestMain(m *testing.M) {
 	converter.OutputBindingHelper()
 }
 
+// TODO Goの将来のリリースで、ジェネリック型の型パラメータを埋め込みフィールドにできるようになった場合
+// この関数を廃止して request_id を含むジェネリック型でラップする
+// https://stackoverflow.com/questions/66118867/go-generics-is-it-possible-to-embed-generic-structs
 func UndocumentedRequestID(b *CodeBuilder) *VariableField {
 	return b.NewField(&Parameter{Property: "request_id", Description: UNDOCUMENTED}, jen.String(), OmitEmpty)
 }
