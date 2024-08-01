@@ -1,6 +1,7 @@
 package binding
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -84,10 +85,9 @@ func GetUpdatePageParams(src any, page *notion.Page) (*notion.UpdatePageProperti
 		return nil, fmt.Errorf("src must be a pointer to a tagged struct")
 	}
 
-	delta := map[string]notion.PropertyValue{}
+	delta := notion.PropertyValueMap{}
 	for i := 0; i < t.NumField(); i++ {
-		sf := t.Field(i)
-		if sf.Tag.Get("notion") != "" {
+		if sf := t.Field(i); sf.Tag.Get("notion") != "" {
 			propId := sf.Tag.Get("notion") // TODO カバーやアイコンの考慮
 			prop := page.Properties.Get(propId)
 			if prop == nil {
@@ -96,9 +96,9 @@ func GetUpdatePageParams(src any, page *notion.Page) (*notion.UpdatePageProperti
 
 			json1, _ := json.Marshal(getPayloadValue(prop).Interface())
 			json2, _ := json.Marshal(v.Field(i).Interface())
-			if string(json1) != string(json2) {
+			if !bytes.Equal(json1, json2) {
 				pv := notion.PropertyValue{Type: prop.Type}
-				setPayloadValue(&pv, v.Field(i))
+				accessPayloadField(&pv).Elem().Set(v.Field(i))
 				delta[propId] = pv
 			}
 		}
@@ -141,8 +141,4 @@ func ToTaggedStruct(db *notion.Database) string {
 
 func getPayloadValue(p *notion.PropertyValue) reflect.Value {
 	return accessPayloadField(p).Elem()
-}
-
-func setPayloadValue(p *notion.PropertyValue, value reflect.Value) {
-	accessPayloadField(p).Elem().Set(value)
 }
