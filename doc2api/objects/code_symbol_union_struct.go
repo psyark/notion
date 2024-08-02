@@ -43,7 +43,7 @@ func WithPayloadObject(b *CodeBuilder) addPayloadFieldOption {
 	return func(union *UnionStruct, field *VariableField) *SimpleObject {
 		payloadName := union.name() + strcase.UpperCamelCase(field.discriminatorValue)
 		payload := b.AddSimpleObject(payloadName, field.comment)
-		field.typeCode = jen.Op("*").Qual("github.com/psyark/notion", payloadName)
+		field.typeCode = jen.Op("*").Add(Qual(payloadName))
 		return payload
 	}
 }
