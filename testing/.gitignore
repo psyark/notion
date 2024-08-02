@@ -1,3 +1,5 @@
 
 env.local
-testdata
+testdata/cache
+testdata/fail
+testdata/pass

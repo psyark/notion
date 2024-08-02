@@ -77,7 +77,7 @@ func (b *CodeBuilder) output(converter *Converter, sortSymbols bool) {
 	if len(b.symbols) == 0 {
 		_ = os.Remove(filePath)
 	} else {
-		file := jen.NewFile("notion")
+		file := jen.NewFilePathName("github.com/psyark/notion", "notion")
 		file.ImportNames(map[string]string{
 			"github.com/google/uuid":        "uuid",
 			"github.com/json-iterator/go":   "jsoniter",

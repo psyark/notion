@@ -60,7 +60,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Title property value objects contain an array of rich text objects within the title property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("title", e.Text, WithType(jen.Id("RichTextArray")))
+		propertyValue.AddPayloadField("title", e.Text, WithType(jen.Qual("github.com/psyark/notion", "RichTextArray")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -87,7 +87,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Rich Text property value objects contain an array of rich text objects within the rich_text property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("rich_text", e.Text, WithType(jen.Id("RichTextArray")))
+		propertyValue.AddPayloadField("rich_text", e.Text, WithType(jen.Qual("github.com/psyark/notion", "RichTextArray")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -137,7 +137,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Select property value objects contain the following data within the select property:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("select", e.Text, WithType(jen.Op("*").Id("Option"))) // may null
+		propertyValue.AddPayloadField("select", e.Text, WithType(jen.Op("*").Qual("github.com/psyark/notion", "Option"))) // may null
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "id",
@@ -178,7 +178,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Status property value objects contain the following data within the status property:",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("status", e.Text, WithType(jen.Op("*").Id("Option")))
+		propertyValue.AddPayloadField("status", e.Text, WithType(jen.Op("*").Qual("github.com/psyark/notion", "Option")))
 	})
 	c.ExpectParameter(&Parameter{
 		Property:     "id",
@@ -219,7 +219,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Multi-select property value objects contain an array of multi-select option values within the multi_select property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("multi_select", e.Text, WithType(jen.Index().Id("Option")))
+		propertyValue.AddPayloadField("multi_select", e.Text, WithType(jen.Index().Qual("github.com/psyark/notion", "Option")))
 	})
 	/* Multi-select option values */
 	c.ExpectBlock(&Block{
@@ -340,7 +340,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Formula property value objects represent the result of evaluating a formula described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a formula cannot be updated directly.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("formula", e.Text, WithType(jen.Op("*").Id("Formula")))
+		propertyValue.AddPayloadField("formula", e.Text, WithType(jen.Op("*").Qual("github.com/psyark/notion", "Formula")))
 	})
 	c.ExpectBlock(&Block{Kind: "Blockquote", Text: "Formulas returned in page objects are subject to a 25 page reference limitation. The Retrieve a page property endpoint should be used to get an accurate formula value."})
 	c.ExpectBlock(&Block{
@@ -400,7 +400,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Relation property value objects contain an array of page references within the\u00a0relation property. A page reference is an object with an id key and a string value (UUIDv4) corresponding to a page ID in another database.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("relation", e.Text, WithType(jen.Index().Id("PageReference")))
+		propertyValue.AddPayloadField("relation", e.Text, WithType(jen.Index().Qual("github.com/psyark/notion", "PageReference")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "Paragraph",
@@ -436,7 +436,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Rollup property value objects represent the result of evaluating a rollup described in thedatabase's properties. These objects contain a type key and a key corresponding with the value of type. The value of a rollup cannot be updated directly.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("rollup", e.Text, WithType(jen.Op("*").Id("Rollup")))
+		propertyValue.AddPayloadField("rollup", e.Text, WithType(jen.Op("*").Qual("github.com/psyark/notion", "Rollup")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -493,7 +493,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "People property value objects contain an array of user objects within the people property.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("people", e.Text, WithType(jen.Index().Id("User")))
+		propertyValue.AddPayloadField("people", e.Text, WithType(jen.Index().Qual("github.com/psyark/notion", "User")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -520,7 +520,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "File property value objects contain an array of file references within the files property. A file reference is an object with a File Object and name property, with a string value corresponding to a filename of the original file upload (i.e. \"Whole_Earth_Catalog.jpg\").",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("files", e.Text, WithType(jen.Index().Id("File")))
+		propertyValue.AddPayloadField("files", e.Text, WithType(jen.Index().Qual("github.com/psyark/notion", "File")))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",
@@ -633,7 +633,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Created time property value objects contain a string within the created_time property. The string contains the date and time when this page was created. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of created_time cannot be updated. See the Property Item Object to see how these values are returned.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("created_time", e.Text, WithType(jen.Id("ISO8601String")))
+		propertyValue.AddPayloadField("created_time", e.Text, WithType(jen.Qual("github.com/psyark/notion", "ISO8601String")))
 	})
 	/* Created by property values */
 	c.ExpectBlock(&Block{
@@ -644,7 +644,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Created by property value objects contain a user object within the created_by property. The user object describes the user who created this page. The value of created_by cannot be updated. See the Property Item Object to see how these values are returned.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("created_by", e.Text, WithType(jen.Id("User")))
+		propertyValue.AddPayloadField("created_by", e.Text, WithType(jen.Qual("github.com/psyark/notion", "User")))
 	})
 	/* Last edited time property values */
 	c.ExpectBlock(&Block{
@@ -655,7 +655,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Last edited time property value objects contain a string within the last_edited_time property. The string contains the date and time when this page was last updated. It is formatted as an ISO 8601 date time string (i.e. \"2020-03-17T19:10:04.968Z\"). The value of last_edited_time cannot be updated. See the Property Item Object to see how these values are returned.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("last_edited_time", e.Text, WithType(jen.Id("ISO8601String")))
+		propertyValue.AddPayloadField("last_edited_time", e.Text, WithType(jen.Qual("github.com/psyark/notion", "ISO8601String")))
 	})
 	/* Last edited by property values */
 	c.ExpectBlock(&Block{
@@ -666,7 +666,7 @@ func TestPropertyValue(t *testing.T) {
 		Kind: "Paragraph",
 		Text: "Last edited by property value objects contain a user object within the last_edited_by property. The user object describes the user who last updated this page. The value of last_edited_by cannot be updated. See the Property Item Object to see how these values are returned.",
 	}).Output(func(e *Block, b *CodeBuilder) {
-		propertyValue.AddPayloadField("last_edited_by", e.Text, WithType(jen.Id("User")))
+		propertyValue.AddPayloadField("last_edited_by", e.Text, WithType(jen.Qual("github.com/psyark/notion", "User")))
 	})
 
 	c.RequestBuilderForUndocumented(func(b *CodeBuilder) {

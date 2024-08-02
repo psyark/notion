@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "nKu_": {
+      "type": "url",
+      "url": "http://example.com/hoge"
+    },
+    "wSuU": {
+      "number": 103.1415926535898,
+      "type": "number"
+    }
+  }
+}

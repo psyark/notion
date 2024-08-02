@@ -3,36 +3,36 @@
 package binding
 
 import (
-	notion "github.com/psyark/notion"
-	"reflect"
+	"fmt"
+	"github.com/psyark/notion"
 )
 
 func getTypeForBinding(p notion.Property) string {
 	switch p.Type {
 	case "title":
-		return "RichTextArray"
+		return "notion.RichTextArray"
 	case "rich_text":
-		return "RichTextArray"
+		return "notion.RichTextArray"
 	case "number":
 		return "*float64"
 	case "select":
-		return "*Option"
+		return "*notion.Option"
 	case "status":
-		return "*Option"
+		return "*notion.Option"
 	case "multi_select":
-		return "[]Option"
+		return "[]notion.Option"
 	case "date":
-		return "*PropertyValueDate"
+		return "*notion.PropertyValueDate"
 	case "formula":
-		return "*Formula"
+		return "*notion.Formula"
 	case "relation":
-		return "[]PageReference"
+		return "[]notion.PageReference"
 	case "rollup":
-		return "*Rollup"
+		return "*notion.Rollup"
 	case "people":
-		return "[]User"
+		return "[]notion.User"
 	case "files":
-		return "[]File"
+		return "[]notion.File"
 	case "checkbox":
 		return "bool"
 	case "url":
@@ -42,66 +42,119 @@ func getTypeForBinding(p notion.Property) string {
 	case "phone_number":
 		return "*string"
 	case "created_time":
-		return "ISO8601String"
+		return "notion.ISO8601String"
 	case "created_by":
-		return "User"
+		return "notion.User"
 	case "last_edited_time":
-		return "ISO8601String"
+		return "notion.ISO8601String"
 	case "last_edited_by":
-		return "User"
+		return "notion.User"
 	case "unique_id":
-		return "*PropertyValueUniqueId"
+		return "*notion.PropertyValueUniqueId"
 	case "button":
 		return "*struct{}"
 	}
 	panic(p.Type)
 }
-func accessPayloadField(p *notion.PropertyValue) reflect.Value {
+
+// getPayload は PropertyValueのTypeに応じたペイロードフィールドの値を取得します
+func getPayload(p *notion.PropertyValue) (any, error) {
 	switch p.Type {
 	case "title":
-		return reflect.ValueOf(&p.Title)
+		return p.Title, nil
 	case "rich_text":
-		return reflect.ValueOf(&p.RichText)
+		return p.RichText, nil
 	case "number":
-		return reflect.ValueOf(&p.Number)
+		return p.Number, nil
 	case "select":
-		return reflect.ValueOf(&p.Select)
+		return p.Select, nil
 	case "status":
-		return reflect.ValueOf(&p.Status)
+		return p.Status, nil
 	case "multi_select":
-		return reflect.ValueOf(&p.MultiSelect)
+		return p.MultiSelect, nil
 	case "date":
-		return reflect.ValueOf(&p.Date)
+		return p.Date, nil
 	case "formula":
-		return reflect.ValueOf(&p.Formula)
+		return p.Formula, nil
 	case "relation":
-		return reflect.ValueOf(&p.Relation)
+		return p.Relation, nil
 	case "rollup":
-		return reflect.ValueOf(&p.Rollup)
+		return p.Rollup, nil
 	case "people":
-		return reflect.ValueOf(&p.People)
+		return p.People, nil
 	case "files":
-		return reflect.ValueOf(&p.Files)
+		return p.Files, nil
 	case "checkbox":
-		return reflect.ValueOf(&p.Checkbox)
+		return p.Checkbox, nil
 	case "url":
-		return reflect.ValueOf(&p.Url)
+		return p.Url, nil
 	case "email":
-		return reflect.ValueOf(&p.Email)
+		return p.Email, nil
 	case "phone_number":
-		return reflect.ValueOf(&p.PhoneNumber)
+		return p.PhoneNumber, nil
 	case "created_time":
-		return reflect.ValueOf(&p.CreatedTime)
+		return p.CreatedTime, nil
 	case "created_by":
-		return reflect.ValueOf(&p.CreatedBy)
+		return p.CreatedBy, nil
 	case "last_edited_time":
-		return reflect.ValueOf(&p.LastEditedTime)
+		return p.LastEditedTime, nil
 	case "last_edited_by":
-		return reflect.ValueOf(&p.LastEditedBy)
+		return p.LastEditedBy, nil
 	case "unique_id":
-		return reflect.ValueOf(&p.UniqueId)
+		return p.UniqueId, nil
 	case "button":
-		return reflect.ValueOf(&p.Button)
+		return p.Button, nil
 	}
-	panic(p.Type)
+	return nil, fmt.Errorf("unknown type: %s", p.Type)
+}
+
+// setPayload は PropertyValueのTypeに応じたペイロードフィールドの値を更新します
+func setPayload(p *notion.PropertyValue, value any) error {
+	switch p.Type {
+	case "title":
+		return setPayloadFieldInternal(&p.Title, value)
+	case "rich_text":
+		return setPayloadFieldInternal(&p.RichText, value)
+	case "number":
+		return setPayloadFieldInternal(&p.Number, value)
+	case "select":
+		return setPayloadFieldInternal(&p.Select, value)
+	case "status":
+		return setPayloadFieldInternal(&p.Status, value)
+	case "multi_select":
+		return setPayloadFieldInternal(&p.MultiSelect, value)
+	case "date":
+		return setPayloadFieldInternal(&p.Date, value)
+	case "formula":
+		return setPayloadFieldInternal(&p.Formula, value)
+	case "relation":
+		return setPayloadFieldInternal(&p.Relation, value)
+	case "rollup":
+		return setPayloadFieldInternal(&p.Rollup, value)
+	case "people":
+		return setPayloadFieldInternal(&p.People, value)
+	case "files":
+		return setPayloadFieldInternal(&p.Files, value)
+	case "checkbox":
+		return setPayloadFieldInternal(&p.Checkbox, value)
+	case "url":
+		return setPayloadFieldInternal(&p.Url, value)
+	case "email":
+		return setPayloadFieldInternal(&p.Email, value)
+	case "phone_number":
+		return setPayloadFieldInternal(&p.PhoneNumber, value)
+	case "created_time":
+		return setPayloadFieldInternal(&p.CreatedTime, value)
+	case "created_by":
+		return setPayloadFieldInternal(&p.CreatedBy, value)
+	case "last_edited_time":
+		return setPayloadFieldInternal(&p.LastEditedTime, value)
+	case "last_edited_by":
+		return setPayloadFieldInternal(&p.LastEditedBy, value)
+	case "unique_id":
+		return setPayloadFieldInternal(&p.UniqueId, value)
+	case "button":
+		return setPayloadFieldInternal(&p.Button, value)
+	}
+	return fmt.Errorf("unknown type: %s", p.Type)
 }
