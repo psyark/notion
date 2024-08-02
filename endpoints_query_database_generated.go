@@ -154,7 +154,7 @@ func (p QueryDatabaseParams) Filter(filter Filter) QueryDatabaseParams {
 }
 
 // When supplied, orders the results based on the provided [sort criteria](ref:post-database-query-sort).
-func (p QueryDatabaseParams) Sorts(sorts Sort) QueryDatabaseParams {
+func (p QueryDatabaseParams) Sorts(sorts []Sort) QueryDatabaseParams {
 	p["sorts"] = sorts
 	return p
 }

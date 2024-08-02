@@ -27,7 +27,7 @@ func TestQueryDatabase(t *testing.T) {
 	).Generate(GenericStructRef{Name: "Pagination", GenericTypeArg: "Page"}, ParamAnnotations{
 		"database_id":  UUID,
 		"filter":       jen.Id("Filter"),
-		"sorts":        jen.Id("Sort"),
+		"sorts":        jen.Index().Id("Sort"),
 		"start_cursor": jen.String(),
 		"page_size":    jen.Int(),
 	})
