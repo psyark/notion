@@ -574,6 +574,7 @@ func TestBlock(t *testing.T) {
 		Description: "Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.",
 	}).Output(func(e *Parameter, b *CodeBuilder) {
 		heading.AddFields(b.NewField(e, jen.Bool()))
+		heading.AddFields(b.NewField(&Parameter{Property: "children", Description: UNDOCUMENTED}, jen.Index().Id("Block"), OmitEmpty))
 	})
 	c.ExpectBlock(&Block{
 		Kind: "FencedCodeBlock",

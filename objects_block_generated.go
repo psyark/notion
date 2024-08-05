@@ -195,9 +195,10 @@ type BlockEquation struct {
 
 // All heading block objects, heading_1, heading_2, and heading_3, contain the following information within their corresponding objects:
 type BlockHeading struct {
-	RichText     RichTextArray `json:"rich_text"`       // The rich text of the heading.
-	Color        string        `json:"color,omitempty"` // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
-	IsToggleable bool          `json:"is_toggleable"`   // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
+	RichText     RichTextArray `json:"rich_text"`          // The rich text of the heading.
+	Color        string        `json:"color,omitempty"`    // The color of the block. Possible values are: - "blue" - "blue_background" - "brown" - "brown_background" - "default" - "gray" - "gray_background" - "green" - "green_background" - "orange" - "orange_background" - "yellow" - "green" - "pink" - "pink_background" - "purple" - "purple_background" - "red" - "red_background" - "yellow_background"
+	IsToggleable bool          `json:"is_toggleable"`      // Whether or not the heading block is a toggle heading or not. If true, then the heading block toggles and can support children. If false, then the heading block is a static heading block.
+	Children     []Block       `json:"children,omitempty"` // UNDOCUMENTED
 }
 
 // Link Preview block objects contain the originally pasted url:

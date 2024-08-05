@@ -155,6 +155,14 @@ func TestClient(t *testing.T) {
 			{Heading1: &BlockHeading{RichText: NewRichTextArray("Heading 1")}},
 			{Heading2: &BlockHeading{RichText: NewRichTextArray("Heading 2")}},
 			{Heading3: &BlockHeading{RichText: NewRichTextArray("Heading 3")}},
+			{Heading1: &BlockHeading{RichText: NewRichTextArray("Heading 1"), IsToggleable: true, Children: []Block{
+				{Callout: &BlockCallout{
+					RichText: NewRichTextArray("コールアウト"),
+					Icon:     &Emoji{Emoji: "🍣"},
+				}},
+			}}},
+			{Heading2: &BlockHeading{RichText: NewRichTextArray("Heading 2"), IsToggleable: true}},
+			{Heading3: &BlockHeading{RichText: NewRichTextArray("Heading 3"), IsToggleable: true}},
 			{ToDo: &BlockToDo{RichText: NewRichTextArray("To Do")}},
 			{SyncedBlock: &BlockSyncedBlock{
 				Children: []Block{
