@@ -54,7 +54,7 @@ func (p AppendBlockChildrenParams) Children(children []Block) AppendBlockChildre
 }
 
 // The ID of the existing block that the new block should be appended after.
-func (p AppendBlockChildrenParams) After(after string) AppendBlockChildrenParams {
+func (p AppendBlockChildrenParams) After(after uuid.UUID) AppendBlockChildrenParams {
 	p["after"] = after
 	return p
 }
